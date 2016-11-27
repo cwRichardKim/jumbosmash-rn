@@ -16,9 +16,9 @@ import {
   TouchableHighlight,
 } from 'react-native';
 
-import SwipingPage from "./components/cards/swipingPage.js";
-import ChatPage    from "./components/chat/chatPage.js";
-import LoginPage   from "./components/login/loginPage.js";
+import SwipingPage from "./components/cards/SwipingPage.js";
+import ChatPage    from "./components/chat/ChatPage.js";
+import LoginPage   from "./components/login/LoginPage.js";
 
 const firebaseConfig = { //TODO: add real keys @elif, with environment variables?
   apiKey: "<your-api-key>",

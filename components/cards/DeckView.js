@@ -17,8 +17,8 @@ import {
 } from 'react-native';
 
 import clamp      from 'clamp';
-import YesView    from './yesView.js'
-import NoView     from './noView.js'
+import YesView    from './YesView.js'
+import NoView     from './NoView.js'
 
 var SWIPE_THRESHOLD = 120;
 
