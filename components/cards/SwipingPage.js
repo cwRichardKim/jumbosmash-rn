@@ -14,9 +14,9 @@ import {
   Dimensions
 } from 'react-native';
 
-import DeckView     from './deckView.js';
-import Card         from './card.js';
-import NoMoreCards  from './noMoreCards.js';
+import DeckView     from './DeckView.js';
+import Card         from './Card.js';
+import NoMoreCards  from './NoMoreCards.js';
 
 const Cards = [
   {name: '1', image: 'https://media.giphy.com/media/GfXFVHUzjlbOg/giphy.gif'},
@@ -77,7 +77,7 @@ class SwipingPage extends Component {
     return (
       <DeckView
         cards={this.state.cards}
-        
+
         renderCard={(cardData) => <Card {...cardData} />}
         renderNoMoreCards={() => <NoMoreCards />}
 
