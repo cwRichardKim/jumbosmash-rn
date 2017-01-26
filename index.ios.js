@@ -14,6 +14,7 @@ import {
   View,
   NavigatorIOS,
   TouchableHighlight,
+  TabBarIOS,
 } from 'react-native';
 
 import SwipingPage from "./components/cards/SwipingPage.js";
@@ -31,56 +32,77 @@ const firebaseApp = firebase.initializeApp(firebaseConfig);
 export default class jumbosmash extends Component {
   render() {
     return (
-      <NavigatorIOS
-        initialRoute={{
-          component: TemporaryMenu,
-          title: 'Temporary Menu',
-        }}
-        style={{flex:1}}
-      />
+      <TabBar/>
     );
   }
 }
 
-// TEMPORARY, will remove once we get a menu design
-class TemporaryMenu extends Component {
-  _toSwipingPage = () => {
-    this.props.navigator.push({
-      component: SwipingPage,
-      title: 'Swiping',
-    });
-  }
-
-  _toChatPage = () => {
-    this.props.navigator.push({
-      component: ChatPage,
-      title: 'Chat',
-    });
-  }
-
-  _toLoginPage = () => {
-    this.props.navigator.push({
-      component: LoginPage,
-      title: 'Login',
-    });
+class TabBar extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      selectedTab: 'cardsTab',
+      chatNotifCount: 0,
+    }
   }
 
   render() {
     return (
-      <View style={{flex:1, alignItems:'center', justifyContent:'center'}}>
-        <Text>We'll get rid of this once we get an actual menu design {'\n'}</Text>
-        <TouchableHighlight onPress={this._toSwipingPage}>
-          <Text>Go to swiping</Text>
-        </TouchableHighlight>
-        <Text>{'\n'}</Text>
-        <TouchableHighlight onPress={this._toChatPage}>
-          <Text>Go to chat</Text>
-        </TouchableHighlight>
-        <Text>{'\n'}</Text>
-        <TouchableHighlight onPress={this._toLoginPage}>
-          <Text>Go to login</Text>
-        </TouchableHighlight>
-      </View>
+      <TabBarIOS
+        unselectedTintColor="yellow"
+        tintColor="white"
+        unselectedItemTintColor="red"
+        barTintColor="darkslateblue">
+        {/* @jade temporary to access the login page until login code is complete */}
+        <TabBarIOS.Item
+          title="Login"
+          systemIcon="downloads"
+          selected={this.state.selectedTab === 'loginTab'}
+          onPress={() => {
+            this.setState({
+              selectedTab: 'loginTab',
+            });
+          }}>
+          <LoginPage/>
+        </TabBarIOS.Item>
+        <TabBarIOS.Item
+          title="Cards"
+          systemIcon="history"
+          selected={this.state.selectedTab === 'cardsTab'}
+          onPress={() => {
+            this.setState({
+              selectedTab: 'cardsTab',
+            });
+          }}>
+          <SwipingPage/>
+        </TabBarIOS.Item>
+        <TabBarIOS.Item
+          title="Chat"
+          systemIcon="contacts"
+          badge={this.state.notifCount > 0 ? this.state.notifCount : undefined}
+          badgeColor="black"
+          selected={this.state.selectedTab === 'chatTab'}
+          onPress={() => {
+            this.setState({
+              selectedTab: 'chatTab',
+            });
+          }}>
+          <ChatPage
+          />
+          {/* ^ penis */}
+        </TabBarIOS.Item>
+        <TabBarIOS.Item
+          title="Settings"
+          systemIcon="more"
+          selected={this.state.selectedTab === 'settingsTab'}
+          onPress={() => {
+            this.setState({
+              selectedTab: 'settingsTab',
+            });
+          }}>
+          <View style={{flex:1, alignItems:'center', justifyContent:'center'}}><Text>Soon to be Settings</Text></View>
+        </TabBarIOS.Item>
+      </TabBarIOS>
     );
   }
 }
