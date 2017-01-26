@@ -20,11 +20,11 @@ import SwipingPage from "./components/cards/SwipingPage.js";
 import ChatPage    from "./components/chat/ChatPage.js";
 import LoginPage   from "./components/login/LoginPage.js";
 
-const firebaseConfig = { //TODO: add real keys @elif, with environment variables?
-  apiKey: "<your-api-key>",
-  authDomain: "<your-auth-domain>",
-  databaseURL: "<your-database-url>",
-  storageBucket: "<your-storage-bucket>",
+const firebaseConfig = {
+  apiKey: "AIzaSyCqxU8ZGcg7Tx-iJoB_IROCG_yj41kWA6A",
+  authDomain: "jumbosmash-ddb99.firebaseapp.com",
+  databaseURL: "https://jumbosmash-ddb99.firebaseio.com/",
+  storageBucket: "jumbosmash-ddb99.appspot.com",
 };
 const firebaseApp = firebase.initializeApp(firebaseConfig);
 
