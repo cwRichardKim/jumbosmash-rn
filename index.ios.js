@@ -47,6 +47,7 @@ class TemporaryMenu extends Component {
     this.props.navigator.push({
       component: ChatPage,
       title: 'Chat',
+      chatroomId: "THIS_WILL_NORMALLY_BE_UNIQUE_ID" //TODO: change this when fully integrated
     });
   }
 

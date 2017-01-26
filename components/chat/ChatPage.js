@@ -21,7 +21,12 @@ class ChatPage extends Component {
   constructor(props) {
     super(props);
 
-    this._messagesRef = firebaseApp.database().ref("messages");
+    //will open up and get ref to particular chat between two users
+    console.log("PROPS:    " + this.props.toString());
+    const path = "messages/".concat(this.props.chatroomId);
+    console.log("PATHHHH  " + path);
+
+    this._messagesRef = firebaseApp.database().ref(path);
 
     this.onSend = this.onSend.bind(this);
     this.onReceive = this.onReceive.bind(this);
