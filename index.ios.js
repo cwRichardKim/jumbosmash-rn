@@ -67,8 +67,9 @@ class TemporaryMenu extends Component {
 
   render() {
     return (
+      // <Text> Hello! </Text>
       <View style={{flex:1, alignItems:'center', justifyContent:'center'}}>
-        <Text>We'll get rid of this once we get an actual menu design {'\n'}</Text>
+        <Text>We ll get rid of this once we get an actual menu design {'\n'} </Text>
         <TouchableHighlight onPress={this._toSwipingPage}>
           <Text>Go to swiping</Text>
         </TouchableHighlight>
