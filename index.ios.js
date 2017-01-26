@@ -29,30 +29,6 @@ export default class jumbosmash extends Component {
   }
 }
 
-<<<<<<< HEAD
-// TEMPORARY, will remove once we get a menu design
-class TemporaryMenu extends Component {
-  _toSwipingPage = () => {
-    this.props.navigator.push({
-      component: SwipingPage,
-      title: 'Swiping',
-    });
-  }
-
-  _toChatPage = () => {
-    this.props.navigator.push({
-      component: ChatPage,
-      title: 'Chat',
-      chatroomId: "THIS_WILL_NORMALLY_BE_UNIQUE_ID" //TODO: change this when fully integrated
-    });
-  }
-
-  _toLoginPage = () => {
-    this.props.navigator.push({
-      component: LoginPage,
-      title: 'Login',
-    });
-=======
 class TabBar extends Component {
   constructor(props) {
     super(props);
@@ -60,7 +36,6 @@ class TabBar extends Component {
       selectedTab: 'cardsTab',
       chatNotifCount: 0,
     }
->>>>>>> 5e81e310752885cca95832f700fbf873b7da8e97
   }
 
   render() {
@@ -105,8 +80,8 @@ class TabBar extends Component {
             });
           }}>
           <ChatPage
+            chatroomId={"UNIQUE_CONVERSATION_ID"}
           />
-          {/* ^ penis */}
         </TabBarIOS.Item>
         <TabBarIOS.Item
           title="Settings"
