@@ -52,7 +52,6 @@ class SwipingPage extends Component {
 
   handleRightSwipe (card) {
     console.log("swiped right func in swiping page");
-    console.log(this.props.height);
   }
 
   handleLeftSwipe (card) {
