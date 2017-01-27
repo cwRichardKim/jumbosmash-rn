@@ -1,14 +1,6 @@
-'use strict';
-
-/*
-This file is the parent file for the entire swiping mechanism. It should control
-the data, make the requests, and delegate the UI / swiping to DeckView
-*/
-
-import React, {Component} from 'react';
 import { GiftedChat } from 'react-native-gifted-chat';
 
-class ChatPage extends Component {
+class MessengerContainer extends React.Component {
   constructor(props) {
     super(props);
     this.state = {messages: []};
@@ -19,7 +11,7 @@ class ChatPage extends Component {
       messages: [
         {
           _id: 1,
-          text: 'DTS?',
+          text: 'Hello developer',
           createdAt: new Date(Date.UTC(2016, 7, 30, 17, 20, 0)),
           user: {
             _id: 2,
@@ -49,5 +41,3 @@ class ChatPage extends Component {
     );
   }
 }
-
-export default ChatPage;
