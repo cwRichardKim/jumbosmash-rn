@@ -15,11 +15,13 @@ import {
   NavigatorIOS,
   TouchableHighlight,
   TabBarIOS,
+  Dimensions,
 } from 'react-native';
 
-import SwipingPage from "./components/cards/SwipingPage.js";
-import ChatPage    from "./components/chat/ChatPage.js";
-import LoginPage   from "./components/login/LoginPage.js";
+import SwipingPage  from "./components/cards/SwipingPage.js";
+import ChatPage     from "./components/chat/ChatPage.js";
+import LoginPage    from "./components/login/LoginPage.js";
+import SettingsPage from "./components/settings/SettingsPage.js"
 
 const firebaseConfig = {
   apiKey: "AIzaSyCqxU8ZGcg7Tx-iJoB_IROCG_yj41kWA6A",
@@ -46,7 +48,9 @@ class TabBar extends Component {
     }
   }
 
+
   render() {
+    let tabBarHeight = 49;
     return (
       <TabBarIOS
         unselectedTintColor="yellow"
@@ -100,7 +104,7 @@ class TabBar extends Component {
               selectedTab: 'settingsTab',
             });
           }}>
-          <View style={{flex:1, alignItems:'center', justifyContent:'center'}}><Text>Soon to be Settings</Text></View>
+          <SettingsPage/>
         </TabBarIOS.Item>
       </TabBarIOS>
     );

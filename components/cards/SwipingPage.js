@@ -11,12 +11,16 @@ import {
   Text,
   View,
   Image,
-  Dimensions
+  Dimensions,
+  Platform,
 } from 'react-native';
 
 import DeckView     from './DeckView.js';
 import Card         from './Card.js';
 import NoMoreCards  from './NoMoreCards.js';
+
+let TABBAR_HEIGHT = (Platform.OS === 'ios') ? 49 : 49; // TODO: check the android tabbar height
+let PAGE_HEIGHT = Dimensions.get('window').height - TABBAR_HEIGHT;
 
 const Cards = [
   {name: '1', image: 'https://media.giphy.com/media/GfXFVHUzjlbOg/giphy.gif'},
@@ -48,6 +52,7 @@ class SwipingPage extends Component {
 
   handleRightSwipe (card) {
     console.log("swiped right func in swiping page");
+    console.log(this.props.height);
   }
 
   handleLeftSwipe (card) {
@@ -75,26 +80,23 @@ class SwipingPage extends Component {
 
   render() {
     return (
-      <DeckView
-        cards={this.state.cards}
+      <View style={{height:PAGE_HEIGHT}}>
+        <DeckView
+          cards={this.state.cards}
 
-        renderCard={(cardData) => <Card {...cardData} />}
-        renderNoMoreCards={() => <NoMoreCards />}
+          renderCard={(cardData) => <Card {...cardData} />}
+          renderNoMoreCards={() => <NoMoreCards />}
 
-        handleRightSwipe={this.handleRightSwipe.bind(this)}
-        handleLeftSwipe={this.handleLeftSwipe.bind(this)}
-        cardRemoved={this.cardRemoved.bind(this)}
-      />
+          handleRightSwipe={this.handleRightSwipe.bind(this)}
+          handleLeftSwipe={this.handleLeftSwipe.bind(this)}
+          cardRemoved={this.cardRemoved.bind(this)}
+        />
+      </View>
     );
   }
 }
 
 const styles = StyleSheet.create({
-  noMoreCards: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
 });
 
 export default SwipingPage;
