@@ -13,14 +13,17 @@ import {
     View,
     Animated,
     PanResponder,
-    Image
+    Image,
+    Dimensions,
 } from 'react-native';
 
-import clamp      from 'clamp';
-import YesView    from './YesView.js'
-import NoView     from './NoView.js'
+import clamp            from 'clamp';
+import YesView          from './YesView.js'
+import NoView           from './NoView.js'
+import SwipeButtonsView from './SwipeButtonsView.js'
 
-var SWIPE_THRESHOLD = 120;
+let SWIPE_THRESHOLD = 120;
+var CARD_WIDTH = Dimensions.get('window').width - 40;
 
 class DeckView extends Component {
   constructor(props) {
@@ -158,7 +161,13 @@ class DeckView extends Component {
     return (
       <View style={this.props.containerStyle}>
 
+        <View style={styles.topPadding}/>
+
         {this.shouldRenderCard(animatedCardstyles)}
+
+        <View style={styles.swipeButtonsView}>
+          <SwipeButtonsView/>
+        </View>
 
         <Animated.View style={[animatedNopeStyles, styles.noView]}>
           <NoView/>
@@ -181,22 +190,33 @@ var styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: '#F5FCFF',
   },
+  topPadding: {
+    height: 50,
+  },
   yesView: {
     position: 'absolute',
     bottom: 20,
     right: 20,
+    zIndex: 11,
   },
   noView: {
     position: 'absolute',
     bottom: 20,
     left: 20,
+    zIndex: 11,
   },
   cardView: {
-    width: 300,
-    height: 500,
+    flex: 1,
+    width: CARD_WIDTH,
+    zIndex: 10,
   },
+  swipeButtonsView: {
+    height: 100,
+    alignSelf: "stretch",
+  }
 });
 
+/* basically setting types for variables */
 DeckView.propTypes = {
   cards: React.PropTypes.array,
   renderCards: React.PropTypes.func,
