@@ -16,12 +16,11 @@ import {
 } from 'react-native';
 
 import DeckView     from './DeckView.js';
-import Card         from './Card.js';
-import NoMoreCards  from './NoMoreCards.js';
 
 let TABBAR_HEIGHT = (Platform.OS === 'ios') ? 49 : 49; // TODO: check the android tabbar height
 let PAGE_HEIGHT = Dimensions.get('window').height - TABBAR_HEIGHT;
 
+// this is an example set of information
 const Cards = [
   {name: '1', image: 'https://media.giphy.com/media/GfXFVHUzjlbOg/giphy.gif'},
   {name: '2', image: 'https://media.giphy.com/media/irTuv1L1T34TC/giphy.gif'},
@@ -34,7 +33,8 @@ const Cards = [
   {name: '9', image: 'https://media.giphy.com/media/3oEduJbDtIuA2VrtS0/giphy.gif'},
 ];
 
-const Cards2 = [
+// this provides an example of how to append cards to the end of the cards object
+const NewCards = [
   {name: '10', image: 'https://media.giphy.com/media/12b3E4U9aSndxC/giphy.gif'},
   {name: '11', image: 'https://media4.giphy.com/media/6csVEPEmHWhWg/200.gif'},
   {name: '12', image: 'https://media4.giphy.com/media/AA69fOAMCPa4o/200.gif'},
@@ -67,10 +67,10 @@ class SwipingPage extends Component {
       console.log(`There are only ${this.state.cards.length - index - 1} cards left.`);
 
       if (!this.state.outOfCards) {
-        console.log(`Adding ${Cards2.length} more cards`)
+        console.log(`Adding ${NewCards.length} more cards`)
 
         this.setState({
-          cards: this.state.cards.concat(Cards2),
+          cards: this.state.cards.concat(NewCards),
           outOfCards: true
         })
       }
@@ -82,9 +82,6 @@ class SwipingPage extends Component {
       <View style={{height:PAGE_HEIGHT}}>
         <DeckView
           cards={this.state.cards}
-
-          renderCard={(cardData) => <Card {...cardData} />}
-          renderNoMoreCards={() => <NoMoreCards />}
 
           handleRightSwipe={this.handleRightSwipe.bind(this)}
           handleLeftSwipe={this.handleLeftSwipe.bind(this)}
