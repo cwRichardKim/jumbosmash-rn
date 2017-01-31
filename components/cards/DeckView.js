@@ -114,8 +114,8 @@ class DeckView extends Component {
   }
 
   _swipeCompleted() {
-    if (this.props.cardRemoved) {
-      this.props.cardRemoved(this.props.cards.indexOf(this.state.card));
+    if (this.props.handleCardWasRemoved) {
+      this.props.handleCardWasRemoved(this.props.cards.indexOf(this.state.card));
     }
     this.state.pan.setValue({x: 0, y: 0});
     this.state.enter.setValue(0.8);

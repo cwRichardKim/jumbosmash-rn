@@ -58,7 +58,10 @@ class SwipingPage extends Component {
     console.log("swiped left func in swiping pages");
   }
 
-  cardRemoved (index) {
+  // This function is called after the card was swiped and before the next card
+  // is loaded.  It is responsible for making sure the array of cards has enough
+  // content in it
+  handleCardWasRemoved (index) {
     console.log(`The index is ${index}`);
 
     let CARD_REFRESH_LIMIT = 3
@@ -85,7 +88,7 @@ class SwipingPage extends Component {
 
           handleRightSwipe={this.handleRightSwipe.bind(this)}
           handleLeftSwipe={this.handleLeftSwipe.bind(this)}
-          cardRemoved={this.cardRemoved.bind(this)}
+          handleCardWasRemoved={this.handleCardWasRemoved.bind(this)}
         />
       </View>
     );
