@@ -9,6 +9,7 @@ import {
   StyleSheet,
   Text,
   View,
+  TouchableHighlight,
 } from 'react-native';
 
 class NotificationBannerView extends Component {
@@ -17,23 +18,29 @@ class NotificationBannerView extends Component {
   }
   render() {
     return(
-      <View style={[styles.view]}>
-        <Text style={styles.text}>{"Nope!"}</Text>
-      </View>
+      <TouchableHighlight style={styles.container} onPress={this.props.onPress}>
+        <View style={[styles.view]}>
+          <Text style={styles.text}>{this.props.message ? this.props.message : "test"}</Text>
+        </View>
+      </TouchableHighlight>
     );
   }
 }
 
 const styles = StyleSheet.create({
+  container: {
+    flex:1,
+  },
   view: {
-    borderColor: 'red',
-    borderWidth: 2,
-    padding: 20,
-    borderRadius: 5,
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "gray"
   },
   text: {
+    paddingTop: 25,
     fontSize: 16,
-    color: 'red',
+    color: 'white',
     backgroundColor: 'transparent',
   }
 });
