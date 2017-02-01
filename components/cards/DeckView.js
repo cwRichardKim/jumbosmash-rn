@@ -23,6 +23,7 @@ import NoView           from './NoView.js'
 import SwipeButtonsView from './SwipeButtonsView.js'
 import Card             from './Card.js';
 import NoMoreCards      from './NoMoreCards.js';
+import ProfileCardView  from './ProfileCardView.js'
 
 let SWIPE_THRESHOLD = 120;
 var CARD_WIDTH = Dimensions.get('window').width - 40;
@@ -35,6 +36,7 @@ class DeckView extends Component {
       pan: new Animated.ValueXY(),
       enter: new Animated.Value(0.9),
       cardIndex: 0,
+      showProfile: false,
     }
   }
 
@@ -114,11 +116,24 @@ class DeckView extends Component {
     this._animateEntrance();
   }
 
+  _shouldRenderProfileCard() {
+    if (this.state.showProfile && this.state.cardIndex < this.props.cards.length) {
+      return(
+        <View style={styles.profileCardView}>
+          <ProfileCardView {...this.props.cards[this.state.cardIndex]}
+            onPress={()=>{this.setState({showProfile: false})}}/>
+        </View>
+      );
+    }
+  }
+
   _shouldRenderCard(animatedCardstyles) {
     if (this.state.cardIndex < this.props.cards.length) {
       return (
         <Animated.View style={[styles.cardView, animatedCardstyles]} {...this._panResponder.panHandlers}>
-          <Card {...this.props.cards[this.state.cardIndex]} />
+          <Card {...this.props.cards[this.state.cardIndex]}
+            onPress={()=>{this.setState({showProfile: true})}}
+          />
         </Animated.View>
       );
     } else {
@@ -147,9 +162,8 @@ class DeckView extends Component {
 
     return (
       <View style={this.props.containerStyle}>
-
         <View style={styles.topPadding}/>
-
+        {this._shouldRenderProfileCard()}
         {this._shouldRenderCard(animatedCardstyles)}
 
         <View style={styles.swipeButtonsView}>
@@ -200,7 +214,16 @@ var styles = StyleSheet.create({
   swipeButtonsView: {
     height: 100,
     alignSelf: "stretch",
-  }
+  },
+  profileCardView: {
+    flex: 1,
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    zIndex: 12,
+  },
 });
 
 /* basically setting types for variables */
