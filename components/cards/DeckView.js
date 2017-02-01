@@ -88,11 +88,6 @@ class DeckView extends Component {
     Animated.spring( this.state.enter, { toValue: 1, friction: 8 } ).start();
   }
 
-  _goToNextCard() {
-    console.log(`index: ${this.state.cardIndex} card name: ${this.props.cards[this.state.cardIndex].name}`);
-    this.setState({ cardIndex: this.state.cardIndex + 1 });
-  }
-
   componentWillReceiveProps(nextProps){
     if(nextProps.cards && nextProps.cards.length > 0){
       this.setState({
@@ -113,22 +108,21 @@ class DeckView extends Component {
     if (this.props.handleCardWasRemoved) {
       this.props.handleCardWasRemoved(this.state.cardIndex);
     }
+    this.setState({ cardIndex: this.state.cardIndex + 1 });
     this.state.pan.setValue({x: 0, y: 0});
     this.state.enter.setValue(0.8);
-    this._goToNextCard();
     this._animateEntrance();
   }
 
   _shouldRenderCard(animatedCardstyles) {
-    var nextCard = this.state.cardIndex < this.props.cards.length ? this.props.cards[this.state.cardIndex] : null
-    if (nextCard) {
+    if (this.state.cardIndex < this.props.cards.length) {
       return (
         <Animated.View style={[styles.cardView, animatedCardstyles]} {...this._panResponder.panHandlers}>
-          <Card {...nextCard} />
+          <Card {...this.props.cards[this.state.cardIndex]} />
         </Animated.View>
       );
     } else {
-      <NoMoreCards/>
+      return (<NoMoreCards/>);
     }
   }
 

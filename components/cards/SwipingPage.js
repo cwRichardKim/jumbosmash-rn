@@ -19,26 +19,14 @@ import DeckView     from './DeckView.js';
 
 let TABBAR_HEIGHT = (Platform.OS === 'ios') ? 49 : 49; // TODO: check the android tabbar height
 let PAGE_HEIGHT = Dimensions.get('window').height - TABBAR_HEIGHT;
+let CARD_REFRESH_BUFFER = 2 // There should always be at least this many cards left, else fetch more
 
 // this is an example set of information
 const Cards = [
-  {name: '0', image: 'https://media.giphy.com/media/GfXFVHUzjlbOg/giphy.gif'},
-  {name: '1', image: 'https://media.giphy.com/media/irTuv1L1T34TC/giphy.gif'},
-  {name: '2', image: 'https://media.giphy.com/media/LkLL0HJerdXMI/giphy.gif'},
-  {name: '3', image: 'https://media.giphy.com/media/fFBmUMzFL5zRS/giphy.gif'},
-  {name: '4', image: 'https://media.giphy.com/media/oDLDbBgf0dkis/giphy.gif'},
-  {name: '5', image: 'https://media.giphy.com/media/7r4g8V2UkBUcw/giphy.gif'},
-  {name: '6', image: 'https://media.giphy.com/media/K6Q7ZCdLy8pCE/giphy.gif'},
-  {name: '7', image: 'https://media.giphy.com/media/hEwST9KM0UGti/giphy.gif'},
-  {name: '8', image: 'https://media.giphy.com/media/3oEduJbDtIuA2VrtS0/giphy.gif'},
-];
-
-// this provides an example of how to append cards to the end of the cards object
-const NewCards = [
-  {name: '9', image: 'https://media.giphy.com/media/12b3E4U9aSndxC/giphy.gif'},
-  {name: '10', image: 'https://media4.giphy.com/media/6csVEPEmHWhWg/200.gif'},
-  {name: '11', image: 'https://media4.giphy.com/media/AA69fOAMCPa4o/200.gif'},
-  {name: '12', image: 'https://media.giphy.com/media/OVHFny0I7njuU/giphy.gif'},
+  { _id: '588ba44d1abc3700118d5478',firstName: 'Elif (test)',middleName: '  ',lastName: 'Kinli',school: 'School of Arts and Sciences',major: 'Computer Science',email: 'elif.kinli@tufts.edu',id: '586edd82837823188a297767',matchList: [],dislikeList: [],likeList: [],notList: [],photos: [],tags: [] },
+  { _id: '588f7db44a557100113d2183',firstName: 'Richard (test)',middleName: 'R.',lastName: 'Kim',school: 'College of Liberal Arts',major: 'Computer Science',email: 'richard.kim@tufts.edu',id: '586edd82837823188a297932',description: 'korean as fuck',matchList: [],dislikeList: [],likeList: [],notList: [],photos: [],tags: [] },
+  { _id: '588f7e504a557100113d2184',firstName: 'Jared (test)',middleName: 'T.',lastName: 'Moskowitz',school: 'School of Engineering',major: 'Computer Science',email: 'jared.moskowitz@tufts.edu',id: '586edd82837823188a297810',description: 'whatever',matchList: [],dislikeList: [],likeList: [],notList: [],photos: [],tags: [] },
+  { _id: '588f7e864a557100113d2185',firstName: 'Jade (test)',middleName: 'Y.',lastName: 'Chan',school: 'College of Liberal Arts',major: 'Computer Science',email: 'jade.chan@tufts.edu',id: '586edd82837823188a2976e7',description: 'whatever',matchList: [],dislikeList: [],likeList: [],notList: [],photos: [],tags: [] }
 ];
 
 class SwipingPage extends Component {
@@ -46,17 +34,16 @@ class SwipingPage extends Component {
     super(props);
     this.state = {
       cards: Cards,
-      outOfCards: false
     }
   }
 
-  _getNextCardsAsync () {
+  _addMoreCardsAsync () {
     return fetch('https://jumbosmash2017.herokuapp.com/profile')
       .then((response) => response.json())
       .then((responseJson) => {
-        console.log("asdf");
-        console.log(responseJson);
-        return responseJson;
+        this.setState({
+          cards: this.state.cards.concat(responseJson),
+        })
       })
       .catch((error) => {
         console.error(error);
@@ -75,23 +62,9 @@ class SwipingPage extends Component {
   // is loaded.  It is responsible for making sure the array of cards has enough
   // content in it
   _handleCardWasRemoved (index) {
-    console.log(`card index ${index} of ${this.state.cards.length} was just swiped`);
-    // this._getNextCardsAsync();
-    // console.log(this.state.cards);
-
-    let CARD_REFRESH_LIMIT = 3
-
-    if (this.state.cards.length - index <= CARD_REFRESH_LIMIT + 1) {
+    if (this.state.cards.length - index <= CARD_REFRESH_BUFFER + 1) {
       console.log(`There are only ${this.state.cards.length - index - 1} cards left.`);
-
-      if (!this.state.outOfCards) {
-        console.log(`Adding ${NewCards.length} more cards`)
-
-        this.setState({
-          cards: this.state.cards.concat(NewCards),
-          outOfCards: true
-        })
-      }
+      this._addMoreCardsAsync();
     }
   }
 
