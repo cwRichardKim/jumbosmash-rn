@@ -17,9 +17,9 @@ class Card extends Component {
   render() {
     return (
       <View style={styles.card}>
-        <Image style={styles.thumbnail} source={{uri: this.props.image}} />
+        <Image style={styles.thumbnail} source={{uri: (this.props.photos && this.props.photos.length >= 1) ? this.props.photos[0] : 'https://img2.greatnotions.com/StockDesign/XLarge/King_Graphics/m0410.jpg'}} />
         <View style={styles.textContainer}>
-          <Text style={styles.text}>This is card {this.props.name}</Text>
+          <Text style={styles.text}>{this.props.firstName}</Text>
         </View>
       </View>
     );

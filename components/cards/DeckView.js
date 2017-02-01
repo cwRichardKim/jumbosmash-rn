@@ -21,6 +21,8 @@ import clamp            from 'clamp';
 import YesView          from './YesView.js'
 import NoView           from './NoView.js'
 import SwipeButtonsView from './SwipeButtonsView.js'
+import Card             from './Card.js';
+import NoMoreCards      from './NoMoreCards.js';
 
 let SWIPE_THRESHOLD = 120;
 var CARD_WIDTH = Dimensions.get('window').width - 40;
@@ -32,40 +34,7 @@ class DeckView extends Component {
     this.state = {
       pan: new Animated.ValueXY(),
       enter: new Animated.Value(0.9),
-      card: this.props.cards ? this.props.cards[0] : null,
-    }
-  }
-
-  _goToNextCard() {
-    let currentCardIdx = this.props.cards.indexOf(this.state.card);
-    let newIdx = currentCardIdx + 1;
-
-    let card = newIdx < this.props.cards.length ? this.props.cards[newIdx] : null;
-
-    this.setState({card: card});
-  }
-
-  componentDidMount() {
-    this._animateEntrance();
-  }
-
-  _animateEntrance() {
-    Animated.spring( this.state.enter, { toValue: 1, friction: 8 } ).start();
-  }
-
-  componentWillReceiveProps(nextProps){
-    if(nextProps.cards && nextProps.cards.length > 0){
-      this.setState({
-        card: nextProps.cards[0]
-      })
-    }
-  }
-
-  calculateVelocity(vx) {
-    if (vx >= 0) {
-      return clamp(vx, 3, 5);
-    } else if (vx < 0) {
-      return clamp(vx * -1, 3, 5) * -1;
+      cardIndex: 0,
     }
   }
 
@@ -92,15 +61,15 @@ class DeckView extends Component {
         if (Math.abs(this.state.pan.x._value) > SWIPE_THRESHOLD) {
 
           if (this.state.pan.x._value > 0) {
-            this.props.handleRightSwipe(this.state.card);
+            this.props.handleRightSwipe(this.props.cards[this.state.cardIndex]);
           } else {
-            this.props.handleLeftSwipe(this.state.card);
+            this.props.handleLeftSwipe(this.props.cards[this.state.cardIndex]);
           }
 
           Animated.decay(this.state.pan, {
             velocity: {x: velocity, y: vy},
             deceleration: 0.98
-          }).start(this._resetState.bind(this))
+          }).start(this._swipeCompleted.bind(this))
         } else {
           Animated.spring(this.state.pan, {
             toValue: {x: 0, y: 0},
@@ -111,31 +80,49 @@ class DeckView extends Component {
     })
   }
 
-  _resetState() {
-    if (this.props.cardRemoved) {
-      this.props.cardRemoved(this.props.cards.indexOf(this.state.card));
-    }
-    this.state.pan.setValue({x: 0, y: 0});
-    this.state.enter.setValue(0.8);
-    this._goToNextCard();
+  componentDidMount() {
     this._animateEntrance();
   }
 
-  shouldRenderCard(animatedCardstyles) {
-    if (this.state.card) {
+  _animateEntrance() {
+    Animated.spring( this.state.enter, { toValue: 1, friction: 8 } ).start();
+  }
+
+  componentWillReceiveProps(nextProps){
+    if(nextProps.cards && nextProps.cards.length > 0){
+      this.setState({
+        card: nextProps.cards[0]
+      })
+    }
+  }
+
+  calculateVelocity(vx) {
+    if (vx >= 0) {
+      return clamp(vx, 3, 5);
+    } else if (vx < 0) {
+      return clamp(vx * -1, 3, 5) * -1;
+    }
+  }
+
+  _swipeCompleted() {
+    if (this.props.handleCardWasRemoved) {
+      this.props.handleCardWasRemoved(this.state.cardIndex);
+    }
+    this.setState({ cardIndex: this.state.cardIndex + 1 });
+    this.state.pan.setValue({x: 0, y: 0});
+    this.state.enter.setValue(0.8);
+    this._animateEntrance();
+  }
+
+  _shouldRenderCard(animatedCardstyles) {
+    if (this.state.cardIndex < this.props.cards.length) {
       return (
         <Animated.View style={[styles.cardView, animatedCardstyles]} {...this._panResponder.panHandlers}>
-          {this.props.renderCard(this.state.card)}
+          <Card {...this.props.cards[this.state.cardIndex]} />
         </Animated.View>
       );
     } else {
-      if (this.props.renderNoMoreCards) {
-        return this.props.renderNoMoreCards();
-      } else {
-        return (
-          <View><Text>No More Cards</Text></View>
-        );
-      }
+      return (<NoMoreCards/>);
     }
   }
 
@@ -163,7 +150,7 @@ class DeckView extends Component {
 
         <View style={styles.topPadding}/>
 
-        {this.shouldRenderCard(animatedCardstyles)}
+        {this._shouldRenderCard(animatedCardstyles)}
 
         <View style={styles.swipeButtonsView}>
           <SwipeButtonsView/>
@@ -219,8 +206,6 @@ var styles = StyleSheet.create({
 /* basically setting types for variables */
 DeckView.propTypes = {
   cards: React.PropTypes.array,
-  renderCards: React.PropTypes.func,
-  renderNoMoreCards: React.PropTypes.func,
   showRightSwipe: React.PropTypes.bool,
   showLeftSwipe: React.PropTypes.bool,
   handleRightSwipe: React.PropTypes.func,
