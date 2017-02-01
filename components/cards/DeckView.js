@@ -34,7 +34,7 @@ class DeckView extends Component {
     this.state = {
       pan: new Animated.ValueXY(),
       enter: new Animated.Value(0.9),
-      card: this.props.cards ? this.props.cards[0] : null,
+      cardIndex: 0,
     }
   }
 
@@ -61,9 +61,9 @@ class DeckView extends Component {
         if (Math.abs(this.state.pan.x._value) > SWIPE_THRESHOLD) {
 
           if (this.state.pan.x._value > 0) {
-            this.props.handleRightSwipe(this.state.card);
+            this.props.handleRightSwipe(this.props.cards[this.state.cardIndex]);
           } else {
-            this.props.handleLeftSwipe(this.state.card);
+            this.props.handleLeftSwipe(this.props.cards[this.state.cardIndex]);
           }
 
           Animated.decay(this.state.pan, {
@@ -89,12 +89,8 @@ class DeckView extends Component {
   }
 
   _goToNextCard() {
-    let currentCardIdx = this.props.cards.indexOf(this.state.card);
-    let newIdx = currentCardIdx + 1;
-
-    let card = newIdx < this.props.cards.length ? this.props.cards[newIdx] : null;
-
-    this.setState({card: card});
+    console.log(`index: ${this.state.cardIndex} card name: ${this.props.cards[this.state.cardIndex].name}`);
+    this.setState({ cardIndex: this.state.cardIndex + 1 });
   }
 
   componentWillReceiveProps(nextProps){
@@ -115,7 +111,7 @@ class DeckView extends Component {
 
   _swipeCompleted() {
     if (this.props.handleCardWasRemoved) {
-      this.props.handleCardWasRemoved(this.props.cards.indexOf(this.state.card));
+      this.props.handleCardWasRemoved(this.state.cardIndex);
     }
     this.state.pan.setValue({x: 0, y: 0});
     this.state.enter.setValue(0.8);
@@ -123,11 +119,12 @@ class DeckView extends Component {
     this._animateEntrance();
   }
 
-  shouldRenderCard(animatedCardstyles) {
-    if (this.state.card) {
+  _shouldRenderCard(animatedCardstyles) {
+    var nextCard = this.state.cardIndex < this.props.cards.length ? this.props.cards[this.state.cardIndex] : null
+    if (nextCard) {
       return (
         <Animated.View style={[styles.cardView, animatedCardstyles]} {...this._panResponder.panHandlers}>
-          <Card {...this.state.card} />
+          <Card {...nextCard} />
         </Animated.View>
       );
     } else {
@@ -159,7 +156,7 @@ class DeckView extends Component {
 
         <View style={styles.topPadding}/>
 
-        {this.shouldRenderCard(animatedCardstyles)}
+        {this._shouldRenderCard(animatedCardstyles)}
 
         <View style={styles.swipeButtonsView}>
           <SwipeButtonsView/>
