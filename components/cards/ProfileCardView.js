@@ -1,8 +1,7 @@
 'use strict';
 
 /*
-This file is responsible for the UI of a single card. Parent class should be
-able to give it text and images and it should be able to lay it out correctly.
+This file is responsible for providing the zoomed in card view after tapping on a card
 */
 
 import React, {Component} from 'react';
@@ -14,17 +13,18 @@ import {
   TouchableWithoutFeedback,
 } from 'react-native';
 
-class Card extends Component {
+//TODO: @richard Make a carousel on the photos
+class ProfileCardView extends Component {
   render() {
     return (
       <TouchableWithoutFeedback style={styles.touchArea}
         onPress={this.props.onPress}>
-      <View style={styles.card}>
-        <Image style={styles.thumbnail} source={{uri: (this.props.photos && this.props.photos.length >= 1) ? this.props.photos[0] : 'https://img2.greatnotions.com/StockDesign/XLarge/King_Graphics/m0410.jpg'}} />
-        <View style={styles.textContainer}>
-          <Text style={styles.text}>{this.props.firstName}</Text>
+        <View style={styles.card}>
+          <Image style={styles.thumbnail} source={{uri: (this.props.photos && this.props.photos.length >= 1) ? this.props.photos[0] : 'https://img2.greatnotions.com/StockDesign/XLarge/King_Graphics/m0410.jpg'}} />
+          <View style={styles.textContainer}>
+            <Text style={styles.text}>{this.props.firstName}{"\n"}{this.props.description}{"\n"}[This is where the rest of the description would go]</Text>
+          </View>
         </View>
-      </View>
       </TouchableWithoutFeedback>
     );
   }
@@ -37,16 +37,15 @@ const styles = StyleSheet.create({
   card: {
     borderRadius: 5,
     overflow: 'hidden',
-    borderColor: '#DDDDDD',
     backgroundColor: 'white',
-    borderWidth: 1,
-    elevation: 1,
+    elevation: 2,
     flex: 1,
   },
   thumbnail: {
-    flex: 1,
+    flex: 2,
   },
   textContainer: {
+    flex: 1,
     alignItems: 'center',
   },
   text: {
@@ -56,12 +55,12 @@ const styles = StyleSheet.create({
   }
 });
 
-Card.propTypes = {
+ProfileCardView.propTypes = {
   //TODO: add the expected property types (name, email, picture, etc)
 };
 
-Card.defaultProps = {
+ProfileCardView.defaultProps = {
   //TODO: create default prop types when some stuff is screwed up
 };
 
-export default Card;
+export default ProfileCardView;
