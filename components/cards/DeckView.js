@@ -141,6 +141,14 @@ class DeckView extends Component {
     }
   }
 
+  _swipeRightButtonPressed() {
+    // this.props.handleRightSwipe(this.props.cards[this.state.cardIndex])
+  }
+
+  _swipeLeftButtonPressed() {
+    // this.props.handleLeftSwipe(this.props.cards[this.state.cardIndex])
+  }
+
   render() {
     let { pan, enter, } = this.state;
 
@@ -167,7 +175,9 @@ class DeckView extends Component {
         {this._shouldRenderCard(animatedCardstyles)}
 
         <View style={styles.swipeButtonsView}>
-          <SwipeButtonsView/>
+          <SwipeButtonsView
+            leftButtonFunction = {this._swipeLeftButtonPressed.bind(this)}
+            rightButtonFunction = {this._swipeRightButtonPressed.bind(this)}/>
         </View>
 
         <Animated.View style={[animatedNopeStyles, styles.noView]}>

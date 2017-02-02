@@ -53,6 +53,9 @@ class NavigationContainer extends Component {
 
   _notificationBannerTapped() {
     this._hideNotificationBanner();
+    this.setState({
+      selectedTab: 'chatTab',
+    });
   }
 
   componentDidMount() {
