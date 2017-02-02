@@ -2,6 +2,7 @@
 export default data = [
   {
     "gender": "male",
+    "chatroomId": "UNIQUE_CONVERSATION_ID",
     "name": {
       "title": "mr",
       "first": "aiden",

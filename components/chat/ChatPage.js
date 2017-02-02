@@ -46,7 +46,11 @@ class ChatNavigator extends React.Component {
     console.log("OKKKKKKKK");
     return (
       <Navigator
-        initialRoute={{component: ChatPage, id: ChatPageNavId, chatroomId: null, title: 'Chat', index: 0 }}
+        initialRoute={{component: ChatPage,
+                       id: ChatPageNavId,
+                       chatroomId: null,
+                       title: 'Chat',
+                       index: 0 }}
         renderScene={this.navigatorRenderScene}
         style={{padding: 0}}
       />
@@ -82,32 +86,32 @@ class ChatPage extends React.Component {
     };
   }
 
-  rowPressed(row) {
-    this.renderConversation(row);
+  rowPressed(props) {
+    this.renderConversation(props.chatroomId);
   }
 
   renderConversation(conversationId) {
     this.props.nav.push({
       title: "TEST",//row.name.first,
       id: ConversationPageNavId,
-      chatroomId: "UNIQUE_CONVERSATION_ID"
+      chatroomId: conversationId
       //index: 1,
       //passProps: {property: "TEST ALSO"}
     });
   }
 
   renderChatRow(props) {
-      return (
-    <TouchableHighlight onPress={() => this.rowPressed(props)}
-        underlayColor='#dddddd'>
-        <View style={styles.rowContainer}>
-          <Image source={{ uri: props.picture.large}} style={styles.rowPhoto} />
-          <Text style={styles.rowText}>
-            {`${props.name.first} ${props.name.last}`}
-          </Text>
-        </View>
-    </TouchableHighlight>
-      );
+    return (
+      <TouchableHighlight onPress={() => this.rowPressed(props)}
+          underlayColor='#dddddd'>
+          <View style={styles.rowContainer}>
+            <Image source={{ uri: props.picture.large}} style={styles.rowPhoto} />
+            <Text style={styles.rowText}>
+              {`${props.name.first} ${props.name.last}`}
+            </Text>
+          </View>
+      </TouchableHighlight>
+    );
   }
 
   render() {
