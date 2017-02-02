@@ -102,9 +102,7 @@ class NavigationContainer extends Component {
                 selectedTab: 'chatTab',
               });
             }}>
-            <ChatPage
-              chatroomId={this.props.chatroomId}
-            />
+            <ChatPage/>
           </TabBarIOS.Item>
           <TabBarIOS.Item
             title="Settings"
