@@ -1,105 +1,75 @@
-'use strict';
 
-/*
-This file is the parent file for the entire swiping mechanism. It should control
-the data, make the requests, and delegate the UI / swiping to DeckView
-*/
+import React from 'react';
+import { View,
+         ListView,
+         StyleSheet,
+         Text, Navigator,
+         TouchableHighlight } from 'react-native';
+import ChatRow from './ChatRow';
+import ChatSearch from './ChatSearch';
+import ConversationPage from './ConversationPage';
+import data from './testData';
 
-import React, {Component} from 'react';
-import { GiftedChat } from 'react-native-gifted-chat';
-const firebase = require('firebase');
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    marginTop: 20,
+  },
+  separator: {
+  flex: 1,
+  height: StyleSheet.hairlineWidth,
+  backgroundColor: '#8E8E8E',
+  },
+});
 
-const firebaseConfig = {
-  apiKey: "AIzaSyCqxU8ZGcg7Tx-iJoB_IROCG_yj41kWA6A",
-  authDomain: "jumbosmash-ddb99.firebaseapp.com",
-  databaseURL: "https://jumbosmash-ddb99.firebaseio.com/",
-  storageBucket: "",
-};
-const firebaseApp = firebase.initializeApp(firebaseConfig);
+class ChatNavigator extends React.Component {
+  render() {
+    return (
+      <Navigator
+        initialRoute={{ title: 'Chat', index: 0 }}
+        renderScene={(route, navigator) =>
+          <ChatPage
+            nav={navigator}
+          />
+        }
+        style={{padding: 0}}
+      />
+    );
+}
+}
 
-class ChatPage extends Component {
+class ChatPage extends React.Component {
   constructor(props) {
     super(props);
 
-    //will open up and get ref to particular chat between two users
-    const path = "messages/".concat(this.props.chatroomId);
-    this._messagesRef = firebaseApp.database().ref(path);
-
-    this.onSend = this.onSend.bind(this);
-    this.onReceive = this.onReceive.bind(this);
-
+    const ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
     this.state = {
-      messages: this._messages,
-      typingText: null,
+      dataSource: ds.cloneWithRows(data),
+      navigator: props.navigator
     };
-
   }
 
-  componentWillMount() {
-    this._isMounted = true;
-  }
-
-  componentDidMount() {
-    this._messagesRef.on('child_added', (child) => {
-      this.onReceive({
-        _id: child.val()._id,
-        text: child.val().text,
-        user: child.val().user,
-        image: 'https://facebook.github.io/react/img/logo_og.png',
-        position: child.val().name == "Jared" && 'right' || 'left',
-        date: new Date(child.val().date),
-        //uniqueId: child.key
-      });
-    });
-
-  }
-
-  setMessages(messages) {
-    this._messages = messages;
-
-    this.setState({
-      messages: messages,
+  rowPressed(row) {
+    this.props.navigator.push({
+      title: "TEST",//row.name.first,
+      component: ConversationPage,
+      passProps: {property: "TEST ALSO"}
     });
   }
-
-  onSend(messages = []) {
-    for (var i = 0, len = messages.length; i < len; i++) {
-      var message = messages[i];
-      this._messagesRef.push({
-        _id: message._id,
-        text: message.text,
-        user: {
-          _id: 2,
-          name: "Jared",
-          avatar: 'https://facebook.github.io/react/img/logo_og.png',
-        },
-        date: new Date().getTime(),
-      });
-
-
-    }
-  }
-
-  onReceive(message) {
-    this.setState((previousState) => {
-      return {
-        messages: GiftedChat.append(previousState.messages, message),
-      };
-    });
-  }
-
   render() {
     return (
-      <GiftedChat
-        messages={this.state.messages}
-        onSend={this.onSend}
-        //onReceive={this.onReceive}
-        user={{
-          _id: 1,
-        }}
-      />
+      <TouchableHighlight onPress={() => this.rowPressed(rowData.lister_url)}
+        underlayColor='#dddddd'>
+        <ListView
+          style={styles.container}
+          dataSource={this.state.dataSource}
+          renderRow={(data) => <ChatRow {...data} />}
+          renderSeparator={(sectionId, rowId) => <View key={rowId} style={styles.separator} />}
+          renderHeader={() => <ChatSearch />}
+        />
+      </TouchableHighlight>
     );
   }
 }
 
-export default ChatPage;
+export default ChatNavigator;

@@ -17,10 +17,10 @@ import {
   Dimensions,
 } from 'react-native';
 
-import SwipingPage  from "./components/cards/SwipingPage.js";
-import ChatPage     from "./components/chat/ChatPage.js";
-import LoginPage    from "./components/login/LoginPage.js";
-import SettingsPage from "./components/settings/SettingsPage.js"
+import SwipingPage   from "./components/cards/SwipingPage.js";
+import ChatNavigator from "./components/chat/ChatPage.js";
+import LoginPage     from "./components/login/LoginPage.js";
+import SettingsPage  from "./components/settings/SettingsPage.js"
 
 
 export default class jumbosmash extends Component {
@@ -83,9 +83,7 @@ class TabBar extends Component {
               selectedTab: 'chatTab',
             });
           }}>
-          <ChatPage
-            chatroomId={"UNIQUE_CONVERSATION_ID"}
-          />
+          <ChatNavigator/>
         </TabBarIOS.Item>
         <TabBarIOS.Item
           title="Settings"
