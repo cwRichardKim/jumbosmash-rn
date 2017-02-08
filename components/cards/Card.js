@@ -19,40 +19,57 @@ class Card extends Component {
     return (
       <TouchableWithoutFeedback style={styles.touchArea}
         onPress={this.props.onPress}>
-      <View style={styles.card}>
-        <Image style={styles.thumbnail} source={{uri: (this.props.photos && this.props.photos.length >= 1) ? this.props.photos[0] : 'https://img2.greatnotions.com/StockDesign/XLarge/King_Graphics/m0410.jpg'}} />
-        <View style={styles.textContainer}>
-          <Text style={styles.text}>{this.props.firstName}</Text>
+        <View style={styles.shadowView}>
+          <View style={styles.card}>
+            <Image style={styles.thumbnail} source={{uri: (this.props.photos && this.props.photos.length >= 1) ? this.props.photos[0] : 'https://img2.greatnotions.com/StockDesign/XLarge/King_Graphics/m0410.jpg'}} />
+            <View style={styles.textContainer}>
+              <Text style={styles.text}>{this.props.firstName}</Text>
+            </View>
+          </View>
         </View>
-      </View>
       </TouchableWithoutFeedback>
     );
   }
 }
 
+let borderRadius = 20;
+
 const styles = StyleSheet.create({
   touchArea: {
     flex: 1,
   },
+  shadowView: {
+    flex: 1,
+    borderRadius: borderRadius,
+
+    // android shadow
+    elevation: 3,
+    shadowColor: '#000000',
+
+    // ios shadow
+    shadowOffset: {
+      width: 0,
+      height: 7,
+    },
+    shadowRadius: 14,
+    shadowOpacity: 0.06,
+  },
   card: {
-    borderRadius: 5,
+    borderRadius: borderRadius,
     overflow: 'hidden',
-    borderColor: '#DDDDDD',
     backgroundColor: 'white',
-    borderWidth: 1,
-    elevation: 1,
     flex: 1,
   },
   thumbnail: {
     flex: 1,
   },
   textContainer: {
-    alignItems: 'center',
+    justifyContent: "center",
+    minHeight: 60,
   },
   text: {
+    padding: 20,
     fontSize: 20,
-    paddingTop: 10,
-    paddingBottom: 10
   }
 });
 

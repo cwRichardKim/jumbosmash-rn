@@ -33,8 +33,9 @@ class SwipingPage extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      cards: Cards,
+      cards: [],
     }
+    this._addMoreCardsAsync();
   }
 
   _addMoreCardsAsync () {

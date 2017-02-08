@@ -28,7 +28,7 @@ class NavigationContainer extends Component {
     this.state = {
       selectedTab: 'cardsTab',
       chatNotifCount: 0,
-      notificationBannerText: "notification banner (tap me)",
+      notificationBannerText: "notification (tap me, goes to chat)",
       pan: new Animated.ValueXY({x:0, y:-100}),
     };
   }
@@ -67,14 +67,12 @@ class NavigationContainer extends Component {
     return (
       <View style={{flex:1}}>
         <TabBarIOS
-          unselectedTintColor="yellow"
-          tintColor="white"
-          unselectedItemTintColor="red"
-          barTintColor="darkslateblue">
+          barTintColor="white">
           {/* @jade temporary to access the login page until login code is complete */}
           <TabBarIOS.Item
-            title="Login"
-            systemIcon="downloads"
+            icon={require('./icons/search.png')}
+            selectedIcon={require('./icons/search2.png')}
+            renderAsOriginal
             selected={this.state.selectedTab === 'loginTab'}
             onPress={() => {
               this.setState({
@@ -84,8 +82,9 @@ class NavigationContainer extends Component {
             <LoginPage/>
           </TabBarIOS.Item>
           <TabBarIOS.Item
-            title="Cards"
-            systemIcon="history"
+            icon={require('./icons/heart.png')}
+            selectedIcon={require('./icons/heart2.png')}
+            renderAsOriginal
             selected={this.state.selectedTab === 'cardsTab'}
             onPress={() => {
               this.setState({
@@ -95,8 +94,9 @@ class NavigationContainer extends Component {
             <SwipingPage/>
           </TabBarIOS.Item>
           <TabBarIOS.Item
-            title="Chat"
-            systemIcon="contacts"
+            icon={require('./icons/chat.png')}
+            selectedIcon={require('./icons/chat2.png')}
+            renderAsOriginal
             badge={this.state.notifCount > 0 ? this.state.notifCount : undefined}
             badgeColor="black"
             selected={this.state.selectedTab === 'chatTab'}
@@ -110,8 +110,9 @@ class NavigationContainer extends Component {
             />
           </TabBarIOS.Item>
           <TabBarIOS.Item
-            title="Settings"
-            systemIcon="more"
+            renderAsOriginal
+            icon={require('./icons/user.png')}
+            selectedIcon={require('./icons/user2.png')}
             selected={this.state.selectedTab === 'settingsTab'}
             onPress={() => {
               this.setState({
