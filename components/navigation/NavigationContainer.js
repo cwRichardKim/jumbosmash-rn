@@ -14,12 +14,10 @@ import {
   TabBarIOS,
   Animated,
   TouchableHighlight,
+  Navigator,
 } from 'react-native';
 
-import SwipingPage            from "../cards/SwipingPage.js";
-import ChatPage               from "../chat/ChatPage.js";
-import LoginPage              from "../login/LoginPage.js";
-import SettingsPage           from "../settings/SettingsPage.js"
+import HomeTabBarIOS          from "./HomeTabBarIOS.js"
 import NotificationBannerView from "./NotificationBannerView.js"
 
 class NavigationContainer extends Component {
@@ -27,7 +25,6 @@ class NavigationContainer extends Component {
     super(props);
     this.state = {
       selectedTab: 'cardsTab',
-      chatNotifCount: 0,
       notificationBannerText: "notification (tap me, goes to chat)",
       pan: new Animated.ValueXY({x:0, y:-100}),
     };
@@ -62,74 +59,49 @@ class NavigationContainer extends Component {
     this._showNotificationBanner();
   }
 
-  render() {
-    let tabBarHeight = 49;
-    return (
-      <View style={{flex:1}}>
-        <TabBarIOS
-          barTintColor="white">
-          {/* @jade temporary to access the login page until login code is complete */}
-          <TabBarIOS.Item
-            icon={require('./icons/search.png')}
-            selectedIcon={require('./icons/search2.png')}
-            renderAsOriginal
-            selected={this.state.selectedTab === 'loginTab'}
-            onPress={() => {
-              this.setState({
-                selectedTab: 'loginTab',
-              });
-            }}>
-            <LoginPage/>
-          </TabBarIOS.Item>
-          <TabBarIOS.Item
-            icon={require('./icons/heart.png')}
-            selectedIcon={require('./icons/heart2.png')}
-            renderAsOriginal
-            selected={this.state.selectedTab === 'cardsTab'}
-            onPress={() => {
-              this.setState({
-                selectedTab: 'cardsTab',
-              });
-            }}>
-            <SwipingPage/>
-          </TabBarIOS.Item>
-          <TabBarIOS.Item
-            icon={require('./icons/chat.png')}
-            selectedIcon={require('./icons/chat2.png')}
-            renderAsOriginal
-            badge={this.state.notifCount > 0 ? this.state.notifCount : undefined}
-            badgeColor="black"
-            selected={this.state.selectedTab === 'chatTab'}
-            onPress={() => {
-              this.setState({
-                selectedTab: 'chatTab',
-              });
-            }}>
-            <ChatPage
-              chatroomId={this.props.chatroomId}
-            />
-          </TabBarIOS.Item>
-          <TabBarIOS.Item
-            renderAsOriginal
-            icon={require('./icons/user.png')}
-            selectedIcon={require('./icons/user2.png')}
-            selected={this.state.selectedTab === 'settingsTab'}
-            onPress={() => {
-              this.setState({
-                selectedTab: 'settingsTab',
-              });
-            }}>
-            <SettingsPage/>
-          </TabBarIOS.Item>
-        </TabBarIOS>
-        <Animated.View
-          style={[styles.notificationBanner, {transform:this.state.pan.getTranslateTransform()}]}>
-          <NotificationBannerView
-            message={this.state.notificationBannerText}
-            onPress={this._notificationBannerTapped.bind(this)}
+  // Changes which tab is showing (swiping, settings, etc), check HomeTabBarIOS
+  // for the tab names.  The reason why this is here is because notifications
+  // will also need to change the tabs, and changes can only trickle downwards.
+  // Thus, selectedTab is a property of the Navigator, and TabBar looks to
+  // Navigator for this property.
+  _changeTab(tabName) {
+    this.setState({
+      selectedTab: tabName,
+    })
+  }
+
+  // Returns the content that the navigator should show.  Since route.name is "TabBar"
+  // by default, it will show the TabBar.  In order to "push" a view on top of this view,
+  // You have to give it its own route name and use navigator.push({name: route name})
+  _renderNavigatorScene (route, navigator) {
+    if (route.name == 'TabBar') {
+      return (
+        <View style={{flex:1}}>
+          <HomeTabBarIOS
+            navigator={navigator}
+            selectedTab={this.state.selectedTab}
+            changeTab={this._changeTab.bind(this)}
           />
-        </Animated.View>
-      </View>
+          <Animated.View
+            style={[styles.notificationBanner, {transform:this.state.pan.getTranslateTransform()}]}>
+            <NotificationBannerView
+              message={this.state.notificationBannerText}
+              onPress={this._notificationBannerTapped.bind(this)}
+            />
+          </Animated.View>
+        </View>
+      );
+    } else if (route.name == 'Chat') {
+      return(<View navigator={navigator}><Text>@jared put your chat view here and use this.props.navigator.push("Chat") to render this page</Text></View>);
+    }
+  }
+
+  render() {
+    return (
+      <Navigator
+        initialRoute={{ name: 'TabBar' }}
+        renderScene={this._renderNavigatorScene.bind(this)}
+      />
     );
   }
 }
