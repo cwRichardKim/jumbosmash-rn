@@ -9,10 +9,7 @@ import {
   StyleSheet,
   Text,
   View,
-  Image,
   TabBarIOS,
-  Animated,
-  TouchableHighlight,
 } from 'react-native';
 
 import SwipingPage            from "../cards/SwipingPage.js";
