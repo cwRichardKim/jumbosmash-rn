@@ -13,6 +13,7 @@ import {
   Image,
   Dimensions,
   Platform,
+  Navigator,
 } from 'react-native';
 
 import DeckView     from './DeckView.js';
@@ -36,6 +37,10 @@ class SwipingPage extends Component {
       cards: [],
     }
     this._addMoreCardsAsync();
+  }
+
+  componentDidMount () {
+    console.log("component did mount");
   }
 
   _addMoreCardsAsync () {
