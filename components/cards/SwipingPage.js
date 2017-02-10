@@ -21,14 +21,6 @@ let TABBAR_HEIGHT = (Platform.OS === 'ios') ? 49 : 49; // TODO: check the androi
 let PAGE_HEIGHT = Dimensions.get('window').height - TABBAR_HEIGHT;
 let CARD_REFRESH_BUFFER = 2 // There should always be at least this many cards left, else fetch more
 
-// this is an example set of information
-const Cards = [
-  { _id: '588ba44d1abc3700118d5478',firstName: 'Elif (test)',middleName: '  ',lastName: 'Kinli',school: 'School of Arts and Sciences',major: 'Computer Science',email: 'elif.kinli@tufts.edu',id: '586edd82837823188a297767',matchList: [],dislikeList: [],likeList: [],notList: [],photos: [],tags: [] },
-  { _id: '588f7db44a557100113d2183',firstName: 'Richard (test)',middleName: 'R.',lastName: 'Kim',school: 'College of Liberal Arts',major: 'Computer Science',email: 'richard.kim@tufts.edu',id: '586edd82837823188a297932',description: 'korean as fuck',matchList: [],dislikeList: [],likeList: [],notList: [],photos: [],tags: [] },
-  { _id: '588f7e504a557100113d2184',firstName: 'Jared (test)',middleName: 'T.',lastName: 'Moskowitz',school: 'School of Engineering',major: 'Computer Science',email: 'jared.moskowitz@tufts.edu',id: '586edd82837823188a297810',description: 'whatever',matchList: [],dislikeList: [],likeList: [],notList: [],photos: [],tags: [] },
-  { _id: '588f7e864a557100113d2185',firstName: 'Jade (test)',middleName: 'Y.',lastName: 'Chan',school: 'College of Liberal Arts',major: 'Computer Science',email: 'jade.chan@tufts.edu',id: '586edd82837823188a2976e7',description: 'whatever',matchList: [],dislikeList: [],likeList: [],notList: [],photos: [],tags: [] }
-];
-
 class SwipingPage extends Component {
   constructor(props) {
     super(props);

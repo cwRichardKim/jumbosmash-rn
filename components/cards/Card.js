@@ -27,6 +27,7 @@ class Card extends Component {
     this.state = {
       pan: new Animated.ValueXY(),
       enter: new Animated.Value(0.9),
+      isImageLoading: true,
     }
   }
 
@@ -111,7 +112,7 @@ class Card extends Component {
     let opacity = pan.x.interpolate({inputRange: [-200, 0, 200], outputRange: [0.5, 1, 0.5]});
     let scale = enter;
 
-    let animatedCardstyles = {transform: [{translateX}, {translateY}, {rotate}, {scale}], opacity};
+    let animatedCardstyles = this.props.isTop ? {transform: [{translateX}, {translateY}, {rotate}, {scale}], opacity} : {};
 
     return (
       <Animated.View style={[styles.cardView, animatedCardstyles, {zIndex: this.props.isTop ? 11 : 10}]} {...this._panResponder.panHandlers}>
@@ -122,7 +123,10 @@ class Card extends Component {
               <Image
                 style={styles.thumbnail}
                 source={{uri: (this.props.photos && this.props.photos.length >= 1) ? this.props.photos[0] : 'https://img2.greatnotions.com/StockDesign/XLarge/King_Graphics/m0410.jpg'}}
+                onLoadStart={()=>{this.setState({isImageLoading: true})}}
+                onLoadEnd={()=>{this.setState({isImageLoading: false})}}
               />
+              <View style={[styles.imageCover, {opacity: this.state.isImageLoading ? 1.0 : 0.0}]}/>
               <View style={styles.textContainer}>
                 <Text style={styles.text}>{this.props.firstName}</Text>
               </View>
@@ -162,6 +166,14 @@ const styles = StyleSheet.create({
     },
     shadowRadius: 14,
     shadowOpacity: 0.06,
+  },
+  imageCover: {
+    position: "absolute",
+    top: 0,
+    bottom: 0,
+    left: 0,
+    right: 0,
+    backgroundColor: "#FBFBFB",
   },
   card: {
     borderRadius: borderRadius,
