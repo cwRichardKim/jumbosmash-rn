@@ -123,7 +123,6 @@ class Card extends Component {
               <Image
                 style={styles.thumbnail}
                 source={{uri: (this.props.photos && this.props.photos.length >= 1) ? this.props.photos[0] : 'https://img2.greatnotions.com/StockDesign/XLarge/King_Graphics/m0410.jpg'}}
-                defaultSource={require("../navigation/icons/heart.png")}
                 onLoadStart={()=>{this.setState({isImageLoading: true})}}
                 onLoadEnd={()=>{this.setState({isImageLoading: false})}}
               />
