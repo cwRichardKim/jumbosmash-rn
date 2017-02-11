@@ -69,6 +69,7 @@ class SwipingPage extends Component {
           handleRightSwipe={this._handleRightSwipe.bind(this)}
           handleLeftSwipe={this._handleLeftSwipe.bind(this)}
           handleCardWasRemoved={this._handleCardWasRemoved.bind(this)}
+          pageHeight={PAGE_HEIGHT}
         />
       </View>
     );

@@ -51,7 +51,9 @@ class DeckView extends Component {
       return(
         <View style={styles.profileCardView}>
           <ProfileCardView {...this.props.cards[this.state.cardIndex]}
-            onPress={()=>{this.setState({showProfile: false})}}/>
+            onPress={()=>{this.setState({showProfile: false})}}
+            pageHeight={this.props.pageHeight}
+          />
         </View>
       );
     }
