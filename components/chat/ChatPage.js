@@ -41,6 +41,28 @@ const styles = StyleSheet.create({
   },
 });
 
+var NavigationBarRouteMapper = {
+  LeftButton(route, navigator, index, navState) {
+    if(index > 0) {
+      return (
+      <TouchableHighlight style={{marginTop: 10}} onPress={() => {
+            if (index > 0) {
+              navigator.pop();
+            }
+        }}>
+       <Text>Back</Text>
+     </TouchableHighlight>
+   )} else {
+   return null}
+   },
+   RightButton(route, navigator, index, navState) {
+      return null;
+   },
+   Title(route, navigator, index, navState) {
+      return <Text>Hello From My App!</Text>
+   }
+};
+
 class ChatNavigator extends React.Component {
   render() {
     console.log("OKKKKKKKK");
@@ -52,6 +74,7 @@ class ChatNavigator extends React.Component {
                        title: 'Chat',
                        index: 0 }}
         renderScene={this.navigatorRenderScene}
+        navigationBar={null/* <Navigator.NavigationBar routeMapper={NavigationBarRouteMapper} /> */}
         style={{padding: 0}}
       />
     );
@@ -91,11 +114,12 @@ class ChatPage extends React.Component {
   }
 
   renderConversation(conversationId) {
+    this.props.nav.pop()
     this.props.nav.push({
       title: "TEST",//row.name.first,
       id: ConversationPageNavId,
-      chatroomId: conversationId
-      //index: 1,
+      chatroomId: conversationId,
+      index: 1,
       //passProps: {property: "TEST ALSO"}
     });
   }
@@ -115,7 +139,6 @@ class ChatPage extends React.Component {
   }
 
   render() {
-    console.log("GOT IN HERE \n ROUTE: " + this.props.index);
     return (
         <ListView
           style={styles.container}

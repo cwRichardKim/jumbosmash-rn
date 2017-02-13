@@ -18,9 +18,7 @@ import NavigationContainer  from "./components/navigation/NavigationContainer.js
 export default class jumbosmash extends Component {
   render() {
     return (
-      <NavigationContainer
-        chatroomId={"UNIQUE_CONVERSATION_ID"}
-      />
+      <NavigationContainer/>
     );
   }
 }
