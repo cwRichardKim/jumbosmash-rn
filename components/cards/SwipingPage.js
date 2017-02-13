@@ -21,6 +21,25 @@ let TABBAR_HEIGHT = (Platform.OS === 'ios') ? 49 : 49; // TODO: check the androi
 let PAGE_HEIGHT = Dimensions.get('window').height - TABBAR_HEIGHT;
 let CARD_REFRESH_BUFFER = 2 // There should always be at least this many cards left, else fetch more
 
+function shuffle(array) {
+  var currentIndex = array.length, temporaryValue, randomIndex;
+
+  // While there remain elements to shuffle...
+  while (0 !== currentIndex) {
+
+    // Pick a remaining element...
+    randomIndex = Math.floor(Math.random() * currentIndex);
+    currentIndex -= 1;
+
+    // And swap it with the current element.
+    temporaryValue = array[currentIndex];
+    array[currentIndex] = array[randomIndex];
+    array[randomIndex] = temporaryValue;
+  }
+
+  return array;
+}
+
 class SwipingPage extends Component {
   constructor(props) {
     super(props);
@@ -34,6 +53,7 @@ class SwipingPage extends Component {
     return fetch('https://jumbosmash2017.herokuapp.com/profile')
       .then((response) => response.json())
       .then((responseJson) => {
+        shuffle(responseJson);
         this.setState({
           cards: this.state.cards.concat(responseJson),
         })

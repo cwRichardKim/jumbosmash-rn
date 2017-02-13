@@ -46,13 +46,19 @@ class DeckView extends Component {
     });
   }
 
+  _closeProfileCard() {
+    this.setState({
+      showProfile: false,
+    })
+  }
+
   _shouldRenderProfileCard() {
     if (this.state.showProfile && this.state.cardIndex < this.props.cards.length) {
       return(
         <View style={styles.profileCardView}>
           <ProfileCardView {...this.props.cards[this.state.cardIndex]}
-            onPress={()=>{this.setState({showProfile: false})}}
             pageHeight={this.props.pageHeight}
+            exitFunction={this._closeProfileCard.bind(this)}
           />
         </View>
       );
@@ -129,7 +135,8 @@ class DeckView extends Component {
         <View style={styles.swipeButtonsView}>
           <SwipeButtonsView
             leftButtonFunction = {this._swipeLeftButtonPressed.bind(this)}
-            rightButtonFunction = {this._swipeRightButtonPressed.bind(this)}/>
+            rightButtonFunction = {this._swipeRightButtonPressed.bind(this)}
+          />
         </View>
         {/* // temporarily removing the yes / no views
         <Animated.View style={[animatedNopeStyles, styles.noView]}>
@@ -157,18 +164,18 @@ var styles = StyleSheet.create({
   topPadding: {
     height: 50,
   },
-  yesView: {
-    position: 'absolute',
-    bottom: 20,
-    right: 20,
-    zIndex: 11,
-  },
-  noView: {
-    position: 'absolute',
-    bottom: 20,
-    left: 20,
-    zIndex: 11,
-  },
+  // yesView: {
+  //   position: 'absolute',
+  //   bottom: 20,
+  //   right: 20,
+  //   zIndex: 11,
+  // },
+  // noView: {
+  //   position: 'absolute',
+  //   bottom: 20,
+  //   left: 20,
+  //   zIndex: 11,
+  // },
   cardContainer: { // the area the card will occupy
     flex: 1,
     width: CARD_WIDTH,
@@ -176,6 +183,7 @@ var styles = StyleSheet.create({
   swipeButtonsView: {
     height: 100,
     alignSelf: "stretch",
+    zIndex: -1,
   },
   profileCardView: {
     flex: 1,
