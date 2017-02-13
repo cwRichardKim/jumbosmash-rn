@@ -11,13 +11,10 @@ import {
     StyleSheet,
     Text,
     View,
-    Animated,
-    PanResponder,
     Image,
     Dimensions,
 } from 'react-native';
 
-import clamp            from 'clamp';
 import YesView          from './YesView.js'
 import NoView           from './NoView.js'
 import SwipeButtonsView from './SwipeButtonsView.js'
@@ -25,7 +22,6 @@ import Card             from './Card.js';
 import NoMoreCards      from './NoMoreCards.js';
 import ProfileCardView  from './ProfileCardView.js'
 
-let SWIPE_THRESHOLD = 120;
 var CARD_WIDTH = Dimensions.get('window').width - 40;
 
 class DeckView extends Component {
@@ -33,87 +29,21 @@ class DeckView extends Component {
     super(props);
 
     this.state = {
-      pan: new Animated.ValueXY(),
-      enter: new Animated.Value(0.9),
       cardIndex: 0,
       showProfile: false,
+      topCardIsFirst: true,
     }
   }
 
-  componentWillMount() {
-    this._panResponder = PanResponder.create({
-      onMoveShouldSetResponderCapture: () => true,
-      onMoveShouldSetPanResponderCapture: (evt, gestureState) => {
-        return gestureState.dx != 0 && gestureState.dy != 0;
-      },
-
-      onPanResponderGrant: (e, gestureState) => {
-        this.state.pan.setOffset({x: this.state.pan.x._value, y: this.state.pan.y._value});
-        this.state.pan.setValue({x: 0, y: 0});
-      },
-
-      onPanResponderMove: Animated.event([
-        null, {dx: this.state.pan.x, dy: this.state.pan.y},
-      ]),
-
-      onPanResponderRelease: (e, {vx, vy}) => {
-        this.state.pan.flattenOffset();
-        var velocity = this.calculateVelocity(vx);
-
-        if (Math.abs(this.state.pan.x._value) > SWIPE_THRESHOLD) {
-
-          if (this.state.pan.x._value > 0) {
-            this.props.handleRightSwipe(this.props.cards[this.state.cardIndex]);
-          } else {
-            this.props.handleLeftSwipe(this.props.cards[this.state.cardIndex]);
-          }
-
-          Animated.decay(this.state.pan, {
-            velocity: {x: velocity, y: vy},
-            deceleration: 0.98
-          }).start(this._swipeCompleted.bind(this))
-        } else {
-          Animated.spring(this.state.pan, {
-            toValue: {x: 0, y: 0},
-            friction: 4
-          }).start()
-        }
-      }
-    })
-  }
-
-  componentDidMount() {
-    this._animateEntrance();
-  }
-
-  _animateEntrance() {
-    Animated.spring( this.state.enter, { toValue: 1, friction: 8 } ).start();
-  }
-
-  componentWillReceiveProps(nextProps){
-    if(nextProps.cards && nextProps.cards.length > 0){
-      this.setState({
-        card: nextProps.cards[0]
-      })
-    }
-  }
-
-  calculateVelocity(vx) {
-    if (vx >= 0) {
-      return clamp(vx, 3, 5);
-    } else if (vx < 0) {
-      return clamp(vx * -1, 3, 5) * -1;
-    }
-  }
-
-  _swipeCompleted() {
+  // this function deals with the data (number of cards) and should have no impact on visuals
+  _swipeDidComplete(cardIndex) {
     if (this.props.handleCardWasRemoved) {
       this.props.handleCardWasRemoved(this.state.cardIndex);
     }
-    this.setState({ cardIndex: this.state.cardIndex + 1 });
-    this.state.pan.setValue({x: 0, y: 0});
-    this.state.enter.setValue(0.8);
-    this._animateEntrance();
+    this.setState({
+      cardIndex: this.state.cardIndex + 1,
+      topCardIsFirst: !this.state.topCardIsFirst
+    });
   }
 
   _shouldRenderProfileCard() {
@@ -121,20 +51,49 @@ class DeckView extends Component {
       return(
         <View style={styles.profileCardView}>
           <ProfileCardView {...this.props.cards[this.state.cardIndex]}
-            onPress={()=>{this.setState({showProfile: false})}}/>
+            onPress={()=>{this.setState({showProfile: false})}}
+            pageHeight={this.props.pageHeight}
+          />
         </View>
       );
     }
   }
 
-  _shouldRenderCard(animatedCardstyles) {
-    if (this.state.cardIndex < this.props.cards.length) {
+  _handleRightSwipeForIndex(cardIndex) {
+    if (this.props.handleRightSwipe) {
+      this.props.handleRightSwipe(this.props.cards[cardIndex]);
+    }
+  }
+
+  _handleLeftSwipeForIndex(cardIndex) {
+    if (this.props.handleLeftSwipe) {
+      this.props.handleLeftSwipe(this.props.cards[cardIndex]);
+    }
+  }
+
+  _shouldRenderCard() {
+    if (this.state.cardIndex < this.props.cards.length - 1) {
+      var card1Index = this.state.topCardIsFirst ? this.state.cardIndex : this.state.cardIndex + 1;
+      var card2Index = this.state.topCardIsFirst ? this.state.cardIndex + 1 : this.state.cardIndex;
       return (
-        <Animated.View style={[styles.cardView, animatedCardstyles]} {...this._panResponder.panHandlers}>
-          <Card {...this.props.cards[this.state.cardIndex]}
+        <View style={{flex:1}}>
+          <Card {...this.props.cards[card1Index]}
             onPress={()=>{this.setState({showProfile: true})}}
+            handleRightSwipeForIndex={this._handleRightSwipeForIndex.bind(this)}
+            handleLeftSwipeForIndex={this._handleLeftSwipeForIndex.bind(this)}
+            swipeDidComplete={this._swipeDidComplete.bind(this)}
+            index={this.state.cardIndex}
+            isTop={this.state.topCardIsFirst}
           />
-        </Animated.View>
+          <Card {...this.props.cards[card2Index]}
+            onPress={()=>{this.setState({showProfile: true})}}
+            handleRightSwipeForIndex={this._handleRightSwipeForIndex.bind(this)}
+            handleLeftSwipeForIndex={this._handleLeftSwipeForIndex.bind(this)}
+            swipeDidComplete={this._swipeDidComplete.bind(this)}
+            index={this.state.cardIndex + 1}
+            isTop={!this.state.topCardIsFirst}
+          />
+        </View>
       );
     } else {
       return (<NoMoreCards/>);
@@ -150,36 +109,29 @@ class DeckView extends Component {
   }
 
   render() {
-    let { pan, enter, } = this.state;
-
-    let [translateX, translateY] = [pan.x, pan.y];
-
-    let rotate = pan.x.interpolate({inputRange: [-200, 0, 200], outputRange: ["-30deg", "0deg", "30deg"]});
-    let opacity = pan.x.interpolate({inputRange: [-200, 0, 200], outputRange: [0.5, 1, 0.5]});
-    let scale = enter;
-
-    let animatedCardstyles = {transform: [{translateX}, {translateY}, {rotate}, {scale}], opacity};
-
-    let yesOpacity = pan.x.interpolate({inputRange: [0, 150], outputRange: [0, 1]});
-    let yesScale = pan.x.interpolate({inputRange: [0, 150], outputRange: [0.5, 1], extrapolate: 'clamp'});
-    let animatedYesStyles = {transform: [{scale: yesScale}], opacity: yesOpacity}
-
-    let nopeOpacity = pan.x.interpolate({inputRange: [-150, 0], outputRange: [1, 0]});
-    let nopeScale = pan.x.interpolate({inputRange: [-150, 0], outputRange: [1, 0.5], extrapolate: 'clamp'});
-    let animatedNopeStyles = {transform: [{scale: nopeScale}], opacity: nopeOpacity}
+    // temporarily removing the yes / no views until design calls for them
+    // let yesOpacity = pan.x.interpolate({inputRange: [0, 150], outputRange: [0, 1]});
+    // let yesScale = pan.x.interpolate({inputRange: [0, 150], outputRange: [0.5, 1], extrapolate: 'clamp'});
+    // let animatedYesStyles = {transform: [{scale: yesScale}], opacity: yesOpacity}
+    //
+    // let nopeOpacity = pan.x.interpolate({inputRange: [-150, 0], outputRange: [1, 0]});
+    // let nopeScale = pan.x.interpolate({inputRange: [-150, 0], outputRange: [1, 0.5], extrapolate: 'clamp'});
+    // let animatedNopeStyles = {transform: [{scale: nopeScale}], opacity: nopeOpacity}
 
     return (
       <View style={this.props.containerStyle}>
         <View style={styles.topPadding}/>
         {this._shouldRenderProfileCard()}
-        {this._shouldRenderCard(animatedCardstyles)}
+        <View style={styles.cardContainer}>
+          {this._shouldRenderCard()}
+        </View>
 
         <View style={styles.swipeButtonsView}>
           <SwipeButtonsView
             leftButtonFunction = {this._swipeLeftButtonPressed.bind(this)}
             rightButtonFunction = {this._swipeRightButtonPressed.bind(this)}/>
         </View>
-
+        {/* // temporarily removing the yes / no views
         <Animated.View style={[animatedNopeStyles, styles.noView]}>
           <NoView/>
         </Animated.View>
@@ -187,6 +139,7 @@ class DeckView extends Component {
         <Animated.View style={[animatedYesStyles, styles.yesView]}>
           <YesView/>
         </Animated.View>
+        */}
 
       </View>
     );
@@ -199,7 +152,7 @@ var styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#F5FCFF',
+    backgroundColor: 'white',
   },
   topPadding: {
     height: 50,
@@ -216,10 +169,9 @@ var styles = StyleSheet.create({
     left: 20,
     zIndex: 11,
   },
-  cardView: {
+  cardContainer: { // the area the card will occupy
     flex: 1,
     width: CARD_WIDTH,
-    zIndex: 10,
   },
   swipeButtonsView: {
     height: 100,
