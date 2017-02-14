@@ -17,8 +17,11 @@ import {
   Dimensions,
 } from 'react-native';
 
+var Carousel = require('react-native-carousel');
+
 let BORDER_RADIUS = 10;
 let CLOSE_SCROLL_DISTANCE = 100;
+let WIDTH = Dimensions.get('window').width;
 
 //TODO: @richard Make a carousel on the photos
 class ProfileCardView extends Component {
@@ -73,15 +76,51 @@ class ProfileCardView extends Component {
     //TODO: implement closing via scrolling
   }
 
+  _shouldRenderImageWithIndex(index) {
+    if (this.props.photos && this.props.photos.length > index) {
+      let imageContainerHeight = this.props.pageHeight * 3 / 4;
+      let source = this.props.photos[index];
+      return (
+        <View style={[styles.imageView, {height: imageContainerHeight}]}>
+          <Image style={styles.topGradient} source={require('./images/topGradient.png')}/>
+          <Image style={[styles.image, {height: imageContainerHeight}]}
+            source={{uri: source}}
+            key={(index == 0) ? this.props.id : ""}
+          />
+        </View>
+      );
+    }
+  }
+
+  _renderImages() {
+    let imageContainerHeight = this.props.pageHeight * 3 / 4;
+    return (
+      <Carousel style={[styles.carousel, {height: imageContainerHeight}]}
+        loop={false}
+        animate={false}
+        indicatorOffset={imageContainerHeight - 65}
+        indicatorColor="rgba(220,220,220,1)"
+        inactiveIndicatorColor="rgba(160,160,160,0.6)"
+        indicatorSize={40}
+      >
+        {this._shouldRenderImageWithIndex(0)}
+        {this._shouldRenderImageWithIndex(1)}
+        {this._shouldRenderImageWithIndex(2)}
+      </Carousel>
+    );
+  }
+
   render() {
     let pageHeight = this.props.pageHeight;
     var _scrollView: ScrollView;
     return (
       <View style={{flex: 1}}>
+
         <Animated.View style={{flex: 1, opacity: this.state.opacity}}>
           <View style={[styles.background, {opacity: this._calculateOpacity()}]}/>
         </Animated.View>
-        <Animated.View style={{position: 'absolute', top:0,bottom:0,left:0,right:0, transform:this.state.pan.getTranslateTransform() }}>
+
+        <Animated.View style={{ position: 'absolute', top:0,bottom:0,left:0,right:0, transform:this.state.pan.getTranslateTransform() }}>
           <ScrollView style={styles.touchArea}
             ref={(scrollView) => { _scrollView = scrollView; }}
             onScroll={this._handleScroll.bind(this)}
@@ -89,8 +128,7 @@ class ProfileCardView extends Component {
             onResponderRelease={this._releasedScrollView.bind(this)}
           >
             <View style={[styles.card, {minHeight: pageHeight + BORDER_RADIUS}]}>
-              <Image style={[styles.thumbnail, {height: pageHeight * 3 / 4}]} source={{uri: (this.props.photos && this.props.photos.length >= 1) ? this.props.photos[0] : 'https://img2.greatnotions.com/StockDesign/XLarge/King_Graphics/m0410.jpg'}} />
-              <Image style={styles.topGradient} source={require('./images/topGradient.png')}/>
+              {this._renderImages()}
               <View style={styles.textContainer}>
                 <Text style={styles.title}>{this.props.firstName} {this.props.lastName}</Text>
                 <Text style={styles.text}>{this.props.description}</Text>
@@ -130,7 +168,7 @@ const styles = StyleSheet.create({
     resizeMode: 'cover',
     top: 0,
     height: 71,
-    width: Dimensions.get('window').width,
+    width: WIDTH,
     opacity: 0.8,
   },
   bottomGradient: {
@@ -138,7 +176,7 @@ const styles = StyleSheet.create({
     resizeMode: 'cover',
     bottom: 0,
     height: 53,
-    width: Dimensions.get('window').width,
+    width: WIDTH,
     opacity: 0.6,
   },
   background: {
@@ -159,7 +197,17 @@ const styles = StyleSheet.create({
     elevation: 2,
     flex: 1,
   },
-  thumbnail: {
+  carousel: {
+    flex: 1,
+    width: WIDTH,
+  },
+  imageView: {
+    overflow: 'hidden',
+    width: WIDTH,
+  },
+  image: {
+    resizeMode: 'cover',
+    width: WIDTH,
   },
   textContainer: {
     backgroundColor: 'white',
