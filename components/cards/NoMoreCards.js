@@ -9,7 +9,8 @@ import {
     StyleSheet,
     Text,
     View,
-    Image
+    Image,
+    ActivityIndicator,
 } from 'react-native';
 
 class NoMoreCards extends Component {
@@ -19,14 +20,21 @@ class NoMoreCards extends Component {
 
   render() {
     return (
-      <View>
-        <Text style={styles.noMoreCardsText}>Loading</Text>
+      <View style={styles.view}>
+        <ActivityIndicator
+          style={styles.view}
+        />
       </View>
     )
   }
 }
 
 const styles = StyleSheet.create({
+  view: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    flex: 1,
+  },
   noMoreCardsText: {
     fontSize: 22,
   }
