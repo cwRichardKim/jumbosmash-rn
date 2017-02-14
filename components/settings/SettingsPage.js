@@ -16,6 +16,11 @@ class SettingsPage extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      photos: props.photos ? props.photos : [],
+      firstName: props.firstName ? props.firstName : "",
+      lastName: props.lastName ? props.lastName : "",
+      description: props.description ? props.description : "",
+      major: props.major ? props.major : "",
     }
   }
 
