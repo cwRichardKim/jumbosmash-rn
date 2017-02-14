@@ -56,7 +56,7 @@ class NavigationContainer extends Component {
   }
 
   componentDidMount() {
-    this._showNotificationBanner();
+    // this._showNotificationBanner();
   }
 
   // Changes which tab is showing (swiping, settings, etc), check HomeTabBarIOS
