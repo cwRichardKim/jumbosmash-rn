@@ -20,6 +20,24 @@ import {
 import HomeTabBarIOS          from "./HomeTabBarIOS.js"
 import NotificationBannerView from "./NotificationBannerView.js"
 
+function shuffle(array) {
+  var currentIndex = array.length, temporaryValue, randomIndex;
+
+  // While there remain elements to shuffle...
+  while (0 !== currentIndex) {
+
+    // Pick a remaining element...
+    randomIndex = Math.floor(Math.random() * currentIndex);
+    currentIndex -= 1;
+
+    // And swap it with the current element.
+    temporaryValue = array[currentIndex];
+    array[currentIndex] = array[randomIndex];
+    array[randomIndex] = temporaryValue;
+  }
+  return array;
+}
+
 class NavigationContainer extends Component {
   constructor(props) {
     super(props);
@@ -27,7 +45,27 @@ class NavigationContainer extends Component {
       selectedTab: 'cardsTab',
       notificationBannerText: "notification (tap me, goes to chat)",
       pan: new Animated.ValueXY({x:0, y:-100}),
+      profiles: [],
     };
+  }
+
+  // fetches new profiles and adds them to the profiles array
+  // lastID: the lastID we got from the previous list of profiles
+  // count: how many profiles to fetch. 0 or null is all
+  _fetchProfiles(lastID, count) {
+    //TODO incorporate lastID and count
+    return fetch('https://jumbosmash2017.herokuapp.com/profile')
+      .then((response) => response.json())
+      .then((responseJson) => {
+        shuffle(responseJson);
+        console.log("hey!")
+        this.setState({
+          profiles: this.state.profiles.concat(responseJson),
+        })
+      })
+      .catch((error) => {
+        console.error(error);
+      });
   }
 
   _hideNotificationBanner() {
@@ -57,6 +95,8 @@ class NavigationContainer extends Component {
 
   componentDidMount() {
     // this._showNotificationBanner();
+    //TODO @richard do something better here and pull from storage or something first
+    this._fetchProfiles();
   }
 
   // Changes which tab is showing (swiping, settings, etc), check HomeTabBarIOS
@@ -81,6 +121,8 @@ class NavigationContainer extends Component {
             navigator={navigator}
             selectedTab={this.state.selectedTab}
             changeTab={this._changeTab.bind(this)}
+            fetchProfiles={this._fetchProfiles.bind(this)}
+            profiles={this.state.profiles}
           />
           <Animated.View
             style={[styles.notificationBanner, {transform:this.state.pan.getTranslateTransform()}]}>
