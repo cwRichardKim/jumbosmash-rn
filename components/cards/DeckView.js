@@ -32,7 +32,6 @@ class DeckView extends Component {
       cardIndex: 0,
       showProfile: false,
       topCardIsFirst: true,
-      numCards: props.profiles.length,
     }
   }
 
