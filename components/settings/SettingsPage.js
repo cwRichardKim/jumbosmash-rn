@@ -10,7 +10,10 @@ import {
   StyleSheet,
   Text,
   View,
+  ScrollView,
 } from 'react-native';
+
+import ProfilePhotoPicker from "./ProfilePhotoPicker.js"
 
 class SettingsPage extends Component {
   constructor(props) {
@@ -21,9 +24,9 @@ class SettingsPage extends Component {
 
   render() {
     return (
-      <View style={{flex:1, alignItems:'center', justifyContent:'center'}}>
-        <Text>Soon to be Settings</Text>
-      </View>
+      <ScrollView>
+        <ProfilePhotoPicker photos={this.props.profile.photos}/>
+      </ScrollView>
     );
   }
 }
