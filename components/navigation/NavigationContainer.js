@@ -46,6 +46,7 @@ class NavigationContainer extends Component {
       notificationBannerText: "notification (tap me, goes to chat)",
       pan: new Animated.ValueXY({x:0, y:-100}),
       profiles: [],
+      myProfile: null,
     };
   }
 
@@ -58,9 +59,9 @@ class NavigationContainer extends Component {
       .then((response) => response.json())
       .then((responseJson) => {
         shuffle(responseJson);
-        console.log("hey!")
         this.setState({
           profiles: this.state.profiles.concat(responseJson),
+          myProfile: this.state.myProfile ? this.state.myProfile : responseJson[0], //TODO: @richard temporary while we don't have a real profile
         })
       })
       .catch((error) => {
@@ -110,6 +111,18 @@ class NavigationContainer extends Component {
     })
   }
 
+  _updateProfile(profile) {
+    console.log(profile);
+    //TODO: @richard this is temporary while the backend isn't up yet
+    var newProfile = {};
+    for (var key in this.state.myProfile) {
+      newProfile[key] = (key in profile) ? profile[key] : this.state.myProfile[key];
+    }
+    this.setState({
+      myProfile: newProfile,
+    })
+  }
+
   // Returns the content that the navigator should show.  Since route.name is "TabBar"
   // by default, it will show the TabBar.  In order to "push" a view on top of this view,
   // You have to give it its own route name and use navigator.push({name: route name})
@@ -123,6 +136,8 @@ class NavigationContainer extends Component {
             changeTab={this._changeTab.bind(this)}
             fetchProfiles={this._fetchProfiles.bind(this)}
             profiles={this.state.profiles}
+            myProfile={this.state.myProfile}
+            updateProfile={this._updateProfile.bind(this)}
           />
           <Animated.View
             style={[styles.notificationBanner, {transform:this.state.pan.getTranslateTransform()}]}>

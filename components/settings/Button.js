@@ -18,7 +18,11 @@ class Button extends Component {
   }
   render() {
     return(
-      <TouchableOpacity style={this.props.style} onPress={this.props.onPress}>
+      <TouchableOpacity
+        style={this.props.style}
+        onPress={this.props.onPress}
+        activeOpacity={this.props.activeOpacity ? this.props.activeOpacity : 0.8}
+      >
         <Image
           style={styles.image}
           source={this.props.source}

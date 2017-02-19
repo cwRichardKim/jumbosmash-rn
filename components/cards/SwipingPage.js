@@ -11,14 +11,10 @@ import {
   Text,
   View,
   Image,
-  Dimensions,
-  Platform,
 } from 'react-native';
 
 import DeckView     from './DeckView.js';
 
-let TABBAR_HEIGHT = (Platform.OS === 'ios') ? 49 : 49; // TODO: check the android tabbar height
-let PAGE_HEIGHT = Dimensions.get('window').height - TABBAR_HEIGHT;
 let CARD_REFRESH_BUFFER = 2 // There should always be at least this many cards left, else fetch more
 
 class SwipingPage extends Component {
@@ -52,13 +48,13 @@ class SwipingPage extends Component {
 
   render() {
     return (
-      <View style={{height:PAGE_HEIGHT}}>
+      <View style={{height:this.props.pageHeight}}>
         <DeckView
           profiles={this.props.profiles}
           handleRightSwipe={this._handleRightSwipe.bind(this)}
           handleLeftSwipe={this._handleLeftSwipe.bind(this)}
           handleCardWasRemoved={this._handleCardWasRemoved.bind(this)}
-          pageHeight={PAGE_HEIGHT}
+          pageHeight={this.props.pageHeight}
         />
       </View>
     );

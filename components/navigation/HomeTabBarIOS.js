@@ -10,12 +10,17 @@ import {
   Text,
   View,
   TabBarIOS,
+  Dimensions,
+  Platform,
 } from 'react-native';
 
 import SwipingPage            from "../cards/SwipingPage.js";
 import ChatPage               from "../chat/ChatPage.js";
 import LoginPage              from "../login/LoginPage.js";
 import SettingsPage           from "../settings/SettingsPage.js"
+
+let TABBAR_HEIGHT = (Platform.OS === 'ios') ? 49 : 49; // TODO: check the android tabbar height
+let PAGE_HEIGHT = Dimensions.get('window').height - TABBAR_HEIGHT;
 
 class HomeTabBarIOS extends Component {
   constructor(props) {
@@ -56,6 +61,7 @@ class HomeTabBarIOS extends Component {
             navigator={this.props.navigator}
             profiles={this.props.profiles}
             fetchProfiles={this.props.fetchProfiles}
+            pageHeight={PAGE_HEIGHT}
           />
         )}
 
@@ -63,7 +69,10 @@ class HomeTabBarIOS extends Component {
 
         {this._renderTabBarItem(require('./icons/user.png'), require('./icons/user2.png'), "settingsTab",
           <SettingsPage
-            profile={this.props.profiles.length > 0 ? this.props.profiles[0] : {} /* TODO: @richard change this once we get actual profile info */}
+            {...this.props.myProfile}
+            pageHeight={PAGE_HEIGHT}
+            tabBarHeight={TABBAR_HEIGHT}
+            updateProfile={this.props.updateProfile}
           />
         )}
       </TabBarIOS>
