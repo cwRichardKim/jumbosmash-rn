@@ -15,6 +15,7 @@ import {
   TextInput,
   TouchableOpacity,
   Image,
+  Alert,
 } from 'react-native';
 
 import ProfilePhotoPicker from "./ProfilePhotoPicker.js"
@@ -28,11 +29,27 @@ class SettingsPage extends Component {
       lastName: props.lastName,
       description: props.description,
       major: props.major,
+      photos: props.photos,
       showSaveButton: false,
     }
   }
 
+  // This function updates the current information to the server
   _saveButtonPressed() {
+    if (this.props.updateProfile) {
+      this.props.updateProfile({
+        firstName: this.state.firstName,
+        lastName: this.state.lastName,
+        description: this.state.description,
+        major: this.state.major,
+        photos: this.state.photos,
+      });
+      //TODO @richard load / error case
+      this.setState({
+        showSaveButton: false,
+      })
+    }
+    //TODO: @richard add loading / error cases
   }
 
   // Scroll a component into view. Just pass the component ref string.
@@ -66,13 +83,29 @@ class SettingsPage extends Component {
     this.refs[nextField].focus();
   };
 
+  // allows ProfilePhotoPicker to adjust the photos
+  _updatePhotos(photos) {
+    if (photos && photos.length == 3) {
+      this.setState({
+        photos: photos,
+        showSaveButton: true,
+      });
+    } else {
+      Alert.alert(
+        "Photo Error",
+        "Something went wrong :( Contact team@jumbosmash.com and let them know that the incorrect number of photos were updated",
+        [{text: 'OK', onPress: () => {}},],
+      );
+    }
+  }
+
   render() {
     return (
       <View style={[styles.container, {height: this.props.pageHeight}]}>
         <ScrollView ref='scrollView'>
           <ProfilePhotoPicker
-            photos={this.props.photos}
-            updateProfile={this.props.updateProfile}
+            photos={this.state.photos}
+            updatePhotos={this._updatePhotos.bind(this)}
           />
           <Text style={[styles.header, styles.textListItem]}>Preferred First Name</Text>
 

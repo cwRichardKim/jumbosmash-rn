@@ -38,6 +38,15 @@ function shuffle(array) {
   return array;
 }
 
+//TODO: @richard delete this later
+let testProfile = {
+  firstName: "Test",
+  lastName: "Profile",
+  description: "kasjf laksj dglkasj dlgja slkgjalskdjglkasdjg laksdj glkasjd giasjg laksdj lkasjd glaksj dglkajd glkajsdg lk alkgj akldg",
+  major: "something",
+  photos: ["https://d13yacurqjgara.cloudfront.net/users/109914/screenshots/905742/elephant_love.jpg", "https://d13yacurqjgara.cloudfront.net/users/1095591/screenshots/2711715/polywood_01_elephant_01_dribbble.jpg", "https://d13yacurqjgara.cloudfront.net/users/179241/screenshots/2633954/chris-fernandez-elephant-2.jpg"],
+}
+
 class NavigationContainer extends Component {
   constructor(props) {
     super(props);
@@ -46,7 +55,7 @@ class NavigationContainer extends Component {
       notificationBannerText: "notification (tap me, goes to chat)",
       pan: new Animated.ValueXY({x:0, y:-100}),
       profiles: [],
-      myProfile: null,
+      myProfile: testProfile,
     };
   }
 
@@ -61,7 +70,7 @@ class NavigationContainer extends Component {
         shuffle(responseJson);
         this.setState({
           profiles: this.state.profiles.concat(responseJson),
-          myProfile: this.state.myProfile ? this.state.myProfile : responseJson[0], //TODO: @richard temporary while we don't have a real profile
+          myProfile: responseJson[0], //TODO: @richard temporary while we don't have a real profile
         })
       })
       .catch((error) => {
@@ -112,7 +121,6 @@ class NavigationContainer extends Component {
   }
 
   _updateProfile(profile) {
-    console.log(profile);
     //TODO: @richard this is temporary while the backend isn't up yet
     var newProfile = {};
     for (var key in this.state.myProfile) {

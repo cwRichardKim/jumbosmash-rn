@@ -47,10 +47,12 @@ class ProfilePhotoPicker extends Component {
   }
 
   _changePhotoWithIndex(index, newPhoto) {
-    if (this.props.updateProfile) {
-      var photos = this.props.photos.slice();
-      photos[index] = newPhoto;
-      this.props.updateProfile({"photos": photos});
+    // Updates the photos on the settings page, not the server.
+    // User has to hit save to make changes permanent in the server
+    if (this.props.updatePhotos) {
+      var newPhotos = this.props.photos.slice();
+      newPhotos[index] = newPhoto;
+      this.props.updatePhotos(newPhotos);
     } else {
       Alert.alert(
         'Something went wrong!',
@@ -66,12 +68,14 @@ class ProfilePhotoPicker extends Component {
     //TODO: @richard
     // https://github.com/CodeLinkIO/Firebase-Image-Upload-React-Native
     // https://jsapp.me/image-upload-in-react-native-with-firebase-storage-50e09ee0f6f8#.ol80aagoa
+
+    // THEN this._changePhotoWithIndex(index, imageURL);
   }
 
   _photoButtonPressedForPhotoIndex(index) {
-    if (this._photoExists(index)) {
-      this._changePhotoWithIndex(index, null)
-    } else {
+    if (this._photoExists(index)) { // Deleting a photo
+      this._changePhotoWithIndex(index, null);
+    } else { // Adding a photo, pull up image picker
       ImagePicker.openPicker({
         width: 300,
         height: 300,
