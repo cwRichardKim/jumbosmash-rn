@@ -109,7 +109,7 @@ class Card extends Component {
     let [translateX, translateY] = [pan.x, pan.y];
 
     let rotate = pan.x.interpolate({inputRange: [-200, 0, 200], outputRange: ["-30deg", "0deg", "30deg"]});
-    let opacity = pan.x.interpolate({inputRange: [-200, 0, 200], outputRange: [0.5, 1, 0.5]});
+    let opacity = pan.x.interpolate({inputRange: [-200, 0, 200], outputRange: [0.95, 1, 0.95]});
     let scale = enter;
 
     let animatedCardstyles = this.props.isTop ? {transform: [{translateX}, {translateY}, {rotate}, {scale}], opacity} : {};
@@ -125,6 +125,7 @@ class Card extends Component {
                 source={{uri: (this.props.photos && this.props.photos.length >= 1) ? this.props.photos[0] : 'https://img2.greatnotions.com/StockDesign/XLarge/King_Graphics/m0410.jpg'}}
                 onLoadStart={()=>{this.setState({isImageLoading: true})}}
                 onLoadEnd={()=>{this.setState({isImageLoading: false})}}
+                key={this.props.id}
               />
               <View style={[styles.imageCover, {opacity: this.state.isImageLoading ? 1.0 : 0.0}]}/>
               <View style={styles.textContainer}>

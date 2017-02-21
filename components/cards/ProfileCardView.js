@@ -12,11 +12,16 @@ import {
   Image,
   TouchableWithoutFeedback,
   ScrollView,
-  TouchableHighlight,
+  TouchableOpacity,
+  Animated,
+  Dimensions,
 } from 'react-native';
 
-let BORDER_RADIUS = 15;
+var Carousel = require('react-native-carousel');
+
+let BORDER_RADIUS = 10;
 let CLOSE_SCROLL_DISTANCE = 100;
+let WIDTH = Dimensions.get('window').width;
 
 //TODO: @richard Make a carousel on the photos
 class ProfileCardView extends Component {
@@ -25,46 +30,118 @@ class ProfileCardView extends Component {
 
     this.state = {
       scrollDistance: 0,
+      pan: new Animated.ValueXY({x:0, y:0}),
+      opacity: new Animated.Value(1),
     }
   }
 
   _handleScroll(event: Object) {
     this.setState({
       scrollDistance: event.nativeEvent.contentOffset.y
-    })
+    });
   }
 
   _calculateOpacity() {
+    let pullBuffer = 50;
+    let maximumOpacity = 0.9;
+    let minimumOpacity = 0.5;
     var distancePulled = this.state.scrollDistance;
-    let maximumOpacity = 0.5;
     if (distancePulled < 0) {
-      return maximumOpacity * (CLOSE_SCROLL_DISTANCE + distancePulled) / CLOSE_SCROLL_DISTANCE;
+      let opacityChange = maximumOpacity - minimumOpacity;
+      let newOpacity = minimumOpacity + opacityChange * (CLOSE_SCROLL_DISTANCE + Math.min(distancePulled + pullBuffer, 0)) / CLOSE_SCROLL_DISTANCE;
+      return newOpacity;
     }
     return maximumOpacity;
   }
 
-  // <TouchableWithoutFeedback style={styles.touchArea}
+  _closeProfileCard() {
+    let animDuration = 300;
+    Animated.parallel([
+      Animated.timing(this.state.pan, {
+        toValue: {x:0, y: this.props.pageHeight},
+        duration: animDuration,
+      }),
+      Animated.timing(this.state.opacity, {
+        toValue: 0,
+        duration: animDuration,
+      }),
+    ]).start(function onComplete(){
+      if (this.props.exitFunction) {
+        this.props.exitFunction();
+      }
+    }.bind(this));
+  }
+
+  _releasedScrollView() {
+    //TODO: implement closing via scrolling
+  }
+
+  _shouldRenderImageWithIndex(index) {
+    if (this.props.photos && this.props.photos.length > index) {
+      let imageContainerHeight = this.props.pageHeight * 3 / 4;
+      let source = this.props.photos[index];
+      return (
+        <View style={[styles.imageView, {height: imageContainerHeight}]}>
+          <Image style={styles.topGradient} source={require('./images/topGradient.png')}/>
+          <Image style={[styles.image, {height: imageContainerHeight}]}
+            source={{uri: source}}
+            key={(index == 0) ? this.props.id : ""}
+          />
+        </View>
+      );
+    }
+  }
+
+  _renderImages() {
+    let imageContainerHeight = this.props.pageHeight * 3 / 4;
+    return (
+      <Carousel style={[styles.carousel, {height: imageContainerHeight}]}
+        loop={false}
+        animate={false}
+        indicatorOffset={imageContainerHeight - 65}
+        indicatorColor="rgba(220,220,220,1)"
+        inactiveIndicatorColor="rgba(160,160,160,0.6)"
+        indicatorSize={40}
+      >
+        {this._shouldRenderImageWithIndex(0)}
+        {this._shouldRenderImageWithIndex(1)}
+        {this._shouldRenderImageWithIndex(2)}
+      </Carousel>
+    );
+  }
+
   render() {
     let pageHeight = this.props.pageHeight;
+    var _scrollView: ScrollView;
     return (
       <View style={{flex: 1}}>
-        <View style={[styles.background, {opacity: this._calculateOpacity()}]}>
-        </View>
-        <ScrollView style={styles.touchArea}
-          onScroll={this._handleScroll.bind(this)}
-          scrollEventThrottle={10}>
-          <View style={[styles.card, {minHeight: pageHeight + BORDER_RADIUS}]}>
-            <Image style={[styles.thumbnail, {height: pageHeight * 3 / 4}]} source={{uri: (this.props.photos && this.props.photos.length >= 1) ? this.props.photos[0] : 'https://img2.greatnotions.com/StockDesign/XLarge/King_Graphics/m0410.jpg'}} />
-            <View style={styles.textContainer}>
-              <Text style={styles.text}>{this.props.firstName}{"\n"}{this.props.description}{"\n"}[This is where the rest of the description would go]</Text>
+
+        <Animated.View style={{flex: 1, opacity: this.state.opacity}}>
+          <View style={[styles.background, {opacity: this._calculateOpacity()}]}/>
+        </Animated.View>
+
+        <Animated.View style={{ position: 'absolute', top:0,bottom:0,left:0,right:0, transform:this.state.pan.getTranslateTransform() }}>
+          <ScrollView style={styles.touchArea}
+            ref={(scrollView) => { _scrollView = scrollView; }}
+            onScroll={this._handleScroll.bind(this)}
+            scrollEventThrottle={16}
+            onResponderRelease={this._releasedScrollView.bind(this)}
+          >
+            <View style={[styles.card, {minHeight: pageHeight + BORDER_RADIUS}]}>
+              {this._renderImages()}
+              <View style={styles.textContainer}>
+                <Text style={styles.title}>{this.props.firstName} {this.props.lastName}</Text>
+                <Text style={styles.text}>{this.props.description}</Text>
+              </View>
+              <Image style={styles.bottomGradient} source={require('./images/bottomGradient.png')}/>
+              <TouchableOpacity
+                style={styles.closeButton}
+                onPress={this._closeProfileCard.bind(this)}>
+                <Image style={styles.closeButtonView} source={require('./images/x.png')}/>
+              </TouchableOpacity>
             </View>
-          </View>
-        </ScrollView>
-        <TouchableHighlight style={[styles.closeButton, {top: 20 + Math.max(0, -this.state.scrollDistance)}]} onPress={this.props.onPress}>
-          <View style={[styles.closeButtonView, {justifyContent: "center", alignItems: "center"}]}>
-            <Text>x</Text>
-          </View>
-        </TouchableHighlight>
+          </ScrollView>
+        </Animated.View>
       </View>
     );
   }
@@ -73,16 +150,34 @@ class ProfileCardView extends Component {
 const styles = StyleSheet.create({
   closeButton: {
     position: "absolute",
+    left: 20,
+    top: 20,
     width: 50,
     height: 50,
-    borderRadius: 25,
-    left: 20,
-    overflow: "hidden",
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   closeButtonView: {
-    backgroundColor: "white",
+    resizeMode: "contain",
+    height: 15,
+    width: 15,
     flex: 1,
-    opacity: 0.5,
+  },
+  topGradient: {
+    position: 'absolute',
+    resizeMode: 'cover',
+    top: 0,
+    height: 71,
+    width: WIDTH,
+    opacity: 0.8,
+  },
+  bottomGradient: {
+    position: 'absolute',
+    resizeMode: 'cover',
+    bottom: 0,
+    height: 53,
+    width: WIDTH,
+    opacity: 0.6,
   },
   background: {
     backgroundColor: 'black',
@@ -98,20 +193,36 @@ const styles = StyleSheet.create({
   card: {
     borderRadius: BORDER_RADIUS,
     overflow: 'hidden',
-    backgroundColor: 'white',
+    backgroundColor: '#FBFBFB',
     elevation: 2,
     flex: 1,
   },
-  thumbnail: {
+  carousel: {
+    flex: 1,
+    width: WIDTH,
+  },
+  imageView: {
+    overflow: 'hidden',
+    width: WIDTH,
+  },
+  image: {
+    resizeMode: 'cover',
+    width: WIDTH,
   },
   textContainer: {
-    alignItems: 'center',
+    backgroundColor: 'white',
+  },
+  title: {
+    fontWeight: "bold",
+    fontSize: 20,
+    padding: 20,
   },
   text: {
     fontSize: 20,
-    paddingTop: 10,
-    paddingBottom: 10
-  }
+    paddingLeft: 20,
+    paddingRight: 20,
+    paddingBottom: 50,
+  },
 });
 
 ProfileCardView.propTypes = {
