@@ -68,7 +68,6 @@ class SettingsPage extends Component {
     while (newPhotos.length < photos.length) {
       newPhotos.push(null);
     }
-    console.log(newPhotos);
     return newPhotos;
   }
 
