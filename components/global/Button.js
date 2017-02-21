@@ -11,7 +11,7 @@ source: image source, will be "contained" if dimensions are not equal
 optional:
 shouldNotAnimate: whether the button should have a slight bounce on touch. default false
 animateInFrom: dictionary {x, y} with number of pixels in the x / y axis to start an animate in from
-  eg: (0, 10) starts 10 pixels down and animates into view
+  eg: {x:0, y:10} starts 10 pixels down and animates into view
 animateOutTo: same as above but animates out before disappearing
 */
 
