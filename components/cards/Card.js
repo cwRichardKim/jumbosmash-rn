@@ -14,9 +14,11 @@ import {
   PanResponder,
   Image,
   TouchableWithoutFeedback,
+  ActivityIndicator,
 } from 'react-native';
 
-import clamp            from 'clamp';
+import clamp          from 'clamp';
+import LoadableImage  from '../global/LoadableImage.js'
 
 let SWIPE_THRESHOLD = 120;
 
@@ -120,14 +122,11 @@ class Card extends Component {
           onPress={this.props.onPress}>
           <View style={styles.shadowView}>
             <View style={styles.card}>
-              <Image
-                style={styles.thumbnail}
+              <LoadableImage
                 source={{uri: (this.props.photos && this.props.photos.length >= 1) ? this.props.photos[0] : 'https://img2.greatnotions.com/StockDesign/XLarge/King_Graphics/m0410.jpg'}}
-                onLoadStart={()=>{this.setState({isImageLoading: true})}}
-                onLoadEnd={()=>{this.setState({isImageLoading: false})}}
-                key={this.props.id}
+                style={styles.image}
+                _key={this.props.id}
               />
-              <View style={[styles.imageCover, {opacity: this.state.isImageLoading ? 1.0 : 0.0}]}/>
               <View style={styles.textContainer}>
                 <Text style={styles.text}>{this.props.firstName}</Text>
               </View>
@@ -168,21 +167,13 @@ const styles = StyleSheet.create({
     shadowRadius: 14,
     shadowOpacity: 0.06,
   },
-  imageCover: {
-    position: "absolute",
-    top: 0,
-    bottom: 0,
-    left: 0,
-    right: 0,
-    backgroundColor: "#FBFBFB",
-  },
   card: {
     borderRadius: borderRadius,
     overflow: 'hidden',
     backgroundColor: 'white',
     flex: 1,
   },
-  thumbnail: {
+  image: {
     flex: 1,
   },
   textContainer: {

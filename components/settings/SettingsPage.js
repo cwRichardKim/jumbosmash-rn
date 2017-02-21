@@ -16,10 +16,11 @@ import {
   TouchableOpacity,
   Image,
   Alert,
+  Animated,
 } from 'react-native';
 
 import ProfilePhotoPicker from "./ProfilePhotoPicker.js"
-import Button             from "./Button.js"
+import SaveButton         from "./SaveButton.js"
 
 class SettingsPage extends Component {
   constructor(props) {
@@ -34,20 +35,80 @@ class SettingsPage extends Component {
     }
   }
 
+  // public function called by parent to update states
+  _updateStates(newProfile) {
+    this.setState({
+      firstName: newProfile.firstName,
+      lastName: newProfile.lastName,
+      description: newProfile.description,
+      major: newProfile.major,
+      photos: newProfile.photos,
+    })
+  }
+
+  _allPhotosAreNull(photos) {
+    for (var i in photos) {
+      if (photos[i] != null) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  // returns the photos pushed to the front eg: [null, x, y] -> [x, y, null]
+  // returns false if all photos are null
+  _reArrangePhotos() {
+    let photos = this.state.photos;
+    var newPhotos = [];
+    for (var i in photos) {
+      if (photos[i] != null) {
+        newPhotos.push(photos[i]);
+      }
+    }
+    while (newPhotos.length < photos.length) {
+      newPhotos.push(null);
+    }
+    console.log(newPhotos);
+    return newPhotos;
+  }
+
+  // returns true if all checks are met, returns false and calls proper
+  // errors if not
+  _checkPropertiesAreValid () {
+    if (this._allPhotosAreNull(this.state.photos)) {
+      Alert.alert(
+        "Must have at least 1 photo",
+        "Please add at least 1 photo before saving",
+        [{text: 'OK', onPress: () => {}},],
+      );
+    } else {
+      return true;
+    }
+    return false;
+  }
+
   // This function updates the current information to the server
   _saveButtonPressed() {
-    if (this.props.updateProfile) {
-      this.props.updateProfile({
-        firstName: this.state.firstName,
-        lastName: this.state.lastName,
-        description: this.state.description,
-        major: this.state.major,
-        photos: this.state.photos,
-      });
+    if (this.props.updateProfile && this._checkPropertiesAreValid()) {
+      this._updateStates(
+        this.props.updateProfile({
+          firstName: this.state.firstName,
+          lastName: this.state.lastName,
+          description: this.state.description,
+          major: this.state.major,
+          photos: this._reArrangePhotos(),
+        })
+      );
       //TODO @richard load / error case
       this.setState({
         showSaveButton: false,
       })
+    } else {
+      Alert.alert(
+        "Update Error",
+        "Something went wrong :( Contact team@jumbosmash.com and let us know that we couldn't update your profile",
+        [{text: 'OK', onPress: () => {}},],
+      );
     }
     //TODO: @richard add loading / error cases
   }
@@ -67,14 +128,9 @@ class SettingsPage extends Component {
   _renderSaveButton() {
     if (this.state.showSaveButton) {
       return (
-        <View style={styles.saveButtonContainer}>
-          <Button
-            style={styles.saveButton}
-            source={require("./images/saveButton.png")}
-            onPress={this._saveButtonPressed.bind(this)}
-            activeOpacity={0.4}
-          />
-        </View>
+        <SaveButton
+          onPress={this._saveButtonPressed.bind(this)}
+        />
       );
     }
   }
@@ -93,7 +149,7 @@ class SettingsPage extends Component {
     } else {
       Alert.alert(
         "Photo Error",
-        "Something went wrong :( Contact team@jumbosmash.com and let them know that the incorrect number of photos were updated",
+        "Something went wrong :( Contact team@jumbosmash.com and let us know that the incorrect number of photos were updated",
         [{text: 'OK', onPress: () => {}},],
       );
     }
@@ -185,30 +241,6 @@ const styles = StyleSheet.create({
   },
   textInput: {
     height: 42,
-  },
-  saveButtonContainer: {
-    position: 'absolute',
-    bottom: 20,
-    height: 50,
-    width: 70,
-    right: 0,
-  },
-  saveButton: {
-    width: 50,
-    height: 50,
-    borderRadius: 25,
-
-    // android shadow
-    elevation: 3,
-    shadowColor: '#000000',
-
-    // ios shadow
-    shadowOffset: {
-      width: 0,
-      height: 4,
-    },
-    shadowRadius: 4,
-    shadowOpacity: 0.1,
   },
   line: {
     height: 1,

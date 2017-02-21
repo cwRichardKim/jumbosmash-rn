@@ -19,24 +19,7 @@ import {
 
 import HomeTabBarIOS          from "./HomeTabBarIOS.js"
 import NotificationBannerView from "./NotificationBannerView.js"
-
-function shuffle(array) {
-  var currentIndex = array.length, temporaryValue, randomIndex;
-
-  // While there remain elements to shuffle...
-  while (0 !== currentIndex) {
-
-    // Pick a remaining element...
-    randomIndex = Math.floor(Math.random() * currentIndex);
-    currentIndex -= 1;
-
-    // And swap it with the current element.
-    temporaryValue = array[currentIndex];
-    array[currentIndex] = array[randomIndex];
-    array[randomIndex] = temporaryValue;
-  }
-  return array;
-}
+let global = require('../global/GlobalFunctions.js');
 
 //TODO: @richard delete this later
 let testProfile = {
@@ -64,10 +47,10 @@ class NavigationContainer extends Component {
   // count: how many profiles to fetch. 0 or null is all
   _fetchProfiles(lastID, count) {
     //TODO incorporate lastID and count
-    return fetch('https://jumbosmash2017.herokuapp.com/profile')
+    return fetch('https://jumbosmash2017.herokuapp.com/profile/all/586edd82837823188a297932')
       .then((response) => response.json())
       .then((responseJson) => {
-        shuffle(responseJson);
+        global.shuffle(responseJson);
         this.setState({
           profiles: this.state.profiles.concat(responseJson),
           myProfile: responseJson[0], //TODO: @richard temporary while we don't have a real profile
@@ -129,6 +112,8 @@ class NavigationContainer extends Component {
     this.setState({
       myProfile: newProfile,
     })
+    // TODO: @richard on success, return the profile
+    return newProfile;
   }
 
   // Returns the content that the navigator should show.  Since route.name is "TabBar"
