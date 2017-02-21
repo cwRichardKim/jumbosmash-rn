@@ -14,8 +14,9 @@ import {
   Alert,
 } from 'react-native';
 
-import Button       from "./Button.js"
-import ImagePicker  from 'react-native-image-crop-picker';
+import Button         from "../global/Button.js"
+import ImagePicker    from 'react-native-image-crop-picker';
+import LoadableImage  from "../global/LoadableImage.js"
 // import RNFetchBlob  from 'react-native-fetch-blob'
 
 let PHONE_WIDTH = Dimensions.get('window').width;
@@ -37,7 +38,7 @@ class ProfilePhotoPicker extends Component {
   _shouldRenderImageWithIndex(index, styles) {
     if (this._photoExists(index)) {
       return (
-        <Image style={styles} source={{uri: this.props.photos[index]}}/>
+        <LoadableImage style={styles} source={{uri: this.props.photos[index]}}/>
       );
     } else {
       return (
@@ -166,12 +167,14 @@ const styles = StyleSheet.create({
     width: 35,
     left: LARGE_PHOTO_WIDTH - 28,
     bottom: -7,
+    borderRadius: 18,
   },
   minorButton: {
     position: 'absolute',
     height: 21,
     width: 21,
-    right: 0,
+    right: -7,
+    borderRadius: 11,
   },
 });
 
