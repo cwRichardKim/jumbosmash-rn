@@ -17,6 +17,8 @@ import {
   Dimensions,
 } from 'react-native';
 
+import LoadableImage  from '../global/LoadableImage.js'
+
 var Carousel = require('react-native-carousel');
 
 let BORDER_RADIUS = 10;
@@ -82,11 +84,12 @@ class ProfileCardView extends Component {
       let source = this.props.photos[index];
       return (
         <View style={[styles.imageView, {height: imageContainerHeight}]}>
-          <Image style={styles.topGradient} source={require('./images/topGradient.png')}/>
-          <Image style={[styles.image, {height: imageContainerHeight}]}
+          <LoadableImage
+            style={[styles.image, {height: imageContainerHeight}]}
             source={{uri: source}}
-            key={(index == 0) ? this.props.id : ""}
+            _key={(index == 0) ? this.props.id : ""}
           />
+          <Image style={styles.topGradient} source={require('./images/topGradient.png')}/>
         </View>
       );
     }
@@ -206,7 +209,6 @@ const styles = StyleSheet.create({
     width: WIDTH,
   },
   image: {
-    resizeMode: 'cover',
     width: WIDTH,
   },
   textContainer: {
