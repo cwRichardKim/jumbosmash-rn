@@ -2,7 +2,8 @@
 
 /*
 This file is the parent file for the entire swiping mechanism. It should control
-the data, make the requests, and delegate the UI / swiping to DeckView
+the data, make the requests, and delegate the UI / swiping to DeckView. It
+should be given a conversationId from it's 'parent' ChatPage
 */
 
 import React, {Component} from 'react';

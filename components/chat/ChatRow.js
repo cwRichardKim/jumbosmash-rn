@@ -1,3 +1,6 @@
+/*
+  Styling for a row on the ChatPage
+*/
 import React from 'react';
 import { View, Text, StyleSheet, Image } from 'react-native';
 

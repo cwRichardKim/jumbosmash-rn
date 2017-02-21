@@ -19,6 +19,8 @@ import {
 
 import HomeTabBarIOS          from "./HomeTabBarIOS.js"
 import NotificationBannerView from "./NotificationBannerView.js"
+import ChatPage               from "../chat/ChatPage.js"
+import ConversationPage       from "../chat/ConversationPage.js"
 
 class NavigationContainer extends Component {
   constructor(props) {
@@ -92,7 +94,10 @@ class NavigationContainer extends Component {
         </View>
       );
     } else if (route.name == 'Chat') {
-      return(<View navigator={navigator}><Text>@jared put your chat view here and use this.props.navigator.push("Chat") to render this page</Text></View>);
+      return(<ConversationPage
+                navigator={navigator}
+                chatroomId={route.chatroomId}
+              />);
     }
   }
 

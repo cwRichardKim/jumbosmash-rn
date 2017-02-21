@@ -1,4 +1,8 @@
 
+/*
+This is the page that handles the population, interaction, and rendering
+of the table of matches.
+*/
 import React from 'react';
 import { View,
          ListView,
@@ -41,6 +45,7 @@ const styles = StyleSheet.create({
   },
 });
 
+/*
 var NavigationBarRouteMapper = {
   LeftButton(route, navigator, index, navState) {
     if(index > 0) {
@@ -74,7 +79,7 @@ class ChatNavigator extends React.Component {
                        title: 'Chat',
                        index: 0 }}
         renderScene={this.navigatorRenderScene}
-        navigationBar={null/* <Navigator.NavigationBar routeMapper={NavigationBarRouteMapper} /> */}
+        navigationBar={null}
         style={{padding: 0}}
       />
     );
@@ -96,17 +101,29 @@ class ChatNavigator extends React.Component {
                 />);
     }
   }
-}
+}*/
 
 class ChatPage extends React.Component {
   constructor(props) {
     super(props);
 
     const ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
+    this._fetchConversationsAsync();
     this.state = {
-      dataSource: ds.cloneWithRows(data),
-      navigator: props.nav
+      dataSource: ds.cloneWithRows(this._fetchConversationsAsync()),
+      navigator: props.navigator
     };
+  }
+
+  _fetchConversationsAsync () {
+    return fetch('https://jumbosmash2017.herokuapp.com/chat/id/586edd82837823188a297810')
+      .then((response) => response.json())
+      .then((responseJson) => {
+        console.log("RESPONSE" + responseJson);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
   }
 
   rowPressed(props) {
@@ -114,17 +131,22 @@ class ChatPage extends React.Component {
   }
 
   renderConversation(conversationId) {
-    this.props.nav.pop()
-    this.props.nav.push({
+    this.props.navigator.pop()
+    this.props.navigator.push({
       title: "TEST",//row.name.first,
       id: ConversationPageNavId,
       chatroomId: conversationId,
       index: 1,
+      name: "Chat"
       //passProps: {property: "TEST ALSO"}
     });
   }
 
   renderChatRow(props) {
+    console.log("YOOOO " + props);
+    if(props == null || props == 0) {
+      return <View></View>
+    }
     return (
       <TouchableHighlight onPress={() => this.rowPressed(props)}
           underlayColor='#dddddd'>
@@ -151,4 +173,4 @@ class ChatPage extends React.Component {
   }
 }
 
-export default ChatNavigator;
+export default ChatPage;

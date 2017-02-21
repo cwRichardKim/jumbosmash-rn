@@ -1,3 +1,7 @@
+/*
+  Handles the search feature in ChatPage
+*/
+
 import React from 'react';
 import { View, Text, StyleSheet, TextInput } from 'react-native';
 
