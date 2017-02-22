@@ -2,6 +2,11 @@
 /*
 This is the page that handles the population, interaction, and rendering
 of the table of matches.
+
+TODO:
+also can you move all the firebase stuff to NavigationContainer?
+then thread it through all the props
+it's probably going to be NavigationContainer -> HomeTabBarIOS -> ChatPage
 */
 import React from 'react';
 import { View,
@@ -14,6 +19,7 @@ import { View,
 import ChatRow from './ChatRow';
 import ChatSearch from './ChatSearch';
 import ConversationPage from './ConversationPage';
+let global = require('../global/GlobalFunctions.js');
 
 const ChatPageNavId = "1";
 const ConversationPageNavId = "2";
@@ -44,64 +50,7 @@ const styles = StyleSheet.create({
   },
 });
 
-/*
-var NavigationBarRouteMapper = {
-  LeftButton(route, navigator, index, navState) {
-    if(index > 0) {
-      return (
-      <TouchableHighlight style={{marginTop: 10}} onPress={() => {
-            if (index > 0) {
-              navigator.pop();
-            }
-        }}>
-       <Text>Back</Text>
-     </TouchableHighlight>
-   )} else {
-   return null}
-   },
-   RightButton(route, navigator, index, navState) {
-      return null;
-   },
-   Title(route, navigator, index, navState) {
-      return <Text>Hello From My App!</Text>
-   }
-};
-
-class ChatNavigator extends React.Component {
-  render() {
-    console.log("OKKKKKKKK");
-    return (
-      <Navigator
-        initialRoute={{component: ChatPage,
-                       id: ChatPageNavId,
-                       chatroomId: null,
-                       title: 'Chat',
-                       index: 0 }}
-        renderScene={this.navigatorRenderScene}
-        navigationBar={null}
-        style={{padding: 0}}
-      />
-    );
-  }
-
-  navigatorRenderScene(route, navigator) {
-    _navigator = navigator;
-    switch (route.id) {
-      case ChatPageNavId:
-        return (<ChatPage
-                  title={route.title}
-                  nav={navigator}
-                />
-                );
-      case ConversationPageNavId:
-        return (<ConversationPage
-                  chatroomId={route.chatroomId}
-                  nav={navigator}
-                />);
-    }
-  }
-}*/
-
+const idOfUser = '588f7e504a557100113d2184';// Jared: 588f7e504a557100113d2184 Richard: '586edd82837823188a297932'; //TODO: self expanatory
 class ChatPage extends React.Component {
   constructor(props) {
     super(props);
@@ -115,44 +64,52 @@ class ChatPage extends React.Component {
   }
 
   _fetchConversationsAsync () {
-    return fetch('https://jumbosmash2017.herokuapp.com/chat/id/586edd82837823188a297810')
+    return fetch('https://jumbosmash2017.herokuapp.com/chat/id/' + idOfUser)
       .then((response) => response.json())
       .then((responseJson) => {
-        console.log("RESPONSE" + responseJson);
+        this.setState({
+          dataSource: this.state.dataSource.cloneWithRows(responseJson)
+        });
       })
       .catch((error) => {
         console.error(error);
       });
   }
 
-  rowPressed(props) {
-    this.renderConversation(props.chatroomId);
+  rowPressed(conversation) {
+    this.renderConversation(conversation);
   }
 
-  renderConversation(conversationId) {
+  renderConversation(conversation) {
     this.props.navigator.pop()
     this.props.navigator.push({
       title: "TEST",//row.name.first,
       id: ConversationPageNavId,
-      chatroomId: conversationId,
+      chatroomId: conversation._id,
+      participants: conversation.participants,
+      userId: idOfUser,
       index: 1,
       name: "Chat"
-      //passProps: {property: "TEST ALSO"}
     });
   }
 
-  renderChatRow(props) {
-    console.log("YOOOO " + props);
-    if(props == null || props == 0) {
+  renderChatRow(conversation) {
+    if(conversation == null || conversation == 0) {
       return <View></View>
     }
+    conversation.participants = global.participantsToDictionary(conversation.participants)
+    otherParticipants = global.otherParticipants(conversation.participants, idOfUser);
+    var len = otherParticipants.length;
+    names = "";
+    for(var key in otherParticipants) {
+      names += " " + otherParticipants[key].firstName;
+    }
     return (
-      <TouchableHighlight onPress={() => this.rowPressed(props)}
+      <TouchableHighlight onPress={() => this.rowPressed(conversation)}
           underlayColor='#dddddd'>
           <View style={styles.rowContainer}>
-            <Image source={{ uri: props.picture.large}} style={styles.rowPhoto} />
             <Text style={styles.rowText}>
-              {`${props.name.first} ${props.name.last}`}
+              {`${names}`}
             </Text>
           </View>
       </TouchableHighlight>

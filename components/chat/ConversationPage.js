@@ -29,7 +29,7 @@ class ConversationPage extends Component {
 
     this.onSend = this.onSend.bind(this);
     this.onReceive = this.onReceive.bind(this);
-
+    this._messages = []
     this.state = {
       messages: this._messages,
       typingText: null,
@@ -43,37 +43,34 @@ class ConversationPage extends Component {
 
   componentDidMount() {
     this._messagesRef.on('child_added', (child) => {
+      var pos = 'right';
+      if (child.val().user._id != this.props.userId) {
+        console.log("GOT IN HERE");
+        pos = 'left';
+      }
       this.onReceive({
         _id: child.val()._id,
         text: child.val().text,
         user: child.val().user,
-        image: 'https://facebook.github.io/react/img/logo_og.png', //TODO: make this actual info
-        position: child.val().name == "Jared" && 'right' || 'left',
+        //image: 'https://facebook.github.io/react/img/logo_og.png', //TODO: make this actual info
+        position: pos,
         date: new Date(child.val().date),
-        //uniqueId: child.key
       });
     });
 
   }
 
-  setMessages(messages) {
-    this._messages = messages;
-
-    this.setState({
-      messages: messages,
-    });
-  }
-
   onSend(messages = []) {
+    console.log("PARTICIPANTS " + JSON.stringify(this.props.participants));
     for (var i = 0, len = messages.length; i < len; i++) {
       var message = messages[i];
       this._messagesRef.push({
         _id: message._id,
         text: message.text,
         user: {
-          _id: 2,
-          name: "Jared",
-          avatar: 'https://facebook.github.io/react/img/logo_og.png',
+          _id: this.props.userId,
+          name: this.props.participants[this.props.userId].firstName,
+          avatar: this.props.participants[this.props.userId].photo,
         },
         date: new Date().getTime(),
       });
@@ -83,6 +80,7 @@ class ConversationPage extends Component {
   }
 
   onReceive(message) {
+    console.log("MESSAGE " + JSON.stringify(message));
     this.setState((previousState) => {
       return {
         messages: GiftedChat.append(previousState.messages, message),
@@ -95,9 +93,9 @@ class ConversationPage extends Component {
       <GiftedChat
         messages={this.state.messages}
         onSend={this.onSend}
-        //onReceive={this.onReceive}
+        onReceive={this.onReceive}
         user={{
-          _id: 1,
+          _id: this.props.userId
         }}
       />
     );

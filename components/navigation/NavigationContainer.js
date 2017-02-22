@@ -147,6 +147,8 @@ class NavigationContainer extends Component {
       return(<ConversationPage
                 navigator={navigator}
                 chatroomId={route.chatroomId}
+                participants={route.participants}
+                userId={route.userId}
               />);
     }
   }
