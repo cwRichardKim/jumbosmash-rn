@@ -70,6 +70,7 @@ class SaveButton extends Component {
         if (callback) {
           callback();
         }
+        this.state.pan.setValue({x:0, y:0})
       });
     }, 300);
   }
@@ -103,7 +104,7 @@ class SaveButton extends Component {
 const styles = StyleSheet.create({
   saveButtonContainer: {
     position: 'absolute',
-    bottom: 20,
+    bottom: 200,
     height: 50,
     width: 70,
     right: 0,
