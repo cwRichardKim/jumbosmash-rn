@@ -104,7 +104,7 @@ class SaveButton extends Component {
 const styles = StyleSheet.create({
   saveButtonContainer: {
     position: 'absolute',
-    bottom: 200,
+    bottom: 20,
     height: 50,
     width: 70,
     right: 0,
