@@ -14,7 +14,6 @@ import { View,
 import ChatRow from './ChatRow';
 import ChatSearch from './ChatSearch';
 import ConversationPage from './ConversationPage';
-import data from './testData';
 
 const ChatPageNavId = "1";
 const ConversationPageNavId = "2";
