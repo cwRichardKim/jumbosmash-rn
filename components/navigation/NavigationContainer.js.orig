@@ -19,9 +19,30 @@ import {
 
 import HomeTabBarIOS          from "./HomeTabBarIOS.js"
 import NotificationBannerView from "./NotificationBannerView.js"
+<<<<<<< HEAD
 import ChatPage               from "../chat/ChatPage.js"
 import ConversationPage       from "../chat/ConversationPage.js"
+
+function shuffle(array) {
+  var currentIndex = array.length, temporaryValue, randomIndex;
+
+  // While there remain elements to shuffle...
+  while (0 !== currentIndex) {
+
+    // Pick a remaining element...
+    randomIndex = Math.floor(Math.random() * currentIndex);
+    currentIndex -= 1;
+
+    // And swap it with the current element.
+    temporaryValue = array[currentIndex];
+    array[currentIndex] = array[randomIndex];
+    array[randomIndex] = temporaryValue;
+  }
+  return array;
+}
+=======
 let global = require('../global/GlobalFunctions.js');
+>>>>>>> ed053001a1ac39398324d5a023888144d2871bb5
 
 //TODO: @richard delete this later
 let testProfile = {
@@ -105,30 +126,15 @@ class NavigationContainer extends Component {
     })
   }
 
-  async _asyncUpdateServerProfile(id, profileChanges, newProfile) {
-    let url = "https://jumbosmash2017.herokuapp.com/profile/id/".concat(id);
-    fetch(url, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(profileChanges),
-    }).then((response) => {
-      this.setState({
-        myProfile: newProfile,
-      });
-    }).catch((error) => {
-      console.error(error); //TODO @richard show error thing
-    });
-  }
-
-  async _updateProfile(profileChanges) {
+  _updateProfile(profile) {
     //TODO: @richard this is temporary while the backend isn't up yet
     var newProfile = {};
     for (var key in this.state.myProfile) {
-      newProfile[key] = (key in profileChanges) ? profileChanges[key] : this.state.myProfile[key];
+      newProfile[key] = (key in profile) ? profile[key] : this.state.myProfile[key];
     }
-    var updateSuccess = await this._asyncUpdateServerProfile(this.state.myProfile.id, profileChanges, newProfile);
+    this.setState({
+      myProfile: newProfile,
+    })
     // TODO: @richard on success, return the profile
     return newProfile;
   }
@@ -162,8 +168,6 @@ class NavigationContainer extends Component {
       return(<ConversationPage
                 navigator={navigator}
                 chatroomId={route.chatroomId}
-                participants={route.participants}
-                userId={route.userId}
               />);
     }
   }

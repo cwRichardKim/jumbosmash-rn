@@ -1,103 +1,130 @@
-'use strict';
 
 /*
-This file is the parent file for the entire swiping mechanism. It should control
-the data, make the requests, and delegate the UI / swiping to DeckView
+This is the page that handles the population, interaction, and rendering
+of the table of matches.
+
+TODO:
+also can you move all the firebase stuff to NavigationContainer?
+then thread it through all the props
+it's probably going to be NavigationContainer -> HomeTabBarIOS -> ChatPage
 */
+import React from 'react';
+import { View,
+         ListView,
+         StyleSheet,
+         Text,
+         Navigator,
+         Image,
+         TouchableHighlight } from 'react-native';
+import ChatRow from './ChatRow';
+import ChatSearch from './ChatSearch';
+import ConversationPage from './ConversationPage';
+let global = require('../global/GlobalFunctions.js');
 
-import React, {Component} from 'react';
-import { GiftedChat } from 'react-native-gifted-chat';
-const firebase = require('firebase');
+const ChatPageNavId = "1";
+const ConversationPageNavId = "2";
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    marginTop: 20,
+  },
+  separator: {
+  flex: 1,
+  height: StyleSheet.hairlineWidth,
+  backgroundColor: '#8E8E8E',
+  },
+  rowContainer: {
+    flex: 1,
+    padding: 12,
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  rowText: {
+    marginLeft: 12,
+    fontSize: 16,
+  },
+  rowPhoto: {
+    height: 40,
+    width: 40,
+    borderRadius: 20,
+  },
+});
 
-const firebaseConfig = {
-  apiKey: "AIzaSyCqxU8ZGcg7Tx-iJoB_IROCG_yj41kWA6A",
-  authDomain: "jumbosmash-ddb99.firebaseapp.com",
-  databaseURL: "https://jumbosmash-ddb99.firebaseio.com/",
-  storageBucket: "",
-};
-const firebaseApp = firebase.initializeApp(firebaseConfig);
-
-class ChatPage extends Component {
+const idOfUser = '588f7e504a557100113d2184';// Jared: 588f7e504a557100113d2184 Richard: '586edd82837823188a297932'; //TODO: self expanatory
+class ChatPage extends React.Component {
   constructor(props) {
     super(props);
 
-    //will open up and get ref to particular chat between two users
-    const path = "messages/".concat(this.props.chatroomId);
-    this._messagesRef = firebaseApp.database().ref(path);
-
-    this.onSend = this.onSend.bind(this);
-    this.onReceive = this.onReceive.bind(this);
-
+    const ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
+    this._fetchConversationsAsync();
     this.state = {
-      messages: this._messages,
-      typingText: null,
+      dataSource: ds.cloneWithRows(this._fetchConversationsAsync()),
+      navigator: props.navigator
     };
-
   }
 
-  componentWillMount() {
-    this._isMounted = true;
-  }
-
-  componentDidMount() {
-    this._messagesRef.on('child_added', (child) => {
-      this.onReceive({
-        _id: child.val()._id,
-        text: child.val().text,
-        user: child.val().user,
-        image: 'https://facebook.github.io/react/img/logo_og.png',
-        position: child.val().name == "Jared" && 'right' || 'left',
-        date: new Date(child.val().date),
-        //uniqueId: child.key
+  _fetchConversationsAsync () {
+    return fetch('https://jumbosmash2017.herokuapp.com/chat/id/' + idOfUser)
+      .then((response) => response.json())
+      .then((responseJson) => {
+        this.setState({
+          dataSource: this.state.dataSource.cloneWithRows(responseJson)
+        });
+      })
+      .catch((error) => {
+        console.error(error);
       });
-    });
-
   }
 
-  setMessages(messages) {
-    this._messages = messages;
+  rowPressed(conversation) {
+    this.renderConversation(conversation);
+  }
 
-    this.setState({
-      messages: messages,
+  renderConversation(conversation) {
+    this.props.navigator.pop()
+    this.props.navigator.push({
+      title: "TEST",//row.name.first,
+      id: ConversationPageNavId,
+      chatroomId: conversation._id,
+      participants: conversation.participants,
+      userId: idOfUser,
+      index: 1,
+      name: "Chat"
     });
   }
 
-  onSend(messages = []) {
-    for (var i = 0, len = messages.length; i < len; i++) {
-      var message = messages[i];
-      this._messagesRef.push({
-        _id: message._id,
-        text: message.text,
-        user: {
-          _id: 2,
-          name: "Jared",
-          avatar: 'https://facebook.github.io/react/img/logo_og.png',
-        },
-        date: new Date().getTime(),
-      });
-
-
+  renderChatRow(conversation) {
+    if(conversation == null || conversation == 0) {
+      return <View></View>
     }
-  }
-
-  onReceive(message) {
-    this.setState((previousState) => {
-      return {
-        messages: GiftedChat.append(previousState.messages, message),
-      };
-    });
+    conversation.participants = global.participantsToDictionary(conversation.participants)
+    otherParticipants = global.otherParticipants(conversation.participants, idOfUser);
+    var len = otherParticipants.length;
+    names = "";
+    for(var key in otherParticipants) {
+      names += " " + otherParticipants[key].firstName;
+    }
+    return (
+      <TouchableHighlight onPress={() => this.rowPressed(conversation)}
+          underlayColor='#dddddd'>
+          <View style={styles.rowContainer}>
+            <Text style={styles.rowText}>
+              {`${names}`}
+            </Text>
+          </View>
+      </TouchableHighlight>
+    );
   }
 
   render() {
     return (
-      <GiftedChat
-        messages={this.state.messages}
-        onSend={this.onSend}
-        //onReceive={this.onReceive}
-        user={{
-          _id: 1,
-        }}
-      />
+        <ListView
+          style={styles.container}
+          dataSource={this.state.dataSource}
+          renderRow={this.renderChatRow.bind(this)}
+          renderSeparator={(sectionId, rowId) => <View key={rowId} style={styles.separator} />}
+          renderHeader={() => <ChatSearch/>}
+        />
     );
   }
 }

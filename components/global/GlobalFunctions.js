@@ -29,5 +29,26 @@ module.exports = {
       hide: "HIDESAVEBUTTON",
       saving: "SAVINGSAVEBUTTON",
     })
-  }
+  },
+  /*
+    takes in an array of participants for a conversation and creates a
+    dictionary with profileId's as keys
+  */
+  participantsToDictionary: function (participants) {
+    var dic = {};
+    len = participants.length;
+    for(var i = 0; i < len; i++) {
+      dic[participants[i].profileId] = participants[i];
+    }
+    return dic;
+  },
+  otherParticipants: function (participants, userId) {
+    dic = {}
+    for(var id in participants) {
+      if(id != userId) {
+        dic[id] = participants[id];
+      }
+    }
+    return dic;
+  },
 }
