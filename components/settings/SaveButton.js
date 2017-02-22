@@ -14,47 +14,41 @@ import {
 } from 'react-native';
 
 import Button from "../global/Button.js"
+const SaveButtonState = require('../global/GlobalFunctions.js').saveButtonStates();
 
 class SaveButton extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      isSaving: false,
-      saveButtonBump: new Animated.ValueXY({x:0, y:0}),
+      pan: new Animated.ValueXY({x:0, y:0}),
     }
   }
 
-  componentWillMount() {
-
-  }
-
-  componentDidMount() {
-    this._bounce();
-  }
-
   _bounce() {
-    setTimeout(() => {
-      Animated.timing(
-        this.state.saveButtonBump,
-        {
-          toValue: {x: 0, y: -10},
-          easing: Easing.out(Easing.ease),
-          duration: 200,
+    if (this.props.saveButtonState == SaveButtonState.show) {
+      setTimeout(() => {
+        if (this.props.saveButtonState == SaveButtonState.show) {
+          Animated.timing(
+            this.state.pan,
+            {
+              toValue: {x: 0, y: -10},
+              easing: Easing.out(Easing.ease),
+              duration: 200,
+            }
+          ).start( () => {
+            Animated.timing(
+              this.state.pan,
+              {
+                toValue: {x: 0, y: 0},
+                easing: Easing.bounce,
+              }
+            ).start(() => {
+              this._bounce();
+            });
+          });
         }
-      ).start( () => {
-        Animated.timing(
-          this.state.saveButtonBump,
-          {
-            toValue: {x: 0, y: 0},
-            easing: Easing.bounce,
-          }
-        ).start(() => {
-          if (! this.state.isSaving) {
-            this._bounce();
-          }
-        });
-      });
-    }, 3000);
+      }, 4000);
+    }
   }
 
   _onPress() {
@@ -63,19 +57,46 @@ class SaveButton extends Component {
     }
   }
 
+  // public function to animate the button away
+  animateOut (callback) {
+    setTimeout(() => {
+      Animated.timing(
+        this.state.pan,
+        {
+          toValue: {x: 0, y: 100},
+          duration: 300,
+        }
+      ).start(() => {
+        if (callback) {
+          callback();
+        }
+      });
+    }, 300);
+  }
+
   render() {
-    return(
-      <Animated.View style={[styles.saveButtonContainer,
-                            {transform: this.state.saveButtonBump.getTranslateTransform()}]}>
-        <Button
-          style={styles.saveButton}
-          source={require("./images/saveButton.png")}
-          onPress={this._onPress.bind(this)}
-          animateInFrom={{x: 0, y: 100}}
-          animateOutTo={{x:0, y:100}}
-        />
-      </Animated.View>
-    );
+    let hideButton = this.props.saveButtonState == SaveButtonState.hide;
+    let showButton = this.props.saveButtonState == SaveButtonState.show;
+    let buttonIsLoading = this.props.saveButtonState == SaveButtonState.saving;
+    if (showButton) {
+      this._bounce();
+    }
+    if (showButton || buttonIsLoading) {
+      return(
+        <Animated.View style={[styles.saveButtonContainer,
+          {transform: this.state.pan.getTranslateTransform()}]}>
+          <Button
+            style={styles.saveButton}
+            source={require("./images/saveButton.png")}
+            onPress={this._onPress.bind(this)}
+            animateInFrom={showButton ? {x: 0, y: 100} : null}
+            isLoading={this.props.saveButtonState == SaveButtonState.saving}
+          />
+        </Animated.View>
+      );
+    } else {
+      return(null);
+    }
   }
 }
 

@@ -21,6 +21,7 @@ import {
 
 import ProfilePhotoPicker from "./ProfilePhotoPicker.js"
 import SaveButton         from "./SaveButton.js"
+const SaveButtonState = require('../global/GlobalFunctions.js').saveButtonStates();
 
 class SettingsPage extends Component {
   constructor(props) {
@@ -31,11 +32,11 @@ class SettingsPage extends Component {
       description: props.description,
       major: props.major,
       photos: props.photos,
-      showSaveButton: false,
+      saveButtonState: SaveButtonState.hide,
     }
   }
 
-  // public function called by parent to update states
+  // after the request is made, this function sets the new states correctly from the server
   _updateStates(newProfile) {
     this.setState({
       firstName: newProfile.firstName,
@@ -76,8 +77,14 @@ class SettingsPage extends Component {
   _checkPropertiesAreValid () {
     if (this._allPhotosAreNull(this.state.photos)) {
       Alert.alert(
-        "Must have at least 1 photo",
+        "Must have at least 1 photo!",
         "Please add at least 1 photo before saving",
+        [{text: 'OK', onPress: () => {}},],
+      );
+    } else if (this.state.firstName.length < 1) {
+      Alert.alert(
+        "Must include your name!",
+        "",
         [{text: 'OK', onPress: () => {}},],
       );
     } else {
@@ -86,22 +93,29 @@ class SettingsPage extends Component {
     return false;
   }
 
-  // This function updates the current information to the server
-  _saveButtonPressed() {
-    if (this.props.updateProfile && this._checkPropertiesAreValid()) {
-      this._updateStates(
+  async _asyncUpdatePropertiesRequest () {
+    if (this.props.updateProfile) {
+      if (this._checkPropertiesAreValid()) {
+        this.setState({
+          saveButtonState: SaveButtonState.saving,
+        });
         this.props.updateProfile({
           firstName: this.state.firstName,
           lastName: this.state.lastName,
           description: this.state.description,
           major: this.state.major,
           photos: this._reArrangePhotos(),
-        })
-      );
-      //TODO @richard load / error case
-      this.setState({
-        showSaveButton: false,
-      })
+        }).then((newProfileResponse) => { // success
+          this._updateStates(newProfileResponse);
+          this.refs.saveButton.animateOut(() => {this.setState({saveButtonState: SaveButtonState.hide})});
+        }).catch((error) => {
+          Alert.alert(
+            "Update Error",
+            "Something went wrong :( It's probably a connection error, but contact team@jumbosmash.com if this keeps happening",
+            [{text: 'OK', onPress: () => {}},],
+          );
+        });
+      }
     } else {
       Alert.alert(
         "Update Error",
@@ -109,7 +123,11 @@ class SettingsPage extends Component {
         [{text: 'OK', onPress: () => {}},],
       );
     }
-    //TODO: @richard add loading / error cases
+  }
+
+  // This function updates the current information to the server
+  _saveButtonPressed() {
+    this._asyncUpdatePropertiesRequest();
   }
 
   // Scroll a component into view. Just pass the component ref string.
@@ -124,16 +142,6 @@ class SettingsPage extends Component {
     }, 50);
   }
 
-  _renderSaveButton() {
-    if (this.state.showSaveButton) {
-      return (
-        <SaveButton
-          onPress={this._saveButtonPressed.bind(this)}
-        />
-      );
-    }
-  }
-
   _focusNextField = (nextField) => {
     this.refs[nextField].focus();
   };
@@ -143,7 +151,7 @@ class SettingsPage extends Component {
     if (photos && photos.length == 3) {
       this.setState({
         photos: photos,
-        showSaveButton: true,
+        saveButtonState: SaveButtonState.show,
       });
     } else {
       Alert.alert(
@@ -166,7 +174,7 @@ class SettingsPage extends Component {
 
           <View style={styles.line}/>
           <TextInput style={[styles.textListItem, styles.textInput]}
-            onChangeText={(firstName) => {this.setState({firstName, showSaveButton:true})}}
+            onChangeText={(firstName) => {this.setState({firstName, saveButtonState:SaveButtonState.show})}}
             value={this.state.firstName}
             color="#C3C1C1"
             maxLength={80}
@@ -181,7 +189,7 @@ class SettingsPage extends Component {
 
           <View style={styles.line}/>
           <TextInput style={[styles.textListItem, styles.textInput]}
-            onChangeText={(lastName) => {this.setState({lastName, showSaveButton:true})}}
+            onChangeText={(lastName) => {this.setState({lastName, saveButtonState:SaveButtonState.show})}}
             value={this.state.lastName}
             color="#C3C1C1"
             maxLength={80}
@@ -196,7 +204,7 @@ class SettingsPage extends Component {
 
           <View style={styles.line}/>
           <TextInput style={[styles.textListItem, styles.textInput, {height: 100, paddingTop: 5, paddingBottom: 5}]}
-            onChangeText={(description) => {this.setState({description, showSaveButton:true})}}
+            onChangeText={(description) => {this.setState({description, saveButtonState:SaveButtonState.show})}}
             value={this.state.description}
             color="#C3C1C1"
             multiline={true}
@@ -210,7 +218,7 @@ class SettingsPage extends Component {
 
           <View style={styles.line}/>
           <TextInput style={[styles.textListItem, styles.textInput]}
-            onChangeText={(major) => {this.setState({major, showSaveButton:true})}}
+            onChangeText={(major) => {this.setState({major, saveButtonState:SaveButtonState.show})}}
             value={this.state.major}
             color="#C3C1C1"
             maxLength={100}
@@ -220,7 +228,11 @@ class SettingsPage extends Component {
           />
           <View style={styles.line}/>
         </ScrollView>
-        {this._renderSaveButton()}
+        <SaveButton
+          ref="saveButton"
+          onPress={this._saveButtonPressed.bind(this)}
+          saveButtonState={this.state.saveButtonState}
+        />
       </View>
     );
   }

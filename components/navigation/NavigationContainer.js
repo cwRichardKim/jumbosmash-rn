@@ -103,15 +103,30 @@ class NavigationContainer extends Component {
     })
   }
 
-  _updateProfile(profile) {
+  async _asyncUpdateServerProfile(id, profileChanges, newProfile) {
+    let url = "https://jumbosmash2017.herokuapp.com/profile/id/".concat(id);
+    fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(profileChanges),
+    }).then((response) => {
+      this.setState({
+        myProfile: newProfile,
+      });
+    }).catch((error) => {
+      console.error(error); //TODO @richard show error thing
+    });
+  }
+
+  async _updateProfile(profileChanges) {
     //TODO: @richard this is temporary while the backend isn't up yet
     var newProfile = {};
     for (var key in this.state.myProfile) {
-      newProfile[key] = (key in profile) ? profile[key] : this.state.myProfile[key];
+      newProfile[key] = (key in profileChanges) ? profileChanges[key] : this.state.myProfile[key];
     }
-    this.setState({
-      myProfile: newProfile,
-    })
+    var updateSuccess = await this._asyncUpdateServerProfile(this.state.myProfile.id, profileChanges, newProfile);
     // TODO: @richard on success, return the profile
     return newProfile;
   }

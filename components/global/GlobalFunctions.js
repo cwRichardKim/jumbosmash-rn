@@ -23,4 +23,11 @@ module.exports = {
     }
     return array;
   },
+  saveButtonStates: function () {
+    return ({
+      show: "SHOWSAVEBUTTON",
+      hide: "HIDESAVEBUTTON",
+      saving: "SAVINGSAVEBUTTON",
+    })
+  }
 }
