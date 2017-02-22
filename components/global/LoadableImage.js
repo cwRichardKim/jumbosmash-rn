@@ -16,6 +16,7 @@ import {
     View,
     Image,
     ActivityIndicator,
+    Alert,
 } from 'react-native';
 
 class LoadableImage extends Component {
@@ -26,14 +27,26 @@ class LoadableImage extends Component {
     }
   }
 
+  _photoFetchError() {
+    // TODO @richard fix / replace this with better image or something
+    Alert.alert(
+      "Photo failed to download",
+      "",
+      [{text: 'OK', onPress: () => {}},]
+    )
+    console.log("image failed to load: ".concat(this.props.source.uri));
+  }
+
   render() {
     return (
       <View style={[this.props.style, styles.container]}>
         <Image
           style={styles.image}
           source={this.props.source}
+          defaultSource={require("./images/turtle.jpg")}
           onLoadStart={()=>{this.setState({isImageLoading: true})}}
           onLoadEnd={()=>{this.setState({isImageLoading: false})}}
+          onError={this._photoFetchError.bind(this)}
           key={this.props._key ? this.props._key : ""}
         />
         <View style={[styles.imageCover, {opacity: this.state.isImageLoading ? 1.0 : 0.0}]}>

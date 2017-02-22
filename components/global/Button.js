@@ -5,14 +5,14 @@ button that animates slightly when touched.
 
 Requires:
 style: JSX style (required: width and height)
-onPress: executed when pressed
+onPress: executed when pressed. will not run if isLoading is true (see below)
 source: image source, will be "contained" if dimensions are not equal
 
 optional:
 shouldNotAnimate: whether the button should have a slight bounce on touch. default false
 animateInFrom: dictionary {x, y} with number of pixels in the x / y axis to start an animate in from
   eg: {x:0, y:10} starts 10 pixels down and animates into view
-animateOutTo: same as above but animates out before disappearing
+isLoading: true / false, shows loading indicator. will not run onPress if true
 */
 
 import React, {Component} from 'react';
@@ -22,6 +22,7 @@ import {
   Image,
   TouchableWithoutFeedback,
   Animated,
+  ActivityIndicator,
 } from 'react-native';
 
 class Button extends Component {
@@ -66,7 +67,7 @@ class Button extends Component {
   }
 
   _onPress() {
-    if (this.props.onPress) {
+    if (this.props.onPress && !this.props.isLoading) {
       this.props.onPress();
     }
     if (!this.props.shouldNotAnimate) {
@@ -77,6 +78,23 @@ class Button extends Component {
           friction: 3,
         }
       ).start();
+    }
+  }
+
+  _shouldRenderImageOrLoadingIndicator () {
+    if (!this.props.isLoading) {
+      return(
+        <Image
+          style={[styles.image]}
+          source={this.props.source ? this.props.source : null}
+        />
+      );
+    } else {
+      return(
+        <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+          <ActivityIndicator animating={true}/>
+        </View>
+      )
     }
   }
 
@@ -95,10 +113,7 @@ class Button extends Component {
           onPress={this._onPress.bind(this)}
           onPressIn={this._onPressIn.bind(this)}
         >
-          <Image
-            style={[styles.image, ]}
-            source={this.props.source ? this.props.source : null}
-          />
+          {this._shouldRenderImageOrLoadingIndicator()}
         </TouchableWithoutFeedback>
       </Animated.View>
     );

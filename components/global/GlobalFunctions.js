@@ -23,6 +23,13 @@ module.exports = {
     }
     return array;
   },
+  saveButtonStates: function () {
+    return ({
+      show: "SHOWSAVEBUTTON",
+      hide: "HIDESAVEBUTTON",
+      saving: "SAVINGSAVEBUTTON",
+    })
+  },
   /*
     takes in an array of participants for a conversation and creates a
     dictionary with profileId's as keys
