@@ -114,6 +114,7 @@ class SettingsPage extends Component {
             "Something went wrong :( It's probably a connection error, but contact team@jumbosmash.com if this keeps happening",
             [{text: 'OK', onPress: () => {}},],
           );
+          throw error;
         });
       }
     } else {

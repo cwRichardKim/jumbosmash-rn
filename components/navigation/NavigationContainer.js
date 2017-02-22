@@ -119,6 +119,7 @@ class NavigationContainer extends Component {
       });
     }).catch((error) => {
       console.error(error); //TODO @richard show error thing
+      throw error;
     });
   }
 
