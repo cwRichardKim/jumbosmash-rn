@@ -46,7 +46,6 @@ class Button extends Component {
       this.props.componentDidMount();
     }
     if (this.props.animateInFrom) {
-      console.log("animate in from")
       Animated.spring(
         this.state.pan,
         {
