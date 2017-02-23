@@ -1043,7 +1043,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 4;
 				DEAD_CODE_STRIPPING = NO;
 				DEVELOPMENT_TEAM = CBME5RD7L2;
 				HEADER_SEARCH_PATHS = (
@@ -1055,6 +1055,7 @@
 					"$(SRCROOT)/../node_modules/react-native-image-crop-picker/ios/**",
 				);
 				INFOPLIST_FILE = jumbosmash/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				OTHER_LDFLAGS = (
 					"$(inherited)",
@@ -1063,6 +1064,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.2017.jumbosmash;
 				PRODUCT_NAME = jumbosmash;
+				PROVISIONING_PROFILE_SPECIFIER = "$(sigh_’ + bundle_id + ‘_appstore’)";
 				VERSIONING_SYSTEM = "apple-generic";
 			};
 			name = Debug;
@@ -1074,7 +1076,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 4;
 				DEVELOPMENT_TEAM = CBME5RD7L2;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1085,6 +1087,7 @@
 					"$(SRCROOT)/../node_modules/react-native-image-crop-picker/ios/**",
 				);
 				INFOPLIST_FILE = jumbosmash/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				OTHER_LDFLAGS = (
 					"$(inherited)",
@@ -1093,6 +1096,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.2017.jumbosmash;
 				PRODUCT_NAME = jumbosmash;
+				PROVISIONING_PROFILE_SPECIFIER = "$(sigh_’ + bundle_id + ‘_appstore’)";
 				VERSIONING_SYSTEM = "apple-generic";
 			};
 			name = Release;

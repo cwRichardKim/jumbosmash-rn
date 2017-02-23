@@ -12,17 +12,53 @@ import {
   Dimensions,
   Image,
   Alert,
+  Platform,
 } from 'react-native';
 
-import Button         from "../global/Button.js"
+import Button         from "../global/Button.js";
 import ImagePicker    from 'react-native-image-crop-picker';
-import LoadableImage  from "../global/LoadableImage.js"
-// import RNFetchBlob  from 'react-native-fetch-blob'
+import LoadableImage  from "../global/LoadableImage.js";
+import RNFetchBlob    from 'react-native-fetch-blob';
 
-let PHONE_WIDTH = Dimensions.get('window').width;
-let PHONE_HEIGHT = Dimensions.get('window').height;
-let LARGE_PHOTO_WIDTH = PHONE_WIDTH * 0.592;
-let SMALL_PHOTO_WIDTH = PHONE_WIDTH * 0.267;
+// Turn local photo to blob for firebase uploading
+const Blob = RNFetchBlob.polyfill.Blob
+window.XMLHttpRequest = RNFetchBlob.polyfill.XMLHttpRequest
+window.Blob = Blob
+const fs = RNFetchBlob.fs;
+
+const PHONE_WIDTH = Dimensions.get('window').width;
+const PHONE_HEIGHT = Dimensions.get('window').height;
+const LARGE_PHOTO_WIDTH = PHONE_WIDTH * 0.592;
+const SMALL_PHOTO_WIDTH = PHONE_WIDTH * 0.267;
+
+//TODO: @richard make this work for android
+const _uploadImage = (firebase, uri, mime = 'application/octet-stream', index) => {
+  return new Promise((resolve, reject) => {
+    const uploadUri = Platform.OS === 'ios' ? uri.replace('file://', '') : uri
+      const sessionId = new Date().getTime()
+      let uploadBlob = null
+      const imageRef = firebase.storage().ref('images').child(`${sessionId}`)
+
+      fs.readFile(uploadUri, 'base64')
+      .then((data) => {
+        return Blob.build(data, { type: `${mime};BASE64` })
+      })
+      .then((blob) => {
+        uploadBlob = blob
+        return imageRef.put(blob, { contentType: mime })
+      })
+      .then(() => {
+        uploadBlob.close()
+        return imageRef.getDownloadURL()
+      })
+      .then((url) => {
+        resolve(url);
+      })
+      .catch((error) => {
+        reject(error);
+      })
+  })
+}
 
 class ProfilePhotoPicker extends Component {
   constructor(props) {
@@ -65,12 +101,18 @@ class ProfilePhotoPicker extends Component {
     }
   }
 
-  _uploadPhotoToFirebase(image) {
-    //TODO: @richard
-    // https://github.com/CodeLinkIO/Firebase-Image-Upload-React-Native
-    // https://jsapp.me/image-upload-in-react-native-with-firebase-storage-50e09ee0f6f8#.ol80aagoa
+  _uploadingPhotoError(error) {
+    //TODO: @richard actually deal with error cases
+    console.log(error);
+  }
 
-    // THEN this._changePhotoWithIndex(index, imageURL);
+  _uploadPhotoToFirebase(image, index) {
+    _uploadImage(this.props.firebase, image.path, image.mime, index)
+    .then((url) => {
+      this._changePhotoWithIndex(index, url);
+    },(error) => {
+      this._uploadingPhotoError(error);
+    });
   }
 
   _photoButtonPressedForPhotoIndex(index) {
@@ -78,16 +120,20 @@ class ProfilePhotoPicker extends Component {
       this._changePhotoWithIndex(index, null);
     } else { // Adding a photo, pull up image picker
       ImagePicker.openPicker({
-        width: 300,
-        height: 300,
-        cropping: true
+        width: 700,
+        height: 700,
+        cropping: true,
+        compressImageMaxHeight: 700,
+        compressImageMaxWidth: 700,
+        compressImageQuality: 0.6,
       }).then(image => {
-        //TODO: @richard some kind of size control
-        this._uploadPhotoToFirebase(image);
+        this._uploadPhotoToFirebase(image, index);
       }).catch(error => {
         let userCancelled = error["code"].includes("CANCELLED");
         if (userCancelled) {
           // potentially handle cancelled condition
+        } else {
+          throw error;
         }
       });
     }

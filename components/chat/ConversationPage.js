@@ -15,7 +15,7 @@ class ConversationPage extends Component {
 
     //will open up and get ref to particular chat between two users
     const path = "messages/".concat(this.props.chatroomId);
-    this._messagesRef = this.props.firebaseApp.database().ref(path);
+    this._messagesRef = this.props.firebase.database().ref(path);
 
     this.onSend = this.onSend.bind(this);
     this.onReceive = this.onReceive.bind(this);
