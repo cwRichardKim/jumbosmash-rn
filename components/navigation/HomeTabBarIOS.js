@@ -65,7 +65,11 @@ class HomeTabBarIOS extends Component {
           />
         )}
 
-        {this._renderTabBarItem(require('./icons/chat.png'), require('./icons/chat2.png'), "chatTab", <ChatPage chatroomId={this.props.chatroomId} navigator={this.props.navigator}/>)}
+        {this._renderTabBarItem(require('./icons/chat.png'), require('./icons/chat2.png'), "chatTab",
+          <ChatPage
+            chatroomId={this.props.chatroomId}
+            navigator={this.props.navigator}
+          />)}
 
         {this._renderTabBarItem(require('./icons/user.png'), require('./icons/user2.png'), "settingsTab",
           <SettingsPage
