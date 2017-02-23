@@ -149,7 +149,8 @@ class SettingsPage extends Component {
 
   // allows ProfilePhotoPicker to adjust the photos
   _updatePhotos(photos) {
-    if (photos && photos.length == 3) {
+    if (photos && photos.length >= 3) {
+      console.log(photos);
       this.setState({
         photos: photos,
         saveButtonState: SaveButtonState.show,
@@ -170,6 +171,7 @@ class SettingsPage extends Component {
           <ProfilePhotoPicker
             photos={this.state.photos}
             updatePhotos={this._updatePhotos.bind(this)}
+            firebase={this.props.firebase}
           />
           <Text style={[styles.header, styles.textListItem]}>Preferred First Name</Text>
 

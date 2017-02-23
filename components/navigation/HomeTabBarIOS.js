@@ -77,6 +77,7 @@ class HomeTabBarIOS extends Component {
             pageHeight={PAGE_HEIGHT}
             tabBarHeight={TABBAR_HEIGHT}
             updateProfile={this.props.updateProfile}
+            firebase={this.props.firebase}
           />
         )}
       </TabBarIOS>

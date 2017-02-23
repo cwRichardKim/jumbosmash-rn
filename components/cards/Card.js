@@ -67,9 +67,9 @@ class Card extends Component {
 
           Animated.decay(this.state.pan, {
             velocity: {x: velocity, y: vy},
-            deceleration: 0.975
+            deceleration: 0.98,
           }).start(this._swipeDidComplete.bind(this))
-        } else { //
+        } else { // return back
           Animated.spring(this.state.pan, {
             toValue: {x: 0, y: 0},
             friction: 4
@@ -111,7 +111,7 @@ class Card extends Component {
     let [translateX, translateY] = [pan.x, pan.y];
 
     let rotate = pan.x.interpolate({inputRange: [-200, 0, 200], outputRange: ["-30deg", "0deg", "30deg"]});
-    let opacity = pan.x.interpolate({inputRange: [-200, 0, 200], outputRange: [0.95, 1, 0.95]});
+    let opacity = pan.x.interpolate({inputRange: [-200, -100, 100, 200], outputRange: [0.6, 1, 1, 0.6]});
     let scale = enter;
 
     let animatedCardstyles = this.props.isTop ? {transform: [{translateX}, {translateY}, {rotate}, {scale}], opacity} : {};

@@ -29,11 +29,6 @@ class LoadableImage extends Component {
 
   _photoFetchError() {
     // TODO @richard fix / replace this with better image or something
-    Alert.alert(
-      "Photo failed to download",
-      "",
-      [{text: 'OK', onPress: () => {}},]
-    )
     console.log("image failed to load: ".concat(this.props.source.uri));
   }
 
