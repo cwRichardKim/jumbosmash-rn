@@ -8,16 +8,6 @@ should be given a conversationId from it's 'parent' ChatPage
 
 import React, {Component} from 'react';
 import { GiftedChat } from 'react-native-gifted-chat';
-const firebase = require('firebase');
-
-const firebaseConfig = {
-  apiKey: "AIzaSyCqxU8ZGcg7Tx-iJoB_IROCG_yj41kWA6A",
-  authDomain: "jumbosmash-ddb99.firebaseapp.com",
-  databaseURL: "https://jumbosmash-ddb99.firebaseio.com/",
-  storageBucket: "",
-};
-
-const firebaseApp = firebase.initializeApp(firebaseConfig);
 
 class ConversationPage extends Component {
   constructor(props) {
@@ -25,7 +15,7 @@ class ConversationPage extends Component {
 
     //will open up and get ref to particular chat between two users
     const path = "messages/".concat(this.props.chatroomId);
-    this._messagesRef = firebaseApp.database().ref(path);
+    this._messagesRef = this.props.firebaseApp.database().ref(path);
 
     this.onSend = this.onSend.bind(this);
     this.onReceive = this.onReceive.bind(this);

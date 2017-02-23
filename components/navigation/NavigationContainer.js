@@ -23,6 +23,15 @@ import ChatPage               from "../chat/ChatPage.js"
 import ConversationPage       from "../chat/ConversationPage.js"
 let global = require('../global/GlobalFunctions.js');
 
+const firebase = require('firebase');
+const firebaseConfig = {
+  apiKey: "AIzaSyCqxU8ZGcg7Tx-iJoB_IROCG_yj41kWA6A",
+  authDomain: "jumbosmash-ddb99.firebaseapp.com",
+  databaseURL: "https://jumbosmash-ddb99.firebaseio.com/",
+  storageBucket: "",
+};
+const firebaseApp = firebase.initializeApp(firebaseConfig);
+
 //TODO: @richard delete this later
 let testProfile = {
   firstName: "Test",
@@ -149,6 +158,7 @@ class NavigationContainer extends Component {
             profiles={this.state.profiles}
             myProfile={this.state.myProfile}
             updateProfile={this._updateProfile.bind(this)}
+            firebaseApp={firebaseApp}
           />
           <Animated.View
             style={[styles.notificationBanner, {transform:this.state.pan.getTranslateTransform()}]}>
@@ -165,6 +175,7 @@ class NavigationContainer extends Component {
                 chatroomId={route.chatroomId}
                 participants={route.participants}
                 userId={route.userId}
+                firebaseApp={firebaseApp}
               />);
     }
   }
