@@ -86,14 +86,10 @@ class ProfilePhotoPicker extends Component {
   _changePhotoWithIndex(index, newPhoto) {
     // Updates the photos on the settings page, not the server.
     // User has to hit save to make changes permanent in the server
-    console.log("updating photo");
-    console.log(index);
-    console.log(newPhoto);
     if (this.props.updatePhotos) {
       var newPhotos = this.props.photos.slice();
       newPhotos[index] = newPhoto;
       this.props.updatePhotos(newPhotos);
-      console.log(this.props.photos)
     } else {
       Alert.alert(
         'Something went wrong!',

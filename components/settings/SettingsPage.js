@@ -150,7 +150,6 @@ class SettingsPage extends Component {
   // allows ProfilePhotoPicker to adjust the photos
   _updatePhotos(photos) {
     if (photos && photos.length >= 3) {
-      console.log(photos);
       this.setState({
         photos: photos,
         saveButtonState: SaveButtonState.show,
