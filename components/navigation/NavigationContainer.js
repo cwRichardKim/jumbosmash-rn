@@ -15,6 +15,7 @@ import {
   Animated,
   TouchableHighlight,
   Navigator,
+  Alert,
 } from 'react-native';
 
 import HomeTabBarIOS          from "./HomeTabBarIOS.js"
@@ -31,6 +32,8 @@ const firebaseConfig = {
   storageBucket: "jumbosmash-ddb99.appspot.com",
 };
 firebase.initializeApp(firebaseConfig);
+
+const FETCH_BATCH_SIZE = 100;
 
 //TODO: @richard delete this later
 let testProfile = {
@@ -59,8 +62,14 @@ class NavigationContainer extends Component {
   _fetchProfiles(lastID, count) {
     //TODO incorporate lastID and count
     return fetch('https://jumbosmash2017.herokuapp.com/profile/all/586edd82837823188a297932')
-      .then((response) => response.json())
-      .then((responseJson) => {
+      .then((response) => {
+        if ("status" in response && response["status"] >= 200 && response["status"] < 300) {
+          return response.json();
+        } else {
+          console.log(response);
+          throw ("status" in response) ? response["status"] : "Unknown Error";
+        }
+      }).then((responseJson) => {
         global.shuffle(responseJson);
         this.setState({
           profiles: this.state.profiles.concat(responseJson),
@@ -68,7 +77,12 @@ class NavigationContainer extends Component {
         })
       })
       .catch((error) => {
-        console.error(error);
+        //TODO: @richard replace with real catch case
+        Alert.alert(
+          "Server is Down :(",
+          error.toString(),
+          [{"OK": ()=>{}}]
+        );
       });
   }
 

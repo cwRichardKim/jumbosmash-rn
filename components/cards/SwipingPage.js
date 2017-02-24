@@ -15,7 +15,7 @@ import {
 
 import DeckView     from './DeckView.js';
 
-let CARD_REFRESH_BUFFER = 2 // There should always be at least this many cards left, else fetch more
+let CARD_REFRESH_BUFFER = 30; // There should always be at least this many cards left, else fetch more
 
 class SwipingPage extends Component {
   constructor(props) {
@@ -30,6 +30,7 @@ class SwipingPage extends Component {
 
   _handleRightSwipe (card) {
     console.log("swiped right func in swiping page");
+    console.log(card);
   }
 
   _handleLeftSwipe (card) {

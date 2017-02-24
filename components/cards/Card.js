@@ -114,10 +114,10 @@ class Card extends Component {
     let opacity = pan.x.interpolate({inputRange: [-200, -100, 100, 200], outputRange: [0.6, 1, 1, 0.6]});
     let scale = enter;
 
-    let animatedCardstyles = this.props.isTop ? {transform: [{translateX}, {translateY}, {rotate}, {scale}], opacity} : {};
+    let animatedCardstyles = this.props.positionInDeck == 0 ? {transform: [{translateX}, {translateY}, {rotate}, {scale}], opacity} : {};
 
     return (
-      <Animated.View style={[styles.cardView, animatedCardstyles, {zIndex: this.props.isTop ? 11 : 10}]} {...this._panResponder.panHandlers}>
+      <Animated.View style={[styles.cardView, animatedCardstyles, {zIndex: 10 - this.props.positionInDeck}]} {...this._panResponder.panHandlers}>
         <TouchableWithoutFeedback style={styles.touchArea}
           onPress={this.props.onPress}>
           <View style={styles.shadowView}>
