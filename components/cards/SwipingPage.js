@@ -30,7 +30,6 @@ class SwipingPage extends Component {
 
   _handleRightSwipe (card) {
     console.log("swiped right func in swiping page");
-    console.log(card);
   }
 
   _handleLeftSwipe (card) {
