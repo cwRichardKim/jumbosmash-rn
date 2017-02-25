@@ -19,11 +19,11 @@ import {
 
 import LoadableImage  from '../global/LoadableImage.js'
 
-var Carousel = require('react-native-carousel');
+let Carousel = require('react-native-carousel');
 
-let BORDER_RADIUS = 10;
-let CLOSE_SCROLL_DISTANCE = 100;
-let WIDTH = Dimensions.get('window').width;
+const BORDER_RADIUS = 10;
+const CLOSE_SCROLL_DISTANCE = 100;
+const WIDTH = Dimensions.get('window').width;
 
 //TODO: @richard Make a carousel on the photos
 class ProfileCardView extends Component {
@@ -44,10 +44,10 @@ class ProfileCardView extends Component {
   }
 
   _calculateOpacity() {
-    let pullBuffer = 50;
-    let maximumOpacity = 0.9;
-    let minimumOpacity = 0.5;
-    var distancePulled = this.state.scrollDistance;
+    const pullBuffer = 50;
+    const maximumOpacity = 0.9;
+    const minimumOpacity = 0.5;
+    let distancePulled = this.state.scrollDistance;
     if (distancePulled < 0) {
       let opacityChange = maximumOpacity - minimumOpacity;
       let newOpacity = minimumOpacity + opacityChange * (CLOSE_SCROLL_DISTANCE + Math.min(distancePulled + pullBuffer, 0)) / CLOSE_SCROLL_DISTANCE;
@@ -57,7 +57,7 @@ class ProfileCardView extends Component {
   }
 
   _closeProfileCard() {
-    let animDuration = 300;
+    const animDuration = 300;
     Animated.parallel([
       Animated.timing(this.state.pan, {
         toValue: {x:0, y: this.props.pageHeight},
@@ -115,7 +115,7 @@ class ProfileCardView extends Component {
 
   render() {
     let pageHeight = this.props.pageHeight;
-    var _scrollView: ScrollView;
+    let _scrollView: ScrollView;
     return (
       <View style={{flex: 1}}>
 

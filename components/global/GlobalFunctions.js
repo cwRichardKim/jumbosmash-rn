@@ -1,13 +1,13 @@
 // This file contains functions / scripts / algorithms that can
 // be useful anywhere.  Use with:
 /*
-let global = require('../global/GlobalFunctions.js');
+const global = require('../global/GlobalFunctions.js');
 global.functionName(param);
 */
 
 module.exports = {
   shuffle: function (array) {
-    var currentIndex = array.length, temporaryValue, randomIndex;
+    let currentIndex = array.length, temporaryValue, randomIndex;
 
     // While there remain elements to shuffle...
     while (0 !== currentIndex) {
@@ -28,6 +28,14 @@ module.exports = {
       show: "SHOWSAVEBUTTON",
       hide: "HIDESAVEBUTTON",
       saving: "SAVINGSAVEBUTTON",
+    })
+  },
+  tabNames: function () {
+    return ({
+      loginTab: "LOGINTAB", //TODO: @richard temporary
+      cardsTab: "CARDSTAB",
+      chatTab: "CHATTAB",
+      settingsTab: "SETTINGSTAB",
     })
   },
   mod: function (n, m) {

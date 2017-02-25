@@ -22,7 +22,7 @@ import HomeTabBarIOS          from "./HomeTabBarIOS.js"
 import NotificationBannerView from "./NotificationBannerView.js"
 import ChatPage               from "../chat/ChatPage.js"
 import ConversationPage       from "../chat/ConversationPage.js"
-let global = require('../global/GlobalFunctions.js');
+const global = require('../global/GlobalFunctions.js');
 
 const firebase = require('firebase');
 const firebaseConfig = {
@@ -36,7 +36,7 @@ firebase.initializeApp(firebaseConfig);
 const FETCH_BATCH_SIZE = 100;
 
 //TODO: @richard delete this later
-let testProfile = {
+const testProfile = {
   firstName: "Test",
   lastName: "Profile",
   description: "kasjf laksj dglkasj dlgja slkgjalskdjglkasdjg laksdj glkasjd giasjg laksdj lkasjd glaksj dglkajd glkajsdg lk alkgj akldg",
@@ -147,11 +147,11 @@ class NavigationContainer extends Component {
 
   async _updateProfile(profileChanges) {
     //TODO: @richard this is temporary while the backend isn't up yet
-    var newProfile = {};
-    for (var key in this.state.myProfile) {
+    let newProfile = {};
+    for (let key in this.state.myProfile) {
       newProfile[key] = (key in profileChanges) ? profileChanges[key] : this.state.myProfile[key];
     }
-    var updateSuccess = await this._asyncUpdateServerProfile(this.state.myProfile.id, profileChanges, newProfile);
+    let updateSuccess = await this._asyncUpdateServerProfile(this.state.myProfile.id, profileChanges, newProfile);
     // TODO: @richard on success, return the profile
     return newProfile;
   }

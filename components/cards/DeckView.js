@@ -21,7 +21,7 @@ import SwipeButtonsView from './SwipeButtonsView.js'
 import Card             from './Card.js';
 import NoMoreCards      from './NoMoreCards.js';
 import ProfileCardView  from './ProfileCardView.js'
-let global = require('../global/GlobalFunctions.js');
+const global = require('../global/GlobalFunctions.js');
 
 const CARD_WIDTH = Dimensions.get('window').width - 40;
 const DECK_SIZE = 3;
@@ -80,8 +80,8 @@ class DeckView extends Component {
   }
 
   _renderCard(cardIndex) {
-    var positionInDeck = global.mod((cardIndex - this.state.topCardIndex), DECK_SIZE);
-    var index = this.state.cardIndex + positionInDeck;
+    let positionInDeck = global.mod((cardIndex - this.state.topCardIndex), DECK_SIZE);
+    let index = this.state.cardIndex + positionInDeck;
     return (
       <Card {...this.props.profiles[index]}
         onPress={()=>{this.setState({showProfile: true})}}
@@ -157,7 +157,7 @@ class DeckView extends Component {
 }
 
 // Base Styles. Use props to override these values
-var styles = StyleSheet.create({
+const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: 'center',

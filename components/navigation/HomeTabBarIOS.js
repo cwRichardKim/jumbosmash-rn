@@ -19,8 +19,8 @@ import ChatPage               from "../chat/ChatPage.js";
 import LoginPage              from "../login/LoginPage.js";
 import SettingsPage           from "../settings/SettingsPage.js"
 
-let TABBAR_HEIGHT = (Platform.OS === 'ios') ? 49 : 49; // TODO: check the android tabbar height
-let PAGE_HEIGHT = Dimensions.get('window').height - TABBAR_HEIGHT;
+const TABBAR_HEIGHT = (Platform.OS === 'ios') ? 49 : 49; // TODO: check the android tabbar height
+const PAGE_HEIGHT = Dimensions.get('window').height - TABBAR_HEIGHT;
 
 class HomeTabBarIOS extends Component {
   constructor(props) {
