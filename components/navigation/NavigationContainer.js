@@ -66,7 +66,6 @@ class NavigationContainer extends Component {
         if ("status" in response && response["status"] >= 200 && response["status"] < 300) {
           return response.json();
         } else {
-          console.log(response);
           throw ("status" in response) ? response["status"] : "Unknown Error";
         }
       }).then((responseJson) => {

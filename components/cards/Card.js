@@ -111,7 +111,7 @@ class Card extends Component {
     let [translateX, translateY] = [pan.x, pan.y];
 
     let rotate = pan.x.interpolate({inputRange: [-200, 0, 200], outputRange: ["-30deg", "0deg", "30deg"]});
-    let opacity = pan.x.interpolate({inputRange: [-200, -100, 100, 200], outputRange: [0.6, 1, 1, 0.6]});
+    let opacity = pan.x.interpolate({inputRange: [-200, -100, 100, 200], outputRange: [0.5, 1, 1, 0.5]});
     let scale = enter;
 
     let animatedCardstyles = this.props.positionInDeck == 0 ? {transform: [{translateX}, {translateY}, {rotate}, {scale}], opacity} : {};
