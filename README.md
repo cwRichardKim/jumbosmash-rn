@@ -15,3 +15,11 @@ react-native link
 cd ios
 pod install
 ```
+# Making Pull Requests:
+
+1. Commit changes to new local branch
+2. git push
+3. go to github.com/cwrichardkim/jumbosmash-rn (Highly recommend [git open](https://github.com/paulirish/git-open)
+4. github will guide you through the rest
+
+Screenshots: ![](http://imgur.com/wMbeGRd.png)
