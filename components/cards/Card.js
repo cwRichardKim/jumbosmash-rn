@@ -20,7 +20,7 @@ import {
 import clamp          from 'clamp';
 import LoadableImage  from '../global/LoadableImage.js'
 
-let SWIPE_THRESHOLD = 90;
+const SWIPE_THRESHOLD = 90;
 
 class Card extends Component {
   constructor(props) {
@@ -55,8 +55,8 @@ class Card extends Component {
         // if we swiped more then 120px away from the middle
         if (Math.abs(this.state.pan.x._value) > SWIPE_THRESHOLD) {
           let isRight = this.state.pan.x._value > 0;
-          var xvelocity =  clamp(vx, 1, 3);
-          var yvelocity =  clamp(vy, -3, 3);
+          let xvelocity =  clamp(vx, 1, 3);
+          let yvelocity =  clamp(vy, -3, 3);
 
           // if it's a right swipe
           if (isRight) {

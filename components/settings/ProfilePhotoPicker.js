@@ -93,7 +93,7 @@ class ProfilePhotoPicker extends Component {
     // Updates the photos on the settings page, not the server.
     // User has to hit save to make changes permanent in the server
     if (this.props.updatePhotos) {
-      var newPhotos = this.props.photos.slice();
+      let newPhotos = this.props.photos.slice();
       newPhotos[index] = newPhoto;
       this.props.updatePhotos(newPhotos);
     } else {
