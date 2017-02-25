@@ -64,6 +64,7 @@ class ProfilePhotoPicker extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      uploadingImageWithIndex: -1,
     }
   }
 
@@ -72,9 +73,14 @@ class ProfilePhotoPicker extends Component {
   }
 
   _shouldRenderImageWithIndex(index, styles) {
-    if (this._photoExists(index)) {
+    let isUploading = this.state.uploadingImageWithIndex == index;
+    if (this._photoExists(index) || isUploading) {
       return (
-        <LoadableImage style={styles} source={{uri: this.props.photos[index]}}/>
+        <LoadableImage
+          style={styles}
+          source={isUploading ? null : {uri: this.props.photos[index]}}
+          isImageLoading={this.state.uploadingImageWithIndex == index}
+        />
       );
     } else {
       return (
@@ -107,24 +113,39 @@ class ProfilePhotoPicker extends Component {
   }
 
   _uploadPhotoToFirebase(image, index) {
+    this.setState({
+      uploadingImageWithIndex: index,
+    });
     _uploadImage(this.props.firebase, image.path, image.mime, index)
     .then((url) => {
+      this.setState({
+        uploadingImageWithIndex: -1,
+      });
       this._changePhotoWithIndex(index, url);
     },(error) => {
+      this.setState({
+        uploadingImageWithIndex: -1,
+      });
       this._uploadingPhotoError(error);
     });
   }
 
   _photoButtonPressedForPhotoIndex(index) {
-    if (this._photoExists(index)) { // Deleting a photo
+    if (this.state.uploadingImageWithIndex >= 0) {
+      Alert.alert(
+        "One Sec",
+        "Still working on your last photo! Should only take a few more seconds",
+        [{"OK": ()=>{}}]
+      ); //TODO @richard: do a real error thing here, test this more thoroughly
+    } else if (this._photoExists(index)) { // Deleting a photo
       this._changePhotoWithIndex(index, null);
     } else { // Adding a photo, pull up image picker
       ImagePicker.openPicker({
         width: 700,
         height: 700,
         cropping: true,
-        compressImageMaxHeight: 700,
-        compressImageMaxWidth: 700,
+        // compressImageMaxHeight: 700,
+        // compressImageMaxWidth: 700,
         compressImageQuality: 0.6,
       }).then(image => {
         this._uploadPhotoToFirebase(image, index);

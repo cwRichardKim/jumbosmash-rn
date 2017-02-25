@@ -15,7 +15,7 @@ import {
 
 import DeckView     from './DeckView.js';
 
-let CARD_REFRESH_BUFFER = 2 // There should always be at least this many cards left, else fetch more
+let CARD_REFRESH_BUFFER = 30; // There should always be at least this many cards left, else fetch more
 
 class SwipingPage extends Component {
   constructor(props) {

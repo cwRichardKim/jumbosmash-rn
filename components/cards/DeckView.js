@@ -21,8 +21,10 @@ import SwipeButtonsView from './SwipeButtonsView.js'
 import Card             from './Card.js';
 import NoMoreCards      from './NoMoreCards.js';
 import ProfileCardView  from './ProfileCardView.js'
+let global = require('../global/GlobalFunctions.js');
 
-var CARD_WIDTH = Dimensions.get('window').width - 40;
+const CARD_WIDTH = Dimensions.get('window').width - 40;
+const DECK_SIZE = 3;
 
 class DeckView extends Component {
   constructor(props) {
@@ -31,7 +33,7 @@ class DeckView extends Component {
     this.state = {
       cardIndex: 0,
       showProfile: false,
-      topCardIsFirst: true,
+      topCardIndex: 0,
     }
   }
 
@@ -42,7 +44,7 @@ class DeckView extends Component {
     }
     this.setState({
       cardIndex: this.state.cardIndex + 1,
-      topCardIsFirst: !this.state.topCardIsFirst
+      topCardIndex: (this.state.topCardIndex + 1) % DECK_SIZE,
     });
   }
 
@@ -77,28 +79,29 @@ class DeckView extends Component {
     }
   }
 
-  _shouldRenderCard() {
-    if (this.props.profiles && this.state.cardIndex < this.props.profiles.length - 1) {
-      var card1Index = this.state.topCardIsFirst ? this.state.cardIndex : this.state.cardIndex + 1;
-      var card2Index = this.state.topCardIsFirst ? this.state.cardIndex + 1 : this.state.cardIndex;
+  _renderCard(cardIndex) {
+    var positionInDeck = global.mod((cardIndex - this.state.topCardIndex), DECK_SIZE);
+    var index = this.state.cardIndex + positionInDeck;
+    return (
+      <Card {...this.props.profiles[index]}
+        onPress={()=>{this.setState({showProfile: true})}}
+        handleRightSwipeForIndex={this._handleRightSwipeForIndex.bind(this)}
+        handleLeftSwipeForIndex={this._handleLeftSwipeForIndex.bind(this)}
+        swipeDidComplete={this._swipeDidComplete.bind(this)}
+        index={index}
+        positionInDeck={positionInDeck}
+        cardWidth={CARD_WIDTH}
+      />
+    );
+  }
+
+  _shouldRenderCards() {
+    if (this.props.profiles && this.state.cardIndex < this.props.profiles.length - (DECK_SIZE - 1)) {
       return (
         <View style={{flex:1}}>
-          <Card {...this.props.profiles[card1Index]}
-            onPress={()=>{this.setState({showProfile: true})}}
-            handleRightSwipeForIndex={this._handleRightSwipeForIndex.bind(this)}
-            handleLeftSwipeForIndex={this._handleLeftSwipeForIndex.bind(this)}
-            swipeDidComplete={this._swipeDidComplete.bind(this)}
-            index={this.state.cardIndex}
-            isTop={this.state.topCardIsFirst}
-          />
-          <Card {...this.props.profiles[card2Index]}
-            onPress={()=>{this.setState({showProfile: true})}}
-            handleRightSwipeForIndex={this._handleRightSwipeForIndex.bind(this)}
-            handleLeftSwipeForIndex={this._handleLeftSwipeForIndex.bind(this)}
-            swipeDidComplete={this._swipeDidComplete.bind(this)}
-            index={this.state.cardIndex + 1}
-            isTop={!this.state.topCardIsFirst}
-          />
+          {this._renderCard(0)}
+          {this._renderCard(1)}
+          {this._renderCard(2)}
         </View>
       );
     } else {
@@ -129,7 +132,7 @@ class DeckView extends Component {
         <View style={styles.topPadding}/>
         {this._shouldRenderProfileCard()}
         <View style={styles.cardContainer}>
-          {this._shouldRenderCard()}
+          {this._shouldRenderCards()}
         </View>
 
         <View style={styles.swipeButtonsView}>

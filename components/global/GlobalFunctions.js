@@ -30,6 +30,9 @@ module.exports = {
       saving: "SAVINGSAVEBUTTON",
     })
   },
+  mod: function (n, m) {
+    return ((n % m) + m) % m;
+  },
   /*
     takes in an array of participants for a conversation and creates a
     dictionary with profileId's as keys

@@ -33,6 +33,7 @@ class LoadableImage extends Component {
   }
 
   render() {
+    let shouldAnimate = this.state.isImageLoading || this.props.isImageLoading;
     return (
       <View style={[this.props.style, styles.container]}>
         <Image
@@ -44,8 +45,8 @@ class LoadableImage extends Component {
           onError={this._photoFetchError.bind(this)}
           key={this.props._key ? this.props._key : ""}
         />
-        <View style={[styles.imageCover, {opacity: this.state.isImageLoading ? 1.0 : 0.0}]}>
-          <ActivityIndicator animating={this.state.isImageLoading}/>
+        <View style={[styles.imageCover, {opacity: shouldAnimate ? 1.0 : 0.0}]}>
+          <ActivityIndicator animating={shouldAnimate}/>
         </View>
       </View>
     )

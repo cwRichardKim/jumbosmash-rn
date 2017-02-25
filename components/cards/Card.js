@@ -20,7 +20,7 @@ import {
 import clamp          from 'clamp';
 import LoadableImage  from '../global/LoadableImage.js'
 
-let SWIPE_THRESHOLD = 120;
+let SWIPE_THRESHOLD = 90;
 
 class Card extends Component {
   constructor(props) {
@@ -51,24 +51,32 @@ class Card extends Component {
 
       onPanResponderRelease: (e, {vx, vy}) => {
         this.state.pan.flattenOffset();
-        var velocity = this.calculateVelocity(vx);
 
         // if we swiped more then 120px away from the middle
         if (Math.abs(this.state.pan.x._value) > SWIPE_THRESHOLD) {
+          let isRight = this.state.pan.x._value > 0;
+          var xvelocity =  clamp(vx, 1, 3);
+          var yvelocity =  clamp(vy, -3, 3);
 
           // if it's a right swipe
-          if (this.state.pan.x._value > 0) {
+          if (isRight) {
             // do something with the data, this function has no impact on the visuals
             this.props.handleRightSwipeForIndex(this.props.index);
           } else { // else if if it's a left swipe
             // do something with the data, this function has no impact on the visuals
             this.props.handleLeftSwipeForIndex(this.props.index);
           }
+          let xdistance = (xvelocity + 0.5) * this.props.cardWidth;
+          let ydistance = (yvelocity - 0.3) * this.props.cardWidth
+          Animated.timing(this.state.pan, {
+            toValue: {x: isRight ? xdistance : -xdistance, y: ydistance},
+            duration: 200,
+          }).start(this._swipeDidComplete.bind(this));
 
-          Animated.decay(this.state.pan, {
-            velocity: {x: velocity, y: vy},
-            deceleration: 0.98,
-          }).start(this._swipeDidComplete.bind(this))
+          // Animated.decay(this.state.pan, {
+          //   velocity: {x: velocity, y: vy},
+          //   deceleration: 0.98,
+          // }).start(this._swipeDidComplete.bind(this))
         } else { // return back
           Animated.spring(this.state.pan, {
             toValue: {x: 0, y: 0},
@@ -81,14 +89,6 @@ class Card extends Component {
 
   componentDidMount() {
     this._animateEntrance();
-  }
-
-  calculateVelocity(vx) {
-    if (vx >= 0) {
-      return clamp(vx, 3, 5);
-    } else if (vx < 0) {
-      return clamp(vx * -1, 3, 5) * -1;
-    }
   }
 
   _animateEntrance() {
@@ -110,14 +110,13 @@ class Card extends Component {
 
     let [translateX, translateY] = [pan.x, pan.y];
 
-    let rotate = pan.x.interpolate({inputRange: [-200, 0, 200], outputRange: ["-30deg", "0deg", "30deg"]});
-    let opacity = pan.x.interpolate({inputRange: [-200, -100, 100, 200], outputRange: [0.6, 1, 1, 0.6]});
+    let rotate = pan.x.interpolate({inputRange: [-200, 0, 200], outputRange: ["-10deg", "0deg", "10deg"]});
     let scale = enter;
 
-    let animatedCardstyles = this.props.isTop ? {transform: [{translateX}, {translateY}, {rotate}, {scale}], opacity} : {};
+    let animatedCardstyles = this.props.positionInDeck == 0 ? {transform: [{translateX}, {translateY}, {rotate}, {scale}]} : {};
 
     return (
-      <Animated.View style={[styles.cardView, animatedCardstyles, {zIndex: this.props.isTop ? 11 : 10}]} {...this._panResponder.panHandlers}>
+      <Animated.View style={[styles.cardView, animatedCardstyles, {zIndex: 10 - this.props.positionInDeck}]} {...this._panResponder.panHandlers}>
         <TouchableWithoutFeedback style={styles.touchArea}
           onPress={this.props.onPress}>
           <View style={styles.shadowView}>
