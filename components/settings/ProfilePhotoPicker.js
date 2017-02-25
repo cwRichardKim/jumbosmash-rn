@@ -144,8 +144,8 @@ class ProfilePhotoPicker extends Component {
         width: 700,
         height: 700,
         cropping: true,
-        compressImageMaxHeight: 700,
-        compressImageMaxWidth: 700,
+        // compressImageMaxHeight: 700,
+        // compressImageMaxWidth: 700,
         compressImageQuality: 0.6,
       }).then(image => {
         this._uploadPhotoToFirebase(image, index);
