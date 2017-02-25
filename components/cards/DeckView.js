@@ -90,6 +90,7 @@ class DeckView extends Component {
         swipeDidComplete={this._swipeDidComplete.bind(this)}
         index={index}
         positionInDeck={positionInDeck}
+        cardWidth={CARD_WIDTH}
       />
     );
   }
