@@ -21,7 +21,7 @@ import {
 
 import ProfilePhotoPicker from "./ProfilePhotoPicker.js";
 import SaveButton         from "./SaveButton.js";
-import SupportButton       from "../global/SupportButton.js";
+import SupportButton      from "../global/SupportButton.js";
 const SaveButtonState = require('../global/GlobalFunctions.js').saveButtonStates();
 
 class SettingsPage extends Component {
