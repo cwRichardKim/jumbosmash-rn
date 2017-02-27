@@ -11,6 +11,7 @@ import {
   Text,
   TouchableWithoutFeedback,
   Animated,
+  Alert,
 } from 'react-native';
 
 var Mailer = require('NativeModules').RNMail;
@@ -25,7 +26,7 @@ class Button extends Component {
 
   _onPressIn() {
     if (!this.props.shouldNotAnimate) {
-      this.state.springValue.setValue(0.9);
+      this.state.springValue.setValue(0.97);
       Animated.timing(
         this.state.springValue,
         {toValue: 0.95}
@@ -45,15 +46,23 @@ class Button extends Component {
   }
 
   _sendMail(path) {
-    Mailer.mail({
-      subject: 'Help / Feedback',
-      recipients: ['team@jumbosmash.com'],
-      body: '',
-    }, (error, event) => {
+    if (Mailer && Mailer.mail) {
+      Mailer.mail({
+        subject: 'Help / Feedback',
+        recipients: ['team@jumbosmash.com'],
+        body: '',
+      }, (error, event) => {
         if(error) {
           AlertIOS.alert('Error', 'Could not send mail. Try sending an email to team@jumbosmash.com through your mail client');
         }
-    });
+      });
+    } else {
+      Alert.alert(
+        "Unsupported Device",
+        "Sorry, your device doesn't support in-app email :(\nSend your question / feedback to team@jumbosmash.com with your mail client",
+        [{text:"OK", onPress:()=>{}}]
+      )
+    }
   }
 
   render() {
