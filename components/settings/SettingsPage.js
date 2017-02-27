@@ -19,8 +19,9 @@ import {
   Animated,
 } from 'react-native';
 
-import ProfilePhotoPicker from "./ProfilePhotoPicker.js"
-import SaveButton         from "./SaveButton.js"
+import ProfilePhotoPicker from "./ProfilePhotoPicker.js";
+import SaveButton         from "./SaveButton.js";
+import SupportButton       from "../global/SupportButton.js";
 const SaveButtonState = require('../global/GlobalFunctions.js').saveButtonStates();
 
 class SettingsPage extends Component {
@@ -245,6 +246,20 @@ class SettingsPage extends Component {
             returnKeyType="done"
           />
           <View style={styles.line}/>
+          <SupportButton style={styles.supportButton}/>
+          <View style={styles.bottom}>
+            <Text style={styles.aboutText}>
+              JumboSmash was brought to you by:{"\n"}
+              Devs: Elif Kinli, Richard Kim, Jared Moskowitz,{"\n"}
+              Jade Chan{"\n"}
+              Designers: Shanshan Duan, Bruno Olmedo{"\n\n"}
+              Beta Testers:{"\n"}
+              Zoe Baghdoyan, Josh Beri, Frankie Caiazzo, Tafari Duncan, Orlando Economos, Jason Fan, Derek Fieldhouse, Shana Gallagher, Lucy Gerhart, Ryan Gill, Cori Jacoby, Nishant Joshi, Dhruv Khurana, Rebecca Larson, Ian Leaman, Ann Lin, Emily Lin, Brian McGough, Jordan Meisel, Mackenzie Merriam, Sylvia R. Ofama, Isha Patnaik, Luis Rebollar, Joaquin Rodgriguez, Ben Sack, Maya Salcido White, Katie Saviano, Kabir Singh, Clare Stone, Lilly Tahmasebi, Aubrey Tan, Mudit Tandon, Joshua Terry, Nicholas Turiano, Harry Weissman, Gideon Wulfsohn
+            </Text>
+          </View>
+          <View style={styles.hiddenText}>
+            <Text style={{textAlign: 'center'}}>🍆🍑</Text>
+          </View>
         </ScrollView>
         <SaveButton
           ref="saveButton"
@@ -276,6 +291,29 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     backgroundColor: "#F8F5F5",
+  },
+  bottom: {
+    minHeight: 150,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 20,
+    padding: 16,
+  },
+  supportButton: {
+    height: 70,
+    marginTop: 20,
+  },
+  aboutText: {
+    textAlign: 'center',
+    opacity: 0.5,
+  },
+  hiddenText: {
+    position: 'absolute',
+    bottom: -150,
+    left: 0,
+    right: 0,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });
 
