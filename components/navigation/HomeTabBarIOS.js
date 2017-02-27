@@ -19,6 +19,8 @@ import ChatPage               from "../chat/ChatPage.js";
 import LoginPage              from "../login/LoginPage.js";
 import SettingsPage           from "../settings/SettingsPage.js"
 
+const TabNames = require("../global/GlobalFunctions").tabNames();
+
 const TABBAR_HEIGHT = (Platform.OS === 'ios') ? 49 : 49; // TODO: check the android tabbar height
 const PAGE_HEIGHT = Dimensions.get('window').height - TABBAR_HEIGHT;
 
@@ -54,9 +56,9 @@ class HomeTabBarIOS extends Component {
         navigator={this.props.navigator}
         barTintColor="white">
         {/* @jade temporary to access the login page until login code is complete */}
-        {this._renderTabBarItem(require('./icons/search.png'), require('./icons/search2.png'), "loginTab", <LoginPage/>)}
+        {this._renderTabBarItem(require('./icons/search.png'), require('./icons/search2.png'), TabNames.loginTab, <LoginPage/>)}
 
-        {this._renderTabBarItem(require('./icons/heart.png'), require('./icons/heart2.png'), "cardsTab",
+        {this._renderTabBarItem(require('./icons/heart.png'), require('./icons/heart2.png'), TabNames.cardsTab,
           <SwipingPage
             navigator={this.props.navigator}
             profiles={this.props.profiles}
@@ -65,19 +67,20 @@ class HomeTabBarIOS extends Component {
           />
         )}
 
-        {this._renderTabBarItem(require('./icons/chat.png'), require('./icons/chat2.png'), "chatTab",
+        {this._renderTabBarItem(require('./icons/chat.png'), require('./icons/chat2.png'), TabNames.chatTab,
           <ChatPage
             chatroomId={this.props.chatroomId}
             navigator={this.props.navigator}
           />)}
 
-        {this._renderTabBarItem(require('./icons/user.png'), require('./icons/user2.png'), "settingsTab",
+        {this._renderTabBarItem(require('./icons/user.png'), require('./icons/user2.png'), TabNames.settingsTab,
           <SettingsPage
             {...this.props.myProfile}
             pageHeight={PAGE_HEIGHT}
             tabBarHeight={TABBAR_HEIGHT}
             updateProfile={this.props.updateProfile}
             firebase={this.props.firebase}
+            setHasUnsavedSettings={this.props.setHasUnsavedSettings}
           />
         )}
       </TabBarIOS>
