@@ -107,7 +107,9 @@ class SettingsPage extends Component {
           photos: this._reArrangePhotos(),
         }).then((newProfileResponse) => { // success
           this._updateStates(newProfileResponse);
-          this.refs.saveButton.animateOut(() => {this.setState({saveButtonState: SaveButtonState.hide})});
+          this.refs.saveButton.animateOut(() => {
+            this._changesSuccessfullyUpdated();
+          });
         }).catch((error) => {
           Alert.alert(
             "Update Error",
@@ -150,16 +152,30 @@ class SettingsPage extends Component {
   // allows ProfilePhotoPicker to adjust the photos
   _updatePhotos(photos) {
     if (photos && photos.length >= 3) {
-      this.setState({
-        photos: photos,
-        saveButtonState: SaveButtonState.show,
-      });
+      this._changeWasMade(()=>{this.setState({photos})});
     } else {
       Alert.alert(
         "Photo Error",
         "Something went wrong :( Contact team@jumbosmash.com and let us know that the incorrect number of photos were updated",
         [{text: 'OK', onPress: () => {}},],
       );
+    }
+  }
+
+  _changeWasMade(changeStateFunc) {
+    this.setState({saveButtonState:SaveButtonState.show})
+    if (this.props.setHasUnsavedSettings){
+      this.props.setHasUnsavedSettings(true);
+    }
+    if (changeStateFunc) {
+      changeStateFunc();
+    }
+  }
+
+  _changesSuccessfullyUpdated() {
+    this.setState({saveButtonState: SaveButtonState.hide});
+    if (this.props.setHasUnsavedSettings){
+      this.props.setHasUnsavedSettings(false);
     }
   }
 
@@ -176,7 +192,7 @@ class SettingsPage extends Component {
 
           <View style={styles.line}/>
           <TextInput style={[styles.textListItem, styles.textInput]}
-            onChangeText={(firstName) => {this.setState({firstName, saveButtonState:SaveButtonState.show})}}
+            onChangeText={(firstName) => {this._changeWasMade(()=>{this.setState({firstName})})}}
             value={this.state.firstName}
             color="#C3C1C1"
             maxLength={80}
@@ -191,7 +207,7 @@ class SettingsPage extends Component {
 
           <View style={styles.line}/>
           <TextInput style={[styles.textListItem, styles.textInput]}
-            onChangeText={(lastName) => {this.setState({lastName, saveButtonState:SaveButtonState.show})}}
+            onChangeText={(lastName) => {this._changeWasMade(()=>{this.setState({lastName})})}}
             value={this.state.lastName}
             color="#C3C1C1"
             maxLength={80}
@@ -206,7 +222,7 @@ class SettingsPage extends Component {
 
           <View style={styles.line}/>
           <TextInput style={[styles.textListItem, styles.textInput, {height: 100, paddingTop: 5, paddingBottom: 5}]}
-            onChangeText={(description) => {this.setState({description, saveButtonState:SaveButtonState.show})}}
+            onChangeText={(description) => {this._changeWasMade(()=>{this.setState({description})})}}
             value={this.state.description}
             color="#C3C1C1"
             multiline={true}
@@ -220,7 +236,7 @@ class SettingsPage extends Component {
 
           <View style={styles.line}/>
           <TextInput style={[styles.textListItem, styles.textInput]}
-            onChangeText={(major) => {this.setState({major, saveButtonState:SaveButtonState.show})}}
+            onChangeText={(major) => {this._changeWasMade(()=>{this.setState({major})})}}
             value={this.state.major}
             color="#C3C1C1"
             maxLength={100}

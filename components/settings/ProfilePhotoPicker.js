@@ -135,7 +135,7 @@ class ProfilePhotoPicker extends Component {
       Alert.alert(
         "One Sec",
         "Still working on your last photo! Should only take a few more seconds",
-        [{"OK": ()=>{}}]
+        [{text: "OK", onPress:()=>{}}]
       ); //TODO @richard: do a real error thing here, test this more thoroughly
     } else if (this._photoExists(index)) { // Deleting a photo
       this._changePhotoWithIndex(index, null);

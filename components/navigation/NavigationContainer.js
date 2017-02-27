@@ -48,11 +48,12 @@ class NavigationContainer extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      selectedTab: 'cardsTab',
+      selectedTab: global.tabNames().cardsTab,
       notificationBannerText: "notification (tap me, goes to chat)",
       pan: new Animated.ValueXY({x:0, y:-100}),
       profiles: [],
       myProfile: testProfile,
+      hasUnsavedSettings: false,
     };
   }
 
@@ -80,7 +81,7 @@ class NavigationContainer extends Component {
         Alert.alert(
           "Server is Down :(",
           error.toString(),
-          [{"OK": ()=>{}}]
+          [{text: "OK", onPress: ()=>{}}]
         );
       });
   }
@@ -122,9 +123,26 @@ class NavigationContainer extends Component {
   // Thus, selectedTab is a property of the Navigator, and TabBar looks to
   // Navigator for this property.
   _changeTab(tabName) {
-    this.setState({
-      selectedTab: tabName,
-    })
+    const settingsTab = global.tabNames().settingsTab;
+    let currentlyOnSettings = this.state.selectedTab == settingsTab;
+    let leavingSettings = currentlyOnSettings && tabName != settingsTab;
+    if (leavingSettings && this.state.hasUnsavedSettings) {
+      Alert.alert(
+        "Leaving unsaved changes",
+        "Save your changes with the circular 'save' button at the bottom-right!",
+        [
+          {text: "OK", onPress:() => {
+            this.setState({
+              selectedTab: tabName,
+            })
+          }},
+        ]
+      );
+    } else {
+      this.setState({
+        selectedTab: tabName,
+      })
+    }
   }
 
   async _asyncUpdateServerProfile(id, profileChanges, newProfile) {
@@ -172,6 +190,9 @@ class NavigationContainer extends Component {
             myProfile={this.state.myProfile}
             updateProfile={this._updateProfile.bind(this)}
             firebase={firebase}
+            setHasUnsavedSettings={(hasUnsavedSettings) => {
+              this.setState({hasUnsavedSettings: hasUnsavedSettings})
+            }}
           />
           <Animated.View
             style={[styles.notificationBanner, {transform:this.state.pan.getTranslateTransform()}]}>
