@@ -66,7 +66,7 @@ class NavigationContainer extends Component {
   }
 
   // Called when the app is closed from DeckView.js
-  // Removes all the old cards and saves the remainder to NSUserDefaults
+  // Removes all the old cards and saves the remainder to AsyncStorage
   _removeSeenCards(currentIndex) {
     let oldLength = this.state.profiles.length;
     this.state.profiles.splice(0, currentIndex);
@@ -113,6 +113,7 @@ class NavigationContainer extends Component {
         if (storedProfiles.constructor === Array && storedProfiles.length > 0){
           this.setState({
             profiles: storedProfiles,
+            myProfile: (this.state.myProfile == testProfile) ? storedProfiles[0] : this.state.myProfile, //TODO: @richard temporary while we don't have a real profile
           });
           this._removeProfilesFromStorage();
 
