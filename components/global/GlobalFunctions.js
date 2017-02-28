@@ -38,6 +38,12 @@ module.exports = {
       settingsTab: "SETTINGSTAB",
     })
   },
+  storageKeys: function () {
+    const prefix = "@SmashEmUp2017:";
+    return ({
+      profiles: prefix+"profiles",
+    })
+  },
   mod: function (n, m) {
     return ((n % m) + m) % m;
   },

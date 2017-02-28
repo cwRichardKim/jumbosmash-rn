@@ -13,6 +13,7 @@ import {
     View,
     Image,
     Dimensions,
+    AppState,
 } from 'react-native';
 
 import YesView          from './YesView.js'
@@ -34,6 +35,32 @@ class DeckView extends Component {
       cardIndex: 0,
       showProfile: false,
       topCardIndex: 0,
+    }
+  }
+
+  componentDidMount() {
+    AppState.addEventListener('change', this._handleAppStateChange.bind(this));
+  }
+
+  componentWillUnmount () {
+    AppState.removeEventListener('change', this._handleAppStateChange.bind(this));
+  }
+
+  _handleAppStateChange (currentAppState) {
+    if (currentAppState == "inactive") {
+      if (this.props.removeSeenCards) {
+        let oldCurrentProfile = this.props.profiles[this.state.cardIndex];
+        this.props.removeSeenCards(this.state.cardIndex)
+        let newCurrentProfile = this.props.profiles[0];
+        if (oldCurrentProfile !== newCurrentProfile) {
+          throw "Removing Cards Did Not Work";
+        }
+        this.setState({
+          cardIndex: 0,
+        });
+      } else {
+        throw "removeSeenCards undefined"
+      }
     }
   }
 
