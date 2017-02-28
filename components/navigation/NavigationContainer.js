@@ -12,7 +12,6 @@ import {
   View,
   Image,
   TabBarIOS,
-  Animated,
   TouchableHighlight,
   Navigator,
   Alert,
@@ -24,6 +23,7 @@ import NotificationBannerView from "./NotificationBannerView.js"
 import ChatPage               from "../chat/ChatPage.js"
 import ConversationPage       from "../chat/ConversationPage.js"
 const global = require('../global/GlobalFunctions.js');
+const TabNames = global.tabNames();
 const StorageKeys = global.storageKeys();
 
 const firebase = require('firebase');
@@ -51,9 +51,8 @@ class NavigationContainer extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      selectedTab: global.tabNames().cardsTab,
+      selectedTab: TabNames.cardsTab,
       notificationBannerText: "notification (tap me, goes to chat)",
-      pan: new Animated.ValueXY({x:0, y:-100}),
       profiles: [],
       myProfile: testProfile,
       hasUnsavedSettings: false,
@@ -61,11 +60,10 @@ class NavigationContainer extends Component {
   }
 
   componentDidMount() {
-    // this._showNotificationBanner();
     this._shouldRetrieveProfilesFromStorage();
   }
 
-  // Called when the app is closed from DeckView.js
+  // Called when the app is closed from SwipingPage.js
   // Removes all the old cards and saves the remainder to AsyncStorage
   _removeSeenCards(currentIndex) {
     let oldLength = this.state.profiles.length;
@@ -163,38 +161,13 @@ class NavigationContainer extends Component {
       });
   }
 
-  _hideNotificationBanner() {
-    Animated.spring(
-      this.state.pan,
-      {
-        toValue: {x:0, y:-100},
-      }
-    ).start();
-  }
-
-  _showNotificationBanner() {
-    Animated.spring(
-      this.state.pan,
-      {
-        toValue: {x:0, y:-25},
-      }
-    ).start();
-  }
-
-  _notificationBannerTapped() {
-    this._hideNotificationBanner();
-    this.setState({
-      selectedTab: 'chatTab',
-    });
-  }
-
   // Changes which tab is showing (swiping, settings, etc), check HomeTabBarIOS
   // for the tab names.  The reason why this is here is because notifications
   // will also need to change the tabs, and changes can only trickle downwards.
   // Thus, selectedTab is a property of the Navigator, and TabBar looks to
   // Navigator for this property.
   _changeTab(tabName) {
-    const settingsTab = global.tabNames().settingsTab;
+    const settingsTab = TabNames.settingsTab;
     let currentlyOnSettings = this.state.selectedTab == settingsTab;
     let leavingSettings = currentlyOnSettings && tabName != settingsTab;
     if (leavingSettings && this.state.hasUnsavedSettings) {
@@ -265,13 +238,14 @@ class NavigationContainer extends Component {
             }}
             removeSeenCards={this._removeSeenCards.bind(this)}
           />
-          <Animated.View
-            style={[styles.notificationBanner, {transform:this.state.pan.getTranslateTransform()}]}>
-            <NotificationBannerView
-              message={this.state.notificationBannerText}
-              onPress={this._notificationBannerTapped.bind(this)}
-            />
-          </Animated.View>
+          <NotificationBannerView
+            style={styles.notificationBanner}
+            message={this.state.notificationBannerText}
+            onPress={()=>{
+              console.log("asdfasdfasdf");
+              this._changeTab(TabNames.chatTab);
+            }}
+          />
         </View>
       );
     } else if (route.name == 'Chat') {
@@ -298,7 +272,7 @@ class NavigationContainer extends Component {
 const styles = StyleSheet.create({
   notificationBanner: {
     position: 'absolute',
-    height: 100,
+    height: 200,
     top: 0,
     left: 0,
     right: 0,
