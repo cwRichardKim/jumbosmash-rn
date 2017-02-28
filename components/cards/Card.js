@@ -1,7 +1,7 @@
 'use strict';
 
 /*
-This file is responsible for the UI of a single card. Parent class should be
+This file is responsible for the UI and motion of a single card. Parent class should be
 able to give it text and images and it should be able to lay it out correctly.
 */
 
@@ -73,10 +73,6 @@ class Card extends Component {
             duration: 200,
           }).start(this._swipeDidComplete.bind(this));
 
-          // Animated.decay(this.state.pan, {
-          //   velocity: {x: velocity, y: vy},
-          //   deceleration: 0.98,
-          // }).start(this._swipeDidComplete.bind(this))
         } else { // return back
           Animated.spring(this.state.pan, {
             toValue: {x: 0, y: 0},
