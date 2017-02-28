@@ -20,8 +20,6 @@ const CARD_REFRESH_BUFFER = 30; // There should always be at least this many car
 class SwipingPage extends Component {
   constructor(props) {
     super(props);
-    this.state = {
-    }
   }
 
   _addMoreCardsAsync () {
@@ -29,11 +27,11 @@ class SwipingPage extends Component {
   }
 
   _handleRightSwipe (card) {
-    console.log("swiped right func in swiping page");
+    console.log("swiped right on " + card.firstName);
   }
 
   _handleLeftSwipe (card) {
-    console.log("swiped left func in swiping pages");
+    console.log("swiped left on " + card.firstName);
   }
 
   // This function is called after the card was swiped and before the next card
@@ -55,6 +53,7 @@ class SwipingPage extends Component {
           handleLeftSwipe={this._handleLeftSwipe.bind(this)}
           handleCardWasRemoved={this._handleCardWasRemoved.bind(this)}
           pageHeight={this.props.pageHeight}
+          removeSeenCards={this.props.removeSeenCards}
         />
       </View>
     );
