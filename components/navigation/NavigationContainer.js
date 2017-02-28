@@ -71,8 +71,6 @@ class NavigationContainer extends Component {
     let oldLength = this.state.profiles.length;
     this.state.profiles.splice(0, currentIndex);
     this._shouldSaveProfilesToStorage();
-
-    return oldLength == this.state.profiles.length + currentIndex;
   }
 
   async _shouldSaveProfilesToStorage () {
