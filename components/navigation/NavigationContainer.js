@@ -16,6 +16,7 @@ import {
   TouchableHighlight,
   Navigator,
   Alert,
+  AsyncStorage,
 } from 'react-native';
 
 import HomeTabBarIOS          from "./HomeTabBarIOS.js"
@@ -23,6 +24,7 @@ import NotificationBannerView from "./NotificationBannerView.js"
 import ChatPage               from "../chat/ChatPage.js"
 import ConversationPage       from "../chat/ConversationPage.js"
 const global = require('../global/GlobalFunctions.js');
+const StorageKeys = global.storageKeys();
 
 const firebase = require('firebase');
 const firebaseConfig = {
@@ -33,6 +35,7 @@ const firebaseConfig = {
 };
 firebase.initializeApp(firebaseConfig);
 
+const FIRST_BATCH_SIZE = 50;
 const FETCH_BATCH_SIZE = 100;
 
 //TODO: @richard delete this later
@@ -57,12 +60,87 @@ class NavigationContainer extends Component {
     };
   }
 
+  componentDidMount() {
+    // this._showNotificationBanner();
+    this._shouldRetrieveProfilesFromStorage();
+  }
+
+  // Called when the app is closed from DeckView.js
+  // Removes all the old cards and saves the remainder to NSUserDefaults
+  _removeSeenCards(currentIndex) {
+    let oldLength = this.state.profiles.length;
+    this.state.profiles.splice(0, currentIndex);
+    this._shouldSaveProfilesToStorage();
+
+    return oldLength == this.state.profiles.length + currentIndex;
+  }
+
+  async _shouldSaveProfilesToStorage () {
+    if (this.state.profiles && this.state.profiles.length > 0) {
+      try {
+        await AsyncStorage.setItem(StorageKeys.profiles, JSON.stringify(this.state.profiles));
+      } catch (error) {
+        throw error;
+      }
+    } else {
+      throw "Tried to save profiles, but they are a type: " + typeof(this.state.profiles);
+    }
+  }
+
+  // empties storage so that if the user force quits, it doesn't seem like it's
+  // stuck and makes a fresh request
+  async _removeProfilesFromStorage () {
+    try {
+      await AsyncStorage.removeItem(StorageKeys.profiles);
+    } catch (error) {
+      throw "Error: Remove from storage: " + error;
+    }
+  };
+
+  // On load, attempts to pull information from local storage,
+  // If that doesn't work, it fetches them from the server
+  // Error cases also fetch from storage
+  // Successfully fetching from storage also empties storage
+  async _shouldRetrieveProfilesFromStorage () {
+    try {
+      let storedProfiles = await AsyncStorage.getItem(StorageKeys.profiles);
+
+      // successfully retrieved something
+      if (storedProfiles !== null) {
+        storedProfiles = JSON.parse(storedProfiles);
+
+        // retrieved data is of correct type
+        if (storedProfiles.constructor === Array && storedProfiles.length > 0){
+          this.setState({
+            profiles: storedProfiles,
+          });
+          this._removeProfilesFromStorage();
+
+        // data is not of the correct type
+        } else {
+          this._fetchProfiles(0, FIRST_BATCH_SIZE);
+        }
+      // storage is null / empty
+      } else {
+        this._fetchProfiles(0, FIRST_BATCH_SIZE);
+      }
+    // error accessing storage
+    } catch (error) {
+      this._fetchProfiles(0, FIRST_BATCH_SIZE);
+      throw error;
+    }
+  }
+
   // fetches new profiles and adds them to the profiles array
   // lastID: the lastID we got from the previous list of profiles
   // count: how many profiles to fetch. 0 or null is all
   _fetchProfiles(lastID, count) {
-    //TODO incorporate lastID and count
-    return fetch('https://jumbosmash2017.herokuapp.com/profile/all/586edd82837823188a297932')
+    //TODO: @richard use lastID
+    let index = "0"; //TODO: @richard replace
+    let id = "586edd82837823188a297932".toString(); //TODO: @richard replace
+    let batch = count ? count.toString() : FETCH_BATCH_SIZE.toString();
+    let url = "https://jumbosmash2017.herokuapp.com/profile/batch/"+id+"/"+index+"/"+batch;
+    return fetch(url)
       .then((response) => {
         if ("status" in response && response["status"] >= 200 && response["status"] < 300) {
           return response.json();
@@ -73,7 +151,7 @@ class NavigationContainer extends Component {
         global.shuffle(responseJson);
         this.setState({
           profiles: this.state.profiles.concat(responseJson),
-          myProfile: responseJson[0], //TODO: @richard temporary while we don't have a real profile
+          myProfile: (this.state.myProfile == testProfile) ? responseJson[0] : this.state.myProfile, //TODO: @richard temporary while we don't have a real profile
         })
       })
       .catch((error) => {
@@ -109,12 +187,6 @@ class NavigationContainer extends Component {
     this.setState({
       selectedTab: 'chatTab',
     });
-  }
-
-  componentDidMount() {
-    // this._showNotificationBanner();
-    //TODO @richard do something better here and pull from storage or something first
-    this._fetchProfiles();
   }
 
   // Changes which tab is showing (swiping, settings, etc), check HomeTabBarIOS
@@ -158,8 +230,7 @@ class NavigationContainer extends Component {
         myProfile: newProfile,
       });
     }).catch((error) => {
-      console.error(error); //TODO @richard show error thing
-      throw error;
+      throw error; //TODO @richard show error thing
     });
   }
 
@@ -193,6 +264,7 @@ class NavigationContainer extends Component {
             setHasUnsavedSettings={(hasUnsavedSettings) => {
               this.setState({hasUnsavedSettings: hasUnsavedSettings})
             }}
+            removeSeenCards={this._removeSeenCards.bind(this)}
           />
           <Animated.View
             style={[styles.notificationBanner, {transform:this.state.pan.getTranslateTransform()}]}>

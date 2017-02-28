@@ -64,6 +64,7 @@ class HomeTabBarIOS extends Component {
             profiles={this.props.profiles}
             fetchProfiles={this.props.fetchProfiles}
             pageHeight={PAGE_HEIGHT}
+            removeSeenCards={this.props.removeSeenCards}
           />
         )}
 
