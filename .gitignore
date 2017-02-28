@@ -4,7 +4,6 @@
 
 # Xcode
 #
-ios/Pods/
 build/
 *.pbxuser
 !default.pbxuser
@@ -40,7 +39,3 @@ buck-out/
 \.buckd/
 android/app/libs
 android/keystores/debug.keystore
-
-# fastlane (dev pushing to itunes connect)
-fastlane/
-jumbosmash.app.dSYM.zip
