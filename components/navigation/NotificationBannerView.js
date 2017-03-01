@@ -17,8 +17,9 @@ import {
 const VERTICAL_THRESHOLD = 10;
 const BANNER_SHOW_HEIGHT = 75;
 const BANNER_TOTAL_HEIGHT = 200; // from NavigationContainer
+const MAX_BANNER_PULL = 20;
 
-const INITIAL_POSITION = {x:0, y: -BANNER_TOTAL_HEIGHT};
+const INITIAL_POSITION = {x:0, y: -BANNER_TOTAL_HEIGHT - 10};
 const SHOW_POSITION = {x:0, y: BANNER_SHOW_HEIGHT - BANNER_TOTAL_HEIGHT};
 import clamp from 'clamp';
 
@@ -48,14 +49,17 @@ class NotificationBannerView extends Component {
 
       onPanResponderRelease: (e, {vx, vy}) => {
         this.state.pan.flattenOffset();
-
-        console.log(Math.abs(this.state.pan.y._value - SHOW_POSITION.y))
-        if (Math.abs(this.state.pan.y._value - SHOW_POSITION.y) > VERTICAL_THRESHOLD) {
+        let yDiff = this.state.pan.y._value - SHOW_POSITION.y;
+        if (Math.abs(yDiff) > VERTICAL_THRESHOLD) {
           let yvelocity =  clamp(vy, -3, 3);
 
-          this._hideNotificationBanner();
+          if (yDiff > 0) {
+            this._hideNotificationBanner(this.props.onPress());
+          } else {
+            this._hideNotificationBanner();
+          }
         } else { // return back
-          this._showNotificationBanner();
+          this._showNotificationBanner(null, 4);
         }
       }
     })
@@ -65,32 +69,43 @@ class NotificationBannerView extends Component {
     this._showNotificationBanner();
   }
 
-  _showNotificationBanner(callback) {
+  _showNotificationBanner(callback, friction = 5) {
     Animated.spring(
       this.state.pan,
       {
         toValue: SHOW_POSITION,
+        friction,
       }
     ).start(callback);
   }
 
-  _hideNotificationBanner(callback) {
+  _hideNotificationBanner(callback, friction = 5) {
     Animated.spring(
       this.state.pan,
       {
         toValue: INITIAL_POSITION,
+        friction,
       }
     ).start(callback);
   }
 
   _notificationBannerTapped() {
-    this._hideNotificationBanner(this.props.onPress());
+    // if (Math.abs(this.state.pan.y._value - SHOW_POSITION.y) < VERTICAL_THRESHOLD) {
+      this._hideNotificationBanner(this.props.onPress());
+    // }
   }
 
   render() {
+    let pan = this.state.pan;
+    let origY = BANNER_SHOW_HEIGHT - BANNER_TOTAL_HEIGHT;
+    let translateY = pan.y.interpolate({
+                                        inputRange:[origY - BANNER_SHOW_HEIGHT, origY, origY + 300],
+                                        outputRange:[origY - BANNER_SHOW_HEIGHT, origY, origY + MAX_BANNER_PULL],
+                                        extrapolateRight: 'clamp',
+                                      });
     return(
       <Animated.View
-        style={[this.props.style, {transform:this.state.pan.getTranslateTransform()}]}
+        style={[this.props.style, {transform:[{translateY}]}]}
         {...this._panResponder.panHandlers}>
         <TouchableHighlight style={styles.container} onPress={this._notificationBannerTapped.bind(this)}>
           <View style={[styles.view]}>
@@ -110,7 +125,8 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: "gray"
+    backgroundColor: "gray",
+    borderRadius: 5,
   },
   text: {
     paddingTop: BANNER_TOTAL_HEIGHT - BANNER_SHOW_HEIGHT,
