@@ -73,7 +73,6 @@ class SwipingPage extends Component {
     if (this.props.profiles.length - cardIndex <= CARD_REFRESH_BUFFER + 1) {
       console.log(`There are only ${this.props.profiles.length - cardIndex - 1} cards left.`);
       this.props.fetchProfiles();
-      console.log(this.props.fetchProfiles());
     }
     this.setState({
       cardIndex: this.state.cardIndex + 1,
@@ -102,7 +101,6 @@ class SwipingPage extends Component {
 
   _handleRightSwipeForIndex(cardIndex) {
     let card = this.props.profiles[cardIndex];
-    console.log("swiped right on " + card.firstName);
   }
 
   _handleLeftSwipeForIndex(cardIndex) {
