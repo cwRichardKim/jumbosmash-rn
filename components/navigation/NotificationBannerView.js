@@ -2,6 +2,13 @@
 
 /*
 Responsible for the view of the dropdown banner that shows a notification
+
+exports:
+showWithMessage(message, onPress)
+example:
+this.notificationBanner.showWithMessage("test", ()=>{
+  this._changeTab(TabNames.chatTab);
+});
 */
 
 import React, {Component} from 'react';
@@ -28,6 +35,8 @@ class NotificationBannerView extends Component {
     super(props);
     this.state = {
       pan: new Animated.ValueXY(INITIAL_POSITION),
+      message: "",
+      onPress: null,
     }
   }
 
@@ -54,7 +63,7 @@ class NotificationBannerView extends Component {
           let yvelocity =  clamp(vy, -3, 3);
 
           if (yDiff > 0) {
-            this._hideNotificationBanner(this.props.onPress());
+            this._notificationBannerTapped();
           } else {
             this._hideNotificationBanner();
           }
@@ -66,6 +75,14 @@ class NotificationBannerView extends Component {
   }
 
   componentDidMount () {
+    // this._showNotificationBanner();
+  }
+
+  showWithMessage(message, onPress) {
+    this.setState({
+      message,
+      onPress,
+    });
     this._showNotificationBanner();
   }
 
@@ -90,9 +107,10 @@ class NotificationBannerView extends Component {
   }
 
   _notificationBannerTapped() {
-    // if (Math.abs(this.state.pan.y._value - SHOW_POSITION.y) < VERTICAL_THRESHOLD) {
-      this._hideNotificationBanner(this.props.onPress());
-    // }
+    if (this.state.onPress) {
+      this.state.onPress();
+    }
+    this._hideNotificationBanner();
   }
 
   render() {
@@ -105,11 +123,11 @@ class NotificationBannerView extends Component {
                                       });
     return(
       <Animated.View
-        style={[this.props.style, {transform:[{translateY}]}]}
+        style={[this.props.style, styles.container, {transform:[{translateY}]}]}
         {...this._panResponder.panHandlers}>
-        <TouchableHighlight style={styles.container} onPress={this._notificationBannerTapped.bind(this)}>
+        <TouchableHighlight style={{flex:1}} onPress={this._notificationBannerTapped.bind(this)}>
           <View style={[styles.view]}>
-            <Text style={styles.text}>{this.props.message ? this.props.message : "test"}</Text>
+            <Text style={styles.text}>{this.state.message}</Text>
           </View>
         </TouchableHighlight>
       </Animated.View>
@@ -119,7 +137,11 @@ class NotificationBannerView extends Component {
 
 const styles = StyleSheet.create({
   container: {
-    flex:1,
+    height: BANNER_TOTAL_HEIGHT,
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
   },
   view: {
     flex: 1,
