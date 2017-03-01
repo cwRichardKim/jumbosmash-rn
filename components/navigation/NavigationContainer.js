@@ -194,6 +194,12 @@ class NavigationContainer extends Component {
     // this.notificationBanner.showWithMessage("test", ()=>{
     //   this._changeTab(TabNames.chatTab);
     // });
+    //
+    // setTimeout(() => {
+    //   this.notificationBanner.showWithMessage("next message arrived", ()=>{
+    //     this._changeTab(TabNames.chatTab);
+    //   });
+    // }, 2000);
   }
 
   async _asyncUpdateServerProfile(id, profileChanges, newProfile) {
