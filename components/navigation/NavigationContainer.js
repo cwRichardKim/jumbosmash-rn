@@ -242,7 +242,6 @@ class NavigationContainer extends Component {
             style={styles.notificationBanner}
             message={this.state.notificationBannerText}
             onPress={()=>{
-              console.log("asdfasdfasdf");
               this._changeTab(TabNames.chatTab);
             }}
           />
