@@ -189,6 +189,13 @@ class NavigationContainer extends Component {
     }
   }
 
+  componentDidMount() {
+    // example notification calling function
+    // this.notificationBanner.showWithMessage("test", ()=>{
+    //   this._changeTab(TabNames.chatTab);
+    // });
+  }
+
   async _asyncUpdateServerProfile(id, profileChanges, newProfile) {
     let url = "https://jumbosmash2017.herokuapp.com/profile/id/".concat(id);
     fetch(url, {
@@ -238,13 +245,7 @@ class NavigationContainer extends Component {
             }}
             removeSeenCards={this._removeSeenCards.bind(this)}
           />
-          <NotificationBannerView
-            style={styles.notificationBanner}
-            message={this.state.notificationBannerText}
-            onPress={()=>{
-              this._changeTab(TabNames.chatTab);
-            }}
-          />
+          <NotificationBannerView ref={(elem) => {this.notificationBanner = elem}}/>
         </View>
       );
     } else if (route.name == 'Chat') {
@@ -269,13 +270,6 @@ class NavigationContainer extends Component {
 }
 
 const styles = StyleSheet.create({
-  notificationBanner: {
-    position: 'absolute',
-    height: 200,
-    top: 0,
-    left: 0,
-    right: 0,
-  },
 });
 
 export default NavigationContainer;
