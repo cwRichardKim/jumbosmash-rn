@@ -21,13 +21,14 @@ import {
   PanResponder
 } from 'react-native';
 
-const VERTICAL_THRESHOLD = 10;
-const BANNER_SHOW_HEIGHT = 75;
-const BANNER_TOTAL_HEIGHT = 200; // from NavigationContainer
-const MAX_BANNER_PULL = 20;
+const VERTICAL_THRESHOLD = 10; // distance pull/push required to register action
+const BANNER_SHOW_HEIGHT = 75; // perceived height of banner
+const BANNER_TOTAL_HEIGHT = 200; // perceived + hidden height of banner
+const MAX_BANNER_PULL = 20; // max distance allowed for downward pull (decelerated)
 
 const INITIAL_POSITION = {x:0, y: -BANNER_TOTAL_HEIGHT - 10};
 const SHOW_POSITION = {x:0, y: BANNER_SHOW_HEIGHT - BANNER_TOTAL_HEIGHT};
+const BUMP_POSITION = {x:0, y: BANNER_SHOW_HEIGHT - BANNER_TOTAL_HEIGHT + 30};
 import clamp from 'clamp';
 
 class NotificationBannerView extends Component {
@@ -37,6 +38,7 @@ class NotificationBannerView extends Component {
       pan: new Animated.ValueXY(INITIAL_POSITION),
       message: "",
       onPress: null,
+      numMessages: 0,
     }
   }
 
@@ -87,13 +89,32 @@ class NotificationBannerView extends Component {
   }
 
   _showNotificationBanner(callback, friction = 5) {
-    Animated.spring(
-      this.state.pan,
-      {
-        toValue: SHOW_POSITION,
-        friction,
-      }
-    ).start(callback);
+    if (this.state.numMessages > 0) {
+      Animated.timing(
+        this.state.pan,
+        {
+          toValue: BUMP_POSITION,
+          duration: 100,
+        }
+      ).start(() => {
+        Animated.spring(
+          this.state.pan,
+          {
+            toValue: SHOW_POSITION,
+            friction: 7,
+          }
+        ).start()
+      });
+    } else {
+      Animated.spring(
+        this.state.pan,
+        {
+          toValue: SHOW_POSITION,
+          friction,
+        }
+      ).start(callback);
+    }
+    this.setState({numMessages: this.state.numMessages + 1});
   }
 
   _hideNotificationBanner(callback, friction = 5) {
@@ -103,7 +124,12 @@ class NotificationBannerView extends Component {
         toValue: INITIAL_POSITION,
         friction,
       }
-    ).start(callback);
+    ).start(() => {
+      if (callback) {
+        callback();
+      }
+      this.setState({numMessages: 0});
+    });
   }
 
   _notificationBannerTapped() {
@@ -121,13 +147,14 @@ class NotificationBannerView extends Component {
                                         outputRange:[origY - BANNER_SHOW_HEIGHT, origY, origY + MAX_BANNER_PULL],
                                         extrapolateRight: 'clamp',
                                       });
+    let numMsgs = this.state.numMessages;
     return(
       <Animated.View
-        style={[this.props.style, styles.container, {transform:[{translateY}]}]}
+        style={[styles.container, this.props.style, {transform:[{translateY}]}]}
         {...this._panResponder.panHandlers}>
         <TouchableHighlight style={{flex:1}} onPress={this._notificationBannerTapped.bind(this)}>
           <View style={[styles.view]}>
-            <Text style={styles.text}>{this.state.message}</Text>
+            <Text style={styles.text}>{this.state.message}{numMsgs > 1 ? " ("+numMsgs.toString()+")" : ""}</Text>
           </View>
         </TouchableHighlight>
       </Animated.View>
