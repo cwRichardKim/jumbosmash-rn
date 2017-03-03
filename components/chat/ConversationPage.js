@@ -7,7 +7,9 @@ should be given a conversationId from it's 'parent' ChatPage
 */
 
 import React, {Component} from 'react';
+import View from 'react-native';
 import { GiftedChat } from 'react-native-gifted-chat';
+
 
 class ConversationPage extends Component {
   constructor(props) {
@@ -32,10 +34,10 @@ class ConversationPage extends Component {
   }
 
   componentDidMount() {
+    this.props.setShowNavigationBar(true);
     this._messagesRef.on('child_added', (child) => {
       var pos = 'right';
       if (child.val().user._id != this.props.userId) {
-        console.log("GOT IN HERE");
         pos = 'left';
       }
       this.onReceive({
@@ -50,8 +52,11 @@ class ConversationPage extends Component {
 
   }
 
+  componentWillUnmount() {
+    this.props.setShowNavigationBar(false);
+  }
+
   onSend(messages = []) {
-    console.log("PARTICIPANTS " + JSON.stringify(this.props.participants));
     for (var i = 0, len = messages.length; i < len; i++) {
       var message = messages[i];
       this._messagesRef.push({
@@ -64,13 +69,10 @@ class ConversationPage extends Component {
         },
         date: new Date().getTime(),
       });
-
-
     }
   }
 
   onReceive(message) {
-    console.log("MESSAGE " + JSON.stringify(message));
     this.setState((previousState) => {
       return {
         messages: GiftedChat.append(previousState.messages, message),
@@ -86,10 +88,8 @@ class ConversationPage extends Component {
         onReceive={this.onReceive}
         user={{
           _id: this.props.userId
-        }}
-      />
+        }}/>
     );
   }
 }
-
 export default ConversationPage;
