@@ -56,6 +56,7 @@ class NavigationContainer extends Component {
       profiles: [],
       myProfile: testProfile,
       hasUnsavedSettings: false,
+      showNavigator: false,
     };
   }
 
@@ -124,15 +125,15 @@ class NavigationContainer extends Component {
           });
           this._removeProfilesFromStorage();
 
-        // data is not of the correct type
+          // data is not of the correct type
         } else {
           this._fetchProfiles(0, FIRST_BATCH_SIZE);
         }
-      // storage is null / empty
+        // storage is null / empty
       } else {
         this._fetchProfiles(0, FIRST_BATCH_SIZE);
       }
-    // error accessing storage
+      // error accessing storage
     } catch (error) {
       this._fetchProfiles(0, FIRST_BATCH_SIZE);
       throw error;
@@ -149,27 +150,27 @@ class NavigationContainer extends Component {
     let batch = count ? count.toString() : FETCH_BATCH_SIZE.toString();
     let url = "https://jumbosmash2017.herokuapp.com/profile/batch/"+id+"/"+index+"/"+batch;
     return fetch(url)
-      .then((response) => {
-        if ("status" in response && response["status"] >= 200 && response["status"] < 300) {
-          return response.json();
-        } else {
-          throw ("status" in response) ? response["status"] : "Unknown Error";
-        }
-      }).then((responseJson) => {
-        global.shuffle(responseJson);
-        this.setState({
-          profiles: this.state.profiles.concat(responseJson),
-          myProfile: (this.state.myProfile == testProfile) ? responseJson[0] : this.state.myProfile, //TODO: @richard temporary while we don't have a real profile
-        })
+    .then((response) => {
+      if ("status" in response && response["status"] >= 200 && response["status"] < 300) {
+        return response.json();
+      } else {
+        throw ("status" in response) ? response["status"] : "Unknown Error";
+      }
+    }).then((responseJson) => {
+      global.shuffle(responseJson);
+      this.setState({
+        profiles: this.state.profiles.concat(responseJson),
+        myProfile: (this.state.myProfile == testProfile) ? responseJson[0] : this.state.myProfile, //TODO: @richard temporary while we don't have a real profile
       })
-      .catch((error) => {
-        //TODO: @richard replace with real catch case
-        Alert.alert(
-          "Server is Down :(",
-          error.toString(),
-          [{text: "OK", onPress: ()=>{}}]
-        );
-      });
+    })
+    .catch((error) => {
+      //TODO: @richard replace with real catch case
+      Alert.alert(
+        "Server is Down :(",
+        error.toString(),
+        [{text: "OK", onPress: ()=>{}}]
+      );
+    });
   }
 
   // Changes which tab is showing (swiping, settings, etc), check HomeTabBarIOS
@@ -252,28 +253,61 @@ class NavigationContainer extends Component {
           <NotificationBannerView ref={(elem) => {this.notificationBanner = elem}}/>
         </View>
       );
-    } else if (route.name == 'Chat') {
-      return(<ConversationPage
-                navigator={navigator}
-                chatroomId={route.chatroomId}
-                participants={route.participants}
-                userId={route.userId}
-                firebase={firebase}
-              />);
+    } else if (route.name == 'Conversation') {
+      return(
+        <ConversationPage
+          navigator={navigator}
+          chatroomId={route.chatroomId}
+          participants={route.participants}
+          userId={route.userId}
+          setShowNavigationBar={this._setShowNavigationBar.bind(this)}
+          firebase={firebase}/>
+      );
     }
   }
 
-  render() {
-    return (
-      <Navigator
+  // used as a callback passed to child components of the navigator.
+  // example use is showing the navigation bar in the ConversationPage
+  _setShowNavigationBar(shouldShow) {
+    this.setState({showNavigator: shouldShow});
+  }
+
+  // returns UI element of the navigation bar
+  _renderNavigationBar() {
+    if (this.state.showNavigator) {
+      return (<Navigator.NavigationBar
+        routeMapper={{
+          LeftButton: (route, navigator, index, navState) =>
+          {
+            return(<TouchableHighlight onPress={() => {navigator.pop();}}>
+              <Text>Back</Text>
+            </TouchableHighlight>);
+          },
+          RightButton: (route, navigator, index, navState) =>
+           { return null; },
+         Title: (route, navigator, index, navState) =>
+           { return (<Text>Awesome Nav Bar</Text>); },
+        }}
+        style={{backgroundColor: 'gray'}}
+        />);
+    } else {
+      return null;
+    }
+  }
+
+
+    render() {
+      return (
+        <Navigator
+        ref={(elem)=>{this.navigator = elem}}
         initialRoute={{ name: 'TabBar' }}
         renderScene={this._renderNavigatorScene.bind(this)}
-      />
-    );
+        navigationBar={this._renderNavigationBar()}
+        />
+      );
+    }
   }
-}
-
 const styles = StyleSheet.create({
 });
 
-export default NavigationContainer;
+  export default NavigationContainer;
