@@ -22,6 +22,7 @@ import HomeTabBarIOS          from "./HomeTabBarIOS.js"
 import NotificationBannerView from "./NotificationBannerView.js"
 import ChatPage               from "../chat/ChatPage.js"
 import ConversationPage       from "../chat/ConversationPage.js"
+
 const global = require('../global/GlobalFunctions.js');
 const TabNames = global.tabNames();
 const StorageKeys = global.storageKeys();
@@ -57,12 +58,13 @@ class NavigationContainer extends Component {
       myProfile: testProfile,
       hasUnsavedSettings: false,
       showNavigator: false,
+      currentRecipient: null, // used for the nav bar in ConversationPage
     };
   }
 
   componentDidMount() {
     this._shouldRetrieveProfilesFromStorage();
-    
+
     // example notification calling function
     // this.notificationBanner.showWithMessage("test", ()=>{
     //   this._changeTab(TabNames.chatTab);
@@ -268,28 +270,40 @@ class NavigationContainer extends Component {
 
   // used as a callback passed to child components of the navigator.
   // example use is showing the navigation bar in the ConversationPage
-  _setShowNavigationBar(shouldShow) {
-    this.setState({showNavigator: shouldShow});
+  _setShowNavigationBar(shouldShow, participant) {
+    this.setState(
+      {showNavigator: shouldShow,
+       currentParticipant: participant,
+      }
+    );
   }
 
   // returns UI element of the navigation bar
   _renderNavigationBar() {
     if (this.state.showNavigator) {
-      return (<Navigator.NavigationBar
-        routeMapper={{
-          LeftButton: (route, navigator, index, navState) =>
-          {
-            return(<TouchableHighlight onPress={() => {navigator.pop();}}>
-              <Text>Back</Text>
-            </TouchableHighlight>);
-          },
-          RightButton: (route, navigator, index, navState) =>
-           { return null; },
-         Title: (route, navigator, index, navState) =>
-           { return (<Text>Awesome Nav Bar</Text>); },
-        }}
-        style={{backgroundColor: 'gray'}}
-        />);
+      return (
+        <Navigator.NavigationBar style={styles.navigationBarContainer}
+          routeMapper={{
+            LeftButton: (route, navigator, index, navState) =>
+            {
+              return(<TouchableHighlight onPress={() => {navigator.pop();}}>
+                <Text>Back</Text>
+              </TouchableHighlight>);
+            },
+            RightButton: (route, navigator, index, navState) =>
+             { return null; },
+           Title: (route, navigator, index, navState) =>
+             { return (
+               <View style={styles.navigationBarTitleContainer}>
+                 <Image style={styles.avatarPhoto} source={this.state.currentParticipant ? {uri: this.state.currentParticipant.photo} : null}/>
+                 <Text style={styles.navigationBarTitleText}>
+                   {this.state.currentParticipant ? this.state.currentParticipant.firstName : null}
+                 </Text>
+               </View>); },}}>
+          <View style={styles.navigationBarSeparator}/>
+        </Navigator.NavigationBar>
+
+      );
     } else {
       return null;
     }
@@ -299,15 +313,39 @@ class NavigationContainer extends Component {
     render() {
       return (
         <Navigator
-        ref={(elem)=>{this.navigator = elem}}
-        initialRoute={{ name: 'TabBar' }}
-        renderScene={this._renderNavigatorScene.bind(this)}
-        navigationBar={this._renderNavigationBar()}
+          ref={(elem)=>{this.navigator = elem}}
+          initialRoute={{ name: 'TabBar' }}
+          renderScene={this._renderNavigatorScene.bind(this)}
+          navigationBar={this._renderNavigationBar()}
         />
       );
     }
   }
 const styles = StyleSheet.create({
+  avatarPhoto: {
+    height: 40,
+    width: 40,
+    borderRadius: 20,
+  },
+  navigationBarContainer: {
+    backgroundColor: 'white',
+  },
+  navigationBarTitleContainer: {
+    padding: 12,
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  navigationBarTitleText: {
+    marginLeft: 12,
+    fontSize: 16,
+    color: '#CAC4C4',
+    fontFamily: 'Avenir Next',
+  },
+  navigationBarSeparator: {
+    flex: 1,
+    height: 40,
+    backgroundColor: '#E1E1E1',
+  },
 });
 
   export default NavigationContainer;

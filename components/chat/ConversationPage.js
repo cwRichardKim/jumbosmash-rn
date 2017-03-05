@@ -7,9 +7,10 @@ should be given a conversationId from it's 'parent' ChatPage
 */
 
 import React, {Component} from 'react';
-import View from 'react-native';
+import {View, StyleSheet} from 'react-native';
 import { GiftedChat } from 'react-native-gifted-chat';
 
+let global = require('../global/GlobalFunctions.js');
 
 class ConversationPage extends Component {
   constructor(props) {
@@ -34,7 +35,8 @@ class ConversationPage extends Component {
   }
 
   componentDidMount() {
-    this.props.setShowNavigationBar(true);
+    let participants = global.otherParticipants(this.props.participants, this.props.userId)
+    this.props.setShowNavigationBar(true, participants && participants.length > 0 ? participants[0] : null);
     this._messagesRef.on('child_added', (child) => {
       var pos = 'right';
       if (child.val().user._id != this.props.userId) {
@@ -53,7 +55,7 @@ class ConversationPage extends Component {
   }
 
   componentWillUnmount() {
-    this.props.setShowNavigationBar(false);
+    this.props.setShowNavigationBar(false, null);
   }
 
   onSend(messages = []) {
@@ -86,10 +88,15 @@ class ConversationPage extends Component {
         messages={this.state.messages}
         onSend={this.onSend}
         onReceive={this.onReceive}
+        renderAvatar={() => {null;}}
         user={{
           _id: this.props.userId
-        }}/>
+        }}
+        />
     );
   }
 }
+
+const styles = StyleSheet.create({
+});
 export default ConversationPage;

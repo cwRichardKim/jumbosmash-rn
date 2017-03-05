@@ -22,7 +22,11 @@ import ChatSearch from './ChatSearch';
 import ConversationPage from './ConversationPage';
 let global = require('../global/GlobalFunctions.js');
 
+//TODO: check for servuce being down
 const idOfUser = '588f7e504a557100113d2184';// Jared: 588f7e504a557100113d2184 Richard: '586edd82837823188a297932'; //TODO: self expanatory
+let _listView: ListView;
+const SCROLL_TO_Y = 90;
+
 class ChatPage extends React.Component {
   constructor(props) {
     super(props);
@@ -32,6 +36,12 @@ class ChatPage extends React.Component {
       dataSource: ds.cloneWithRows(this._fetchConversationsAsync()),
       navigator: props.navigator
     };
+  }
+
+  componentDidMount () {
+    if (_listView) {
+      _listView.scrollTo({x: 0, y: SCROLL_TO_Y, animated: true});
+    }
   }
 
   _fetchConversationsAsync () {
@@ -57,7 +67,6 @@ class ChatPage extends React.Component {
    this.setState({searchText: searchText});
 
    let filteredData = this.filterConversations(searchText, this.state.rawData);
-   console.log("FILTERED " + JSON.stringify(filteredData));
    this.setState({
       dataSource: this.state.dataSource.cloneWithRows(filteredData),
    });
@@ -67,15 +76,24 @@ class ChatPage extends React.Component {
     let text = searchText.toLowerCase();
     return conversations.filter((c) => {
       let otherParticipants = global.otherParticipants(c.participants, idOfUser);
-      console.log(JSON.stringify(otherParticipants));
       let convo = otherParticipants[0].firstName.toLowerCase();
-      console.log("CONVO: " + convo);
       return convo.search(text) !== -1;
     });
   }
 
   rowPressed(conversation) {
     this.renderConversation(conversation);
+  }
+
+  _renderHeader() {
+    return(
+      <View>
+        {this._renderSearchBar()}
+        <View style={styles.headerContainer}>
+          <Text style={styles.headerText}> MY MATCHES </Text>
+        </View>
+      </View>
+    );
   }
 
   _renderSearchBar() {
@@ -103,19 +121,29 @@ class ChatPage extends React.Component {
     if(conversation == null || conversation == 0) {
       return null;
     }
+
+    // figure out other person(s) in conversation and get name
     let otherParticipants = global.otherParticipants(conversation.participants, idOfUser);
     let len = otherParticipants.length;
     if(len <= 0) {return null;}
     let name = otherParticipants[0].firstName;
     name += otherParticipants.length > 1 ? " et al." : "";
+
+    // handle rendering of last sent message
+    let setShowRight = conversation.lastSent.profileId == idOfUser;
+
     return (
       <TouchableHighlight onPress={() => this.rowPressed(conversation)}
           underlayColor='#dddddd'>
           <View style={styles.rowContainer}>
-            <Image style={styles.rowPhoto} source={otherParticipants ? {uri: otherParticipants[0].photo} : null}/>
-            <Text style={styles.rowText}>
-              {`${name}`}
-            </Text>
+            {setShowRight ? <Text style={styles.rowText} ellipsizeMode={'tail'} numberOfLines={1}>{conversation.lastSent.message}</Text> : null}
+            <View style={styles.rowPhotoAndName}>
+              <Image style={styles.rowPhoto} source={otherParticipants ? {uri: otherParticipants[0].photo} : null}/>
+              <Text style={styles.rowText}>
+                {`${name}`}
+              </Text>
+            </View>
+            {!setShowRight ? <Text style={styles.rowText} ellipsizeMode={'tail'} numberOfLines={1}>{conversation.lastSent.message}</Text> : null}
           </View>
       </TouchableHighlight>
     );
@@ -124,12 +152,13 @@ class ChatPage extends React.Component {
   render() {
     return (
         <ListView
+          ref={(listView) => { _listView = listView; }}
           style={styles.container}
           dataSource={this.state.dataSource}
           renderRow={this.renderChatRow.bind(this)}
           enableEmptySections={true}
           renderSeparator={(sectionId, rowId) => <View key={rowId} style={styles.separator} />}
-          renderHeader={() => this._renderSearchBar()}
+          renderHeader={() => this._renderHeader()}
         />
     );
   }
@@ -151,14 +180,30 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
   },
+  rowPhotoAndName: {
+    flexDirection: 'column',
+    alignItems: 'center',
+  },
   rowText: {
     marginLeft: 12,
     fontSize: 16,
+    fontFamily: 'Avenir Next',
+    // flex: 1,
   },
   rowPhoto: {
     height: 40,
     width: 40,
     borderRadius: 20,
+    flex: 1,
+  },
+  headerContainer: {
+    height: 40,
+    flex: 1,
+  },
+  headerText: {
+    fontSize: 20,
+    fontFamily: 'Avenir Next',
+    color: '#F3A9BF',
   },
   searchInput: {
     height: 30,
