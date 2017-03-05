@@ -32,6 +32,8 @@ class SwipingPage extends Component {
   constructor(props) {
     super(props);
 
+    this.cards=[null, null, null];
+
     this.state = {
       cardIndex: 0,
       showProfile: false,
@@ -101,6 +103,7 @@ class SwipingPage extends Component {
 
   _handleRightSwipeForIndex(cardIndex) {
     let card = this.props.profiles[cardIndex];
+    console.log("swiped right on " + card.firstName);
   }
 
   _handleLeftSwipeForIndex(cardIndex) {
@@ -108,12 +111,13 @@ class SwipingPage extends Component {
     console.log("swiped left on " + card.firstName);
   }
 
+  // handles button push, delegates animation and logic to card
   _swipeRightButtonPressed() {
-    // this.props.handleRightSwipe(this.props.profiles[this.state.cardIndex])
+    this.cards[this.state.topCardIndex].programmaticSwipeRight();
   }
 
   _swipeLeftButtonPressed() {
-    // this.props.handleLeftSwipe(this.props.profiles[this.state.cardIndex])
+    this.cards[this.state.topCardIndex].programmaticSwipeLeft();
   }
 
   // renders single card
@@ -122,6 +126,7 @@ class SwipingPage extends Component {
     let index = this.state.cardIndex + positionInDeck;
     return (
       <Card {...this.props.profiles[index]}
+        ref={(elem) => {this.cards[cardIndex] = elem}}
         onPress={()=>{this.setState({showProfile: true})}}
         handleRightSwipeForIndex={this._handleRightSwipeForIndex.bind(this)}
         handleLeftSwipeForIndex={this._handleLeftSwipeForIndex.bind(this)}

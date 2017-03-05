@@ -87,6 +87,30 @@ class Card extends Component {
     this._animateEntrance();
   }
 
+  _programmaticSwipeAnimation(isRight) {
+    let xValue = isRight ? this.props.cardWidth * 2 : this.props.cardWidth * -2;
+    let yValue = 50;
+    Animated.timing(this.state.pan, {
+      toValue: {x: xValue, y: yValue},
+      duration: 200,
+    }).start(() => {
+      if (isRight) {
+        this.props.handleRightSwipeForIndex(this.props.index);
+      } else {
+        this.props.handleLeftSwipeForIndex(this.props.index);
+      }
+      this._swipeDidComplete();
+    });
+  }
+
+  programmaticSwipeRight() {
+    this._programmaticSwipeAnimation(true);
+  }
+
+  programmaticSwipeLeft() {
+    this._programmaticSwipeAnimation(false);
+  }
+
   _animateEntrance() {
     Animated.spring( this.state.enter, { toValue: 1, friction: 8 } ).start();
   }
@@ -96,9 +120,8 @@ class Card extends Component {
       // this function deals with the data (number of cards) and should have no impact on visuals
       this.props.swipeDidComplete(this.props.index);
     }
+    // reuses view for next card, center the card
     this.state.pan.setValue({x: 0, y: 0});
-    this.state.enter.setValue(0.9);
-    this._animateEntrance();
   }
 
   render() {
