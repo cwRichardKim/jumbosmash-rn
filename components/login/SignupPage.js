@@ -12,14 +12,13 @@ import {
   TextInput,
   View,
   Alert,
-  AsyncStorage,
   Button,
   Navigator
 } from 'react-native';
 
-import LoginPage              from './LoginPage.js';
 import AccountPage            from './AccountPage.js';
-// import AuthErrors             from './AuthErrors.js';
+import AuthErrors             from './AuthErrors.js';
+import Redirect               from './Redirect.js';
 
 class SignupPage extends Component {
 
@@ -29,28 +28,6 @@ class SignupPage extends Component {
       email_input: '',
       password:'',
     }
-  }
-
-  // TOOD: move to AuthErrors
-  handleSignupError(error) {
-    var errorCode = error.code;
-        switch(errorCode) {
-          case "auth/email-already-in-use":
-            Alert.alert("The email is already in use. Retrieve password.");
-            break;
-          case "auth/invalid-email":
-            Alert.alert("The email is not valid.");
-            break;
-          case "auth/operation-not-allowed":
-            Alert.alert("Email account is not enabled.");
-            break;
-          case "auth/weak-password":
-            Alert.alert("The password you've chosen is not strong enough.");
-            break;
-          default:
-            Alert.alert("Error. Please try again.");
-            break;
-        }
   }
 
   signup() {
@@ -68,19 +45,13 @@ class SignupPage extends Component {
       })
       // Failure case: Signup Error
       .catch((error) => {
-        this.handleSignupError(error);
+        AuthErrors.handleSignupError(error);
       })
 
     // TODO: Think about email confirmation? => right now i can create an account for *any* email address
   }
 
-  // TODO: Move these functions 
-  goToLoginPage(){
-    this.props.navigator.push({
-      component: LoginPage
-    });
-  }
-
+  // TODO: move to redirect
   goToAccountPage() {
     this.props.navigator.push({
       component: AccountPage
@@ -118,7 +89,7 @@ class SignupPage extends Component {
 
           <Button
             style={styles.button}
-            onPress={this.goToLoginPage.bind(this)}
+            onPress={Redirect.goToLoginPage.bind(this)}
             title="Got an account, go to Login"
             accessibilityLabel="Already got an account, go to login"
           />

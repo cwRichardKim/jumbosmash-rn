@@ -16,14 +16,13 @@ import {
 } from 'react-native';
 
 import LoginPage              from './LoginPage.js';
+import AuthErrors             from './AuthErrors.js';
 
 class AccountPage extends Component {
 
   constructor(props) {
     super(props);
     this.state = {
-      email: '',
-      password:'',
     }
   }
 
@@ -32,11 +31,6 @@ class AccountPage extends Component {
     this.props.navigator.push({
       component: LoginPage
     });
-  }
-
-  // TODO: figure out how to handle signout error?
-  handleLogoutError(error) {
-    Alert.alert("there's been an error! AHHH!");
   }
 
   logout(){

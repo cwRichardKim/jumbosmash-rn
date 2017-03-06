@@ -1,6 +1,7 @@
 'use strict';
 
 /*
+This is the parent page of everything. 
 This page handles the navigation for login, managing the transition between:
   
   SignupPage     --    Creating an account
@@ -30,14 +31,25 @@ class AuthContainer extends Component {
   constructor(props){
     super(props);
     this.state = {
-      component: null,
+      component: LoginPage, // default is not logged in
     };
   }
   
+  // Loads initial page
+  // If user is logged in => AccountPage
+  // user is not logged in => LoginPage
+  componentWillMount(){
+    var user = this.props.firebase.auth().currentUser;
+
+    if (user) {
+      this.setState({component: AccountPage});
+    }
+  }
+
   render(){
     return (
       <Navigator
-        initialRoute={{component: LoginPage}}    
+        initialRoute={{component: this.state.component}}    
         configureScene={() => {
           return Navigator.SceneConfigs.FloatFromRight;
         }}
