@@ -1,8 +1,7 @@
 'use strict';
 
 /*
-This file is the parent file for the entire swiping mechanism. It should control
-the data, make the requests, and delegate the UI / swiping to DeckView
+This file handles if you already have an account, and want to login.
 */
 
 import React, {Component} from 'react';
@@ -11,86 +10,130 @@ import {
   Text,
   TextInput,
   View,
+  Alert,
+  AsyncStorage,
   Button,
 } from 'react-native';
 
-import Swiper from 'react-native-swiper'; /* find one FROM facebook */
-
-const onButtonPress = () => {
-  // Alert.alert('Button has been pressed!');
-};
+import SignupPage             from "./SignupPage.js";
+import AccountPage            from "./AccountPage.js";
 
 class LoginPage extends Component {
+  
   constructor(props) {
     super(props);
     this.state = {
-      firstName: '',
-      lastName: '',
-      isGood: false, //
+      email: '',
+      password:'',
     }
+  }
+
+  handleLoginError(error) {
+    var errorCode = error.code;
+    switch(errorCode) {
+      case "auth/invalid-email":
+        Alert.alert("The email is not valid.");
+        break;
+      case "auth/user-disabled":
+        Alert.alert("User is not enabled.");
+        break;
+      case "auth/user-not-found":
+        Alert.alert("User not found. Create an account!");
+        break;
+      case "auth/wrong-password":
+        Alert.alert("Incorrect password.");
+        break;
+      default:
+        Alert.alert("Error. Please try again.");
+        break;
+    }
+  }
+
+  login(){
+
+    var firebase_auth = this.props.firebase.auth();
+
+    var email = this.state.email; // same verification that email is Tufts(?)
+    var password = this.state.password;
+
+    firebase_auth.signInWithEmailAndPassword(email, password)
+      // Success case
+      .then(() => {
+        this.goToAccountPage();
+      })
+      // Failure case: Login Error
+      .catch((error) => {
+        this.handleLoginError(error);
+      })
+  }
+
+
+ // TODO: Move these functions 
+  goToSignup(){
+    this.props.navigator.push({
+      component: SignupPage
+    });
+  }
+
+  goToAccountPage() {
+    this.props.navigator.push({
+      component: AccountPage
+    });
   }
 
   render() {
     return (
-      <Swiper style={styles.wrapper} showsButtons={true}>
-        <View style={styles.slide}>
-        <Text style={styles.text}>Let's get you set up.</Text>
-        </View>
-        <View style={styles.slide}>
-          <TextInput style={styles.name}
-            placeholder="First Name"
-            onChangeText={(text) => this.setState({firstName})}
+      <View style={styles.container}>
+        <View style={styles.body}>
+          <TextInput
+            style={styles.textinput}
+            onChangeText={(text) => this.setState({email: text})}
+            value={this.state.email}
+            placeholder={"Email Address"}
           />
-          <TextInput style={styles.name}
-            placeholder="Last Name"
-            onChangeText={(text) => this.setState({lastName})}
+
+          <TextInput
+            style={styles.textinput}
+            onChangeText={(text) => this.setState({password: text})}
+            value={this.state.password}
+            secureTextEntry={true}
+            placeholder={"Password"}
           />
-        </View>
-        <View style={styles.slide}>
-          <Text style={styles.text}>Smile! Upload a photo: </Text>
-        </View>
-        <View style={styles.slide}>
-          <Text style={styles.text}>You're all set! </Text>
+
           <Button
-            onPress={onButtonPress}
-            title="Let's start"
-            color="#841584"
-            accessibilityLabel="JumboSmash account creation completed!"
-            enabled={this.state.isGood} //
+            onPress={this.login.bind(this)}
+            title="Login"
+            accessibilityLabel="Login"
+          />
+
+          <Button
+            onPress={this.goToSignup.bind(this)}
+            title="New here? Go to Signup"
+            accessibilityLabel="Go to signup page"
           />
         </View>
-      </Swiper>
+      </View>
     );
   }
 }
-/*
-Questions:
-  - overall setup of each card --> get that right, how should i separate?
-    Should each slide be its own js that renders a slide specifically?
-  - CSS --> cleaned up? Can one item have multiple classes? can they be nested?
-  - Cleaner way of doing things
-*/
-
-// <Text style={styles.text}>Gender:</Text>
-// <Text style={styles.text}>Description:</Text>
 
 var styles = StyleSheet.create({
-  wrapper: {
-  },
-  slide: {
+  container: {
     flex: 1,
-    justifyContent: 'center',
+    flexDirection: 'row',
+    alignItems:'center'
+  },
+  body: {
+    flex: 9,
     alignItems: 'center',
   },
-  text: {
-    color: '#000000',
-    fontSize: 20,
-  },
-  name: {
+  textinput: {
     height: 40,
     borderColor: 'gray',
     borderWidth: 1,
-    width: 160,
+    margin: 10,
+  },
+  button: {
   }
 })
 
