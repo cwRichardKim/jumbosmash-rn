@@ -26,6 +26,8 @@ class Card extends Component {
   constructor(props) {
     super(props);
 
+    this.isSwiping = false;
+
     this.state = {
       pan: new Animated.ValueXY(),
       enter: new Animated.Value(0.9),
@@ -33,11 +35,17 @@ class Card extends Component {
     }
   }
 
+  // Returns whether the card should register a swipe action.
+  // mostly guards against spam swiping / pressing
+  _canSwipe() {
+    return !this.isSwiping && this.props.positionInDeck == 0;
+  }
+
   componentWillMount() {
     this._panResponder = PanResponder.create({
       onMoveShouldSetResponderCapture: () => true,
       onMoveShouldSetPanResponderCapture: (evt, gestureState) => {
-        return gestureState.dx != 0 && gestureState.dy != 0;
+        return gestureState.dx != 0 && gestureState.dy != 0 && this._canSwipe();
       },
 
       onPanResponderGrant: (e, gestureState) => {
@@ -50,10 +58,14 @@ class Card extends Component {
       ]),
 
       onPanResponderRelease: (e, {vx, vy}) => {
+        if (!this._canSwipe()) {
+          return;
+        }
         this.state.pan.flattenOffset();
 
         // if we swiped more then 120px away from the middle
         if (Math.abs(this.state.pan.x._value) > SWIPE_THRESHOLD) {
+          this.isSwiping = true;
           let isRight = this.state.pan.x._value > 0;
           let xvelocity =  clamp(vx, 1, 3);
           let yvelocity =  clamp(vy, -3, 3);
@@ -88,19 +100,22 @@ class Card extends Component {
   }
 
   _programmaticSwipeAnimation(isRight) {
-    let xValue = isRight ? this.props.cardWidth * 2 : this.props.cardWidth * -2;
-    let yValue = 50;
-    Animated.timing(this.state.pan, {
-      toValue: {x: xValue, y: yValue},
-      duration: 200,
-    }).start(() => {
-      if (isRight) {
-        this.props.handleRightSwipeForIndex(this.props.index);
-      } else {
-        this.props.handleLeftSwipeForIndex(this.props.index);
-      }
-      this._swipeDidComplete();
-    });
+    if (!this.isSwiping) {
+      this.isSwiping = true;
+      let xValue = isRight ? this.props.cardWidth * 2 : this.props.cardWidth * -2;
+      let yValue = 50;
+      Animated.timing(this.state.pan, {
+        toValue: {x: xValue, y: yValue},
+        duration: 200,
+      }).start(() => {
+        if (isRight) {
+          this.props.handleRightSwipeForIndex(this.props.index);
+        } else {
+          this.props.handleLeftSwipeForIndex(this.props.index);
+        }
+        this._swipeDidComplete();
+      });
+    }
   }
 
   programmaticSwipeRight() {
@@ -122,6 +137,7 @@ class Card extends Component {
     }
     // reuses view for next card, center the card
     this.state.pan.setValue({x: 0, y: 0});
+    this.isSwiping = false;
   }
 
   render() {
