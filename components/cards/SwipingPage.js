@@ -100,6 +100,7 @@ class SwipingPage extends Component {
     }
   }
 
+
   // TODO: @richard remove this later. this is for testing purposes to see if double click bug is fixed
   _swipeErrorCheck(cardIndex, card) {
     let indexBroke = this.state.cardIndex != cardIndex; // expecting false
@@ -110,9 +111,34 @@ class SwipingPage extends Component {
     }
   }
 
+  async _asyncUpdateLikeList(profId, swipeId) {
+    let url = "https://jumbosmash2017.herokuapp.com/profile/like/".concat(profId).concat("/").concat(swipeId);
+    console.log("URLYUP :\n" + url);
+    fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({profileId: profId, swipedId: swipeId}),
+    }).then((response) => {
+      if ("status" in response && response["status"] >= 200 && response["status"] < 300) {
+        return response.json();
+      } else {
+        throw ("status" in response) ? response["status"] : "Unknown Error";
+      }
+    }).then((responseJson) => {
+      if (responseJson.code == "MATCH") {
+        //TODO: @richard or @jared handle what to do when match on swiping page
+      }
+    }).catch((error) => {
+      throw error; //TODO @richard show error thing
+    });
+  }
+
   _handleRightSwipeForIndex(cardIndex) {
-    let card = this.props.profiles[cardIndex];
-    console.log("swiped right on " + card.firstName);
+    let profile = this.props.profiles[cardIndex];
+    console.log("PROFILE SWIPED: " + JSON.stringify(profile.id));
+    this._asyncUpdateLikeList('586edd82837823188a29791d',profile.id);//, profile.id);//, profile.id);//, '586edd82837823188a297921'); //TODO: @jared dont hard code//this.props.myProfile.id, profile.id);
     this._swipeErrorCheck(cardIndex, card);
   }
 

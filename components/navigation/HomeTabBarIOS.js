@@ -62,6 +62,7 @@ class HomeTabBarIOS extends Component {
           <SwipingPage
             navigator={this.props.navigator}
             profiles={this.props.profiles}
+            myProfile={this.props.myProfile}
             fetchProfiles={this.props.fetchProfiles}
             pageHeight={PAGE_HEIGHT}
             removeSeenCards={this.props.removeSeenCards}
