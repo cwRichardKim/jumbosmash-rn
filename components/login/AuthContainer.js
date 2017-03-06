@@ -45,7 +45,8 @@ class AuthContainer extends Component {
           if(route.component){
             return React.createElement(route.component, 
               { navigator: navigator, 
-                firebase: this.props.firebase }); 
+                firebase: this.props.firebase,
+                email_ext: "@tufts.edu" }); 
           }
         }}
       />
