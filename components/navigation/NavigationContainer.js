@@ -38,12 +38,15 @@ firebase.initializeApp(firebaseConfig);
 const FIRST_BATCH_SIZE = 50;
 const FETCH_BATCH_SIZE = 100;
 
+const idOfUser = '586edd82837823188a29791f';// Jared: 588f7e504a557100113d2184 Richard: '586edd82837823188a297932'; //TODO: self expanatory
+
 //TODO: @richard delete this later
 const testProfile = {
   firstName: "Test",
   lastName: "Profile",
   description: "kasjf laksj dglkasj dlgja slkgjalskdjglkasdjg laksdj glkasjd giasjg laksdj lkasjd glaksj dglkajd glkajsdg lk alkgj akldg",
   major: "something",
+  photo: "https://d13yacurqjgara.cloudfront.net/users/109914/screenshots/905742/elephant_love.jpg",
   photos: ["https://d13yacurqjgara.cloudfront.net/users/109914/screenshots/905742/elephant_love.jpg", "https://d13yacurqjgara.cloudfront.net/users/1095591/screenshots/2711715/polywood_01_elephant_01_dribbble.jpg", "https://d13yacurqjgara.cloudfront.net/users/179241/screenshots/2633954/chris-fernandez-elephant-2.jpg"],
 }
 
@@ -62,7 +65,7 @@ class NavigationContainer extends Component {
 
   componentDidMount() {
     this._shouldRetrieveProfilesFromStorage();
-    
+
     // example notification calling function
     // this.notificationBanner.showWithMessage("test", ()=>{
     //   this._changeTab(TabNames.chatTab);
@@ -254,12 +257,19 @@ class NavigationContainer extends Component {
         </View>
       );
     } else if (route.name == 'Conversation') {
+      //TODO: this is just temp to get the profile I wanted
+      let prof = null;
+      for (let i = 0; i < route.participants.length; i++) {
+        if (route.participants[i].profileId == idOfUser) {
+          prof = route.participants[i];
+        }
+      }
       return(
         <ConversationPage
           navigator={navigator}
           chatroomId={route.chatroomId}
           participants={route.participants}
-          userId={route.userId}
+          myProfile={prof} //{this.state.myProfile}
           setShowNavigationBar={this._setShowNavigationBar.bind(this)}
           firebase={firebase}/>
       );

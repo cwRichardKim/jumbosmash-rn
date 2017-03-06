@@ -37,7 +37,7 @@ class ConversationPage extends Component {
     this.props.setShowNavigationBar(true);
     this._messagesRef.on('child_added', (child) => {
       var pos = 'right';
-      if (child.val().user._id != this.props.userId) {
+      if (child.val().user._id != this.props.myProfile.profileId) {
         pos = 'left';
       }
       this.onReceive({
@@ -57,15 +57,16 @@ class ConversationPage extends Component {
   }
 
   onSend(messages = []) {
+    console.log("PROPS \n" + JSON.stringify(this.props.participants));
     for (var i = 0, len = messages.length; i < len; i++) {
       var message = messages[i];
       this._messagesRef.push({
         _id: message._id,
         text: message.text,
         user: {
-          _id: this.props.userId,
-          name: this.props.participants[this.props.userId].firstName,
-          avatar: this.props.participants[this.props.userId].photo,
+          _id: this.props.myProfile.profileId,
+          name: this.props.myProfile.firstName,
+          avatar: this.props.myProfile.photo,
         },
         date: new Date().getTime(),
       });
@@ -87,7 +88,7 @@ class ConversationPage extends Component {
         onSend={this.onSend}
         onReceive={this.onReceive}
         user={{
-          _id: this.props.userId
+          _id: this.props.myProfile.profileId
         }}/>
     );
   }
