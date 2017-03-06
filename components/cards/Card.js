@@ -65,11 +65,10 @@ class Card extends Component {
 
         // if we swiped more then 120px away from the middle
         if (Math.abs(this.state.pan.x._value) > SWIPE_THRESHOLD) {
-          this.swiping = true;
+          this.isSwiping = true;
           let isRight = this.state.pan.x._value > 0;
           let xvelocity =  clamp(vx, 1, 3);
           let yvelocity =  clamp(vy, -3, 3);
-          console.log("JUST SWIPED PAST THRESHOLD "+this.props.index.toString() + " "+this.props.firstName);
 
           // if it's a right swipe
           if (isRight) {
@@ -101,7 +100,7 @@ class Card extends Component {
   }
 
   _programmaticSwipeAnimation(isRight) {
-    if (!this.isSwiping && Math.abs(this.state.pan.x._value) < 5) {
+    if (!this.isSwiping) {
       this.isSwiping = true;
       let xValue = isRight ? this.props.cardWidth * 2 : this.props.cardWidth * -2;
       let yValue = 50;
@@ -138,6 +137,7 @@ class Card extends Component {
     }
     // reuses view for next card, center the card
     this.state.pan.setValue({x: 0, y: 0});
+    this.isSwiping = false;
   }
 
   render() {
