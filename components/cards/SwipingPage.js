@@ -14,6 +14,7 @@ import {
   Image,
   Dimensions,
   AppState,
+  Alert,
 } from 'react-native';
 
 import YesView          from './YesView.js'
@@ -37,7 +38,6 @@ class SwipingPage extends Component {
     this.state = {
       cardIndex: 0,
       showProfile: false,
-      topCardIndex: 0,
     }
   }
 
@@ -77,8 +77,7 @@ class SwipingPage extends Component {
       this.props.fetchProfiles();
     }
     this.setState({
-      cardIndex: this.state.cardIndex + 1,
-      topCardIndex: (this.state.topCardIndex + 1) % DECK_SIZE,
+      cardIndex: cardIndex + 1,
     });
   }
 
@@ -101,28 +100,50 @@ class SwipingPage extends Component {
     }
   }
 
+  // TODO: @richard remove this later. this is for testing purposes to see if double click bug is fixed
+  _swipeErrorCheck(cardIndex, card) {
+    let indexBroke = this.state.cardIndex != cardIndex; // expecting false
+    let cardsArrayUpdated = this.cards[cardIndex %3] != null; // expecting true
+    let cardArrayBroke = cardsArrayUpdated && card.firstName != this.cards[cardIndex % 3].props.firstName; // expecting false
+    if (indexBroke || !cardsArrayUpdated || cardArrayBroke) {
+      Alert.alert("SwipingPage.js broke","screenshot this and send it to Richard (" + indexBroke.toString() + " " + cardsArrayUpdated.toString() + " " + cardArrayBroke.toString() + ")",[{text:"OK", onPress:()=>{}}])
+    }
+  }
+
   _handleRightSwipeForIndex(cardIndex) {
     let card = this.props.profiles[cardIndex];
     console.log("swiped right on " + card.firstName);
+    this._swipeErrorCheck(cardIndex, card);
   }
 
   _handleLeftSwipeForIndex(cardIndex) {
     let card = this.props.profiles[cardIndex];
     console.log("swiped left on " + card.firstName);
+    this._swipeErrorCheck(cardIndex, card);
+  }
+
+  _cardsExist() {
+    let bufferDeckLoaded = this.cards && this.cards[0] != null;
+    let profilesLoaded = this.props.profiles && this.props.profiles.length > 0 && typeof(this.props.profiles[0]) != "undefined";
+    return bufferDeckLoaded && profilesLoaded;
   }
 
   // handles button push, delegates animation and logic to card
   _swipeRightButtonPressed() {
-    this.cards[this.state.topCardIndex].programmaticSwipeRight();
+    if (this._cardsExist()) {
+      this.cards[this.state.cardIndex % DECK_SIZE].programmaticSwipeRight();
+    }
   }
 
   _swipeLeftButtonPressed() {
-    this.cards[this.state.topCardIndex].programmaticSwipeLeft();
+    if (this._cardsExist()  ) {
+      this.cards[this.state.cardIndex % DECK_SIZE].programmaticSwipeLeft();
+    }
   }
 
   // renders single card
   _renderCard(cardIndex) {
-    let positionInDeck = global.mod((cardIndex - this.state.topCardIndex), DECK_SIZE);
+    let positionInDeck = global.mod((cardIndex - this.state.cardIndex), DECK_SIZE);
     let index = this.state.cardIndex + positionInDeck;
     return (
       <Card {...this.props.profiles[index]}
