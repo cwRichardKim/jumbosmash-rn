@@ -15,8 +15,10 @@ import {
   Button,
 } from 'react-native';
 
-import SignupPage             from "./SignupPage.js";
-import AccountPage            from "./AccountPage.js";
+import AccountPage            from './AccountPage.js';
+import AuthErrors             from './AuthErrors.js';
+import Redirect               from './Redirect.js';
+
 
 class LoginPage extends Component {
   
@@ -25,27 +27,6 @@ class LoginPage extends Component {
     this.state = {
       email_input: '',
       password:'',
-    }
-  }
-
-  handleLoginError(error) {
-    var errorCode = error.code;
-    switch(errorCode) {
-      case "auth/invalid-email":
-        Alert.alert("The email is not valid.");
-        break;
-      case "auth/user-disabled":
-        Alert.alert("User is not enabled.");
-        break;
-      case "auth/user-not-found":
-        Alert.alert("User not found. Create an account!");
-        break;
-      case "auth/wrong-password":
-        Alert.alert("Incorrect password.");
-        break;
-      default:
-        Alert.alert("Error. Please try again.");
-        break;
     }
   }
 
@@ -63,18 +44,11 @@ class LoginPage extends Component {
       })
       // Failure case: Login Error
       .catch((error) => {
-        this.handleLoginError(error);
+        AuthErrors.handleLoginError(error);
       })
   }
 
-
- // TODO: Move these functions 
-  goToSignup(){
-    this.props.navigator.push({
-      component: SignupPage
-    });
-  }
-
+  // TODO: move to redirect
   goToAccountPage() {
     this.props.navigator.push({
       component: AccountPage
@@ -110,7 +84,7 @@ class LoginPage extends Component {
           />
 
           <Button
-            onPress={this.goToSignup.bind(this)}
+            onPress={Redirect.goToSignupPage.bind(this)}
             title="New here? Go to Signup"
             accessibilityLabel="Go to signup page"
           />
