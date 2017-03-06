@@ -22,7 +22,7 @@ import ChatSearch from './ChatSearch';
 import ConversationPage from './ConversationPage';
 let global = require('../global/GlobalFunctions.js');
 
-const idOfUser = '588f7e504a557100113d2184';// Jared: 588f7e504a557100113d2184 Richard: '586edd82837823188a297932'; //TODO: self expanatory
+const idOfUser = '586edd82837823188a29791f';// Jared: 588f7e504a557100113d2184 Richard: '586edd82837823188a297932'; //TODO: self expanatory
 class ChatPage extends React.Component {
   constructor(props) {
     super(props);
@@ -67,9 +67,7 @@ class ChatPage extends React.Component {
     let text = searchText.toLowerCase();
     return conversations.filter((c) => {
       let otherParticipants = global.otherParticipants(c.participants, idOfUser);
-      console.log(JSON.stringify(otherParticipants));
       let convo = otherParticipants[0].firstName.toLowerCase();
-      console.log("CONVO: " + convo);
       return convo.search(text) !== -1;
     });
   }
@@ -94,7 +92,7 @@ class ChatPage extends React.Component {
     this.props.navigator.push({
       chatroomId: conversation._id,
       participants: conversation.participants,
-      userId: idOfUser,
+      myProfile: this.props.myProfile,
       name: "Conversation"
     });
   }
