@@ -19,18 +19,19 @@ import {
 
 import LoginPage              from './LoginPage.js';
 import AccountPage            from './AccountPage.js';
+// import AuthErrors             from './AuthErrors.js';
 
 class SignupPage extends Component {
 
   constructor(props) {
     super(props);
     this.state = {
-      email: '',
+      email_input: '',
       password:'',
     }
   }
 
-  // TOOD: move error handling to different interface
+  // TOOD: move to AuthErrors
   handleSignupError(error) {
     var errorCode = error.code;
         switch(errorCode) {
@@ -56,7 +57,7 @@ class SignupPage extends Component {
 
     var firebase_auth = this.props.firebase.auth(); // TODO: global(?)
 
-    var email = this.state.email;  // TODO: enforce that email has to be @tufts.edu
+    var email = this.state.email_input + this.props.email_ext; 
     var password = this.state.password;
 
     /* Passing to firebase authentication function here */
@@ -90,12 +91,15 @@ class SignupPage extends Component {
     return (
       <View style={styles.container}>
         <View style={styles.body}>
-          <TextInput
-            style={styles.textinput}
-            onChangeText={(text) => this.setState({email: text})}
-            value={this.state.email}
-            placeholder={"Enter your email address"}
-          />
+          <View style={styles.textinput}>
+            <TextInput
+              style={styles.first}
+              onChangeText={(text) => this.setState({email_input: text})}
+              value={this.state.email_input}
+              placeholder={"Enter your tufts email"}
+            />
+            <Text style={styles.last}> {this.props.email_ext} </Text>
+          </View>
 
           <TextInput
             style={styles.textinput}
@@ -134,11 +138,19 @@ var styles = StyleSheet.create({
     flex: 9,
     alignItems: 'center',
   },
+  first: {
+    flex: 3/4,
+  },
+  last: {
+    flex: 1/4,
+    alignSelf: 'center',
+  },
   textinput: {
     height: 40,
     borderColor: 'gray',
     borderWidth: 1,
     margin: 10,
+    flexDirection: 'row',
   },
   button: {
   }

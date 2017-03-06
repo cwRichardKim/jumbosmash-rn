@@ -23,7 +23,7 @@ class LoginPage extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      email: '',
+      email_input: '',
       password:'',
     }
   }
@@ -53,7 +53,7 @@ class LoginPage extends Component {
 
     var firebase_auth = this.props.firebase.auth();
 
-    var email = this.state.email; // same verification that email is Tufts(?)
+    var email = this.state.email_input + this.props.email_ext;
     var password = this.state.password;
 
     firebase_auth.signInWithEmailAndPassword(email, password)
@@ -85,12 +85,15 @@ class LoginPage extends Component {
     return (
       <View style={styles.container}>
         <View style={styles.body}>
-          <TextInput
-            style={styles.textinput}
-            onChangeText={(text) => this.setState({email: text})}
-            value={this.state.email}
-            placeholder={"Email Address"}
-          />
+          <View style={styles.textinput}>
+            <TextInput
+              style={styles.first}
+              onChangeText={(text) => this.setState({email_input: text})}
+              value={this.state.email_input}
+              placeholder={"Enter your username"}
+            />
+            <Text style={styles.last}> {this.props.email_ext} </Text>
+          </View>
 
           <TextInput
             style={styles.textinput}
@@ -127,11 +130,19 @@ var styles = StyleSheet.create({
     flex: 9,
     alignItems: 'center',
   },
+  first: {
+    flex: 3/4,
+  },
+  last: {
+    flex: 1/4,
+    alignSelf: 'center',
+  },
   textinput: {
     height: 40,
     borderColor: 'gray',
     borderWidth: 1,
     margin: 10,
+    flexDirection: 'row',
   },
   button: {
   }
