@@ -19,13 +19,15 @@ const SaveButtonState = require('../global/GlobalFunctions.js').saveButtonStates
 class SaveButton extends Component {
   constructor(props) {
     super(props);
+    this.isBouncing = false;
     this.state = {
       pan: new Animated.ValueXY({x:0, y:0}),
     }
   }
 
   _bounce() {
-    if (this.props.saveButtonState == SaveButtonState.show) {
+    if (this.props.saveButtonState == SaveButtonState.show && !this.isBouncing) {
+      this.isBouncing = true;
       setTimeout(() => {
         if (this.props.saveButtonState == SaveButtonState.show) {
           Animated.timing(
@@ -43,6 +45,7 @@ class SaveButton extends Component {
                 easing: Easing.bounce,
               }
             ).start(() => {
+              this.isBouncing = false;
               this._bounce();
             });
           });
@@ -70,7 +73,7 @@ class SaveButton extends Component {
         if (callback) {
           callback();
         }
-        this.state.pan.setValue({x:0, y:0})
+        this.state.pan.setValue({x:0, y:0});
       });
     }, 300);
   }
