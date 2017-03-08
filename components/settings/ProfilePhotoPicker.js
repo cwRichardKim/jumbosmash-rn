@@ -55,7 +55,6 @@ const _uploadImage = (firebase, uri, mime = 'application/octet-stream', index) =
         return imageRef.getDownloadURL();
       })
       .then((url) => {
-        console.log("successful upload");
         resolve(url);
       })
       .catch((error) => {
@@ -126,7 +125,6 @@ class ProfilePhotoPicker extends Component {
   }
 
   _uploadPhotoToFirebase(image, index, isLarge) {
-    console.log(image);
     this.setState({
       uploadingImageWithIndex: index,
     });
