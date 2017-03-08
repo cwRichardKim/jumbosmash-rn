@@ -18,9 +18,10 @@ import {
 import Button         from "../global/Button.js";
 import ImagePicker    from 'react-native-image-crop-picker';
 import LoadableImage  from "../global/LoadableImage.js";
-if (!__DEV__) {
-  let RNFetchBlob  = require('react-native-fetch-blob');
+import ImageResizer   from 'react-native-image-resizer';
+import RNFetchBlob    from 'react-native-fetch-blob';
 
+if (!__DEV__) {
   //Turn local photo to blob for firebase uploading
   const Blob = RNFetchBlob.polyfill.Blob
   window.XMLHttpRequest = RNFetchBlob.polyfill.XMLHttpRequest
@@ -51,9 +52,10 @@ const _uploadImage = (firebase, uri, mime = 'application/octet-stream', index) =
       })
       .then(() => {
         uploadBlob.close()
-        return imageRef.getDownloadURL()
+        return imageRef.getDownloadURL();
       })
       .then((url) => {
+        console.log("successful upload");
         resolve(url);
       })
       .catch((error) => {
@@ -71,7 +73,12 @@ class ProfilePhotoPicker extends Component {
   }
 
   _photoExists(index) {
-    return this.props.photos && this.props.photos.length > index && this.props.photos[index];
+    let photos = this.props.photos;
+    return photos
+      && photos.length > index
+      && photos[index]
+      && photos[index].large
+      && photos[index].large.length > 0;
   }
 
   _shouldRenderImageWithIndex(index, styles) {
@@ -80,7 +87,7 @@ class ProfilePhotoPicker extends Component {
       return (
         <LoadableImage
           style={styles}
-          source={isUploading ? null : {uri: this.props.photos[index]}}
+          source={isUploading ? null : {uri: this.props.photos[index].large}}
           isImageLoading={this.state.uploadingImageWithIndex == index}
         />
       );
@@ -91,12 +98,16 @@ class ProfilePhotoPicker extends Component {
     }
   }
 
-  _changePhotoWithIndex(index, newPhoto) {
+  _changePhotoWithIndex(index, newPhoto, isLarge) {
     // Updates the photos on the settings page, not the server.
     // User has to hit save to make changes permanent in the server
     if (this.props.updatePhotos) {
       let newPhotos = this.props.photos.slice();
-      newPhotos[index] = newPhoto;
+      if (isLarge) {
+        newPhotos[index].large = newPhoto;
+      } else {
+        newPhotos[index].small = newPhoto;
+      }
       this.props.updatePhotos(newPhotos);
     } else {
       Alert.alert(
@@ -114,16 +125,21 @@ class ProfilePhotoPicker extends Component {
     console.log(error);
   }
 
-  _uploadPhotoToFirebase(image, index) {
+  _uploadPhotoToFirebase(image, index, isLarge) {
+    console.log(image);
     this.setState({
       uploadingImageWithIndex: index,
     });
-    _uploadImage(this.props.firebase, image.path, image.mime, index)
+
+    let imagePath = isLarge ? image.path : image;
+    let imageMime = isLarge ? image.mime : "image/jpeg";
+
+    _uploadImage(this.props.firebase, imagePath, imageMime, index)
     .then((url) => {
       this.setState({
         uploadingImageWithIndex: -1,
       });
-      this._changePhotoWithIndex(index, url);
+      this._changePhotoWithIndex(index, url, isLarge);
     },(error) => {
       this.setState({
         uploadingImageWithIndex: -1,
@@ -132,7 +148,19 @@ class ProfilePhotoPicker extends Component {
     });
   }
 
+  _uploadSmallerImage(image, index) {
+    ImageResizer.createResizedImage(image, 100, 100, "JPEG", 100, 0, null).then((resizedImageUri) => {
+      this._uploadPhotoToFirebase(resizedImageUri, index, false)
+    }).catch((err) => {
+      Alert.alert("Small photo error", err, [{text: "OK", onPress: ()=>{}}]);
+    });
+  }
+
   _photoButtonPressedForPhotoIndex(index) {
+    if (__DEV__) {
+      Alert.alert("Upload only works on release", "We've disabled upload until beta releases (testflight) because it breaks some builds", [{text:"OK", onPress:()=>{}}])
+      return;
+    }
     if (this.state.uploadingImageWithIndex >= 0) {
       Alert.alert(
         "One Sec",
@@ -140,17 +168,20 @@ class ProfilePhotoPicker extends Component {
         [{text: "OK", onPress:()=>{}}]
       ); //TODO @richard: do a real error thing here, test this more thoroughly
     } else if (this._photoExists(index)) { // Deleting a photo
-      this._changePhotoWithIndex(index, null);
+      this._changePhotoWithIndex(index, null, true);
+      this._changePhotoWithIndex(index, null, false);
     } else { // Adding a photo, pull up image picker
       ImagePicker.openPicker({
         width: 700,
         height: 700,
         cropping: true,
-        // compressImageMaxHeight: 700,
-        // compressImageMaxWidth: 700,
         compressImageQuality: 0.6,
       }).then(image => {
-        this._uploadPhotoToFirebase(image, index);
+        console.log(image.path);
+        if (image) {
+          this._uploadPhotoToFirebase(image, index, true);
+          this._uploadSmallerImage(image.path, index);
+        }
       }).catch(error => {
         let userCancelled = error["code"].includes("CANCELLED");
         if (userCancelled) {

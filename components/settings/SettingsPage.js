@@ -50,7 +50,7 @@ class SettingsPage extends Component {
 
   _allPhotosAreNull(photos) {
     for (var i in photos) {
-      if (photos[i] != null) {
+      if (photos[i] != null && photos[i].large != null && photos[i].small != null) {
         return false;
       }
     }
