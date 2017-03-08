@@ -157,7 +157,7 @@ class Card extends Component {
           <View style={styles.shadowView}>
             <View style={styles.card}>
               <LoadableImage
-                source={{uri: (this.props.photos && this.props.photos.length >= 1) ? this.props.photos[0] : 'https://img2.greatnotions.com/StockDesign/XLarge/King_Graphics/m0410.jpg'}}
+                source={{uri: (this.props.photos && this.props.photos.length >= 1) ? this.props.photos[0].large : 'https://img2.greatnotions.com/StockDesign/XLarge/King_Graphics/m0410.jpg'}}
                 style={styles.image}
                 _key={this.props.id}
               />
