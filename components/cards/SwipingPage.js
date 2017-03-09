@@ -87,10 +87,10 @@ class SwipingPage extends Component {
     })
   }
 
-  _shouldRenderProfileCard() {
+  _shouldRenderProfileView() {
     if (this.state.showProfile && this.state.cardIndex < this.props.profiles.length) {
       return(
-        <View style={styles.profileCardView}>
+        <View style={styles.coverView}>
           <ProfileCardView {...this.props.profiles[this.state.cardIndex]}
             pageHeight={this.props.pageHeight}
             exitFunction={this._closeProfileCard.bind(this)}
@@ -99,7 +99,6 @@ class SwipingPage extends Component {
       );
     }
   }
-
 
   // TODO: @richard remove this later. this is for testing purposes to see if double click bug is fixed
   _swipeErrorCheck(cardIndex, card) {
@@ -113,7 +112,6 @@ class SwipingPage extends Component {
 
   async _asyncUpdateLikeList(profId, swipeId) {
     let url = "https://jumbosmash2017.herokuapp.com/profile/like/".concat(profId).concat("/").concat(swipeId);
-    console.log("URLYUP :\n" + url);
     fetch(url, {
       method: 'POST',
       headers: {
@@ -128,7 +126,10 @@ class SwipingPage extends Component {
       }
     }).then((responseJson) => {
       if (responseJson.code == "MATCH") {
-        //TODO: @richard or @jared handle what to do when match on swiping page
+        //TODO: @jared handle what to do when match on swiping page
+        if (this.props.notifyUserOfMatchWith) {
+          // this.props.notifyUserOfMatchWith(responseJson.theprofile) <- @jared
+        }
       }
     }).catch((error) => {
       throw error; //TODO @richard show error thing
@@ -214,7 +215,7 @@ class SwipingPage extends Component {
       <View style={{height:this.props.pageHeight}}>
         <View style={[styles.container]}>
           <View style={styles.topPadding}/>
-          {this._shouldRenderProfileCard()}
+          {this._shouldRenderProfileView()}
           <View style={styles.cardContainer}>
             {this._shouldRenderCards()}
           </View>
@@ -271,14 +272,14 @@ const styles = StyleSheet.create({
     alignSelf: "stretch",
     zIndex: -1,
   },
-  profileCardView: {
+  coverView: {
     flex: 1,
     position: 'absolute',
     top: 0,
     left: 0,
     right: 0,
     bottom: 0,
-    zIndex: 12,
+    zIndex: 100,
   },
 });
 
