@@ -132,6 +132,7 @@ const styles = StyleSheet.create({
   },
   touchArea: {
     position: 'absolute',
+    overflow: 'hidden',
   }
 });
 
