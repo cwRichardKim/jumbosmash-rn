@@ -15,7 +15,7 @@ import {
   Platform,
 } from 'react-native';
 
-import Button         from "../global/Button.js";
+import CircleButton   from "../global/CircleButton.js";
 import ImagePicker    from 'react-native-image-crop-picker';
 import LoadableImage  from "../global/LoadableImage.js";
 import ImageResizer   from 'react-native-image-resizer';
@@ -175,7 +175,6 @@ class ProfilePhotoPicker extends Component {
         cropping: true,
         compressImageQuality: 0.6,
       }).then(image => {
-        console.log(image.path);
         if (image) {
           this._uploadPhotoToFirebase(image, index, true);
           this._uploadSmallerImage(image.path, index);
@@ -196,7 +195,7 @@ class ProfilePhotoPicker extends Component {
       <View style={styles.container}>
         <View style={styles.majorPhotoView}>
           {this._shouldRenderImageWithIndex(0, [styles.majorPhoto, styles.photo])}
-          <Button
+          <CircleButton
             style={styles.majorButton}
             source={(this._photoExists(0)) ? require("./images/removeButton.png") : require("./images/addButton.png")}
             onPress={() => this._photoButtonPressedForPhotoIndex(0)}
@@ -205,7 +204,7 @@ class ProfilePhotoPicker extends Component {
         <View style={styles.minorPhotosContainer}>
           <View style={styles.minorPhotoViewTop}>
             {this._shouldRenderImageWithIndex(1, [styles.minorPhoto, styles.photo])}
-            <Button
+            <CircleButton
               style={[styles.minorButton, {top: SMALL_PHOTO_WIDTH - 15}]}
               source={(this._photoExists(1)) ? require("./images/removeButton.png") : require("./images/addButton.png")}
               onPress={() => this._photoButtonPressedForPhotoIndex(1)}
@@ -213,7 +212,7 @@ class ProfilePhotoPicker extends Component {
           </View>
           <View style={styles.minorPhotoViewBottom}>
             {this._shouldRenderImageWithIndex(2, [styles.minorPhoto, styles.photo])}
-            <Button
+            <CircleButton
               style={[styles.minorButton, {bottom: - 4}]}
               source={(this._photoExists(2)) ? require("./images/removeButton.png") : require("./images/addButton.png")}
               onPress={() => this._photoButtonPressedForPhotoIndex(2)}

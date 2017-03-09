@@ -13,7 +13,7 @@ import {
   Easing,
 } from 'react-native';
 
-import Button from "../global/Button.js"
+import CircleButton from "../global/CircleButton.js"
 const SaveButtonState = require('../global/GlobalFunctions.js').saveButtonStates();
 
 class SaveButton extends Component {
@@ -89,7 +89,7 @@ class SaveButton extends Component {
       return(
         <Animated.View style={[styles.saveButtonContainer,
           {transform: this.state.pan.getTranslateTransform()}]}>
-          <Button
+          <CircleButton
             style={styles.saveButton}
             source={require("./images/saveButton.png")}
             onPress={this._onPress.bind(this)}

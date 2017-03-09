@@ -22,6 +22,7 @@ import HomeTabBarIOS          from "./HomeTabBarIOS.js"
 import NotificationBannerView from "./NotificationBannerView.js"
 import ChatPage               from "../chat/ChatPage.js"
 import ConversationPage       from "../chat/ConversationPage.js"
+import MatchView              from './MatchView.js'
 const global = require('../global/GlobalFunctions.js');
 const TabNames = global.tabNames();
 const StorageKeys = global.storageKeys();
@@ -58,11 +59,12 @@ class NavigationContainer extends Component {
     super(props);
     this.state = {
       selectedTab: TabNames.cardsTab,
-      notificationBannerText: "notification (tap me, goes to chat)",
       profiles: [],
       myProfile: testProfile,
+      matchedProfile: testProfile, // profile of the person you matched with for MatchView
       hasUnsavedSettings: false,
       showNavigator: false,
+      showMatchView: false,
     };
   }
 
@@ -172,7 +174,7 @@ class NavigationContainer extends Component {
     .catch((error) => {
       //TODO: @richard replace with real catch case
       Alert.alert(
-        "Server is Down :(",
+        "Something Went Wrong :(",
         error.toString(),
         [{text: "OK", onPress: ()=>{}}]
       );
@@ -235,6 +237,38 @@ class NavigationContainer extends Component {
     return newProfile;
   }
 
+  // shows the correct notification for matching
+  // if on the swiping page, then shows full match view, else shows a banner notif
+  _notifyUserOfMatchWith(profile) {
+    if (profile != null && this.state.selectedTab == TabNames.cardsTab) {
+      this.setState({
+        matchProfile: profile,
+        showMatchView: true,
+      });
+    } else if (profile != null) {
+      this.setState({
+        matchProfile: profile,
+      });
+      this.notificationBanner.showWithMessage("New Match! Say Hello to " + profile.firstName, ()=>{
+        this._changeTab(TabNames.chatTab);
+      });
+    }
+  }
+
+  _shouldRenderMatchView() {
+    if (this.state.showMatchView && this.state.selectedTab == TabNames.cardsTab && this.state.profiles.length > 1) {
+      return (
+        <View style={styles.coverView}>
+          <MatchView
+            myProfile={this.state.myProfile}
+            matchProfile={this.state.matchProfile}
+            onClose={() => this.setState({showMatchView: false})}
+          />
+        </View>
+      );
+    }
+  }
+
   // Returns the content that the navigator should show.  Since route.name is "TabBar"
   // by default, it will show the TabBar.  In order to "push" a view on top of this view,
   // You have to give it its own route name and use navigator.push({name: route name})
@@ -255,7 +289,9 @@ class NavigationContainer extends Component {
               this.setState({hasUnsavedSettings: hasUnsavedSettings})
             }}
             removeSeenCards={this._removeSeenCards.bind(this)}
+            notifyUserOfMatchWith={this._notifyUserOfMatchWith.bind(this)}
           />
+          {this._shouldRenderMatchView()}
           <NotificationBannerView ref={(elem) => {this.notificationBanner = elem}}/>
         </View>
       );
@@ -320,7 +356,17 @@ class NavigationContainer extends Component {
       );
     }
   }
+
 const styles = StyleSheet.create({
+  coverView: {
+    flex: 1,
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    zIndex: 100,
+  },
 });
 
   export default NavigationContainer;
