@@ -17,17 +17,21 @@ import { View,
          TextInput,
          Image,
          TouchableHighlight,
-         Alert,
-         RefreshControl,} from 'react-native';
+         Alert, } from 'react-native';
 import ChatRow from './ChatRow';
 import ChatSearch from './ChatSearch';
 import ConversationPage from './ConversationPage';
 let global = require('../global/GlobalFunctions.js');
 
+<<<<<<< HEAD
 //TODO: check for servuce being down
+const idOfUser = '588f7e504a557100113d2184';// Jared: 588f7e504a557100113d2184 Richard: '586edd82837823188a297932'; //TODO: self expanatory
 let _listView: ListView;
 const SCROLL_TO_Y = 0;
 
+=======
+const idOfUser = '586edd82837823188a29791f';// Jared: 588f7e504a557100113d2184 Richard: '586edd82837823188a297932'; //TODO: self expanatory
+>>>>>>> 583fa87702b3ab57406ce0674a189ca8dbff21e3
 class ChatPage extends React.Component {
   constructor(props) {
     super(props);
@@ -35,9 +39,7 @@ class ChatPage extends React.Component {
     //this._fetchConversationsAsync();
     this.state = {
       dataSource: ds.cloneWithRows(this._fetchConversationsAsync()),
-      navigator: props.navigator,
-      refreshing: false,
-      rawData: [],
+      navigator: props.navigator
     };
   }
 
@@ -48,33 +50,27 @@ class ChatPage extends React.Component {
   }
 
   _fetchConversationsAsync () {
-    return fetch('https://jumbosmash2017.herokuapp.com/chat/id/' + this.props.myProfile.profileId)
-      .then((response) => {
-        if ("status" in response && response["status"] >= 200 && response["status"] < 300) {
-          return response.json();
-        } else {
-          throw ("status" in response) ? response["status"] : "Unknown Error";
-        }
-      })
+    return fetch('https://jumbosmash2017.herokuapp.com/chat/id/' + idOfUser)
+      .then((response) => response.json())
       .then((data) => {
-
         this.setState({
           dataSource: this.state.dataSource.cloneWithRows(data),
+          isLoading: false,
+          empty: false,
           rawData: data,
           searchText: '',
         });
       })
       .catch((error) => {
-        console.error("ERROR " + error);
+        console.error(error);
+        Alert.alert(
+          "Server is Down :(",
+          error.toString(),
+          [{text: "OK", onPress: ()=>{}}]
+        );
       });
   }
 
-  _onRefresh() {
-    this.setState({refreshing: true});
-    this._fetchConversationsAsync().then(() => {
-      this.setState({refreshing: false});
-    });
-  }
 
   setSearchText(event) {
    let searchText = event.nativeEvent.text;
@@ -89,7 +85,7 @@ class ChatPage extends React.Component {
   filterConversations(searchText, conversations) {
     let text = searchText.toLowerCase();
     return conversations.filter((c) => {
-      let otherParticipants = global.otherParticipants(c.participants, this.props.myProfile.profileId);
+      let otherParticipants = global.otherParticipants(c.participants, idOfUser);
       let convo = otherParticipants[0].firstName.toLowerCase();
       return convo.search(text) !== -1;
     });
@@ -103,28 +99,16 @@ class ChatPage extends React.Component {
     return(
       <View>
         {this._renderSearchBar()}
-        {this._renderNoMatches()}
       </View>
     );
   }
 
-  _renderNoMatches() {
-    if (this.state.rawData == null || this.state.rawData.length <= 0) {
-      return (
-        <TouchableHighlight onPress={() => {/* TODO: take to edit prof page*/}}
-            underlayColor='#dddddd'>
-            <View style={styles.rowContainer}>
-            <Text style={styles.rowText}>You have no matches (you can upload different photos in the profile section)</Text>
-            </View>
-        </TouchableHighlight>
-      );
-    }
-
-    return null;
-  }
-
   _renderSearchBar() {
-    let numMatches = this.state.rawData != null && this.state.rawData.length != null ? this.state.rawData.length : 0;
+    if (this.state.rawData == null) {
+      return null;
+    }
+    console.log("RAW DATA \n" + JSON.stringify(this.state.rawData));
+    let numMatches = this.state.rawData.length;
     let str = "Search " + numMatches + " Matches";
     return(
       <View style={styles.searchContainer}>
@@ -149,12 +133,12 @@ class ChatPage extends React.Component {
   }
 
   renderChatRow(conversation) {
-    if((conversation == null || conversation == 0) || conversation.participants == null) {
+    if(conversation == null || conversation == 0) {
       return null;
     }
 
     // figure out other person(s) in conversation and get name
-    let otherParticipants = global.otherParticipants(conversation.participants, this.props.myProfile.profileId);
+    let otherParticipants = global.otherParticipants(conversation.participants, idOfUser);
     let len = otherParticipants.length;
     if(len <= 0) {return null;}
     let name = otherParticipants[0].firstName;
@@ -162,7 +146,7 @@ class ChatPage extends React.Component {
 
     // handle rendering of last sent message
     //TODO: put styling in styles
-    let setShowRight = conversation.lastSent.profileId == this.props.myProfile.profileId;
+    let setShowRight = conversation.lastSent.profileId == idOfUser;
     let photoStyle = function (read) {return ({
       height: 60,
       width: 60,
@@ -213,11 +197,6 @@ class ChatPage extends React.Component {
           enableEmptySections={true}
           renderSeparator={(sectionId, rowId) => <View key={rowId} style={styles.separator} />}
           renderHeader={() => this._renderHeader()}
-          refreshControl={
-            <RefreshControl
-              refreshing={this.state.refreshing}
-              onRefresh={this._onRefresh.bind(this)}
-            />}
         />
     );
   }
