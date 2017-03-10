@@ -14,6 +14,7 @@ import {
   Image,
   Dimensions,
   AppState,
+  Alert,
 } from 'react-native';
 
 import YesView          from './YesView.js'
@@ -32,10 +33,11 @@ class SwipingPage extends Component {
   constructor(props) {
     super(props);
 
+    this.cards=[null, null, null];
+
     this.state = {
       cardIndex: 0,
       showProfile: false,
-      topCardIndex: 0,
     }
   }
 
@@ -75,8 +77,7 @@ class SwipingPage extends Component {
       this.props.fetchProfiles();
     }
     this.setState({
-      cardIndex: this.state.cardIndex + 1,
-      topCardIndex: (this.state.topCardIndex + 1) % DECK_SIZE,
+      cardIndex: cardIndex + 1,
     });
   }
 
@@ -86,10 +87,10 @@ class SwipingPage extends Component {
     })
   }
 
-  _shouldRenderProfileCard() {
+  _shouldRenderProfileView() {
     if (this.state.showProfile && this.state.cardIndex < this.props.profiles.length) {
       return(
-        <View style={styles.profileCardView}>
+        <View style={styles.coverView}>
           <ProfileCardView {...this.props.profiles[this.state.cardIndex]}
             pageHeight={this.props.pageHeight}
             exitFunction={this._closeProfileCard.bind(this)}
@@ -99,29 +100,79 @@ class SwipingPage extends Component {
     }
   }
 
+  // TODO: @richard remove this later. this is for testing purposes to see if double click bug is fixed
+  _swipeErrorCheck(cardIndex, card) {
+    let indexBroke = this.state.cardIndex != cardIndex; // expecting false
+    let cardsArrayUpdated = this.cards[cardIndex %3] != null; // expecting true
+    let cardArrayBroke = cardsArrayUpdated && card.firstName != this.cards[cardIndex % 3].props.firstName; // expecting false
+    if (indexBroke || !cardsArrayUpdated || cardArrayBroke) {
+      Alert.alert("SwipingPage.js broke","screenshot this and send it to Richard (" + indexBroke.toString() + " " + cardsArrayUpdated.toString() + " " + cardArrayBroke.toString() + ")",[{text:"OK", onPress:()=>{}}])
+    }
+  }
+
+  async _asyncUpdateLikeList(profId, swipeId) {
+    let url = "https://jumbosmash2017.herokuapp.com/profile/like/".concat(profId).concat("/").concat(swipeId);
+    fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({profileId: profId, swipedId: swipeId}),
+    }).then((response) => {
+      if ("status" in response && response["status"] >= 200 && response["status"] < 300) {
+        return response.json();
+      } else {
+        throw ("status" in response) ? response["status"] : "Unknown Error";
+      }
+    }).then((responseJson) => {
+      if (responseJson.code == "MATCH") {
+        //TODO: @jared handle what to do when match on swiping page
+        if (this.props.notifyUserOfMatchWith) {
+          // this.props.notifyUserOfMatchWith(responseJson.theprofile) <- @jared
+        }
+      }
+    }).catch((error) => {
+      throw error; //TODO @richard show error thing
+    });
+  }
+
   _handleRightSwipeForIndex(cardIndex) {
-    let card = this.props.profiles[cardIndex];
+    let profile = this.props.profiles[cardIndex];
+    this._asyncUpdateLikeList(this.props.myProfile.id, profile.id);
+    this._swipeErrorCheck(cardIndex, profile);
   }
 
   _handleLeftSwipeForIndex(cardIndex) {
     let card = this.props.profiles[cardIndex];
-    console.log("swiped left on " + card.firstName);
+    this._swipeErrorCheck(cardIndex, card);
   }
 
+  _cardsExist() {
+    let bufferDeckLoaded = this.cards && this.cards[0] != null;
+    let profilesLoaded = this.props.profiles && this.props.profiles.length > 0 && typeof(this.props.profiles[0]) != "undefined";
+    return bufferDeckLoaded && profilesLoaded;
+  }
+
+  // handles button push, delegates animation and logic to card
   _swipeRightButtonPressed() {
-    // this.props.handleRightSwipe(this.props.profiles[this.state.cardIndex])
+    if (this._cardsExist()) {
+      this.cards[this.state.cardIndex % DECK_SIZE].programmaticSwipeRight();
+    }
   }
 
   _swipeLeftButtonPressed() {
-    // this.props.handleLeftSwipe(this.props.profiles[this.state.cardIndex])
+    if (this._cardsExist()  ) {
+      this.cards[this.state.cardIndex % DECK_SIZE].programmaticSwipeLeft();
+    }
   }
 
   // renders single card
   _renderCard(cardIndex) {
-    let positionInDeck = global.mod((cardIndex - this.state.topCardIndex), DECK_SIZE);
+    let positionInDeck = global.mod((cardIndex - this.state.cardIndex), DECK_SIZE);
     let index = this.state.cardIndex + positionInDeck;
     return (
       <Card {...this.props.profiles[index]}
+        ref={(elem) => {this.cards[cardIndex] = elem}}
         onPress={()=>{this.setState({showProfile: true})}}
         handleRightSwipeForIndex={this._handleRightSwipeForIndex.bind(this)}
         handleLeftSwipeForIndex={this._handleLeftSwipeForIndex.bind(this)}
@@ -162,7 +213,7 @@ class SwipingPage extends Component {
       <View style={{height:this.props.pageHeight}}>
         <View style={[styles.container]}>
           <View style={styles.topPadding}/>
-          {this._shouldRenderProfileCard()}
+          {this._shouldRenderProfileView()}
           <View style={styles.cardContainer}>
             {this._shouldRenderCards()}
           </View>
@@ -219,14 +270,14 @@ const styles = StyleSheet.create({
     alignSelf: "stretch",
     zIndex: -1,
   },
-  profileCardView: {
+  coverView: {
     flex: 1,
     position: 'absolute',
     top: 0,
     left: 0,
     right: 0,
     bottom: 0,
-    zIndex: 12,
+    zIndex: 100,
   },
 });
 

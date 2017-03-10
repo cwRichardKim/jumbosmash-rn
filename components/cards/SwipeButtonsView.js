@@ -12,30 +12,31 @@ import {
   View,
   Image,
   TouchableHighlight,
+  Dimensions,
 } from 'react-native';
+
+import CircleButton from "../global/CircleButton.js";
+
+const WIDTH = Dimensions.get("window").width;
 
 class SwipeButtonsView extends Component {
   render() {
     return (
       <View style={styles.container}>
-        <View style={{flex:1}}>
-          <TouchableHighlight
-            style={styles.leftButtonTouchArea}
+        <View style={[styles.buttonContainer, styles.leftButtonContainer]}>
+          <CircleButton
+            style={[styles.button, styles.leftButton]}
+            source={require("./images/cross.png")}
             onPress={this.props.leftButtonFunction}
-          >
-            <View style={styles.button}>
-            </View>
-          </TouchableHighlight>
+          />
         </View>
-
-        <View style={{flex:1}}>
-          <TouchableHighlight
-            style={styles.rightButtonTouchArea}
+        <View style={styles.centerPadding}/>
+        <View style={[styles.buttonContainer, styles.rightButtonContainer]}>
+          <CircleButton
+            style={[styles.button, styles.rightButton]}
+            source={require("./images/heart.png")}
             onPress={this.props.rightButtonFunction}
-          >
-            <View style={styles.button}>
-            </View>
-          </TouchableHighlight>
+          />
         </View>
       </View>
     );
@@ -47,21 +48,40 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: "row",
   },
-  leftButtonTouchArea: {
-    margin: 10,
-    flex: 1,
-    backgroundColor: "#F2585A",
-    borderRadius: 100,
-  },
-  rightButtonTouchArea: {
-    margin: 10,
-    flex: 1,
-    backgroundColor: "#8AC3EF",
-    borderRadius: 100,
-  },
   button: {
+    borderRadius: 100,
+    width: WIDTH * 0.16,
+    height: WIDTH * 0.16,
+
+    // android shadow
+    elevation: 3,
+    shadowColor: '#000000',
+
+    // ios shadow
+    shadowOffset: {
+      width: 0,
+      height: 4,
+    },
+    shadowRadius: 4,
+    shadowOpacity: 0.1,
+  },
+  buttonContainer: {
+    flex: 4,
+  },
+  leftButtonContainer: {
+    flexDirection: 'row-reverse',
+    alignItems: 'center',
+  },
+  centerPadding: {
     flex: 1,
-  }
+  },
+  rightButtonContainer: {
+    justifyContent: 'center',
+  },
+  leftButton: {
+  },
+  rightButton: {
+  },
 });
 
 export default SwipeButtonsView;

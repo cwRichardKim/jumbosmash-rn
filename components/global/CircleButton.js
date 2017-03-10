@@ -25,7 +25,7 @@ import {
   ActivityIndicator,
 } from 'react-native';
 
-class Button extends Component {
+class CircleButton extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -132,7 +132,8 @@ const styles = StyleSheet.create({
   },
   touchArea: {
     position: 'absolute',
+    overflow: 'hidden',
   }
 });
 
-export default Button;
+export default CircleButton;
