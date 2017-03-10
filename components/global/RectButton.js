@@ -11,12 +11,9 @@ import {
   Text,
   TouchableWithoutFeedback,
   Animated,
-  Alert,
 } from 'react-native';
 
-var Mailer = require('NativeModules').RNMail;
-
-class Button extends Component {
+class RectButton extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -35,7 +32,9 @@ class Button extends Component {
   }
 
   _onPress() {
-    this._sendMail(this.state.path);
+    if (this.props.onPress) {
+      this.props.onPress();
+    }
     Animated.spring(
       this.state.springValue,
       {
@@ -43,26 +42,6 @@ class Button extends Component {
         friction: 3,
       }
     ).start();
-  }
-
-  _sendMail(path) {
-    if (Mailer && Mailer.mail) {
-      Mailer.mail({
-        subject: 'Help / Feedback',
-        recipients: ['team@jumbosmash.com'],
-        body: '',
-      }, (error, event) => {
-        if(error) {
-          AlertIOS.alert('Error', 'Could not send mail. Try sending an email to team@jumbosmash.com through your mail client');
-        }
-      });
-    } else {
-      Alert.alert(
-        "Unsupported Device",
-        "Sorry, your device doesn't support in-app email :(\nSend your question / feedback to team@jumbosmash.com with your mail client",
-        [{text:"OK", onPress:()=>{}}]
-      )
-    }
   }
 
   render() {
@@ -78,7 +57,7 @@ class Button extends Component {
           onPressIn={this._onPressIn.bind(this)}
         >
           <View style={styles.view}>
-            <Text>Help / Feedback</Text>
+            <Text style={this.props.textStyles ? this.props.textStyles : {}}>{this.props.text ? this.props.text : ""}</Text>
           </View>
         </TouchableWithoutFeedback>
       </Animated.View>
@@ -88,19 +67,16 @@ class Button extends Component {
 
 const styles = StyleSheet.create({
   container: {
+    borderRadius: 5,
   },
   touchArea: {
     flex: 1,
   },
   view: {
-    backgroundColor: '#F2585A',
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    marginLeft: 16,
-    marginRight: 16,
-    borderRadius: 5,
   }
 });
 
-export default Button;
+export default RectButton;

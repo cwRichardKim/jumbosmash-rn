@@ -57,7 +57,7 @@ class ProfileCardView extends Component {
   }
 
   _closeProfileCard() {
-    const animDuration = 300;
+    const animDuration = 200;
     Animated.parallel([
       Animated.timing(this.state.pan, {
         toValue: {x:0, y: this.props.pageHeight},
@@ -83,6 +83,7 @@ class ProfileCardView extends Component {
       let imageContainerHeight = this.props.pageHeight * 3 / 4;
       let source = this.props.photos[index].large;
       return (
+        <TouchableWithoutFeedback style={{flex:1}} onPress={this._closeProfileCard.bind(this)}>
         <View style={[styles.imageView, {height: imageContainerHeight}]}>
           <LoadableImage
             style={[styles.image, {height: imageContainerHeight}]}
@@ -91,6 +92,7 @@ class ProfileCardView extends Component {
           />
           <Image style={styles.topGradient} source={require('./images/topGradient.png')}/>
         </View>
+        </TouchableWithoutFeedback>
       );
     }
   }
@@ -132,10 +134,12 @@ class ProfileCardView extends Component {
           >
             <View style={[styles.card, {minHeight: pageHeight + BORDER_RADIUS}]}>
               {this._renderImages()}
-              <View style={styles.textContainer}>
-                <Text style={styles.title}>{this.props.firstName} {this.props.lastName}</Text>
-                <Text style={styles.text}>{this.props.description}</Text>
-              </View>
+              <TouchableWithoutFeedback style={{flex:1}} onPress={this._closeProfileCard.bind(this)}>
+                <View style={styles.textContainer}>
+                  <Text style={styles.title}>{this.props.firstName} {this.props.lastName}</Text>
+                  <Text style={styles.text}>{this.props.description}</Text>
+                </View>
+              </TouchableWithoutFeedback>
               <Image style={styles.bottomGradient} source={require('./images/bottomGradient.png')}/>
               <TouchableOpacity
                 style={styles.closeButton}
