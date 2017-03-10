@@ -32,7 +32,6 @@ class ChatPage extends React.Component {
   constructor(props) {
     super(props);
     const ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
-    //this._fetchConversationsAsync();
     this.state = {
       dataSource: ds.cloneWithRows(this._fetchConversationsAsync()),
       navigator: props.navigator,
@@ -48,7 +47,7 @@ class ChatPage extends React.Component {
   }
 
   _fetchConversationsAsync () {
-    return fetch('https://jumbosmash2017.herokuapp.com/chat/id/' + this.props.myProfile.profileId)
+    return fetch('https://jumbosmash2017.herokuapp.com/chat/id/' + this.props.myProfile.id)
       .then((response) => {
         if ("status" in response && response["status"] >= 200 && response["status"] < 300) {
           return response.json();
@@ -57,7 +56,7 @@ class ChatPage extends React.Component {
         }
       })
       .then((data) => {
-
+        console.log("DATA: \n" + JSON.stringify(data));
         this.setState({
           dataSource: this.state.dataSource.cloneWithRows(data),
           rawData: data,
@@ -88,6 +87,7 @@ class ChatPage extends React.Component {
 
   filterConversations(searchText, conversations) {
     let text = searchText.toLowerCase();
+    console.log("CONVO: " + JSON.stringify(conversations));
     return conversations.filter((c) => {
       let otherParticipants = global.otherParticipants(c.participants, this.props.myProfile.profileId);
       let convo = otherParticipants[0].firstName.toLowerCase();
@@ -119,7 +119,6 @@ class ChatPage extends React.Component {
         </TouchableHighlight>
       );
     }
-
     return null;
   }
 
@@ -154,7 +153,7 @@ class ChatPage extends React.Component {
     }
 
     // figure out other person(s) in conversation and get name
-    let otherParticipants = global.otherParticipants(conversation.participants, this.props.myProfile.profileId);
+    let otherParticipants = global.otherParticipants(conversation.participants, this.props.myProfile.id);
     let len = otherParticipants.length;
     if(len <= 0) {return null;}
     let name = otherParticipants[0].firstName;
@@ -162,7 +161,7 @@ class ChatPage extends React.Component {
 
     // handle rendering of last sent message
     //TODO: put styling in styles
-    let setShowRight = conversation.lastSent.profileId == this.props.myProfile.profileId;
+    let setShowRight = conversation.lastSent.profileId == this.props.myProfile.id;
     let photoStyle = function (read) {return ({
       height: 60,
       width: 60,

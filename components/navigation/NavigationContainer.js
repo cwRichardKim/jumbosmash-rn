@@ -16,8 +16,6 @@ import {
   Navigator,
   Alert,
   AsyncStorage,
-  Platform,
-  Dimensions,
 } from 'react-native';
 
 import HomeTabBarIOS          from "./HomeTabBarIOS.js"
@@ -41,23 +39,14 @@ firebase.initializeApp(firebaseConfig);
 const FIRST_BATCH_SIZE = 50;
 const FETCH_BATCH_SIZE = 100;
 
-const idOfUser = '586edd82837823188a297736';
-
-const NAVBAR_HEIGHT = (Platform.OS === 'ios') ? 88 : 49; // TODO: check the android tabbar height
-const PAGE_HEIGHT = Dimensions.get('window').height - NAVBAR_HEIGHT;
-
 //TODO: @richard delete this later
 const testProfile = {
-  profileId: idOfUser,
+  profileId: "586edd82837823188a297728",
   firstName: "Test",
   lastName: "Profile",
   description: "kasjf laksj dglkasj dlgja slkgjalskdjglkasdjg laksdj glkasjd giasjg laksdj lkasjd glaksj dglkajd glkajsdg lk alkgj akldg",
   major: "something",
-  photos: [
-    {large:"https://d13yacurqjgara.cloudfront.net/users/109914/screenshots/905742/elephant_love.jpg", small:"https://d13yacurqjgara.cloudfront.net/users/109914/screenshots/905742/elephant_love.jpg"},
-    {large:"https://d13yacurqjgara.cloudfront.net/users/1095591/screenshots/2711715/polywood_01_elephant_01_dribbble.jpg",small:"https://d13yacurqjgara.cloudfront.net/users/1095591/screenshots/2711715/polywood_01_elephant_01_dribbble.jpg"},
-    {large:"https://d13yacurqjgara.cloudfront.net/users/179241/screenshots/2633954/chris-fernandez-elephant-2.jpg",small:"https://d13yacurqjgara.cloudfront.net/users/179241/screenshots/2633954/chris-fernandez-elephant-2.jpg"}
-  ],
+  photos: ["https://d13yacurqjgara.cloudfront.net/users/109914/screenshots/905742/elephant_love.jpg", "https://d13yacurqjgara.cloudfront.net/users/1095591/screenshots/2711715/polywood_01_elephant_01_dribbble.jpg", "https://d13yacurqjgara.cloudfront.net/users/179241/screenshots/2633954/chris-fernandez-elephant-2.jpg"],
 }
 
 class NavigationContainer extends Component {
@@ -272,9 +261,8 @@ class NavigationContainer extends Component {
         <ConversationPage
           navigator={navigator}
           chatroomId={route.chatroomId}
-          pageHeight={PAGE_HEIGHT}
           participants={route.participants}
-          myProfile={this.state.myProfile}
+          userId={route.userId}
           setShowNavigationBar={this._setShowNavigationBar.bind(this)}
           firebase={firebase}/>
       );
@@ -308,7 +296,7 @@ class NavigationContainer extends Component {
            Title: (route, navigator, index, navState) =>
              { return (
                <View style={styles.navigationBarTitleContainer}>
-                 <Image style={styles.avatarPhoto} source={this.state.currentParticipant ? {uri: this.state.currentParticipant.photos[0].small} : null}/>
+                 <Image style={styles.avatarPhoto} source={this.state.currentParticipant ? {uri: this.state.currentParticipant.photo} : null}/>
                  <Text style={styles.navigationBarTitleText}>
                    {this.state.currentParticipant ? this.state.currentParticipant.firstName : null}
                  </Text>
