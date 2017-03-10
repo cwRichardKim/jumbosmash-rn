@@ -1,9 +1,8 @@
 'use strict';
 
 /*
-This file is the parent file for the entire swiping mechanism. It should control
-the data, make the requests, and delegate the UI / swiping to DeckView. It
-should be given a conversationId from it's 'parent' ChatPage
+This is the page that handles and displays a conversations with an
+a person or persons (or bot ;) )
 */
 
 import React, {Component} from 'react';
@@ -35,16 +34,16 @@ class ConversationPage extends Component {
 
   componentDidMount() {
     this.props.setShowNavigationBar(true);
+    // send initial chat bot
     this._messagesRef.on('child_added', (child) => {
       var pos = 'right';
-      if (child.val().user._id != this.props.myProfile.profileId) {
+      if (child.val().user._id != this.props.myProfile.id) {
         pos = 'left';
       }
       this.onReceive({
         _id: child.val()._id,
         text: child.val().text,
         user: child.val().user,
-        //image: 'https://facebook.github.io/react/img/logo_og.png', //TODO: make this actual info
         position: pos,
         date: new Date(child.val().date),
       });
@@ -57,14 +56,13 @@ class ConversationPage extends Component {
   }
 
   onSend(messages = []) {
-    console.log("PROPS \n" + JSON.stringify(this.props.participants));
     for (var i = 0, len = messages.length; i < len; i++) {
       var message = messages[i];
       this._messagesRef.push({
         _id: message._id,
         text: message.text,
         user: {
-          _id: this.props.myProfile.profileId,
+          _id: this.props.myProfile.id,
           name: this.props.myProfile.firstName,
           avatar: this.props.myProfile.photo,
         },
@@ -88,7 +86,7 @@ class ConversationPage extends Component {
         onSend={this.onSend}
         onReceive={this.onReceive}
         user={{
-          _id: this.props.myProfile.profileId
+          _id: this.props.myProfile.id
         }}/>
     );
   }
