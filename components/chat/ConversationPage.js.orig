@@ -1,0 +1,111 @@
+'use strict';
+
+/*
+This is the page that handles and displays a conversations with an
+a person or persons (or bot ;) )
+*/
+
+import React, {Component} from 'react';
+import {View, StyleSheet} from 'react-native';
+import { GiftedChat } from 'react-native-gifted-chat';
+
+let global = require('../global/GlobalFunctions.js');
+
+class ConversationPage extends Component {
+  constructor(props) {
+    super(props);
+
+    //will open up and get ref to particular chat between two users
+    const path = "messages/".concat(this.props.chatroomId);
+    this._messagesRef = this.props.firebase.database().ref(path);
+
+    this.onSend = this.onSend.bind(this);
+    this.onReceive = this.onReceive.bind(this);
+    this._messages = []
+    this.state = {
+      messages: this._messages,
+      typingText: null,
+    };
+
+  }
+
+  componentWillMount() {
+    this._isMounted = true;
+  }
+
+  componentDidMount() {
+<<<<<<< HEAD
+    this.props.setShowNavigationBar(true);
+    // send initial chat bot
+=======
+    let participants = global.otherParticipants(this.props.participants, this.props.userId)
+    this.props.setShowNavigationBar(true, participants && participants.length > 0 ? participants[0] : null);
+>>>>>>> 380950b1236a2d9051c6eb350a4b6abf7f7a5928
+    this._messagesRef.on('child_added', (child) => {
+      var pos = 'right';
+      if (child.val().user._id != this.props.myProfile.profileId) {
+        pos = 'left';
+      }
+      this.onReceive({
+        _id: child.val()._id,
+        text: child.val().text,
+        user: child.val().user,
+        //image: 'https://facebook.github.io/react/img/logo_og.png', //TODO: make this actual info
+        position: pos,
+        date: new Date(child.val().date),
+      });
+    });
+
+  }
+
+  componentWillUnmount() {
+    this.props.setShowNavigationBar(false, null);
+  }
+
+  onSend(messages = []) {
+    for (var i = 0, len = messages.length; i < len; i++) {
+      var message = messages[i];
+      this._messagesRef.push({
+        _id: message._id,
+        text: message.text,
+        user: {
+          _id: this.props.myProfile.profileId,
+          name: this.props.myProfile.firstName,
+          avatar: this.props.myProfile.photo,
+        },
+        date: new Date().getTime(),
+      });
+    }
+  }
+
+  onReceive(message) {
+    this.setState((previousState) => {
+      return {
+        messages: GiftedChat.append(previousState.messages, message),
+      };
+    });
+  }
+
+  render() {
+    return (
+      <GiftedChat
+        messages={this.state.messages}
+        onSend={this.onSend}
+        onReceive={this.onReceive}
+        renderAvatar={() => {null;}}
+        user={{
+<<<<<<< HEAD
+          _id: this.props.myProfile.profileId
+        }}/>
+=======
+          _id: this.props.userId
+        }}
+        />
+>>>>>>> 380950b1236a2d9051c6eb350a4b6abf7f7a5928
+    );
+  }
+}
+
+const styles = StyleSheet.create({
+});
+export default ConversationPage;
