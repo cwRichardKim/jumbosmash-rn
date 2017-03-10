@@ -41,14 +41,15 @@ firebase.initializeApp(firebaseConfig);
 const FIRST_BATCH_SIZE = 50;
 const FETCH_BATCH_SIZE = 100;
 
-const idOfUser = '586edd82837823188a297736';
-
+<<<<<<< HEAD
 const NAVBAR_HEIGHT = (Platform.OS === 'ios') ? 88 : 49; // TODO: check the android tabbar height
 const PAGE_HEIGHT = Dimensions.get('window').height - NAVBAR_HEIGHT;
+=======
+const idOfUser = '586edd82837823188a29791f';// Jared: 588f7e504a557100113d2184 Richard: '586edd82837823188a297932'; //TODO: self expanatory
+>>>>>>> 583fa87702b3ab57406ce0674a189ca8dbff21e3
 
 //TODO: @richard delete this later
 const testProfile = {
-  profileId: idOfUser,
   firstName: "Test",
   lastName: "Profile",
   description: "kasjf laksj dglkasj dlgja slkgjalskdjglkasdjg laksdj glkasjd giasjg laksdj lkasjd glaksj dglkajd glkajsdg lk alkgj akldg",
@@ -268,13 +269,21 @@ class NavigationContainer extends Component {
         </View>
       );
     } else if (route.name == 'Conversation') {
+      //TODO: this is just temp to get the profile I wanted
+      let prof = null;
+      for (let i = 0; i < route.participants.length; i++) {
+        if (route.participants[i].profileId == idOfUser) {
+          prof = route.participants[i];
+        }
+      }
       return(
         <ConversationPage
           navigator={navigator}
           chatroomId={route.chatroomId}
           pageHeight={PAGE_HEIGHT}
-          participants={route.participants}
           myProfile={this.state.myProfile}
+          participants={route.participants}
+          myProfile={prof} //{this.state.myProfile}
           setShowNavigationBar={this._setShowNavigationBar.bind(this)}
           firebase={firebase}/>
       );
@@ -308,7 +317,7 @@ class NavigationContainer extends Component {
            Title: (route, navigator, index, navState) =>
              { return (
                <View style={styles.navigationBarTitleContainer}>
-                 <Image style={styles.avatarPhoto} source={this.state.currentParticipant ? {uri: this.state.currentParticipant.photos[0].small} : null}/>
+                 <Image style={styles.avatarPhoto} source={this.state.currentParticipant ? {uri: this.state.currentParticipant.photo} : null}/>
                  <Text style={styles.navigationBarTitleText}>
                    {this.state.currentParticipant ? this.state.currentParticipant.firstName : null}
                  </Text>
