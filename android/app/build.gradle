@@ -126,7 +126,6 @@ android {
 }
 
 dependencies {
-    compile project(':react-native-vector-icons')
     compile project(':react-native-image-resizer')
     compile project(':react-native-mail')
     compile project(':react-native-fetch-blob')
