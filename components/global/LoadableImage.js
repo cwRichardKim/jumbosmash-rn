@@ -29,7 +29,7 @@ class LoadableImage extends Component {
 
   _photoFetchError() {
     // TODO @richard fix / replace this with better image or something
-    console.log("image failed to load: ".concat(this.props.source.uri));
+    console.log("image failed to load: ".concat(this.props.source));
   }
 
   render() {
