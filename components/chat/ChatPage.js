@@ -54,7 +54,6 @@ class ChatPage extends React.Component {
         }
       })
       .then((data) => {
-        console.log("DATA: \n" + JSON.stringify(data));
         this.setState({
           dataSource: this.state.dataSource.cloneWithRows(data),
           rawData: data,
@@ -85,7 +84,6 @@ class ChatPage extends React.Component {
 
   filterConversations(searchText, conversations) {
     let text = searchText.toLowerCase();
-    console.log("CONVO: " + JSON.stringify(conversations));
     return conversations.filter((c) => {
       let otherParticipants = global.otherParticipants(c.participants, this.props.myProfile.profileId);
       let convo = otherParticipants[0].firstName.toLowerCase();

@@ -136,8 +136,7 @@ class SwipingPage extends Component {
 
   _handleRightSwipeForIndex(cardIndex) {
     let profile = this.props.profiles[cardIndex];
-    console.log("PROFILE SWIPED: " + JSON.stringify(profile.id));
-    this._asyncUpdateLikeList('586edd82837823188a29771f', this.props.myProfile.profileId);
+    this._asyncUpdateLikeList(this.props.myProfile.id, profile.id);
     this._swipeErrorCheck(cardIndex, profile);
   }
 
