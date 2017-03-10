@@ -79,7 +79,7 @@ class Card extends Component {
             this.props.handleLeftSwipeForIndex(this.props.index);
           }
           let xdistance = (xvelocity + 0.5) * this.props.cardWidth;
-          let ydistance = (yvelocity - 0.3) * this.props.cardWidth
+          let ydistance = (yvelocity - 0.3) * this.props.cardWidth;
           Animated.timing(this.state.pan, {
             toValue: {x: isRight ? xdistance : -xdistance, y: ydistance},
             duration: 200,
@@ -157,9 +157,10 @@ class Card extends Component {
           <View style={styles.shadowView}>
             <View style={styles.card}>
               <LoadableImage
-                source={{uri: (this.props.photos && this.props.photos.length >= 1) ? this.props.photos[0].large : 'https://img2.greatnotions.com/StockDesign/XLarge/King_Graphics/m0410.jpg'}}
+                source={{uri: (this.props.photos && this.props.photos.length >= 1) ? this.props.photos[0].large : ""}}
                 style={styles.image}
                 _key={this.props.id}
+                thumbnail={{uri: (this.props.photos && this.props.photos.length >=1) ? this.props.photos[0].small : ""}}
               />
               <View style={styles.textContainer}>
                 <Text style={styles.text}>{this.props.firstName}</Text>
