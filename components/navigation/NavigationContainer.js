@@ -39,19 +39,14 @@ firebase.initializeApp(firebaseConfig);
 const FIRST_BATCH_SIZE = 50;
 const FETCH_BATCH_SIZE = 100;
 
-const idOfUser = '586edd82837823188a29791f';// Jared: 588f7e504a557100113d2184 Richard: '586edd82837823188a297932'; //TODO: self expanatory
-
 //TODO: @richard delete this later
 const testProfile = {
+  profileId: "586edd82837823188a297728",
   firstName: "Test",
   lastName: "Profile",
   description: "kasjf laksj dglkasj dlgja slkgjalskdjglkasdjg laksdj glkasjd giasjg laksdj lkasjd glaksj dglkajd glkajsdg lk alkgj akldg",
   major: "something",
-  photos: [
-    {large:"https://d13yacurqjgara.cloudfront.net/users/109914/screenshots/905742/elephant_love.jpg", small:"https://d13yacurqjgara.cloudfront.net/users/109914/screenshots/905742/elephant_love.jpg"},
-    {large:"https://d13yacurqjgara.cloudfront.net/users/1095591/screenshots/2711715/polywood_01_elephant_01_dribbble.jpg",small:"https://d13yacurqjgara.cloudfront.net/users/1095591/screenshots/2711715/polywood_01_elephant_01_dribbble.jpg"},
-    {large:"https://d13yacurqjgara.cloudfront.net/users/179241/screenshots/2633954/chris-fernandez-elephant-2.jpg",small:"https://d13yacurqjgara.cloudfront.net/users/179241/screenshots/2633954/chris-fernandez-elephant-2.jpg"}
-  ],
+  photos: ["https://d13yacurqjgara.cloudfront.net/users/109914/screenshots/905742/elephant_love.jpg", "https://d13yacurqjgara.cloudfront.net/users/1095591/screenshots/2711715/polywood_01_elephant_01_dribbble.jpg", "https://d13yacurqjgara.cloudfront.net/users/179241/screenshots/2633954/chris-fernandez-elephant-2.jpg"],
 }
 
 class NavigationContainer extends Component {
@@ -64,6 +59,7 @@ class NavigationContainer extends Component {
       matchedProfile: testProfile, // profile of the person you matched with for MatchView
       hasUnsavedSettings: false,
       showNavigator: false,
+      currentRecipient: null, // used for the nav bar in ConversationPage
       showMatchView: false,
     };
   }
@@ -296,19 +292,12 @@ class NavigationContainer extends Component {
         </View>
       );
     } else if (route.name == 'Conversation') {
-      //TODO: this is just temp to get the profile I wanted
-      let prof = null;
-      for (let i = 0; i < route.participants.length; i++) {
-        if (route.participants[i].profileId == idOfUser) {
-          prof = route.participants[i];
-        }
-      }
       return(
         <ConversationPage
           navigator={navigator}
           chatroomId={route.chatroomId}
           participants={route.participants}
-          myProfile={prof} //{this.state.myProfile}
+          userId={route.userId}
           setShowNavigationBar={this._setShowNavigationBar.bind(this)}
           firebase={firebase}/>
       );
@@ -317,28 +306,40 @@ class NavigationContainer extends Component {
 
   // used as a callback passed to child components of the navigator.
   // example use is showing the navigation bar in the ConversationPage
-  _setShowNavigationBar(shouldShow) {
-    this.setState({showNavigator: shouldShow});
+  _setShowNavigationBar(shouldShow, participant) {
+    this.setState(
+      {showNavigator: shouldShow,
+       currentParticipant: participant,
+      }
+    );
   }
 
   // returns UI element of the navigation bar
   _renderNavigationBar() {
     if (this.state.showNavigator) {
-      return (<Navigator.NavigationBar
-        routeMapper={{
-          LeftButton: (route, navigator, index, navState) =>
-          {
-            return(<TouchableHighlight onPress={() => {navigator.pop();}}>
-              <Text>Back</Text>
-            </TouchableHighlight>);
-          },
-          RightButton: (route, navigator, index, navState) =>
-           { return null; },
-         Title: (route, navigator, index, navState) =>
-           { return (<Text>Awesome Nav Bar</Text>); },
-        }}
-        style={{backgroundColor: 'gray'}}
-        />);
+      return (
+        <Navigator.NavigationBar style={styles.navigationBarContainer}
+          routeMapper={{
+            LeftButton: (route, navigator, index, navState) =>
+            {
+              return(<TouchableHighlight onPress={() => {navigator.pop();}}>
+                <Text>Back</Text>
+              </TouchableHighlight>);
+            },
+            RightButton: (route, navigator, index, navState) =>
+             { return null; },
+           Title: (route, navigator, index, navState) =>
+             { return (
+               <View style={styles.navigationBarTitleContainer}>
+                 <Image style={styles.avatarPhoto} source={this.state.currentParticipant ? {uri: this.state.currentParticipant.photo} : null}/>
+                 <Text style={styles.navigationBarTitleText}>
+                   {this.state.currentParticipant ? this.state.currentParticipant.firstName : null}
+                 </Text>
+               </View>); },}}>
+          <View style={styles.navigationBarSeparator}/>
+        </Navigator.NavigationBar>
+
+      );
     } else {
       return null;
     }
@@ -348,16 +349,39 @@ class NavigationContainer extends Component {
     render() {
       return (
         <Navigator
-        ref={(elem)=>{this.navigator = elem}}
-        initialRoute={{ name: 'TabBar' }}
-        renderScene={this._renderNavigatorScene.bind(this)}
-        navigationBar={this._renderNavigationBar()}
+          ref={(elem)=>{this.navigator = elem}}
+          initialRoute={{ name: 'TabBar' }}
+          renderScene={this._renderNavigatorScene.bind(this)}
+          navigationBar={this._renderNavigationBar()}
         />
       );
     }
   }
 
 const styles = StyleSheet.create({
+  avatarPhoto: {
+    height: 40,
+    width: 40,
+    borderRadius: 20,
+  },
+  navigationBarContainer: {
+    backgroundColor: 'white',
+  },
+  navigationBarTitleContainer: {
+    padding: 12,
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  navigationBarTitleText: {
+    marginLeft: 12,
+    fontSize: 16,
+    color: '#CAC4C4',
+    fontFamily: 'Avenir Next',
+  },
+  navigationBarSeparator: {
+    flex: 1,
+    height: 40,
+    backgroundColor: '#E1E1E1',
   coverView: {
     flex: 1,
     position: 'absolute',
