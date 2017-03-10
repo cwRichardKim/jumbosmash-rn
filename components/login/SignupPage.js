@@ -1,7 +1,8 @@
 'use strict';
 
 /*
-This file handles if you already have an account, and want to login.
+This page handles account creation, mainly responsible for retreiving email and 
+password from UI textinput boxes, and passing to firebase authentication.
 */
 
 import React, {Component} from 'react';
@@ -11,17 +12,16 @@ import {
   TextInput,
   View,
   Alert,
-  AsyncStorage,
   Button,
+  Navigator
 } from 'react-native';
 
 import AccountPage            from './AccountPage.js';
 import AuthErrors             from './AuthErrors.js';
 import Redirect               from './Redirect.js';
 
+class SignupPage extends Component {
 
-class LoginPage extends Component {
-  
   constructor(props) {
     super(props);
     this.state = {
@@ -30,22 +30,25 @@ class LoginPage extends Component {
     }
   }
 
-  login(){
+  signup() {
 
-    var firebase_auth = this.props.firebase.auth();
+    var firebase_auth = this.props.firebase.auth(); // TODO: global(?)
 
-    var email = this.state.email_input + this.props.email_ext;
+    var email = this.state.email_input + this.props.email_ext; 
     var password = this.state.password;
 
-    firebase_auth.signInWithEmailAndPassword(email, password)
+    /* Passing to firebase authentication function here */
+    firebase_auth.createUserWithEmailAndPassword(email, password)
       // Success case
       .then(() => {
         this.goToAccountPage();
       })
-      // Failure case: Login Error
+      // Failure case: Signup Error
       .catch((error) => {
-        AuthErrors.handleLoginError(error);
+        AuthErrors.handleSignupError(error);
       })
+
+    // TODO: Think about email confirmation? => right now i can create an account for *any* email address
   }
 
   // TODO: move to redirect
@@ -64,7 +67,7 @@ class LoginPage extends Component {
               style={styles.first}
               onChangeText={(text) => this.setState({email_input: text})}
               value={this.state.email_input}
-              placeholder={"Enter your username"}
+              placeholder={"Enter your tufts email"}
             />
             <Text style={styles.last}> {this.props.email_ext} </Text>
           </View>
@@ -74,19 +77,21 @@ class LoginPage extends Component {
             onChangeText={(text) => this.setState({password: text})}
             value={this.state.password}
             secureTextEntry={true}
-            placeholder={"Password"}
+            placeholder={"Choose a password"}
           />
 
           <Button
-            onPress={this.login.bind(this)}
-            title="Login"
-            accessibilityLabel="Login"
+            style={styles.button}
+            onPress={this.signup.bind(this)}
+            title="Signup"
+            accessibilityLabel="Signup, creating an account"
           />
 
           <Button
-            onPress={Redirect.goToSignupPage.bind(this)}
-            title="New here? Go to Signup"
-            accessibilityLabel="Go to signup page"
+            style={styles.button}
+            onPress={Redirect.goToLoginPage.bind(this)}
+            title="Got an account, go to Login"
+            accessibilityLabel="Already got an account, go to login"
           />
         </View>
       </View>
@@ -122,4 +127,4 @@ var styles = StyleSheet.create({
   }
 })
 
-export default LoginPage;
+export default SignupPage;

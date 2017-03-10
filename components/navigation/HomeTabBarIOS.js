@@ -16,7 +16,8 @@ import {
 
 import SwipingPage            from "../cards/SwipingPage.js";
 import ChatPage               from "../chat/ChatPage.js";
-import LoginPage              from "../login/LoginPage.js";
+import AuthContainer          from "../login/AuthContainer.js";
+// import SignupPage             from "../login/SignupPage.js";
 import SettingsPage           from "../settings/SettingsPage.js"
 
 const TabNames = require("../global/GlobalFunctions").tabNames();
@@ -56,7 +57,10 @@ class HomeTabBarIOS extends Component {
         navigator={this.props.navigator}
         barTintColor="white">
         {/* @jade temporary to access the login page until login code is complete */}
-        {this._renderTabBarItem(require('./icons/search.png'), require('./icons/search2.png'), TabNames.loginTab, <LoginPage/>)}
+        {this._renderTabBarItem(require('./icons/search.png'), require('./icons/search2.png'), TabNames.loginTab, 
+          <AuthContainer
+            firebase={this.props.firebase}
+          />)}
 
         {this._renderTabBarItem(require('./icons/heart.png'), require('./icons/heart2.png'), TabNames.cardsTab,
           <SwipingPage
