@@ -22,6 +22,7 @@ import HomeTabBarIOS          from "./HomeTabBarIOS.js"
 import NotificationBannerView from "./NotificationBannerView.js"
 import ChatPage               from "../chat/ChatPage.js"
 import ConversationPage       from "../chat/ConversationPage.js"
+import MatchView              from './MatchView.js'
 const global = require('../global/GlobalFunctions.js');
 const TabNames = global.tabNames();
 const StorageKeys = global.storageKeys();
@@ -40,11 +41,16 @@ const FETCH_BATCH_SIZE = 100;
 
 //TODO: @richard delete this later
 const testProfile = {
+  profileId: "586edd82837823188a297728",
   firstName: "Test",
   lastName: "Profile",
   description: "kasjf laksj dglkasj dlgja slkgjalskdjglkasdjg laksdj glkasjd giasjg laksdj lkasjd glaksj dglkajd glkajsdg lk alkgj akldg",
   major: "something",
-  photos: ["https://d13yacurqjgara.cloudfront.net/users/109914/screenshots/905742/elephant_love.jpg", "https://d13yacurqjgara.cloudfront.net/users/1095591/screenshots/2711715/polywood_01_elephant_01_dribbble.jpg", "https://d13yacurqjgara.cloudfront.net/users/179241/screenshots/2633954/chris-fernandez-elephant-2.jpg"],
+  photos: [
+    {large: "https://d13yacurqjgara.cloudfront.net/users/109914/screenshots/905742/elephant_love.jpg", small: "https://d13yacurqjgara.cloudfront.net/users/109914/screenshots/905742/elephant_love.jpg"},
+    {large: "https://d13yacurqjgara.cloudfront.net/users/1095591/screenshots/2711715/polywood_01_elephant_01_dribbble.jpg", small: "https://d13yacurqjgara.cloudfront.net/users/1095591/screenshots/2711715/polywood_01_elephant_01_dribbble.jpg"},
+    {large: "https://d13yacurqjgara.cloudfront.net/users/179241/screenshots/2633954/chris-fernandez-elephant-2.jpg", small: "https://d13yacurqjgara.cloudfront.net/users/179241/screenshots/2633954/chris-fernandez-elephant-2.jpg"},
+  ]
 }
 
 class NavigationContainer extends Component {
@@ -52,15 +58,29 @@ class NavigationContainer extends Component {
     super(props);
     this.state = {
       selectedTab: TabNames.cardsTab,
-      notificationBannerText: "notification (tap me, goes to chat)",
       profiles: [],
       myProfile: testProfile,
+      matchedProfile: testProfile, // profile of the person you matched with for MatchView
       hasUnsavedSettings: false,
+      showNavigator: false,
+      currentRecipient: null, // used for the nav bar in ConversationPage
+      showMatchView: false,
     };
   }
 
   componentDidMount() {
     this._shouldRetrieveProfilesFromStorage();
+
+    // example notification calling function
+    // this.notificationBanner.showWithMessage("test", ()=>{
+    //   this._changeTab(TabNames.chatTab);
+    // });
+    //
+    // setTimeout(() => {
+    //   this.notificationBanner.showWithMessage("next message arrived", ()=>{
+    //     this._changeTab(TabNames.chatTab);
+    //   });
+    // }, 2000);
   }
 
   // Called when the app is closed from SwipingPage.js
@@ -113,15 +133,15 @@ class NavigationContainer extends Component {
           });
           this._removeProfilesFromStorage();
 
-        // data is not of the correct type
+          // data is not of the correct type
         } else {
           this._fetchProfiles(0, FIRST_BATCH_SIZE);
         }
-      // storage is null / empty
+        // storage is null / empty
       } else {
         this._fetchProfiles(0, FIRST_BATCH_SIZE);
       }
-    // error accessing storage
+      // error accessing storage
     } catch (error) {
       this._fetchProfiles(0, FIRST_BATCH_SIZE);
       throw error;
@@ -138,27 +158,27 @@ class NavigationContainer extends Component {
     let batch = count ? count.toString() : FETCH_BATCH_SIZE.toString();
     let url = "https://jumbosmash2017.herokuapp.com/profile/batch/"+id+"/"+index+"/"+batch;
     return fetch(url)
-      .then((response) => {
-        if ("status" in response && response["status"] >= 200 && response["status"] < 300) {
-          return response.json();
-        } else {
-          throw ("status" in response) ? response["status"] : "Unknown Error";
-        }
-      }).then((responseJson) => {
-        global.shuffle(responseJson);
-        this.setState({
-          profiles: this.state.profiles.concat(responseJson),
-          myProfile: (this.state.myProfile == testProfile) ? responseJson[0] : this.state.myProfile, //TODO: @richard temporary while we don't have a real profile
-        })
+    .then((response) => {
+      if ("status" in response && response["status"] >= 200 && response["status"] < 300) {
+        return response.json();
+      } else {
+        throw ("status" in response) ? response["status"] : "Unknown Error";
+      }
+    }).then((responseJson) => {
+      global.shuffle(responseJson);
+      this.setState({
+        profiles: this.state.profiles.concat(responseJson),
+        myProfile: (this.state.myProfile == testProfile) ? responseJson[0] : this.state.myProfile, //TODO: @richard temporary while we don't have a real profile
       })
-      .catch((error) => {
-        //TODO: @richard replace with real catch case
-        Alert.alert(
-          "Server is Down :(",
-          error.toString(),
-          [{text: "OK", onPress: ()=>{}}]
-        );
-      });
+    })
+    .catch((error) => {
+      //TODO: @richard replace with real catch case
+      Alert.alert(
+        "Something Went Wrong :(",
+        error.toString(),
+        [{text: "OK", onPress: ()=>{}}]
+      );
+    });
   }
 
   // Changes which tab is showing (swiping, settings, etc), check HomeTabBarIOS
@@ -217,6 +237,38 @@ class NavigationContainer extends Component {
     return newProfile;
   }
 
+  // shows the correct notification for matching
+  // if on the swiping page, then shows full match view, else shows a banner notif
+  _notifyUserOfMatchWith(profile) {
+    if (profile != null && this.state.selectedTab == TabNames.cardsTab) {
+      this.setState({
+        matchProfile: profile,
+        showMatchView: true,
+      });
+    } else if (profile != null) {
+      this.setState({
+        matchProfile: profile,
+      });
+      this.notificationBanner.showWithMessage("New Match! Say Hello to " + profile.firstName, ()=>{
+        this._changeTab(TabNames.chatTab);
+      });
+    }
+  }
+
+  _shouldRenderMatchView() {
+    if (this.state.showMatchView && this.state.selectedTab == TabNames.cardsTab && this.state.profiles.length > 1) {
+      return (
+        <View style={styles.coverView}>
+          <MatchView
+            myProfile={this.state.myProfile}
+            matchProfile={this.state.matchProfile}
+            onClose={() => this.setState({showMatchView: false})}
+          />
+        </View>
+      );
+    }
+  }
+
   // Returns the content that the navigator should show.  Since route.name is "TabBar"
   // by default, it will show the TabBar.  In order to "push" a view on top of this view,
   // You have to give it its own route name and use navigator.push({name: route name})
@@ -237,45 +289,113 @@ class NavigationContainer extends Component {
               this.setState({hasUnsavedSettings: hasUnsavedSettings})
             }}
             removeSeenCards={this._removeSeenCards.bind(this)}
+            notifyUserOfMatchWith={this._notifyUserOfMatchWith.bind(this)}
           />
-          <NotificationBannerView
-            style={styles.notificationBanner}
-            message={this.state.notificationBannerText}
-            onPress={()=>{
-              this._changeTab(TabNames.chatTab);
-            }}
-          />
+          {this._shouldRenderMatchView()}
+          <NotificationBannerView ref={(elem) => {this.notificationBanner = elem}}/>
         </View>
       );
-    } else if (route.name == 'Chat') {
-      return(<ConversationPage
-                navigator={navigator}
-                chatroomId={route.chatroomId}
-                participants={route.participants}
-                userId={route.userId}
-                firebase={firebase}
-              />);
+    } else if (route.name == 'Conversation') {
+      return(
+        <ConversationPage
+          navigator={navigator}
+          chatroomId={route.chatroomId}
+          participants={route.participants}
+          userId={route.userId}
+          setShowNavigationBar={this._setShowNavigationBar.bind(this)}
+          firebase={firebase}/>
+      );
     }
   }
 
-  render() {
-    return (
-      <Navigator
-        initialRoute={{ name: 'TabBar' }}
-        renderScene={this._renderNavigatorScene.bind(this)}
-      />
+  // used as a callback passed to child components of the navigator.
+  // example use is showing the navigation bar in the ConversationPage
+  _setShowNavigationBar(shouldShow, participant) {
+    this.setState(
+      {showNavigator: shouldShow,
+       currentParticipant: participant,
+      }
     );
   }
-}
+
+  // returns UI element of the navigation bar
+  _renderNavigationBar() {
+    if (this.state.showNavigator) {
+      return (
+        <Navigator.NavigationBar style={styles.navigationBarContainer}
+          routeMapper={{
+            LeftButton: (route, navigator, index, navState) =>
+            {
+              return(<TouchableHighlight onPress={() => {navigator.pop();}}>
+                <Text>Back</Text>
+              </TouchableHighlight>);
+            },
+            RightButton: (route, navigator, index, navState) =>
+             { return null; },
+           Title: (route, navigator, index, navState) =>
+             { return (
+               <View style={styles.navigationBarTitleContainer}>
+                 <Image style={styles.avatarPhoto} source={this.state.currentParticipant ? {uri: this.state.currentParticipant.photo} : null}/>
+                 <Text style={styles.navigationBarTitleText}>
+                   {this.state.currentParticipant ? this.state.currentParticipant.firstName : null}
+                 </Text>
+               </View>); },}}>
+          <View style={styles.navigationBarSeparator}/>
+        </Navigator.NavigationBar>
+
+      );
+    } else {
+      return null;
+    }
+  }
+
+
+    render() {
+      return (
+        <Navigator
+          ref={(elem)=>{this.navigator = elem}}
+          initialRoute={{ name: 'TabBar' }}
+          renderScene={this._renderNavigatorScene.bind(this)}
+          navigationBar={this._renderNavigationBar()}
+        />
+      );
+    }
+  }
 
 const styles = StyleSheet.create({
-  notificationBanner: {
+  avatarPhoto: {
+    height: 40,
+    width: 40,
+    borderRadius: 20,
+  },
+  navigationBarContainer: {
+    backgroundColor: 'white',
+  },
+  navigationBarTitleContainer: {
+    padding: 12,
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  navigationBarTitleText: {
+    marginLeft: 12,
+    fontSize: 16,
+    color: '#CAC4C4',
+    fontFamily: 'Avenir Next',
+  },
+  navigationBarSeparator: {
+    flex: 1,
+    height: 40,
+    backgroundColor: '#E1E1E1',
+  },
+  coverView: {
+    flex: 1,
     position: 'absolute',
-    height: 200,
     top: 0,
     left: 0,
     right: 0,
+    bottom: 0,
+    zIndex: 100,
   },
 });
 
-export default NavigationContainer;
+  export default NavigationContainer;

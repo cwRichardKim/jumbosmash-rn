@@ -66,16 +66,18 @@ class HomeTabBarIOS extends Component {
           <SwipingPage
             navigator={this.props.navigator}
             profiles={this.props.profiles}
+            myProfile={this.props.myProfile}
             fetchProfiles={this.props.fetchProfiles}
             pageHeight={PAGE_HEIGHT}
             removeSeenCards={this.props.removeSeenCards}
+            notifyUserOfMatchWith={this.props.notifyUserOfMatchWith}
           />
         )}
 
         {this._renderTabBarItem(require('./icons/chat.png'), require('./icons/chat2.png'), TabNames.chatTab,
           <ChatPage
-            chatroomId={this.props.chatroomId}
             navigator={this.props.navigator}
+            myProfile={this.props.myProfile}
           />)}
 
         {this._renderTabBarItem(require('./icons/user.png'), require('./icons/user2.png'), TabNames.settingsTab,

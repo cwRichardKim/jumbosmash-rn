@@ -1,13 +1,14 @@
 'use strict';
 
 /*
-This file is the parent file for the entire swiping mechanism. It should control
-the data, make the requests, and delegate the UI / swiping to DeckView. It
-should be given a conversationId from it's 'parent' ChatPage
+This is the page that handles and displays a conversations with an
+a person or persons (or bot ;) )
 */
 
 import React, {Component} from 'react';
+import View from 'react-native';
 import { GiftedChat } from 'react-native-gifted-chat';
+
 
 class ConversationPage extends Component {
   constructor(props) {
@@ -32,17 +33,17 @@ class ConversationPage extends Component {
   }
 
   componentDidMount() {
+    this.props.setShowNavigationBar(true);
+    // send initial chat bot
     this._messagesRef.on('child_added', (child) => {
       var pos = 'right';
-      if (child.val().user._id != this.props.userId) {
-        console.log("GOT IN HERE");
+      if (child.val().user._id != this.props.myProfile.id) {
         pos = 'left';
       }
       this.onReceive({
         _id: child.val()._id,
         text: child.val().text,
         user: child.val().user,
-        //image: 'https://facebook.github.io/react/img/logo_og.png', //TODO: make this actual info
         position: pos,
         date: new Date(child.val().date),
       });
@@ -50,27 +51,27 @@ class ConversationPage extends Component {
 
   }
 
+  componentWillUnmount() {
+    this.props.setShowNavigationBar(false);
+  }
+
   onSend(messages = []) {
-    console.log("PARTICIPANTS " + JSON.stringify(this.props.participants));
     for (var i = 0, len = messages.length; i < len; i++) {
       var message = messages[i];
       this._messagesRef.push({
         _id: message._id,
         text: message.text,
         user: {
-          _id: this.props.userId,
-          name: this.props.participants[this.props.userId].firstName,
-          avatar: this.props.participants[this.props.userId].photo,
+          _id: this.props.myProfile.id,
+          name: this.props.myProfile.firstName,
+          avatar: this.props.myProfile.photo,
         },
         date: new Date().getTime(),
       });
-
-
     }
   }
 
   onReceive(message) {
-    console.log("MESSAGE " + JSON.stringify(message));
     this.setState((previousState) => {
       return {
         messages: GiftedChat.append(previousState.messages, message),
@@ -85,11 +86,9 @@ class ConversationPage extends Component {
         onSend={this.onSend}
         onReceive={this.onReceive}
         user={{
-          _id: this.props.userId
-        }}
-      />
+          _id: this.props.myProfile.id
+        }}/>
     );
   }
 }
-
 export default ConversationPage;

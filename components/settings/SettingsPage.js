@@ -21,8 +21,9 @@ import {
 
 import ProfilePhotoPicker from "./ProfilePhotoPicker.js";
 import SaveButton         from "./SaveButton.js";
-import SupportButton      from "../global/SupportButton.js";
+import RectButton      from "../global/RectButton.js";
 const SaveButtonState = require('../global/GlobalFunctions.js').saveButtonStates();
+let Mailer = require('NativeModules').RNMail;
 
 class SettingsPage extends Component {
   constructor(props) {
@@ -50,7 +51,7 @@ class SettingsPage extends Component {
 
   _allPhotosAreNull(photos) {
     for (var i in photos) {
-      if (photos[i] != null) {
+      if (photos[i] != null && photos[i].large != null && photos[i].small != null) {
         return false;
       }
     }
@@ -180,6 +181,26 @@ class SettingsPage extends Component {
     }
   }
 
+  _sendMail() {
+    if (Mailer && Mailer.mail) {
+      Mailer.mail({
+        subject: 'Help / Feedback',
+        recipients: ['team@jumbosmash.com'],
+        body: '',
+      }, (error, event) => {
+        if(error) {
+          Alert.alert('Error', 'Could not send mail. Try sending an email to team@jumbosmash.com through your mail client');
+        }
+      });
+    } else {
+      Alert.alert(
+        "Unsupported Device",
+        "Sorry, your device doesn't support in-app email :(\nSend your question / feedback to team@jumbosmash.com with your mail client",
+        [{text:"OK", onPress:()=>{}}]
+      )
+    }
+  }
+
   render() {
     return (
       <View style={[styles.container, {height: this.props.pageHeight}]}>
@@ -246,7 +267,11 @@ class SettingsPage extends Component {
             returnKeyType="done"
           />
           <View style={styles.line}/>
-          <SupportButton style={styles.supportButton}/>
+          <RectButton
+            style={styles.supportButton}
+            onPress={this._sendMail.bind(this)}
+            text="Help / Feedback"
+          />
           <View style={styles.bottom}>
             <Text style={styles.aboutText}>
               JumboSmash was brought to you by:{"\n"}
@@ -302,6 +327,10 @@ const styles = StyleSheet.create({
   supportButton: {
     height: 70,
     marginTop: 20,
+    backgroundColor: '#F2585A',
+    marginLeft: 16,
+    marginRight: 16,
+    borderRadius: 5,
   },
   aboutText: {
     textAlign: 'center',
