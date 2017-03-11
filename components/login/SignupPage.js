@@ -33,15 +33,20 @@ class SignupPage extends Component {
 
   async signup() {
 
-    let email = (this.state.email_input + this.props.email_ext).toLowerCase(); // validate input, get rid of white sapaces
+    let email = this.formatEmail();
     let password = this.state.password;
 
     let isTuftsSenior = await StudentDatabase.validateTuftsSenior(email);
     if (isTuftsSenior) {
       this.createAccount(email, password);
     } else {
-      Alert.alert("I'm sorry, you're not in our database as a Tufts Senior. Contact ___ if you think this is a mistake");
+      Alert.alert("I'm sorry, you're not in our database as a Tufts Senior. Contact _______________ if you think this is a mistake");
     }
+  }
+
+  formatEmail() {
+    let em = (this.state.email_input).toLowerCase().trim() + this.props.email_ext;
+    return em;
   }
 
   createAccount(email, password) {
