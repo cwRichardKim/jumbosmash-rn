@@ -20,7 +20,7 @@ import {
   AsyncStorage,
   Button,
   Navigator,
-  AppState
+  // AppState,
 } from 'react-native';
 
 import SignupPage             from "./SignupPage.js";
