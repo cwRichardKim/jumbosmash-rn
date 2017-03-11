@@ -23,7 +23,7 @@ import AuthContainer          from "../login/AuthContainer.js";
 // import SignupPage             from "../login/SignupPage.js";
 import SettingsPage           from "../settings/SettingsPage.js"
 
-const TabNames = require("../global/GlobalFunctions").tabNames();
+const PageNames = require("../global/GlobalFunctions").pageNames();
 
 const NAVBAR_HEIGHT = (Platform.OS === 'ios') ? 64 : 64; // TODO: check the android tabbar height
 const PAGE_HEIGHT = Dimensions.get('window').height - NAVBAR_HEIGHT;
@@ -42,7 +42,7 @@ class JumboNavigator extends Component {
   // by default, it will show the TabBar.  In order to "push" a view on top of this view,
   // You have to give it its own route name and use navigator.push({name: route name})
   _renderNavigatorScene (route, navigator) {
-    if (route.name == "Account") {
+    if (route.name == PageNames.settingsPage) {
       return (
         <SettingsPage
           {...this.props.myProfile}
@@ -53,7 +53,7 @@ class JumboNavigator extends Component {
           setHasUnsavedSettings={this.props.setHasUnsavedSettings}
         />
       );
-    } else if (route.name == "Swiping") {
+    } else if (route.name == PageNames.cardsPage) {
       return (
         <SwipingPage
           navigator={navigator}
@@ -66,7 +66,7 @@ class JumboNavigator extends Component {
           notifyUserOfMatchWith={this.props.notifyUserOfMatchWith}
         />
       );
-    } else if (route.name == "Chat") {
+    } else if (route.name == PageNames.chatPage) {
       return (
         <ChatPage
           navigator={navigator}
@@ -75,13 +75,13 @@ class JumboNavigator extends Component {
           pageHeight={PAGE_HEIGHT}
         />
       );
-    } else if (route.name == "Auth") {
+    } else if (route.name == PageNames.loginPage) {
       return (
         <AuthContainer
           firebase={this.props.firebase}
         />
       );
-    } else if (route.name == 'Conversation') {
+    } else if (route.name == PageNames.conversation) {
       return(
         <ConversationPage
           navigator={navigator}
@@ -104,7 +104,7 @@ class JumboNavigator extends Component {
             LeftButton: (route, navigator, index, navState) => {
               return (
                 <TouchableHighlight onPress={() => {
-                  navigator.replace({name: "Account"});
+                  navigator.replace({name: PageNames.settingsPage});
                 }}>
                   <Text>Account</Text>
                 </TouchableHighlight>
@@ -113,7 +113,7 @@ class JumboNavigator extends Component {
             RightButton: (route, navigator, index, navState) => {
               return (
                 <TouchableHighlight onPress={() => {
-                  navigator.replace({name: "Chat"});
+                  navigator.replace({name: PageNames.chatPage});
                 }}>
                   <Text>Chat</Text>
                 </TouchableHighlight>
@@ -123,12 +123,12 @@ class JumboNavigator extends Component {
               return (
                 <View>
                   <TouchableHighlight onPress={() => {
-                    navigator.replace({name: "Swiping"});
+                    navigator.replace({name: PageNames.cardsPage});
                   }}>
                     <Text>Swipe!</Text>
                   </TouchableHighlight>
                   <TouchableHighlight onPress={() => {
-                    navigator.replace({name: "Auth"});
+                    navigator.replace({name: PageNames.loginPage});
                   }}>
                     <Text>Login (temp)</Text>
                   </TouchableHighlight>
@@ -164,29 +164,11 @@ class JumboNavigator extends Component {
     }
   }
 
-  // Function for generating the tab items.  This includes the icon at the bottom
-  // and the content that is displayed
-  _renderTabBarItem(unselectedIcon, selectedIcon, tabName, content) {
-    return (
-      <TabBarIOS.Item
-        icon={unselectedIcon}
-        selectedIcon={selectedIcon}
-        renderAsOriginal
-        selected={this.props.selectedTab === tabName}
-        onPress={() => {
-          this.props.changeTab(tabName);
-        }}
-      >
-        {content}
-      </TabBarIOS.Item>
-    );
-  }
-
   render() {
     return (
       <Navigator
         ref={(elem)=>{this.navigator = elem}}
-        initialRoute={this.props.initialRoute ? this.props.initialRoute : { name: 'Swiping' }}
+        initialRoute={this.props.initialRoute ? this.props.initialRoute : { name: PageNames.cardsPage }}
         renderScene={this._renderNavigatorScene.bind(this)}
         navigationBar={this._renderNavigationBar()}
       />

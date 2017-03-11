@@ -139,7 +139,7 @@ class ChatPage extends React.Component {
       chatroomId: conversation._id,
       participants: conversation.participants,
       myProfile: this.props.myProfile,
-      name: "Conversation"
+      name: global.pageNames().conversation,
     });
   }
 

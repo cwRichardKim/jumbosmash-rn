@@ -30,12 +30,13 @@ module.exports = {
       saving: "SAVINGSAVEBUTTON",
     })
   },
-  tabNames: function () {
+  pageNames: function () {
     return ({
-      loginTab: "LOGINTAB", //TODO: @richard temporary
-      cardsTab: "CARDSTAB",
-      chatTab: "CHATTAB",
-      settingsTab: "SETTINGSTAB",
+      loginPage: "LOGINPAGE", //TODO: @richard temporary
+      cardsPage: "CARDSPAGE",
+      chatPage: "CHATPAGE",
+      settingsPage: "SETTINGSPAGE",
+      conversation: "CONVERSATIONPAGE"
     })
   },
   storageKeys: function () {

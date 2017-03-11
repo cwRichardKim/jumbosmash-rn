@@ -11,13 +11,9 @@ import {
   Text,
   View,
   Image,
-  TabBarIOS,
   TouchableHighlight,
-  Navigator,
   Alert,
   AsyncStorage,
-  Dimensions,
-  Platform,
 } from 'react-native';
 
 import JumboNavigator         from "./JumboNavigator.js"
@@ -25,7 +21,7 @@ import NotificationBannerView from "./NotificationBannerView.js"
 import MatchView              from './MatchView.js'
 
 const global = require('../global/GlobalFunctions.js');
-const TabNames = global.tabNames();
+const PageNames = global.pageNames();
 const StorageKeys = global.storageKeys();
 
 const firebase = require('firebase');
@@ -57,8 +53,10 @@ const testProfile = {
 class NavigationContainer extends Component {
   constructor(props) {
     super(props);
+
+    this.currentPage = PageNames.cardsPage,
+
     this.state = {
-      selectedTab: TabNames.cardsTab,
       profiles: [],
       myProfile: testProfile,
       matchedProfile: testProfile, // profile of the person you matched with for MatchView
@@ -73,12 +71,12 @@ class NavigationContainer extends Component {
 
     // example notification calling function
     // this.notificationBanner.showWithMessage("test", ()=>{
-    //   this._changeTab(TabNames.chatTab);
+    //   this._changePage(PageNames.chatPage);
     // });
     //
     // setTimeout(() => {
     //   this.notificationBanner.showWithMessage("next message arrived", ()=>{
-    //     this._changeTab(TabNames.chatTab);
+    //     this._changePage(PageNames.chatPage);
     //   });
     // }, 2000);
   }
@@ -184,12 +182,12 @@ class NavigationContainer extends Component {
   // Changes which tab is showing (swiping, settings, etc), check HomeTabBarIOS
   // for the tab names.  The reason why this is here is because notifications
   // will also need to change the tabs, and changes can only trickle downwards.
-  // Thus, selectedTab is a property of the Navigator, and TabBar looks to
+  // Thus, currentPage is a property of the Navigator, and TabBar looks to
   // Navigator for this property.
-  _changeTab(tabName) {
-    const settingsTab = TabNames.settingsTab;
-    let currentlyOnSettings = this.state.selectedTab == settingsTab;
-    let leavingSettings = currentlyOnSettings && tabName != settingsTab;
+  _changePage(pageName) {
+    const settingsPage = PageNames.settingsPage;
+    let currentlyOnSettings = this.currentPage == settingsPage;
+    let leavingSettings = currentlyOnSettings && pageName != settingsPage;
     if (leavingSettings && this.state.hasUnsavedSettings) {
       Alert.alert(
         "Leaving unsaved changes",
@@ -197,14 +195,14 @@ class NavigationContainer extends Component {
         [
           {text: "OK", onPress:() => {
             this.setState({
-              selectedTab: tabName,
+              currentPage: pageName,
             })
           }},
         ]
       );
     } else {
       this.setState({
-        selectedTab: tabName,
+        currentPage: pageName,
       })
     }
   }
@@ -240,7 +238,7 @@ class NavigationContainer extends Component {
   // shows the correct notification for matching
   // if on the swiping page, then shows full match view, else shows a banner notif
   _notifyUserOfMatchWith(profile) {
-    if (profile != null && this.state.selectedTab == TabNames.cardsTab) {
+    if (profile != null && this.currentPage == PageNames.cardsPage) {
       this.setState({
         matchProfile: profile,
         showMatchView: true,
@@ -250,13 +248,13 @@ class NavigationContainer extends Component {
         matchProfile: profile,
       });
       this.notificationBanner.showWithMessage("New Match! Say Hello to " + profile.firstName, ()=>{
-        this._changeTab(TabNames.chatTab);
+        this._changePage(PageNames.chatPage);
       });
     }
   }
 
   _shouldRenderMatchView() {
-    // if (this.state.showMatchView && this.state.selectedTab == TabNames.cardsTab && this.state.profiles.length > 1) {
+    if (this.state.showMatchView && this.currentPage == PageNames.cardsPage && this.state.profiles.length > 1) {
       return (
         <View style={styles.coverView}>
           <MatchView
@@ -266,7 +264,7 @@ class NavigationContainer extends Component {
           />
         </View>
       );
-    // }
+    }
   }
 
   // sets participant of chat using callback
@@ -280,9 +278,9 @@ class NavigationContainer extends Component {
     return (
       <View style={{flex: 1}}>
         <JumboNavigator
-          initialRoute={{ name: 'Swiping' }}
-          selectedTab={this.state.selectedTab}
-          changeTab={this._changeTab.bind(this)}
+          initialRoute={{ name: PageNames.cardsPage }}
+          currentPage={this.currentPage}
+          changePage={this._changePage.bind(this)}
           fetchProfiles={this._fetchProfiles.bind(this)}
           profiles={this.state.profiles}
           myProfile={this.state.myProfile}
@@ -294,6 +292,7 @@ class NavigationContainer extends Component {
           setCurrentParticipant={this._setCurrentParticipant.bind(this)}
         />
         {this._shouldRenderMatchView()}
+        <NotificationBannerView ref={(elem) => {this.notificationBanner = elem}}/>
       </View>
     );
   }
