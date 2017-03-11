@@ -210,7 +210,7 @@ class SwipingPage extends Component {
     // let animatedNopeStyles = {transform: [{scale: nopeScale}], opacity: nopeOpacity}
 
     return (
-      <View style={{height:this.props.pageHeight}}>
+      <View style={{marginTop: this.props.navBarHeight, height:this.props.pageHeight}}>
         <View style={[styles.container]}>
           <View style={styles.topPadding}/>
           {this._shouldRenderProfileView()}
@@ -247,7 +247,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
   },
   topPadding: {
-    height: 50,
+    height: 20,
   },
   // yesView: {
   //   position: 'absolute',

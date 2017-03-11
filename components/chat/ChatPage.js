@@ -202,7 +202,7 @@ class ChatPage extends React.Component {
     return (
         <ListView
           ref={(listView) => { _listView = listView; }}
-          style={styles.container}
+          style={[styles.container, {marginTop: this.props.navBarHeight, height: this.props.pageHeight}]}
           dataSource={this.state.dataSource}
           renderRow={this.renderChatRow.bind(this)}
           enableEmptySections={true}
