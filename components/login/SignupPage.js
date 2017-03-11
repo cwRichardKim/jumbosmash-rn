@@ -19,6 +19,7 @@ import {
 import AccountPage            from './AccountPage.js';
 import AuthErrors             from './AuthErrors.js';
 import Redirect               from './Redirect.js';
+import StudentDatabase        from './StudentDatabase.js';
 
 class SignupPage extends Component {
 
@@ -30,15 +31,22 @@ class SignupPage extends Component {
     }
   }
 
-  signup() {
+  async signup() {
 
-    var firebase_auth = this.props.firebase.auth(); // TODO: global(?)
+    let email = (this.state.email_input + this.props.email_ext).toLowerCase(); // validate input, get rid of white sapaces
+    let password = this.state.password;
 
-    var email = this.state.email_input + this.props.email_ext; 
-    var password = this.state.password;
+    let isTuftsSenior = await StudentDatabase.validateTuftsSenior(email);
+    if (isTuftsSenior) {
+      this.createAccount(email, password);
+    } else {
+      Alert.alert("I'm sorry, you're not in our database as a Tufts Senior. Contact ___ if you think this is a mistake");
+    }
+  }
 
+  createAccount(email, password) {
     /* Passing to firebase authentication function here */
-    firebase_auth.createUserWithEmailAndPassword(email, password)
+    this.props.firebase.auth().createUserWithEmailAndPassword(email, password)
       // Success case
       .then(() => {
         this.goToAccountPage();
@@ -48,7 +56,6 @@ class SignupPage extends Component {
         AuthErrors.handleSignupError(error);
       })
 
-    // TODO: Think about email confirmation? => right now i can create an account for *any* email address
   }
 
   // TODO: move to redirect

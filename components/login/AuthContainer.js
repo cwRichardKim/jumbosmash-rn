@@ -20,6 +20,7 @@ import {
   AsyncStorage,
   Button,
   Navigator,
+  // AppState,
 } from 'react-native';
 
 import SignupPage             from "./SignupPage.js";
@@ -34,17 +35,18 @@ class AuthContainer extends Component {
       component: LoginPage, // default is not logged in
     };
   }
-  
-  // Loads initial page
-  // If user is logged in => AccountPage
-  // user is not logged in => LoginPage
-  componentWillMount(){
-    var user = this.props.firebase.auth().currentUser;
 
-    if (user) {
-      this.setState({component: AccountPage});
-    }
-  }
+  // state = {
+  //   appState: AppState.currentState
+  // }
+  
+  // // Loads initial page
+  // // If user is logged in => AccountPage
+  // // user is not logged in => LoginPage
+  // componentDidMount(){
+  //   AppState.addEventListener('change', this._handleAppStateChange)
+
+  // }
 
   render(){
     return (
