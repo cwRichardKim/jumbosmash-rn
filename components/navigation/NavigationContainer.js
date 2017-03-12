@@ -54,13 +54,10 @@ class NavigationContainer extends Component {
   constructor(props) {
     super(props);
 
-    this.currentPage = PageNames.cardsPage,
-
     this.state = {
       profiles: [],
       myProfile: testProfile,
       matchedProfile: testProfile, // profile of the person you matched with for MatchView
-      hasUnsavedSettings: false,
       currentRecipient: null, // used for the nav bar in ConversationPage
       showMatchView: false,
     };
@@ -71,12 +68,12 @@ class NavigationContainer extends Component {
 
     // example notification calling function
     // this.notificationBanner.showWithMessage("test", ()=>{
-    //   this._changePage(PageNames.chatPage);
+    //   this.navigator.changePage(PageNames.chatPage);
     // });
     //
     // setTimeout(() => {
     //   this.notificationBanner.showWithMessage("next message arrived", ()=>{
-    //     this._changePage(PageNames.chatPage);
+    //     this.navigator.changePage(PageNames.chatPage);
     //   });
     // }, 2000);
   }
@@ -179,34 +176,6 @@ class NavigationContainer extends Component {
     });
   }
 
-  // Changes which tab is showing (swiping, settings, etc), check HomeTabBarIOS
-  // for the tab names.  The reason why this is here is because notifications
-  // will also need to change the tabs, and changes can only trickle downwards.
-  // Thus, currentPage is a property of the Navigator, and TabBar looks to
-  // Navigator for this property.
-  _changePage(pageName) {
-    const settingsPage = PageNames.settingsPage;
-    let currentlyOnSettings = this.currentPage == settingsPage;
-    let leavingSettings = currentlyOnSettings && pageName != settingsPage;
-    if (leavingSettings && this.state.hasUnsavedSettings) {
-      Alert.alert(
-        "Leaving unsaved changes",
-        "Save your changes with the circular 'save' button at the bottom-right!",
-        [
-          {text: "OK", onPress:() => {
-            this.setState({
-              currentPage: pageName,
-            })
-          }},
-        ]
-      );
-    } else {
-      this.setState({
-        currentPage: pageName,
-      })
-    }
-  }
-
   async _asyncUpdateServerProfile(id, profileChanges, newProfile) {
     let url = "https://jumbosmash2017.herokuapp.com/profile/id/".concat(id);
     fetch(url, {
@@ -238,7 +207,7 @@ class NavigationContainer extends Component {
   // shows the correct notification for matching
   // if on the swiping page, then shows full match view, else shows a banner notif
   _notifyUserOfMatchWith(profile) {
-    if (profile != null && this.currentPage == PageNames.cardsPage) {
+    if (profile != null && this.navigator.currentPage == PageNames.cardsPage) {
       this.setState({
         matchProfile: profile,
         showMatchView: true,
@@ -248,19 +217,20 @@ class NavigationContainer extends Component {
         matchProfile: profile,
       });
       this.notificationBanner.showWithMessage("New Match! Say Hello to " + profile.firstName, ()=>{
-        this._changePage(PageNames.chatPage);
+        this.navigator.changePage(PageNames.chatPage);
       });
     }
   }
 
   _shouldRenderMatchView() {
-    if (this.state.showMatchView && this.currentPage == PageNames.cardsPage && this.state.profiles.length > 1) {
+    if (this.state.showMatchView && this.navigator.currentPage == PageNames.cardsPage && this.state.profiles.length > 1) {
       return (
         <View style={styles.coverView}>
           <MatchView
             myProfile={this.state.myProfile}
             matchProfile={this.state.matchProfile}
             onClose={() => this.setState({showMatchView: false})}
+            onSuccess={() => this.navigator.changePage(PageNames.chatPage)}
           />
         </View>
       );
@@ -278,15 +248,13 @@ class NavigationContainer extends Component {
     return (
       <View style={{flex: 1}}>
         <JumboNavigator
+          ref={(elem) => {this.navigator = elem}}
           initialRoute={{ name: PageNames.cardsPage }}
-          currentPage={this.currentPage}
-          changePage={this._changePage.bind(this)}
           fetchProfiles={this._fetchProfiles.bind(this)}
           profiles={this.state.profiles}
           myProfile={this.state.myProfile}
           updateProfile={this._updateProfile.bind(this)}
           firebase={firebase}
-          setHasUnsavedSettings={(hasUnsavedSettings) => {this.setState({hasUnsavedSettings})}}
           removeSeenCards={this._removeSeenCards.bind(this)}
           notifyUserOfMatchWith={this._notifyUserOfMatchWith.bind(this)}
           setCurrentParticipant={this._setCurrentParticipant.bind(this)}

@@ -31,17 +31,43 @@ const PAGE_HEIGHT = Dimensions.get('window').height - NAVBAR_HEIGHT;
 class JumboNavigator extends Component {
   constructor(props) {
     super(props);
+
+    this.currentPage = this.props.initialRoute ? this.props.initialRoute.name : PageNames.cardsPage;
+
     this.state = {
       // WAIT. before you add anything here, remember that this is the UI of the
       // navigator, only add things that pertain to UI
       chatNotifCount: 0,
+      hasUnsavedSettings: false,
     };
+  }
+
+  // Public function, changes which page is showing (swiping, settings, etc),
+  // The reason why this is here is because notifications will also need to
+  // change the tabs, and changes can only trickle downwards.
+  // Thus, currentPage is a property of the Navigator
+  changePage(pageName) {
+    const settingsPage = PageNames.settingsPage;
+    let currentlyOnSettings = this.currentPage == settingsPage;
+    let leavingSettings = currentlyOnSettings && pageName != settingsPage;
+    if (leavingSettings && this.state.hasUnsavedSettings) {
+      Alert.alert(
+        "Leaving unsaved changes",
+        "Save your changes with the circular 'save' button at the bottom-right!",
+        [{text: "OK", onPress:( ) => {
+          this.navigator.replace({name: pageName});
+        }}]
+      );
+    } else {
+      this.navigator.replace({name: pageName});;
+    }
   }
 
   // Returns the content that the navigator should show.  Since route.name is "TabBar"
   // by default, it will show the TabBar.  In order to "push" a view on top of this view,
   // You have to give it its own route name and use navigator.push({name: route name})
   _renderNavigatorScene (route, navigator) {
+    this.currentPage = route.name;
     if (route.name == PageNames.settingsPage) {
       return (
         <SettingsPage
@@ -50,7 +76,7 @@ class JumboNavigator extends Component {
           navBarHeight={NAVBAR_HEIGHT}
           updateProfile={this.props.updateProfile}
           firebase={this.props.firebase}
-          setHasUnsavedSettings={this.props.setHasUnsavedSettings}
+          ssetHasUnsavedSettings={(hasUnsavedSettings) => {this.setState({hasUnsavedSettings})}}
         />
       );
     } else if (route.name == PageNames.cardsPage) {

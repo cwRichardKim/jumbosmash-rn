@@ -7,7 +7,7 @@ exports:
 showWithMessage(message, onPress)
 example:
 this.notificationBanner.showWithMessage("test", ()=>{
-  this._changeTab(PageNames.chatPage);
+  this.navigator.changeTab(PageNames.chatPage);
 });
 */
 
