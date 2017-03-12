@@ -13,6 +13,7 @@ import {
   Image,
   TouchableHighlight,
   Alert,
+  AppState,
   AsyncStorage,
 } from 'react-native';
 
@@ -64,6 +65,7 @@ class NavigationContainer extends Component {
   }
 
   componentDidMount() {
+    AppState.addEventListener('change', this._handleAppStateChange.bind(this));
     this._shouldRetrieveProfilesFromStorage();
 
     // example notification calling function
@@ -78,12 +80,35 @@ class NavigationContainer extends Component {
     // }, 2000);
   }
 
+  componentWillUnmount () {
+    AppState.removeEventListener('change', this._handleAppStateChange.bind(this));
+  }
+
+  _handleAppStateChange (currentAppState) {
+    if (this && currentAppState == "inactive" && this.navigator.swipingPage) {
+      let index = this.navigator.swipingPage.state.cardIndex;
+      this._removeSeenCards(index);
+    }
+  }
+
   // Called when the app is closed from SwipingPage.js
   // Removes all the old cards and saves the remainder to AsyncStorage
-  _removeSeenCards(currentIndex) {
+  _removeSeenCards(index) {
+    let oldCurrentProfile = this.state.profiles[index];
+
     let oldLength = this.state.profiles.length;
-    this.state.profiles.splice(0, currentIndex);
+    this.state.profiles.splice(0, index);
     this._shouldSaveProfilesToStorage();
+
+    let newCurrentProfile = this.state.profiles[0];
+    if (oldCurrentProfile !== newCurrentProfile) {
+      throw "Removing Cards Did Not Work";
+    }
+    if (this.navigator.swipingPage) {
+      this.navigator.swipingPage.setState({
+        cardIndex: 0,
+      });
+    }
   }
 
   async _shouldSaveProfilesToStorage () {
