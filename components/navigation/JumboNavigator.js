@@ -121,73 +121,78 @@ class JumboNavigator extends Component {
     }
   }
 
-  // returns UI element of the navigation bar
-  _renderNavigationBar() {
-    if (this.state.showNavigator || true) {
+  _renderNavBarLeftButton(route, navigator, index, navState) {
+    if (route.name == PageNames.conversation) {
       return (
-        <Navigator.NavigationBar style={styles.navigationBarContainer}
-          routeMapper={{
-            LeftButton: (route, navigator, index, navState) => {
-              return (
-                <TouchableHighlight onPress={() => {
-                  navigator.replace({name: PageNames.settingsPage});
-                }}>
-                  <Text>Account</Text>
-                </TouchableHighlight>
-              );
-            },
-            RightButton: (route, navigator, index, navState) => {
-              return (
-                <TouchableHighlight onPress={() => {
-                  navigator.replace({name: PageNames.chatPage});
-                }}>
-                  <Text>Chat</Text>
-                </TouchableHighlight>
-              );
-            },
-            Title: (route, navigator, index, navState) => {
-              return (
-                <View>
-                  <TouchableHighlight onPress={() => {
-                    navigator.replace({name: PageNames.cardsPage});
-                  }}>
-                    <Text>Swipe!</Text>
-                  </TouchableHighlight>
-                  <TouchableHighlight onPress={() => {
-                    navigator.replace({name: PageNames.loginPage});
-                  }}>
-                    <Text>Login (temp)</Text>
-                  </TouchableHighlight>
-                </View>
-              );
-            },
-          }}>
-        </Navigator.NavigationBar>
+        <TouchableHighlight onPress={() => {navigator.pop();}}>
+          <Text>Back</Text>
+        </TouchableHighlight>
+      );
+    } else {
+      console.log("asdf")
+      return (
+        <TouchableHighlight onPress={() => {
+          navigator.replace({name: PageNames.settingsPage});
+        }}>
+          <Text>Account</Text>
+        </TouchableHighlight>
+      );
+    }
+  }
+
+  _renderNavBarRightButton(route, navigator, index, navState) {
+    if (route.name == PageNames.conversation) {
+      return null;
+    } else {
+      return (
+        <TouchableHighlight onPress={() => {
+          navigator.replace({name: PageNames.chatPage});
+        }}>
+          <Text>Chat</Text>
+        </TouchableHighlight>
+      );
+    }
+  }
+
+  _renderNavBarCenter(route, navigator, index, navState) {
+    if (route.name == PageNames.conversation) {
+      return (
+        <View style={styles.navigationBarTitleContainer}>
+          <Image style={styles.avatarPhoto} source={this.state.currentParticipant ? {uri: this.state.currentParticipant.photo} : null}/>
+          <Text style={styles.navigationBarTitleText}>
+            {this.state.currentParticipant ? this.state.currentParticipant.firstName : null}
+          </Text>
+        </View>
       );
     } else {
       return (
-        <Navigator.NavigationBar style={styles.navigationBarContainer}
-          routeMapper={{
-            LeftButton: (route, navigator, index, navState) =>
-            {
-              return(<TouchableHighlight onPress={() => {navigator.pop();}}>
-                <Text>Back</Text>
-              </TouchableHighlight>);
-            },
-            RightButton: (route, navigator, index, navState) =>
-             { return null; },
-           Title: (route, navigator, index, navState) =>
-             { return (
-               <View style={styles.navigationBarTitleContainer}>
-                 <Image style={styles.avatarPhoto} source={this.state.currentParticipant ? {uri: this.state.currentParticipant.photo} : null}/>
-                 <Text style={styles.navigationBarTitleText}>
-                   {this.state.currentParticipant ? this.state.currentParticipant.firstName : null}
-                 </Text>
-               </View>); },}}>
-          <View style={styles.navigationBarSeparator}/>
-        </Navigator.NavigationBar>
+        <View>
+          <TouchableHighlight onPress={() => {
+            navigator.replace({name: PageNames.cardsPage});
+          }}>
+            <Text>Swipe!</Text>
+          </TouchableHighlight>
+          <TouchableHighlight onPress={() => {
+            navigator.replace({name: PageNames.loginPage});
+          }}>
+            <Text>Login (temp)</Text>
+          </TouchableHighlight>
+        </View>
       );
     }
+  }
+
+  // returns UI element of the navigation bar
+  _renderNavigationBar() {
+    return (
+      <Navigator.NavigationBar style={styles.navigationBarContainer}
+        routeMapper={{
+          LeftButton: this._renderNavBarLeftButton.bind(this),
+          RightButton: this._renderNavBarRightButton.bind(this),
+          Title: this._renderNavBarCenter.bind(this),
+        }}>
+      </Navigator.NavigationBar>
+    );
   }
 
   render() {
