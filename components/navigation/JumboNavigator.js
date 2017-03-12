@@ -85,6 +85,7 @@ class JumboNavigator extends Component {
     } else if (route.name == PageNames.cardsPage) {
       return (
         <SwipingPage
+          ref={(elem) => {this.swipingPage = elem}}
           navigator={navigator}
           profiles={this.props.profiles}
           myProfile={this.props.myProfile}
