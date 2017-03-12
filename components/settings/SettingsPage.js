@@ -141,7 +141,7 @@ class SettingsPage extends Component {
       let scrollResponder = this.refs.scrollView.getScrollResponder();
       scrollResponder.scrollResponderScrollNativeHandleToKeyboard(
         findNodeHandle(this.refs[refName]),
-        50, //additionalOffset
+        90, //additionalOffset
         true
       );
     }, 50);
@@ -203,7 +203,7 @@ class SettingsPage extends Component {
 
   render() {
     return (
-      <View style={[styles.container, {height: this.props.pageHeight}]}>
+      <View style={[styles.container, {marginTop: this.props.navBarHeight, height: this.props.pageHeight}]}>
         <ScrollView ref='scrollView'>
           <ProfilePhotoPicker
             photos={this.state.photos}

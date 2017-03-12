@@ -139,7 +139,7 @@ class ChatPage extends React.Component {
       chatroomId: conversation._id,
       participants: conversation.participants,
       myProfile: this.props.myProfile,
-      name: "Conversation"
+      name: global.pageNames().conversation,
     });
   }
 
@@ -202,7 +202,7 @@ class ChatPage extends React.Component {
     return (
         <ListView
           ref={(listView) => { _listView = listView; }}
-          style={styles.container}
+          style={[styles.container, {marginTop: this.props.navBarHeight, height: this.props.pageHeight}]}
           dataSource={this.state.dataSource}
           renderRow={this.renderChatRow.bind(this)}
           enableEmptySections={true}

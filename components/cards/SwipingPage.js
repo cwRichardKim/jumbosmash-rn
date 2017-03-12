@@ -13,7 +13,6 @@ import {
   View,
   Image,
   Dimensions,
-  AppState,
   Alert,
 } from 'react-native';
 
@@ -41,29 +40,9 @@ class SwipingPage extends Component {
     }
   }
 
-  componentDidMount() {
-    AppState.addEventListener('change', this._handleAppStateChange.bind(this));
-  }
-
-  componentWillUnmount () {
-    AppState.removeEventListener('change', this._handleAppStateChange.bind(this));
-  }
-
-  _handleAppStateChange (currentAppState) {
-    if (currentAppState == "inactive") {
-      if (this.props.removeSeenCards) {
-        let oldCurrentProfile = this.props.profiles[this.state.cardIndex];
-        this.props.removeSeenCards(this.state.cardIndex)
-        let newCurrentProfile = this.props.profiles[0];
-        if (oldCurrentProfile !== newCurrentProfile) {
-          throw "Removing Cards Did Not Work";
-        }
-        this.setState({
-          cardIndex: 0,
-        });
-      } else {
-        throw "removeSeenCards undefined"
-      }
+  componentWillUnmount() {
+    if (this.props.removeSeenCards) {
+      this.props.removeSeenCards(this.state.cardIndex);
     }
   }
 
@@ -210,7 +189,7 @@ class SwipingPage extends Component {
     // let animatedNopeStyles = {transform: [{scale: nopeScale}], opacity: nopeOpacity}
 
     return (
-      <View style={{height:this.props.pageHeight}}>
+      <View style={{marginTop: this.props.navBarHeight, height:this.props.pageHeight}}>
         <View style={[styles.container]}>
           <View style={styles.topPadding}/>
           {this._shouldRenderProfileView()}
@@ -247,7 +226,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
   },
   topPadding: {
-    height: 50,
+    height: 20,
   },
   // yesView: {
   //   position: 'absolute',
