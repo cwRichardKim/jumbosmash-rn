@@ -14,6 +14,7 @@ import {
   Platform,
   Navigator,
   TouchableHighlight,
+  Alert,
 } from 'react-native';
 
 import SwipingPage            from "../cards/SwipingPage.js";
@@ -43,13 +44,15 @@ class JumboNavigator extends Component {
   }
 
   // Public function, changes which page is showing (swiping, settings, etc),
-  // The reason why this is here is because notifications will also need to
-  // change the tabs, and changes can only trickle downwards.
-  // Thus, currentPage is a property of the Navigator
+  // This is used to replace the current page with another page, not to push a
+  // new page on top of the current one.
   changePage(pageName) {
     const settingsPage = PageNames.settingsPage;
     let currentlyOnSettings = this.currentPage == settingsPage;
     let leavingSettings = currentlyOnSettings && pageName != settingsPage;
+    console.log(currentlyOnSettings);
+    console.log(leavingSettings);
+    console.log(this.state.hasUnsavedSettings);
     if (leavingSettings && this.state.hasUnsavedSettings) {
       Alert.alert(
         "Leaving unsaved changes",
@@ -76,7 +79,7 @@ class JumboNavigator extends Component {
           navBarHeight={NAVBAR_HEIGHT}
           updateProfile={this.props.updateProfile}
           firebase={this.props.firebase}
-          ssetHasUnsavedSettings={(hasUnsavedSettings) => {this.setState({hasUnsavedSettings})}}
+          setHasUnsavedSettings={(hasUnsavedSettings) => {this.setState({hasUnsavedSettings})}}
         />
       );
     } else if (route.name == PageNames.cardsPage) {
@@ -132,7 +135,7 @@ class JumboNavigator extends Component {
       console.log("asdf")
       return (
         <TouchableHighlight onPress={() => {
-          navigator.replace({name: PageNames.settingsPage});
+          this.changePage(PageNames.settingsPage);
         }}>
           <Text>Account</Text>
         </TouchableHighlight>
@@ -146,7 +149,7 @@ class JumboNavigator extends Component {
     } else {
       return (
         <TouchableHighlight onPress={() => {
-          navigator.replace({name: PageNames.chatPage});
+          this.changePage(PageNames.chatPage);
         }}>
           <Text>Chat</Text>
         </TouchableHighlight>
@@ -168,12 +171,12 @@ class JumboNavigator extends Component {
       return (
         <View>
           <TouchableHighlight onPress={() => {
-            navigator.replace({name: PageNames.cardsPage});
+            this.changePage(PageNames.cardsPage);
           }}>
             <Text>Swipe!</Text>
           </TouchableHighlight>
           <TouchableHighlight onPress={() => {
-            navigator.replace({name: PageNames.loginPage});
+            this.changePage(PageNames.loginPage);
           }}>
             <Text>Login (temp)</Text>
           </TouchableHighlight>
