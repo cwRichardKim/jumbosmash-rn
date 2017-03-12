@@ -21,13 +21,11 @@ import LoadableImage  from "../global/LoadableImage.js";
 import ImageResizer   from 'react-native-image-resizer';
 import RNFetchBlob    from 'react-native-fetch-blob';
 
-if (!__DEV__) {
-  //Turn local photo to blob for firebase uploading
-  const Blob = RNFetchBlob.polyfill.Blob
-  window.XMLHttpRequest = RNFetchBlob.polyfill.XMLHttpRequest
-  window.Blob = Blob
-  const fs = RNFetchBlob.fs;
-}
+//Turn local photo to blob for firebase uploading
+const Blob = RNFetchBlob.polyfill.Blob
+window.XMLHttpRequest = RNFetchBlob.polyfill.XMLHttpRequest
+window.Blob = Blob
+const fs = RNFetchBlob.fs;
 
 const PHONE_WIDTH = Dimensions.get('window').width;
 const PHONE_HEIGHT = Dimensions.get('window').height;
@@ -155,10 +153,6 @@ class ProfilePhotoPicker extends Component {
   }
 
   _photoButtonPressedForPhotoIndex(index) {
-    if (__DEV__) {
-      Alert.alert("Upload only works on release", "We've disabled upload until beta releases (testflight) because it breaks some builds", [{text:"OK", onPress:()=>{}}])
-      return;
-    }
     if (this.state.uploadingImageWithIndex >= 0) {
       Alert.alert(
         "One Sec",
