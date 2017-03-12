@@ -47,12 +47,8 @@ class JumboNavigator extends Component {
   // This is used to replace the current page with another page, not to push a
   // new page on top of the current one.
   changePage(pageName) {
-    const settingsPage = PageNames.settingsPage;
-    let currentlyOnSettings = this.currentPage == settingsPage;
-    let leavingSettings = currentlyOnSettings && pageName != settingsPage;
-    console.log(currentlyOnSettings);
-    console.log(leavingSettings);
-    console.log(this.state.hasUnsavedSettings);
+    let currentlyOnSettings = this.currentPage == PageNames.settingsPage;
+    let leavingSettings = currentlyOnSettings && pageName != PageNames.settingsPage;
     if (leavingSettings && this.state.hasUnsavedSettings) {
       Alert.alert(
         "Leaving unsaved changes",
@@ -133,7 +129,6 @@ class JumboNavigator extends Component {
         </TouchableHighlight>
       );
     } else {
-      console.log("asdf")
       return (
         <TouchableHighlight onPress={() => {
           this.changePage(PageNames.settingsPage);
