@@ -16,6 +16,7 @@ import {
 } from 'react-native';
 
 import CircleButton from "../global/CircleButton.js";
+import GlobalStyles from "../global/GlobalStyles.js";
 
 const WIDTH = Dimensions.get("window").width;
 
@@ -25,7 +26,7 @@ class SwipeButtonsView extends Component {
       <View style={styles.container}>
         <View style={[styles.buttonContainer, styles.leftButtonContainer]}>
           <CircleButton
-            style={[styles.button, styles.leftButton]}
+            style={[GlobalStyles.buttonShadow, styles.button, styles.leftButton]}
             source={require("./images/cross.png")}
             onPress={this.props.leftButtonFunction}
           />
@@ -33,7 +34,7 @@ class SwipeButtonsView extends Component {
         <View style={styles.centerPadding}/>
         <View style={[styles.buttonContainer, styles.rightButtonContainer]}>
           <CircleButton
-            style={[styles.button, styles.rightButton]}
+            style={[GlobalStyles.buttonShadow, styles.button, styles.rightButton]}
             source={require("./images/heart.png")}
             onPress={this.props.rightButtonFunction}
           />
@@ -52,18 +53,6 @@ const styles = StyleSheet.create({
     borderRadius: 100,
     width: WIDTH * 0.16,
     height: WIDTH * 0.16,
-
-    // android shadow
-    elevation: 3,
-    shadowColor: '#000000',
-
-    // ios shadow
-    shadowOffset: {
-      width: 0,
-      height: 4,
-    },
-    shadowRadius: 4,
-    shadowOpacity: 0.1,
   },
   buttonContainer: {
     flex: 4,
