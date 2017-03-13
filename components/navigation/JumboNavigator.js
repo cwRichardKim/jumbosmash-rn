@@ -13,8 +13,9 @@ import {
   Dimensions,
   Platform,
   Navigator,
-  TouchableHighlight,
+  TouchableOpacity,
   Alert,
+  Animated,
 } from 'react-native';
 
 import SwipingPage            from "../cards/SwipingPage.js";
@@ -32,6 +33,8 @@ const PageNames = require("../global/GlobalFunctions").pageNames();
 
 const NAVBAR_HEIGHT = (Platform.OS === 'ios') ? 64 : 64; // TODO: check the android tabbar height
 const PAGE_HEIGHT = Dimensions.get('window').height - NAVBAR_HEIGHT;
+const PAGE_WIDTH = Dimensions.get('window').width;
+const NAVBAR_SELECTOR_WIDTH = PAGE_WIDTH / 4;
 
 class JumboNavigator extends Component {
   constructor(props) {
@@ -47,6 +50,7 @@ class JumboNavigator extends Component {
       showProfile: false,
       showMatchView: false,
       matchedProfile: null, // profile of the person you matched with for MatchView
+      selectorBarPan: new Animated.ValueXY({x:0, y:0}),
     };
   }
 
@@ -65,10 +69,29 @@ class JumboNavigator extends Component {
     // this._notifyUserOfMatchWith(this.props.myProfile)
   }
 
+  _animateSelectorBarTo(pageName) {
+    let destinationX = 0;
+    if (pageName == PageNames.settingsPage) {
+      destinationX = - (PAGE_WIDTH - NAVBAR_SELECTOR_WIDTH) / 2;
+    } else if (pageName == PageNames.chatPage) {
+      destinationX = PAGE_WIDTH - NAVBAR_SELECTOR_WIDTH * 2.5;
+    }
+
+    Animated.spring (
+      this.state.selectorBarPan,
+      {
+        toValue: {x: destinationX, y: 0},
+        speed: 40,
+        bounciness: 7,
+      }
+    ).start();
+  }
+
   // Public function, changes which page is showing (swiping, settings, etc),
   // This is used to replace the current page with another page, not to push a
   // new page on top of the current one.
   changePage(pageName) {
+    this._animateSelectorBarTo(pageName);
     let currentlyOnSettings = this.currentPage == PageNames.settingsPage;
     let leavingSettings = currentlyOnSettings && pageName != PageNames.settingsPage;
     if (leavingSettings && this.state.hasUnsavedSettings) {
@@ -147,17 +170,20 @@ class JumboNavigator extends Component {
   _renderNavBarLeftButton(route, navigator, index, navState) {
     if (route.name == PageNames.conversation) {
       return (
-        <TouchableHighlight onPress={() => {navigator.pop();}}>
+        <TouchableOpacity onPress={() => {navigator.pop();}}>
           <Text>Back</Text>
-        </TouchableHighlight>
+        </TouchableOpacity>
       );
     } else {
       return (
-        <TouchableHighlight onPress={() => {
-          this.changePage(PageNames.settingsPage);
-        }}>
+        <TouchableOpacity
+          style={styles.buttonArea}
+          onPress={() => {
+            this.changePage(PageNames.settingsPage);
+          }}
+        >
           <Text>Account</Text>
-        </TouchableHighlight>
+        </TouchableOpacity>
       );
     }
   }
@@ -167,11 +193,14 @@ class JumboNavigator extends Component {
       return null;
     } else {
       return (
-        <TouchableHighlight onPress={() => {
-          this.changePage(PageNames.chatPage);
-        }}>
+        <TouchableOpacity
+          style={styles.buttonArea}
+          onPress={() => {
+            this.changePage(PageNames.chatPage);
+          }}
+        >
           <Text>Chat</Text>
-        </TouchableHighlight>
+        </TouchableOpacity>
       );
     }
   }
@@ -188,17 +217,18 @@ class JumboNavigator extends Component {
       );
     } else {
       return (
-        <View>
-          <TouchableHighlight onPress={() => {
+        <View style={styles.buttonArea}>
+          <TouchableOpacity onPress={() => {
             this.changePage(PageNames.cardsPage);
           }}>
             <Text>Swipe!</Text>
-          </TouchableHighlight>
-          <TouchableHighlight onPress={() => {
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => {
             this.changePage(PageNames.loginPage);
           }}>
             <Text>Login (temp)</Text>
-          </TouchableHighlight>
+          </TouchableOpacity>
+          <Animated.View style={[styles.navBarSelector, {transform: this.state.selectorBarPan.getTranslateTransform()}]}/>
         </View>
       );
     }
@@ -316,14 +346,22 @@ const styles = StyleSheet.create({
     color: '#CAC4C4',
     fontFamily: 'Avenir Next',
   },
-  navigationBarSeparator: {
-    flex: 1,
-    height: 40,
-    backgroundColor: '#E1E1E1',
-  },
   coverView: {
     zIndex: 100,
   },
+  buttonArea: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: NAVBAR_SELECTOR_WIDTH,
+  },
+  navBarSelector: {
+    position: 'absolute',
+    bottom: 0,
+    height: 5,
+    width: NAVBAR_SELECTOR_WIDTH,
+    backgroundColor: 'black',
+  }
 });
 
 
