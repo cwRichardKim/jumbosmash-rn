@@ -1,8 +1,9 @@
 'use strict';
 
 /*
-This page handles account creation, mainly responsible for retreiving email and 
-password from UI textinput boxes, and passing to firebase authentication.
+This page handles account creation, 
+mainly responsible for retreiving email and password 
+from UI textinput boxes, and passing to firebase authentication.
 */
 
 import React, {Component} from 'react';

@@ -25,7 +25,7 @@ class AccountPage extends Component {
     this.state = {
     }
   }
-
+  
   logout(){
     this.props.firebase.auth().signOut()
       .then(() => {

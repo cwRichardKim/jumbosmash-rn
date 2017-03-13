@@ -52,6 +52,7 @@ class AuthErrors extends Component {
         Alert.alert("Incorrect password.");
         break;
       default:
+        throw error;
         Alert.alert("Error. Please try again.");
         break;
     }

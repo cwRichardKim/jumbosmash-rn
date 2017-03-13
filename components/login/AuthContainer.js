@@ -30,6 +30,7 @@ class AuthContainer extends Component {
     };
   }
 
+  // Checks if user is already logged in, and verified
   componentWillMount() {
     var user = this.props.firebase.auth().currentUser;
     if (user && user.emailVerified) {
