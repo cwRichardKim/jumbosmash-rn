@@ -37,7 +37,7 @@ const FETCH_BATCH_SIZE = 100;
 
 //TODO: @richard delete this later
 const testProfile = {
-  profileId: "586edd82837823188a297728",
+  id: "586edd82837823188a297728",
   firstName: "Test",
   lastName: "Profile",
   description: "kasjf laksj dglkasj dlgja slkgjalskdjglkasdjg laksdj glkasjd giasjg laksdj lkasjd glaksj dglkajd glkajsdg lk alkgj akldg",
@@ -153,13 +153,37 @@ class NavigationContainer extends Component {
     }
   }
 
+  async _getLastIndex() {
+    try {
+      let lastIndex = await AsyncStorage.getItem(StorageKeys.lastIndex);
+      // successfully retrieved something
+      if (lastIndex !== null) {
+        return parseInt(lastIndex);
+      // storage is null / empty
+      } else {
+        return 0;
+      }
+      // error accessing storage
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async _setLastIndex(lastIndex) {
+    try {
+      await AsyncStorage.setItem(StorageKeys.lastIndex, lastIndex.toString());
+    } catch (error) {
+      throw "Tried to save lastIndex "+error;
+    }
+  }
+
   // fetches new profiles and adds them to the profiles array
   // lastID: the lastID we got from the previous list of profiles
   // count: how many profiles to fetch. 0 or null is all
-  _fetchProfiles(lastID, count) {
-    //TODO: @richard use lastID
-    let index = "0"; //TODO: @richard replace
-    let id = "586edd82837823188a297932".toString(); //TODO: @richard replace
+  async _fetchProfiles(lastID, count) {
+    let index = await this._getLastIndex();
+    // console.log("request made with last index: "+index.toString()); //TODO @richard testing code remove
+    let id = this.state.myProfile.id.toString(); //TODO: @richard replace
     let batch = count ? count.toString() : FETCH_BATCH_SIZE.toString();
     let url = "https://jumbosmash2017.herokuapp.com/profile/batch/"+id+"/"+index+"/"+batch;
     return fetch(url)
@@ -170,6 +194,10 @@ class NavigationContainer extends Component {
         throw ("status" in response) ? response["status"] : "Unknown Error";
       }
     }).then((responseJson) => {
+      this._setLastIndex(responseJson[responseJson.length - 1].index);
+      // for (var i = 0; i < responseJson.length; i++) { //TODO @richard testing code remove
+      //   console.log(responseJson[i]);
+      // }
       global.shuffle(responseJson);
       this.setState({
         profiles: this.state.profiles.concat(responseJson),

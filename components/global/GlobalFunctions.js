@@ -43,6 +43,7 @@ module.exports = {
     const prefix = "@SmashEmUp2017:";
     return ({
       profiles: prefix+"profiles",
+      lastIndex: prefix+"lastIndex",
     })
   },
   mod: function (n, m) {
