@@ -1,8 +1,8 @@
 'use strict';
 
 /*
-This is the parent file for the entire application.  It houses the TabBar
-Navigation and the Notification (drop down header)
+This is the parent file for the entire application.  Its primary responsibility
+is to pass props to the Navigator and to deal with app-wide data
 */
 
 import React, {Component} from 'react';
@@ -18,8 +18,6 @@ import {
 } from 'react-native';
 
 import JumboNavigator         from "./JumboNavigator.js"
-import NotificationBannerView from "./NotificationBannerView.js"
-import MatchView              from './MatchView.js'
 
 const global = require('../global/GlobalFunctions.js');
 const PageNames = global.pageNames();
@@ -58,26 +56,13 @@ class NavigationContainer extends Component {
     this.state = {
       profiles: [],
       myProfile: testProfile,
-      matchedProfile: testProfile, // profile of the person you matched with for MatchView
       currentRecipient: null, // used for the nav bar in ConversationPage
-      showMatchView: false,
     };
   }
 
   componentDidMount() {
     AppState.addEventListener('change', this._handleAppStateChange.bind(this));
     this._shouldRetrieveProfilesFromStorage();
-
-    // example notification calling function
-    // this.notificationBanner.showWithMessage("test", ()=>{
-    //   this.navigator.changePage(PageNames.chatPage);
-    // });
-    //
-    // setTimeout(() => {
-    //   this.notificationBanner.showWithMessage("next message arrived", ()=>{
-    //     this.navigator.changePage(PageNames.chatPage);
-    //   });
-    // }, 2000);
   }
 
   componentWillUnmount () {
@@ -229,39 +214,6 @@ class NavigationContainer extends Component {
     return newProfile;
   }
 
-  // shows the correct notification for matching
-  // if on the swiping page, then shows full match view, else shows a banner notif
-  _notifyUserOfMatchWith(profile) {
-    if (profile != null && this.navigator.currentPage == PageNames.cardsPage) {
-      this.setState({
-        matchProfile: profile,
-        showMatchView: true,
-      });
-    } else if (profile != null) {
-      this.setState({
-        matchProfile: profile,
-      });
-      this.notificationBanner.showWithMessage("New Match! Say Hello to " + profile.firstName, ()=>{
-        this.navigator.changePage(PageNames.chatPage);
-      });
-    }
-  }
-
-  _shouldRenderMatchView() {
-    if (this.state.showMatchView && this.navigator.currentPage == PageNames.cardsPage && this.state.profiles.length > 1) {
-      return (
-        <View style={styles.coverView}>
-          <MatchView
-            myProfile={this.state.myProfile}
-            matchProfile={this.state.matchProfile}
-            onClose={() => this.setState({showMatchView: false})}
-            onSuccess={() => this.navigator.changePage(PageNames.chatPage)}
-          />
-        </View>
-      );
-    }
-  }
-
   // sets participant of chat using callback
   _setCurrentParticipant(currentParticipant) {
     if (currentParticipant) {
@@ -281,26 +233,14 @@ class NavigationContainer extends Component {
           updateProfile={this._updateProfile.bind(this)}
           firebase={firebase}
           removeSeenCards={this._removeSeenCards.bind(this)}
-          notifyUserOfMatchWith={this._notifyUserOfMatchWith.bind(this)}
           setCurrentParticipant={this._setCurrentParticipant.bind(this)}
         />
-        {this._shouldRenderMatchView()}
-        <NotificationBannerView ref={(elem) => {this.notificationBanner = elem}}/>
       </View>
     );
   }
 }
 
 const styles = StyleSheet.create({
-  coverView: {
-    flex: 1,
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    zIndex: 100,
-  },
 });
 
   export default NavigationContainer;
