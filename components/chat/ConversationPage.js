@@ -33,7 +33,7 @@ class ConversationPage extends Component {
   }
 
   componentDidMount() {
-    this.props.setShowNavigationBar(true);
+    this.props.setCurrentParticipant(null); // TODO: @jared @richard might not need this anymore because navigator will always show
     // send initial chat bot
     this._messagesRef.on('child_added', (child) => {
       var pos = 'right';
@@ -52,7 +52,7 @@ class ConversationPage extends Component {
   }
 
   componentWillUnmount() {
-    this.props.setShowNavigationBar(false);
+    this.props.setCurrentParticipant(null); // TODO: @jared @richard might not need this anymore because navigator will always show
   }
 
   onSend(messages = []) {
