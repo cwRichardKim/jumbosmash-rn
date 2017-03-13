@@ -21,6 +21,8 @@ import {
   PanResponder
 } from 'react-native';
 
+import GlobalStyles   from "../global/GlobalStyles.js";
+
 const VERTICAL_THRESHOLD = 10; // distance pull/push required to register action
 const BANNER_SHOW_HEIGHT = 75; // perceived height of banner
 const BANNER_TOTAL_HEIGHT = 200; // perceived + hidden height of banner
@@ -154,7 +156,7 @@ class NotificationBannerView extends Component {
         {...this._panResponder.panHandlers}>
         <TouchableHighlight style={{flex:1}} onPress={this._notificationBannerTapped.bind(this)}>
           <View style={[styles.view]}>
-            <Text style={styles.text}>{this.state.message}{numMsgs > 1 ? " ("+numMsgs.toString()+")" : ""}</Text>
+            <Text style={[GlobalStyles.text, styles.text]}>{this.state.message}{numMsgs > 1 ? " ("+numMsgs.toString()+")" : ""}</Text>
           </View>
         </TouchableHighlight>
       </Animated.View>

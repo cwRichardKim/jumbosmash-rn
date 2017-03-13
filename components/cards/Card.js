@@ -18,7 +18,8 @@ import {
 } from 'react-native';
 
 import clamp          from 'clamp';
-import LoadableImage  from '../global/LoadableImage.js'
+import LoadableImage  from '../global/LoadableImage.js';
+import GlobalStyles   from "../global/GlobalStyles.js";
 
 const SWIPE_THRESHOLD = 90;
 
@@ -151,10 +152,10 @@ class Card extends Component {
     let animatedCardstyles = this.props.positionInDeck == 0 ? {transform: [{translateX}, {translateY}, {rotate}, {scale}]} : {};
 
     return (
-      <Animated.View style={[styles.cardView, animatedCardstyles, {zIndex: 10 - this.props.positionInDeck}]} {...this._panResponder.panHandlers}>
+      <Animated.View style={[GlobalStyles.absoluteCover, styles.cardView, animatedCardstyles, {zIndex: 10 - this.props.positionInDeck}]} {...this._panResponder.panHandlers}>
         <TouchableWithoutFeedback style={styles.touchArea}
           onPress={this.props.onPress}>
-          <View style={styles.shadowView}>
+          <View style={[GlobalStyles.basicShadow, styles.shadowView]}>
             <View style={styles.card}>
               <LoadableImage
                 source={{uri: (this.props.photos && this.props.photos.length >= 1) ? this.props.photos[0].large : ""}}
@@ -163,7 +164,7 @@ class Card extends Component {
                 thumbnail={{uri: (this.props.photos && this.props.photos.length >=1) ? this.props.photos[0].small : ""}}
               />
               <View style={styles.textContainer}>
-                <Text style={styles.text}>{this.props.firstName}</Text>
+                <Text style={[GlobalStyles.text, styles.text]}>{this.props.firstName}</Text>
               </View>
             </View>
           </View>
@@ -177,11 +178,6 @@ let borderRadius = 20;
 
 const styles = StyleSheet.create({
   cardView: {
-    position: 'absolute',
-    left: 0,
-    right: 0,
-    top: 0,
-    bottom: 0,
   },
   touchArea: {
     flex: 1,
@@ -189,18 +185,6 @@ const styles = StyleSheet.create({
   shadowView: {
     flex: 1,
     borderRadius: borderRadius,
-
-    // android shadow
-    elevation: 3,
-    shadowColor: '#000000',
-
-    // ios shadow
-    shadowOffset: {
-      width: 0,
-      height: 7,
-    },
-    shadowRadius: 14,
-    shadowOpacity: 0.06,
   },
   card: {
     borderRadius: borderRadius,

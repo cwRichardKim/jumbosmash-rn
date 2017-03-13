@@ -26,6 +26,7 @@ import {
 
 import LoadableImage  from '../global/LoadableImage.js';
 import RectButton     from '../global/RectButton.js';
+import GlobalStyles   from "../global/GlobalStyles.js";
 
 const BORDER_RADIUS = 10;
 const WIDTH = Dimensions.get('window').width;
@@ -133,10 +134,10 @@ class MatchView extends Component {
   render() {
     return (
       <View style={styles.container}>
-        <Animated.View style={[styles.background, {opacity: this.state.backgroundOpacity}]}/>
+        <Animated.View style={[GlobalStyles.absoluteCover, styles.background, {opacity: this.state.backgroundOpacity}]}/>
         <Animated.View style={[styles.foreground, {opacity: this.state.foregroundOpacity}]}>
           <Animated.View style={[styles.textContainer, {transform: [{scale: this.state.foregroundScale}]}]}>
-            <Text style={styles.matchText}>It's a Smatch!</Text>
+            <Text style={[GlobalStyles.text, styles.matchText]}>It's a Smatch!</Text>
           </Animated.View>
           <View style={styles.matchContainer}>
             <Animated.View style={[styles.profile, styles.leftProfile, {transform: [{scale: this.state.foregroundScale}]}]}>
@@ -183,11 +184,6 @@ const styles = StyleSheet.create({
   },
   background: {
     backgroundColor: 'black',
-    position: 'absolute',
-    left: 0,
-    right: 0,
-    top: 0,
-    bottom: 0,
   },
   foreground: {
     flex: 1,
