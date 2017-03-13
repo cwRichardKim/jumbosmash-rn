@@ -61,7 +61,7 @@ class JumboNavigator extends Component {
     //   });
     // }, 2000);
 
-    this._notifyUserOfMatchWith(this.props.myProfile)
+    // this._notifyUserOfMatchWith(this.props.myProfile)
   }
 
   // Public function, changes which page is showing (swiping, settings, etc),
