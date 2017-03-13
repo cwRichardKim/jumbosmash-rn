@@ -51,6 +51,7 @@ class SignupPage extends Component {
       // Success case
       .then((user) => {
         VerifyEmailActivation.sendEmail(user);
+        this.goToLoginPage();
       })
       // Failure case: Signup Error
       .catch((error) => {

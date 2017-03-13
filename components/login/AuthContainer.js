@@ -30,6 +30,13 @@ class AuthContainer extends Component {
     };
   }
 
+  componentWillMount() {
+    var user = this.props.firebase.auth().currentUser;
+    if (user && user.emailVerified) {
+      this.setState( {component: AccountPage})
+    }
+  }
+
   render(){
     return (
       <Navigator
