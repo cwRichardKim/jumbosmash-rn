@@ -32,25 +32,18 @@ class LoginPage extends Component {
     }
   }
 
-  componentWillMount() {
-    // Adding listener here
-    this.unsubscribe = this.props.firebase.auth().onAuthStateChanged(user => {
-      if (user) {
-        if (user.emailVerified) {
-          this.props.navigator.push({
-            component: AccountPage
-          });
-        } else {
-          Alert.alert("please verify your email.");
-        }
-      }
-    });
-  }
-
-  componentWillUnmount() {
-    this.unsubscribe(); // Removing listener
-  }
-
+  // componentWillMount() {
+  //   // Adding listener here
+  //   this.unsubscribe = this.props.firebase.auth().onAuthStateChanged(user => {
+  //     if (user && user.emailVerified) {
+  //       this.props.navigator.push({
+  //         component: AccountPage
+  //       });
+  //     } else if (user && !user.emailVerified) {
+  //       Alert.alert("Please verify your email!");
+  //     }
+  //   });
+  // }
 
   login(){
 
@@ -58,6 +51,15 @@ class LoginPage extends Component {
     var password = this.state.password;
 
     this.props.firebase.auth().signInWithEmailAndPassword(email, password)
+      .then((user) => {
+        if (user.emailVerified) {
+          this.props.navigator.push({
+            component: AccountPage
+          })
+        } else {
+          Alert.alert("please verify your account!");
+        }
+      })
       // Listener should take care of re-directing, we only
       // need to catch errors
       .catch((error) => {
