@@ -22,7 +22,10 @@ import ChatPage               from "../chat/ChatPage.js";
 import ConversationPage       from "../chat/ConversationPage.js"
 import AuthContainer          from "../login/AuthContainer.js";
 // import SignupPage             from "../login/SignupPage.js";
-import SettingsPage           from "../settings/SettingsPage.js"
+import SettingsPage           from "../settings/SettingsPage.js";
+import ProfileCardView        from '../cards/ProfileCardView.js';
+import MatchView              from './MatchView.js'
+import NotificationBannerView from "./NotificationBannerView.js"
 
 const PageNames = require("../global/GlobalFunctions").pageNames();
 
@@ -40,7 +43,25 @@ class JumboNavigator extends Component {
       // navigator, only add things that pertain to UI
       chatNotifCount: 0,
       hasUnsavedSettings: false,
+      showProfile: false,
+      showMatchView: false,
+      matchedProfile: null, // profile of the person you matched with for MatchView
     };
+  }
+
+  componentDidMount() {
+    // example notification calling function
+    // this.notificationBanner.showWithMessage("test", ()=>{
+    //   this.changePage(PageNames.chatPage);
+    // });
+    //
+    // setTimeout(() => {
+    //   this.notificationBanner.showWithMessage("next message arrived", ()=>{
+    //     this.changePage(PageNames.chatPage);
+    //   });
+    // }, 2000);
+
+    // this._notifyUserOfMatchWith(this.props.myProfile)
   }
 
   // Public function, changes which page is showing (swiping, settings, etc),
@@ -89,7 +110,8 @@ class JumboNavigator extends Component {
           navBarHeight={NAVBAR_HEIGHT}
           pageHeight={PAGE_HEIGHT}
           removeSeenCards={this.props.removeSeenCards}
-          notifyUserOfMatchWith={this.props.notifyUserOfMatchWith}
+          notifyUserOfMatchWith={this._notifyUserOfMatchWith.bind(this)}
+          openProfileCard={this._openProfileCard.bind(this)}
         />
       );
     } else if (route.name == PageNames.chatPage) {
@@ -194,14 +216,81 @@ class JumboNavigator extends Component {
     );
   }
 
+  // Profile card UI
+
+  _shouldRenderProfileView() {
+    if (this.state.showProfile && this.swipingPage.state.cardIndex < this.props.profiles.length) {
+      return(
+        <View style={styles.coverView}>
+          <ProfileCardView {...this.props.profiles[this.swipingPage.state.cardIndex]}
+            pageHeight={PAGE_HEIGHT + NAVBAR_HEIGHT}
+            exitFunction={this._closeProfileCard.bind(this)}
+          />
+        </View>
+      );
+    }
+  }
+
+  _openProfileCard() {
+    this.setState({
+      showProfile: true,
+    })
+  }
+
+  _closeProfileCard() {
+    this.setState({
+      showProfile: false,
+    })
+  }
+
+  // Match View UI
+
+  _shouldRenderMatchView() {
+    if (this.state.showMatchView && this.currentPage == PageNames.cardsPage && this.props.profiles.length > 1) {
+      return (
+        <View style={styles.coverView}>
+          <MatchView
+            myProfile={this.props.myProfile}
+            matchProfile={this.state.matchProfile}
+            onClose={() => this.setState({showMatchView: false})}
+            onSuccess={() => this.changePage(PageNames.chatPage)}
+          />
+        </View>
+      );
+    }
+  }
+
+  // shows the correct notification for matching
+  // if on the swiping page, then shows full match view, else shows a banner notif
+  _notifyUserOfMatchWith(profile) {
+    if (profile != null && this.currentPage == PageNames.cardsPage) {
+      this.setState({
+        matchProfile: profile,
+        showMatchView: true,
+      });
+    } else if (profile != null) {
+      this.setState({
+        matchProfile: profile,
+      });
+      this.notificationBanner.showWithMessage("New Match! Say Hello to " + profile.firstName, ()=>{
+        this.changePage(PageNames.chatPage);
+      });
+    }
+  }
+
   render() {
     return (
-      <Navigator
-        ref={(elem)=>{this.navigator = elem}}
-        initialRoute={this.props.initialRoute ? this.props.initialRoute : { name: PageNames.cardsPage }}
-        renderScene={this._renderNavigatorScene.bind(this)}
-        navigationBar={this._renderNavigationBar()}
-      />
+      <View style={{flex: 1}}>
+        <Navigator
+          ref={(elem)=>{this.navigator = elem}}
+          initialRoute={this.props.initialRoute ? this.props.initialRoute : { name: PageNames.cardsPage }}
+          renderScene={this._renderNavigatorScene.bind(this)}
+          navigationBar={this._renderNavigationBar()}
+        />
+        {this._shouldRenderProfileView()}
+        {this._shouldRenderMatchView()}
+        <NotificationBannerView ref={(elem) => {this.notificationBanner = elem}}/>
+      </View>
     );
   }
 }
@@ -242,6 +331,15 @@ const styles = StyleSheet.create({
     flex: 1,
     height: 40,
     backgroundColor: '#E1E1E1',
+  },
+  coverView: {
+    flex: 1,
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    zIndex: 100,
   },
 });
 
