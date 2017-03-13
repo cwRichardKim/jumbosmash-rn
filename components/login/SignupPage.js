@@ -60,7 +60,7 @@ class SignupPage extends Component {
 
   goToLoginPage() {
     this.props.navigator.push({
-      component: SignupPage
+      component: LoginPage
     });
   }
 
