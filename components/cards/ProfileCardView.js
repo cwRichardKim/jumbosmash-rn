@@ -38,7 +38,7 @@ class ProfileCardView extends Component {
   }
 
   _shouldRenderImageWithIndex(index) {
-    if (this.props.photos && this.props.photos.length > index) {
+    if (this.props.photos && this.props.photos.length > index && this.props.photos[index] && this.props.photos[index].large) {
       let imageContainerHeight = this.props.pageHeight * 3 / 4;
       let source = this.props.photos[index].large;
       return (

@@ -66,7 +66,7 @@ class SettingsPage extends Component {
     let photos = this.state.photos;
     var newPhotos = [];
     for (var i in photos) {
-      if (photos[i] != null) {
+      if (photos[i] != null && photos[i].large != null && photos[i].small != null) {
         newPhotos.push(photos[i]);
       }
     }
