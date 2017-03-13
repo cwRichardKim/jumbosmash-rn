@@ -1,13 +1,8 @@
 'use strict';
 
 /*
-This is the parent page of everything. 
-This page handles the navigation for login, managing the transition between:
-  
-  SignupPage     --    Creating an account
-  LoginPage      --    Signing into already created account
-  AccountPage    --    Logged in Account Page
-  
+This is the first page. It sets up the navigator for authentication, and then
+pushes to LoginPage. 
 */
 
 import React, {Component} from 'react';
@@ -20,12 +15,11 @@ import {
   AsyncStorage,
   Button,
   Navigator,
-  // AppState,
 } from 'react-native';
 
-import SignupPage             from "./SignupPage.js";
 import LoginPage              from "./LoginPage.js";
 import AccountPage            from "./AccountPage.js";
+import SignupPage             from "./SignupPage.js";
 
 class AuthContainer extends Component {    
 
@@ -36,17 +30,13 @@ class AuthContainer extends Component {
     };
   }
 
-  // state = {
-  //   appState: AppState.currentState
-  // }
-  
-  // // Loads initial page
-  // // If user is logged in => AccountPage
-  // // user is not logged in => LoginPage
-  // componentDidMount(){
-  //   AppState.addEventListener('change', this._handleAppStateChange)
-
-  // }
+  // Checks if user is already logged in, and verified
+  componentWillMount() {
+    var user = this.props.firebase.auth().currentUser;
+    if (user && user.emailVerified) {
+      this.setState( {component: AccountPage})
+    }
+  }
 
   render(){
     return (

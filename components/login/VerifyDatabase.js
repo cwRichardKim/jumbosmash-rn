@@ -9,7 +9,7 @@ import {
   Alert,
 } from 'react-native';
 
-class StudentDatabase extends Component {
+class VerifyDatabase extends Component {
 
   constructor(props) {
     super(props);
@@ -17,7 +17,7 @@ class StudentDatabase extends Component {
     }
   }
 
-  static async validateTuftsSenior(email) {
+  static async doesStudentExist(email) {
     let url = "https://jumbosmash2017.herokuapp.com/student/email/" + email;
     let isFound = false;
   
@@ -33,6 +33,10 @@ class StudentDatabase extends Component {
 
   }
 
+  static doesNotExist(email) {
+    Alert.alert("I'm sorry, you're not in our database as a Tufts Senior. Contact _______________ if you think this is a mistake");
+  }
+
 }
 
-export default StudentDatabase;
+export default VerifyDatabase;

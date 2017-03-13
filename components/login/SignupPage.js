@@ -1,8 +1,9 @@
 'use strict';
 
 /*
-This page handles account creation, mainly responsible for retreiving email and 
-password from UI textinput boxes, and passing to firebase authentication.
+This page handles account creation, 
+mainly responsible for retreiving email and password 
+from UI textinput boxes, and passing to firebase authentication.
 */
 
 import React, {Component} from 'react';
@@ -16,10 +17,10 @@ import {
   Navigator
 } from 'react-native';
 
-import AccountPage            from './AccountPage.js';
+import LoginPage              from './LoginPage.js';
 import AuthErrors             from './AuthErrors.js';
-import Redirect               from './Redirect.js';
-import StudentDatabase        from './StudentDatabase.js';
+import VerifyDatabase         from './VerifyDatabase.js';
+import VerifyEmailActivation  from './VerifyEmailActivation.js'
 
 class SignupPage extends Component {
 
@@ -33,35 +34,35 @@ class SignupPage extends Component {
 
   async signup() {
 
-    let email = (this.state.email_input + this.props.email_ext).toLowerCase(); // validate input, get rid of white sapaces
+    let email = this.formatEmail();
     let password = this.state.password;
 
-    let isTuftsSenior = await StudentDatabase.validateTuftsSenior(email);
-    if (isTuftsSenior) {
-      this.createAccount(email, password);
-    } else {
-      Alert.alert("I'm sorry, you're not in our database as a Tufts Senior. Contact ___ if you think this is a mistake");
-    }
+    (await VerifyDatabase.doesStudentExist(email)) ? this.createAccount(email, password) : VerifyDatabase.doesNotExist();
+
+  }
+
+  formatEmail() {
+    let em = (this.state.email_input).toLowerCase().trim() + this.props.email_ext;
+    return em;
   }
 
   createAccount(email, password) {
     /* Passing to firebase authentication function here */
     this.props.firebase.auth().createUserWithEmailAndPassword(email, password)
       // Success case
-      .then(() => {
-        this.goToAccountPage();
+      .then((user) => {
+        VerifyEmailActivation.sendEmail(user);
+        this.goToLoginPage();
       })
       // Failure case: Signup Error
       .catch((error) => {
         AuthErrors.handleSignupError(error);
       })
-
   }
 
-  // TODO: move to redirect
-  goToAccountPage() {
+  goToLoginPage() {
     this.props.navigator.push({
-      component: AccountPage
+      component: LoginPage
     });
   }
 
@@ -96,7 +97,7 @@ class SignupPage extends Component {
 
           <Button
             style={styles.button}
-            onPress={Redirect.goToLoginPage.bind(this)}
+            onPress={this.goToLoginPage.bind(this)}
             title="Got an account, go to Login"
             accessibilityLabel="Already got an account, go to login"
           />

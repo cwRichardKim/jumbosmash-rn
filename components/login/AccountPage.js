@@ -1,7 +1,7 @@
 'use strict';
 
 /*
-This page is the current representation of a logged in user
+This page is the current representation of a logged in user.
 */
 
 import React, {Component} from 'react';
@@ -25,24 +25,17 @@ class AccountPage extends Component {
     this.state = {
     }
   }
-
-  // TODO: Move these functions 
-  goToLoginPage(){
-    this.props.navigator.push({
-      component: LoginPage
-    });
-  }
-
+  
   logout(){
-    var firebase_auth = this.props.firebase.auth();
-
-    firebase_auth.signOut()
+    this.props.firebase.auth().signOut()
       .then(() => {
         Alert.alert("You've been logged out. Bye!");
-        this.goToLoginPage();
+        this.props.navigator.push({
+          component: LoginPage
+        });
       })
       .catch((error) => {
-        this.handleLogoutError(error);
+        AuthErrors.handleLogoutError(error);
       })
   }
 
