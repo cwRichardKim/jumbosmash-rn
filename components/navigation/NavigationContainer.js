@@ -196,7 +196,7 @@ class NavigationContainer extends Component {
     }).then((responseJson) => {
       this._setLastIndex(responseJson[responseJson.length - 1].index);
       // for (var i = 0; i < responseJson.length; i++) { //TODO @richard testing code remove
-      //   console.log(responseJson[i]);
+      //   console.log(responseJson[i].index.toString() + " " + responseJson[i].firstName);
       // }
       global.shuffle(responseJson);
       this.setState({
