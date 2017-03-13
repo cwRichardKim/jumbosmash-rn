@@ -21,7 +21,7 @@ import {
 import SignupPage             from './SignupPage.js';
 import AccountPage            from './AccountPage.js';
 import AuthErrors             from './AuthErrors.js';
-import Redirect               from './Redirect.js';
+// import Redirect               from './Redirect.js';
 
 class LoginPage extends Component {
   
