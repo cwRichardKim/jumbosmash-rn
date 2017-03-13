@@ -205,12 +205,4 @@ const styles = StyleSheet.create({
   }
 });
 
-Card.propTypes = {
-  //TODO: add the expected property types (name, email, picture, etc)
-};
-
-Card.defaultProps = {
-  //TODO: create default prop types when some stuff is screwed up
-};
-
 export default Card;

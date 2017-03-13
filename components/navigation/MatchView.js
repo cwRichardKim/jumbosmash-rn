@@ -31,7 +31,6 @@ import GlobalStyles   from "../global/GlobalStyles.js";
 const BORDER_RADIUS = 10;
 const WIDTH = Dimensions.get('window').width;
 
-//TODO: @richard Make a carousel on the photos
 class MatchView extends Component {
   constructor(props) {
     super(props);
