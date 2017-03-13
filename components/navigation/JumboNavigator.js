@@ -24,8 +24,9 @@ import AuthContainer          from "../login/AuthContainer.js";
 // import SignupPage             from "../login/SignupPage.js";
 import SettingsPage           from "../settings/SettingsPage.js";
 import ProfileCardView        from '../cards/ProfileCardView.js';
-import MatchView              from './MatchView.js'
-import NotificationBannerView from "./NotificationBannerView.js"
+import MatchView              from './MatchView.js';
+import NotificationBannerView from "./NotificationBannerView.js";
+import GlobalStyles           from "../global/GlobalStyles.js";
 
 const PageNames = require("../global/GlobalFunctions").pageNames();
 
@@ -206,7 +207,7 @@ class JumboNavigator extends Component {
   // returns UI element of the navigation bar
   _renderNavigationBar() {
     return (
-      <Navigator.NavigationBar style={styles.navigationBarContainer}
+      <Navigator.NavigationBar style={[GlobalStyles.basicShadow, styles.navigationBarContainer]}
         routeMapper={{
           LeftButton: this._renderNavBarLeftButton.bind(this),
           RightButton: this._renderNavBarRightButton.bind(this),
@@ -221,7 +222,7 @@ class JumboNavigator extends Component {
   _shouldRenderProfileView() {
     if (this.state.showProfile && this.swipingPage.state.cardIndex < this.props.profiles.length) {
       return(
-        <View style={styles.coverView}>
+        <View style={[GlobalStyles.absoluteCover ,styles.coverView]}>
           <ProfileCardView {...this.props.profiles[this.swipingPage.state.cardIndex]}
             pageHeight={PAGE_HEIGHT + NAVBAR_HEIGHT}
             exitFunction={this._closeProfileCard.bind(this)}
@@ -248,7 +249,7 @@ class JumboNavigator extends Component {
   _shouldRenderMatchView() {
     if (this.state.showMatchView && this.currentPage == PageNames.cardsPage && this.props.profiles.length > 1) {
       return (
-        <View style={styles.coverView}>
+        <View style={[GlobalStyles.absoluteCover, styles.coverView]}>
           <MatchView
             myProfile={this.props.myProfile}
             matchProfile={this.state.matchProfile}
@@ -303,18 +304,6 @@ const styles = StyleSheet.create({
   },
   navigationBarContainer: {
     backgroundColor: 'white',
-
-    // android shadow
-    elevation: 3,
-    shadowColor: '#000000',
-
-    // ios shadow
-    shadowOffset: {
-      width: 0,
-      height: 7,
-    },
-    shadowRadius: 14,
-    shadowOpacity: 0.06,
   },
   navigationBarTitleContainer: {
     padding: 12,
@@ -333,12 +322,6 @@ const styles = StyleSheet.create({
     backgroundColor: '#E1E1E1',
   },
   coverView: {
-    flex: 1,
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
     zIndex: 100,
   },
 });

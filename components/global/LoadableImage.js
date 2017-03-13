@@ -20,6 +20,8 @@ import {
     Animated,
 } from 'react-native';
 
+import GlobalStyles from "../global/GlobalStyles.js";
+
 class LoadableImage extends Component {
   constructor(props) {
     super(props);
@@ -68,7 +70,7 @@ class LoadableImage extends Component {
     if (this.props.thumbnail) {
       return(
         <Animated.Image
-          style={[styles.thumbnail, {opacity: this.state.thumbnailOpacity}]}
+          style={[GlobalStyles.absoluteCover, styles.thumbnail, {opacity: this.state.thumbnailOpacity}]}
           source={this.props.thumbnail}
           onLoadStart={this._thumbnailLoadStart.bind(this)}
           onLoadEnd={this._thumbnailLoadEnd.bind(this)}
@@ -94,7 +96,7 @@ class LoadableImage extends Component {
     let shouldAnimate = hideImage || (thumbnailExists && thumbnailLoading);
     return (
       <View style={[this.props.style, styles.container]}>
-        <View style={[styles.loadingPage]}>
+        <View style={[GlobalStyles.absoluteCover, styles.loadingPage]}>
           <ActivityIndicator animating={shouldAnimate}/>
         </View>
         <Image
@@ -121,19 +123,9 @@ const styles = StyleSheet.create({
     resizeMode: 'cover',
   },
   thumbnail: {
-    position: 'absolute',
     resizeMode: 'cover',
-    top: 0,
-    bottom: 0,
-    left: 0,
-    right: 0,
   },
   loadingPage: {
-    position: "absolute",
-    top: 0,
-    bottom: 0,
-    left: 0,
-    right: 0,
     backgroundColor: "#F0F0F0",
     justifyContent: 'center',
     alignItems: 'center',

@@ -13,6 +13,8 @@ import {
   Animated,
 } from 'react-native';
 
+import GlobalStyles   from "../global/GlobalStyles.js";
+
 class RectButton extends Component {
   constructor(props) {
     super(props);
@@ -57,7 +59,7 @@ class RectButton extends Component {
           onPressIn={this._onPressIn.bind(this)}
         >
           <View style={styles.view}>
-            <Text style={this.props.textStyles ? this.props.textStyles : {}}>{this.props.text ? this.props.text : ""}</Text>
+            <Text style={[GlobalStyles.text, this.props.textStyles]}>{this.props.text ? this.props.text : ""}</Text>
           </View>
         </TouchableWithoutFeedback>
       </Animated.View>
