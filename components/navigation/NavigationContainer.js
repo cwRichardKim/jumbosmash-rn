@@ -11,20 +11,18 @@ import {
   Text,
   View,
   Image,
-  TabBarIOS,
   TouchableHighlight,
-  Navigator,
   Alert,
+  AppState,
   AsyncStorage,
 } from 'react-native';
 
-import HomeTabBarIOS          from "./HomeTabBarIOS.js"
+import JumboNavigator         from "./JumboNavigator.js"
 import NotificationBannerView from "./NotificationBannerView.js"
-import ChatPage               from "../chat/ChatPage.js"
-import ConversationPage       from "../chat/ConversationPage.js"
 import MatchView              from './MatchView.js'
+
 const global = require('../global/GlobalFunctions.js');
-const TabNames = global.tabNames();
+const PageNames = global.pageNames();
 const StorageKeys = global.storageKeys();
 
 const firebase = require('firebase');
@@ -56,39 +54,61 @@ const testProfile = {
 class NavigationContainer extends Component {
   constructor(props) {
     super(props);
+
     this.state = {
-      selectedTab: TabNames.cardsTab,
       profiles: [],
       myProfile: testProfile,
       matchedProfile: testProfile, // profile of the person you matched with for MatchView
-      hasUnsavedSettings: false,
-      showNavigator: false,
       currentRecipient: null, // used for the nav bar in ConversationPage
       showMatchView: false,
     };
   }
 
   componentDidMount() {
+    AppState.addEventListener('change', this._handleAppStateChange.bind(this));
     this._shouldRetrieveProfilesFromStorage();
 
     // example notification calling function
     // this.notificationBanner.showWithMessage("test", ()=>{
-    //   this._changeTab(TabNames.chatTab);
+    //   this.navigator.changePage(PageNames.chatPage);
     // });
     //
     // setTimeout(() => {
     //   this.notificationBanner.showWithMessage("next message arrived", ()=>{
-    //     this._changeTab(TabNames.chatTab);
+    //     this.navigator.changePage(PageNames.chatPage);
     //   });
     // }, 2000);
   }
 
+  componentWillUnmount () {
+    AppState.removeEventListener('change', this._handleAppStateChange.bind(this));
+  }
+
+  _handleAppStateChange (currentAppState) {
+    if (this && currentAppState == "inactive" && this.navigator.swipingPage) {
+      let index = this.navigator.swipingPage.state.cardIndex;
+      this._removeSeenCards(index);
+    }
+  }
+
   // Called when the app is closed from SwipingPage.js
   // Removes all the old cards and saves the remainder to AsyncStorage
-  _removeSeenCards(currentIndex) {
+  _removeSeenCards(index) {
+    let oldCurrentProfile = this.state.profiles[index];
+
     let oldLength = this.state.profiles.length;
-    this.state.profiles.splice(0, currentIndex);
+    this.state.profiles.splice(0, index);
     this._shouldSaveProfilesToStorage();
+
+    let newCurrentProfile = this.state.profiles[0];
+    if (oldCurrentProfile !== newCurrentProfile) {
+      throw "Removing Cards Did Not Work";
+    }
+    if (this.navigator.swipingPage) {
+      this.navigator.swipingPage.setState({
+        cardIndex: 0,
+      });
+    }
   }
 
   async _shouldSaveProfilesToStorage () {
@@ -181,34 +201,6 @@ class NavigationContainer extends Component {
     });
   }
 
-  // Changes which tab is showing (swiping, settings, etc), check HomeTabBarIOS
-  // for the tab names.  The reason why this is here is because notifications
-  // will also need to change the tabs, and changes can only trickle downwards.
-  // Thus, selectedTab is a property of the Navigator, and TabBar looks to
-  // Navigator for this property.
-  _changeTab(tabName) {
-    const settingsTab = TabNames.settingsTab;
-    let currentlyOnSettings = this.state.selectedTab == settingsTab;
-    let leavingSettings = currentlyOnSettings && tabName != settingsTab;
-    if (leavingSettings && this.state.hasUnsavedSettings) {
-      Alert.alert(
-        "Leaving unsaved changes",
-        "Save your changes with the circular 'save' button at the bottom-right!",
-        [
-          {text: "OK", onPress:() => {
-            this.setState({
-              selectedTab: tabName,
-            })
-          }},
-        ]
-      );
-    } else {
-      this.setState({
-        selectedTab: tabName,
-      })
-    }
-  }
-
   async _asyncUpdateServerProfile(id, profileChanges, newProfile) {
     let url = "https://jumbosmash2017.herokuapp.com/profile/id/".concat(id);
     fetch(url, {
@@ -240,7 +232,7 @@ class NavigationContainer extends Component {
   // shows the correct notification for matching
   // if on the swiping page, then shows full match view, else shows a banner notif
   _notifyUserOfMatchWith(profile) {
-    if (profile != null && this.state.selectedTab == TabNames.cardsTab) {
+    if (profile != null && this.navigator.currentPage == PageNames.cardsPage) {
       this.setState({
         matchProfile: profile,
         showMatchView: true,
@@ -250,143 +242,56 @@ class NavigationContainer extends Component {
         matchProfile: profile,
       });
       this.notificationBanner.showWithMessage("New Match! Say Hello to " + profile.firstName, ()=>{
-        this._changeTab(TabNames.chatTab);
+        this.navigator.changePage(PageNames.chatPage);
       });
     }
   }
 
   _shouldRenderMatchView() {
-    if (this.state.showMatchView && this.state.selectedTab == TabNames.cardsTab && this.state.profiles.length > 1) {
+    if (this.state.showMatchView && this.navigator.currentPage == PageNames.cardsPage && this.state.profiles.length > 1) {
       return (
         <View style={styles.coverView}>
           <MatchView
             myProfile={this.state.myProfile}
             matchProfile={this.state.matchProfile}
             onClose={() => this.setState({showMatchView: false})}
+            onSuccess={() => this.navigator.changePage(PageNames.chatPage)}
           />
         </View>
       );
     }
   }
 
-  // Returns the content that the navigator should show.  Since route.name is "TabBar"
-  // by default, it will show the TabBar.  In order to "push" a view on top of this view,
-  // You have to give it its own route name and use navigator.push({name: route name})
-  _renderNavigatorScene (route, navigator) {
-    if (route.name == 'TabBar') {
-      return (
-        <View style={{flex:1}}>
-          <HomeTabBarIOS
-            navigator={navigator}
-            selectedTab={this.state.selectedTab}
-            changeTab={this._changeTab.bind(this)}
-            fetchProfiles={this._fetchProfiles.bind(this)}
-            profiles={this.state.profiles}
-            myProfile={this.state.myProfile}
-            updateProfile={this._updateProfile.bind(this)}
-            firebase={firebase}
-            setHasUnsavedSettings={(hasUnsavedSettings) => {
-              this.setState({hasUnsavedSettings: hasUnsavedSettings})
-            }}
-            removeSeenCards={this._removeSeenCards.bind(this)}
-            notifyUserOfMatchWith={this._notifyUserOfMatchWith.bind(this)}
-          />
-          {this._shouldRenderMatchView()}
-          <NotificationBannerView ref={(elem) => {this.notificationBanner = elem}}/>
-        </View>
-      );
-    } else if (route.name == 'Conversation') {
-      return(
-        <ConversationPage
-          navigator={navigator}
-          chatroomId={route.chatroomId}
-          participants={route.participants}
-          userId={route.userId}
-          setShowNavigationBar={this._setShowNavigationBar.bind(this)}
-          firebase={firebase}/>
-      );
+  // sets participant of chat using callback
+  _setCurrentParticipant(currentParticipant) {
+    if (currentParticipant) {
+      this.setState({currentParticipant});
     }
   }
 
-  // used as a callback passed to child components of the navigator.
-  // example use is showing the navigation bar in the ConversationPage
-  _setShowNavigationBar(shouldShow, participant) {
-    this.setState(
-      {showNavigator: shouldShow,
-       currentParticipant: participant,
-      }
+  render() {
+    return (
+      <View style={{flex: 1}}>
+        <JumboNavigator
+          ref={(elem) => {this.navigator = elem}}
+          initialRoute={{ name: PageNames.cardsPage }}
+          fetchProfiles={this._fetchProfiles.bind(this)}
+          profiles={this.state.profiles}
+          myProfile={this.state.myProfile}
+          updateProfile={this._updateProfile.bind(this)}
+          firebase={firebase}
+          removeSeenCards={this._removeSeenCards.bind(this)}
+          notifyUserOfMatchWith={this._notifyUserOfMatchWith.bind(this)}
+          setCurrentParticipant={this._setCurrentParticipant.bind(this)}
+        />
+        {this._shouldRenderMatchView()}
+        <NotificationBannerView ref={(elem) => {this.notificationBanner = elem}}/>
+      </View>
     );
   }
-
-  // returns UI element of the navigation bar
-  _renderNavigationBar() {
-    if (this.state.showNavigator) {
-      return (
-        <Navigator.NavigationBar style={styles.navigationBarContainer}
-          routeMapper={{
-            LeftButton: (route, navigator, index, navState) =>
-            {
-              return(<TouchableHighlight onPress={() => {navigator.pop();}}>
-                <Text>Back</Text>
-              </TouchableHighlight>);
-            },
-            RightButton: (route, navigator, index, navState) =>
-             { return null; },
-           Title: (route, navigator, index, navState) =>
-             { return (
-               <View style={styles.navigationBarTitleContainer}>
-                 <Image style={styles.avatarPhoto} source={this.state.currentParticipant ? {uri: this.state.currentParticipant.photo} : null}/>
-                 <Text style={styles.navigationBarTitleText}>
-                   {this.state.currentParticipant ? this.state.currentParticipant.firstName : null}
-                 </Text>
-               </View>); },}}>
-          <View style={styles.navigationBarSeparator}/>
-        </Navigator.NavigationBar>
-
-      );
-    } else {
-      return null;
-    }
-  }
-
-
-    render() {
-      return (
-        <Navigator
-          ref={(elem)=>{this.navigator = elem}}
-          initialRoute={{ name: 'TabBar' }}
-          renderScene={this._renderNavigatorScene.bind(this)}
-          navigationBar={this._renderNavigationBar()}
-        />
-      );
-    }
-  }
+}
 
 const styles = StyleSheet.create({
-  avatarPhoto: {
-    height: 40,
-    width: 40,
-    borderRadius: 20,
-  },
-  navigationBarContainer: {
-    backgroundColor: 'white',
-  },
-  navigationBarTitleContainer: {
-    padding: 12,
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  navigationBarTitleText: {
-    marginLeft: 12,
-    fontSize: 16,
-    color: '#CAC4C4',
-    fontFamily: 'Avenir Next',
-  },
-  navigationBarSeparator: {
-    flex: 1,
-    height: 40,
-    backgroundColor: '#E1E1E1',
-  },
   coverView: {
     flex: 1,
     position: 'absolute',
