@@ -18,9 +18,10 @@ import {
   Button,
 } from 'react-native';
 
-import SignupPage             from './SignupPage.js'
+import SignupPage             from './SignupPage.js';
 import AccountPage            from './AccountPage.js';
 import AuthErrors             from './AuthErrors.js';
+import Redirect               from './Redirect.js';
 
 class LoginPage extends Component {
   
@@ -32,19 +33,6 @@ class LoginPage extends Component {
     }
   }
 
-  // componentWillMount() {
-  //   // Adding listener here
-  //   this.unsubscribe = this.props.firebase.auth().onAuthStateChanged(user => {
-  //     if (user && user.emailVerified) {
-  //       this.props.navigator.push({
-  //         component: AccountPage
-  //       });
-  //     } else if (user && !user.emailVerified) {
-  //       Alert.alert("Please verify your email!");
-  //     }
-  //   });
-  // }
-
   login(){
 
     var email = this.state.email_input + this.props.email_ext;
@@ -52,16 +40,14 @@ class LoginPage extends Component {
 
     this.props.firebase.auth().signInWithEmailAndPassword(email, password)
       .then((user) => {
-        if (user.emailVerified) {
+        if (user && user.emailVerified) {
           this.props.navigator.push({
             component: AccountPage
-          })
-        } else {
-          Alert.alert("please verify your account!");
+          });
+        } else if (user && !user.emailVerified) {
+          Alert.alert("please check your email, and verify your account before logging in.");
         }
       })
-      // Listener should take care of re-directing, we only
-      // need to catch errors
       .catch((error) => {
         AuthErrors.handleLoginError(error);
       })
