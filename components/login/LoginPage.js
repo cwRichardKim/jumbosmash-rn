@@ -41,7 +41,7 @@ class LoginPage extends Component {
             component: AccountPage
           });
         } else {
-          Alert.alert("Please verify your email");
+          Alert.alert("Please verify your email.");
         }
       }
     });
