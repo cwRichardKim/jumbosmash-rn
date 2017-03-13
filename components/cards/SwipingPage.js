@@ -21,7 +21,6 @@ import NoView           from './NoView.js'
 import SwipeButtonsView from './SwipeButtonsView.js'
 import Card             from './Card.js';
 import NoMoreCards      from './NoMoreCards.js';
-import ProfileCardView  from './ProfileCardView.js'
 const global = require('../global/GlobalFunctions.js');
 
 const CARD_REFRESH_BUFFER = 30; // There should always be at least this many cards left, else fetch more
@@ -36,7 +35,6 @@ class SwipingPage extends Component {
 
     this.state = {
       cardIndex: 0,
-      showProfile: false,
     }
   }
 
@@ -58,25 +56,6 @@ class SwipingPage extends Component {
     this.setState({
       cardIndex: cardIndex + 1,
     });
-  }
-
-  _closeProfileCard() {
-    this.setState({
-      showProfile: false,
-    })
-  }
-
-  _shouldRenderProfileView() {
-    if (this.state.showProfile && this.state.cardIndex < this.props.profiles.length) {
-      return(
-        <View style={styles.coverView}>
-          <ProfileCardView {...this.props.profiles[this.state.cardIndex]}
-            pageHeight={this.props.pageHeight}
-            exitFunction={this._closeProfileCard.bind(this)}
-          />
-        </View>
-      );
-    }
   }
 
   // TODO: @richard remove this later. this is for testing purposes to see if double click bug is fixed
@@ -152,7 +131,7 @@ class SwipingPage extends Component {
     return (
       <Card {...this.props.profiles[index]}
         ref={(elem) => {this.cards[cardIndex] = elem}}
-        onPress={()=>{this.setState({showProfile: true})}}
+        onPress={this.props.openProfileCard}
         handleRightSwipeForIndex={this._handleRightSwipeForIndex.bind(this)}
         handleLeftSwipeForIndex={this._handleLeftSwipeForIndex.bind(this)}
         swipeDidComplete={this._swipeDidComplete.bind(this)}
@@ -192,7 +171,6 @@ class SwipingPage extends Component {
       <View style={{marginTop: this.props.navBarHeight, height:this.props.pageHeight}}>
         <View style={[styles.container]}>
           <View style={styles.topPadding}/>
-          {this._shouldRenderProfileView()}
           <View style={styles.cardContainer}>
             {this._shouldRenderCards()}
           </View>
@@ -248,15 +226,6 @@ const styles = StyleSheet.create({
     height: 100,
     alignSelf: "stretch",
     zIndex: -1,
-  },
-  coverView: {
-    flex: 1,
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    zIndex: 100,
   },
 });
 
