@@ -26,57 +26,15 @@ const BORDER_RADIUS = 10;
 const CLOSE_SCROLL_DISTANCE = 100;
 const WIDTH = Dimensions.get('window').width;
 
-//TODO: @richard Make a carousel on the photos
 class ProfileCardView extends Component {
   constructor(props) {
     super(props);
-
-    this.state = {
-      scrollDistance: 0,
-      pan: new Animated.ValueXY({x:0, y:0}),
-      opacity: new Animated.Value(1),
-    }
-  }
-
-  _handleScroll(event: Object) {
-    this.setState({
-      scrollDistance: event.nativeEvent.contentOffset.y
-    });
-  }
-
-  _calculateOpacity() {
-    const pullBuffer = 50;
-    const maximumOpacity = 0.9;
-    const minimumOpacity = 0.5;
-    let distancePulled = this.state.scrollDistance;
-    if (distancePulled < 0) {
-      let opacityChange = maximumOpacity - minimumOpacity;
-      let newOpacity = minimumOpacity + opacityChange * (CLOSE_SCROLL_DISTANCE + Math.min(distancePulled + pullBuffer, 0)) / CLOSE_SCROLL_DISTANCE;
-      return newOpacity;
-    }
-    return maximumOpacity;
   }
 
   _closeProfileCard() {
-    const animDuration = 200;
-    Animated.parallel([
-      Animated.timing(this.state.pan, {
-        toValue: {x:0, y: this.props.pageHeight},
-        duration: animDuration,
-      }),
-      Animated.timing(this.state.opacity, {
-        toValue: 0,
-        duration: animDuration,
-      }),
-    ]).start(function onComplete(){
-      if (this.props.exitFunction) {
-        this.props.exitFunction();
-      }
-    }.bind(this));
-  }
-
-  _releasedScrollView() {
-    //TODO: implement closing via scrolling
+    if (this.props.exitFunction) {
+      this.props.exitFunction();
+    }
   }
 
   _shouldRenderImageWithIndex(index) {
@@ -122,16 +80,14 @@ class ProfileCardView extends Component {
     return (
       <View style={{flex: 1}}>
 
-        <Animated.View style={{flex: 1, opacity: this.state.opacity}}>
-          <View style={[styles.background, {opacity: this._calculateOpacity()}]}/>
+        <Animated.View style={{flex: 1}}>
+          <View style={[GlobalStyles.absoluteCover, styles.background]}/>
         </Animated.View>
 
-        <Animated.View style={[GlobalStyles.absoluteCover, {transform:this.state.pan.getTranslateTransform()}]}>
+        <Animated.View style={[GlobalStyles.absoluteCover]}>
           <ScrollView style={styles.touchArea}
             ref={(scrollView) => { _scrollView = scrollView; }}
-            onScroll={this._handleScroll.bind(this)}
             scrollEventThrottle={16}
-            onResponderRelease={this._releasedScrollView.bind(this)}
           >
             <View style={[styles.card, {minHeight: pageHeight + BORDER_RADIUS}]}>
               {this._renderImages()}
@@ -189,11 +145,7 @@ const styles = StyleSheet.create({
   },
   background: {
     backgroundColor: 'black',
-    position: "absolute",
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
+    opacity: 0.8,
   },
   touchArea: {
     flex: 1,
@@ -231,13 +183,5 @@ const styles = StyleSheet.create({
     paddingBottom: 50,
   },
 });
-
-ProfileCardView.propTypes = {
-  //TODO: add the expected property types (name, email, picture, etc)
-};
-
-ProfileCardView.defaultProps = {
-  //TODO: create default prop types when some stuff is screwed up
-};
 
 export default ProfileCardView;
