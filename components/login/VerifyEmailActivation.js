@@ -18,7 +18,6 @@ class VerifyEmailActivation extends Component {
   }
 
   static sendEmail(user) {
-
     user.sendEmailVerification()
       .then(() => {
         Alert.alert("we've sent you an email, please verify your email account.");
