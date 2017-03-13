@@ -21,7 +21,9 @@ import {
 
 import ProfilePhotoPicker from "./ProfilePhotoPicker.js";
 import SaveButton         from "./SaveButton.js";
-import RectButton      from "../global/RectButton.js";
+import RectButton         from "../global/RectButton.js";
+import GlobalStyles       from "../global/GlobalStyles.js";
+
 const SaveButtonState = require('../global/GlobalFunctions.js').saveButtonStates();
 let Mailer = require('NativeModules').RNMail;
 
@@ -210,10 +212,10 @@ class SettingsPage extends Component {
             updatePhotos={this._updatePhotos.bind(this)}
             firebase={this.props.firebase}
           />
-          <Text style={[styles.header, styles.textListItem]}>Preferred First Name</Text>
+          <Text style={[styles.header, GlobalStyles.text, styles.textListItem]}>Preferred First Name</Text>
 
           <View style={styles.line}/>
-          <TextInput style={[styles.textListItem, styles.textInput]}
+          <TextInput style={[GlobalStyles.text, styles.textListItem, styles.textInput]}
             onChangeText={(firstName) => {this._changeWasMade(()=>{this.setState({firstName})})}}
             value={this.state.firstName}
             color="#C3C1C1"
@@ -225,10 +227,10 @@ class SettingsPage extends Component {
           />
           <View style={styles.line}/>
 
-          <Text style={[styles.header, styles.textListItem]}>Last Name</Text>
+          <Text style={[styles.header, GlobalStyles.text, styles.textListItem]}>Last Name</Text>
 
           <View style={styles.line}/>
-          <TextInput style={[styles.textListItem, styles.textInput]}
+          <TextInput style={[GlobalStyles.text, styles.textListItem, styles.textInput]}
             onChangeText={(lastName) => {this._changeWasMade(()=>{this.setState({lastName})})}}
             value={this.state.lastName}
             color="#C3C1C1"
@@ -240,10 +242,10 @@ class SettingsPage extends Component {
           />
           <View style={styles.line}/>
 
-          <Text style={[styles.header, styles.textListItem]}>Bio</Text>
+          <Text style={[styles.header, GlobalStyles.text, styles.textListItem]}>Bio</Text>
 
           <View style={styles.line}/>
-          <TextInput style={[styles.textListItem, styles.textInput, {height: 100, paddingTop: 5, paddingBottom: 5}]}
+          <TextInput style={[GlobalStyles.text, styles.textListItem, styles.textInput, {height: 100, paddingTop: 5, paddingBottom: 5}]}
             onChangeText={(description) => {this._changeWasMade(()=>{this.setState({description})})}}
             value={this.state.description}
             color="#C3C1C1"
@@ -254,10 +256,10 @@ class SettingsPage extends Component {
           />
           <View style={styles.line}/>
 
-          <Text style={[styles.header, styles.textListItem]}>Major</Text>
+          <Text style={[styles.header, GlobalStyles.text, styles.textListItem]}>Major</Text>
 
           <View style={styles.line}/>
-          <TextInput style={[styles.textListItem, styles.textInput]}
+          <TextInput style={[GlobalStyles.text, styles.textListItem, styles.textInput]}
             onChangeText={(major) => {this._changeWasMade(()=>{this.setState({major})})}}
             value={this.state.major}
             color="#C3C1C1"

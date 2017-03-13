@@ -14,6 +14,7 @@ import {
 } from 'react-native';
 
 import CircleButton from "../global/CircleButton.js"
+import GlobalStyles from "../global/GlobalStyles.js"
 const SaveButtonState = require('../global/GlobalFunctions.js').saveButtonStates();
 
 class SaveButton extends Component {
@@ -90,7 +91,7 @@ class SaveButton extends Component {
         <Animated.View style={[styles.saveButtonContainer,
           {transform: this.state.pan.getTranslateTransform()}]}>
           <CircleButton
-            style={styles.saveButton}
+            style={[GlobalStyles.buttonShadow, styles.saveButton]}
             source={require("./images/saveButton.png")}
             onPress={this._onPress.bind(this)}
             animateInFrom={showButton ? {x: 0, y: 100} : null}
@@ -116,17 +117,6 @@ const styles = StyleSheet.create({
     width: 50,
     height: 50,
     borderRadius: 25,
-    // android shadow
-    elevation: 3,
-    shadowColor: '#000000',
-
-    // ios shadow
-    shadowOffset: {
-      width: 0,
-      height: 4,
-    },
-    shadowRadius: 4,
-    shadowOpacity: 0.1,
   },
 });
 

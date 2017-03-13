@@ -17,7 +17,8 @@ import {
   Dimensions,
 } from 'react-native';
 
-import LoadableImage  from '../global/LoadableImage.js'
+import LoadableImage  from '../global/LoadableImage.js';
+import GlobalStyles   from "../global/GlobalStyles.js";
 
 let Carousel = require('react-native-carousel');
 
@@ -125,7 +126,7 @@ class ProfileCardView extends Component {
           <View style={[styles.background, {opacity: this._calculateOpacity()}]}/>
         </Animated.View>
 
-        <Animated.View style={{ position: 'absolute', top:0,bottom:0,left:0,right:0, transform:this.state.pan.getTranslateTransform() }}>
+        <Animated.View style={[GlobalStyles.absoluteCover, {transform:this.state.pan.getTranslateTransform()}]}>
           <ScrollView style={styles.touchArea}
             ref={(scrollView) => { _scrollView = scrollView; }}
             onScroll={this._handleScroll.bind(this)}
@@ -136,8 +137,8 @@ class ProfileCardView extends Component {
               {this._renderImages()}
               <TouchableWithoutFeedback style={{flex:1}} onPress={this._closeProfileCard.bind(this)}>
                 <View style={styles.textContainer}>
-                  <Text style={styles.title}>{this.props.firstName} {this.props.lastName}</Text>
-                  <Text style={styles.text}>{this.props.description}</Text>
+                  <Text style={[GlobalStyles.text, styles.title]}>{this.props.firstName} {this.props.lastName}</Text>
+                  <Text style={[GlobalStyles.text, styles.text]}>{this.props.description}</Text>
                 </View>
               </TouchableWithoutFeedback>
               <Image style={styles.bottomGradient} source={require('./images/bottomGradient.png')}/>
