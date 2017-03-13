@@ -2,6 +2,9 @@
 
 /*
 This file handles if you already have an account, and want to login.
+This is also the first page that AuthContainer pushes to. It has
+the authlistener attached, and checks if user should be seeing
+AccountPage or LoginPage.
 */
 
 import React, {Component} from 'react';
@@ -15,10 +18,9 @@ import {
   Button,
 } from 'react-native';
 
+import SignupPage             from './SignupPage.js'
 import AccountPage            from './AccountPage.js';
 import AuthErrors             from './AuthErrors.js';
-import Redirect               from './Redirect.js';
-
 
 class LoginPage extends Component {
   
@@ -30,28 +32,42 @@ class LoginPage extends Component {
     }
   }
 
-  login(){
+  componentWillMount() {
+    // Adding listener here
+    this.unsubscribe = this.props.firebase.auth().onAuthStateChanged(user => {
+      if (user) {
+        if (user.emailVerified) {
+          this.props.navigator.push({
+            component: AccountPage
+          });
+        } else {
+          Alert.alert("Please verify your email");
+        }
+      }
+    });
+  }
 
-    var firebase_auth = this.props.firebase.auth();
+  componentWillUnmount() {
+    this.unsubscribe(); // Removing listener
+  }
+
+
+  login(){
 
     var email = this.state.email_input + this.props.email_ext;
     var password = this.state.password;
 
-    firebase_auth.signInWithEmailAndPassword(email, password)
-      // Success case
-      .then(() => {
-        this.goToAccountPage();
-      })
-      // Failure case: Login Error
+    this.props.firebase.auth().signInWithEmailAndPassword(email, password)
+      // Listener should take care of re-directing, we only
+      // need to catch errors
       .catch((error) => {
         AuthErrors.handleLoginError(error);
       })
   }
 
-  // TODO: move to redirect
-  goToAccountPage() {
+  goToSignupPage() {
     this.props.navigator.push({
-      component: AccountPage
+          component: SignupPage
     });
   }
 
@@ -84,7 +100,7 @@ class LoginPage extends Component {
           />
 
           <Button
-            onPress={Redirect.goToSignupPage.bind(this)}
+            onPress={this.goToSignupPage.bind(this)}
             title="New here? Go to Signup"
             accessibilityLabel="Go to signup page"
           />
