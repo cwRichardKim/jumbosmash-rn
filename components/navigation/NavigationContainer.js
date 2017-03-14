@@ -56,7 +56,6 @@ class NavigationContainer extends Component {
     this.state = {
       profiles: [],
       myProfile: testProfile,
-      currentRecipient: null, // used for the nav bar in ConversationPage
     };
   }
 
@@ -245,13 +244,6 @@ class NavigationContainer extends Component {
     return newProfile;
   }
 
-  // sets participant of chat using callback
-  _setCurrentParticipant(currentParticipant) {
-    if (currentParticipant) {
-      this.setState({currentParticipant});
-    }
-  }
-
   render() {
     return (
       <View style={{flex: 1}}>
@@ -264,7 +256,6 @@ class NavigationContainer extends Component {
           updateProfile={this._updateProfile.bind(this)}
           firebase={firebase}
           removeSeenCards={this._removeSeenCards.bind(this)}
-          setCurrentParticipant={this._setCurrentParticipant.bind(this)}
         />
       </View>
     );
