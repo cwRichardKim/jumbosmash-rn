@@ -161,6 +161,7 @@ class JumboNavigator extends Component {
           navigator={navigator}
           chatroomId={route.chatroomId}
           participants={route.participants}
+          conversation={route.conversation}
           myProfile={this.props.myProfile}
           firebase={this.props.firebase}
         />
