@@ -83,10 +83,16 @@ class SwipingPage extends Component {
         throw ("status" in response) ? response["status"] : "Unknown Error";
       }
     }).then((responseJson) => {
+      /*
+        JSON response:
+        {code: "MATCH",
+         message: "You have a match!",
+         profileId: [ID of current user],
+         swipedId: [ID of recently swiped on user that current user matched with]
+      */
       if (responseJson.code == "MATCH") {
-        //TODO: @jared handle what to do when match on swiping page
         if (this.props.notifyUserOfMatchWith) {
-          // this.props.notifyUserOfMatchWith(responseJson.theprofile) <- @jared
+          // this.props.notifyUserOfMatchWith(responseJson.swipedId);
         }
       }
     }).catch((error) => {
