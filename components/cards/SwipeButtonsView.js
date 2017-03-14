@@ -13,7 +13,6 @@ import {
   Image,
   TouchableHighlight,
   Dimensions,
-  Aniamted,
   Alert,
 } from 'react-native';
 
@@ -22,7 +21,7 @@ import GlobalStyles from "../global/GlobalStyles.js";
 let Mailer = require('NativeModules').RNMail;
 
 const WIDTH = Dimensions.get("window").width;
-const MIN_SWIPES_FOR_EMOJIS = 10;
+const MIN_SWIPES_FOR_EMOJIS = 20;
 
 const emojis= [
   [ 0, "💀"],
@@ -32,8 +31,8 @@ const emojis= [
   [ 5, "☹️"],
   [ 7, "👌"], // starting position
   [10, "😍"],
-  [17, "💦"],
-  [20, "❤️"],
+  [16, "❤️"],
+  [20, "💦"],
   [25, "🍑"],
   [30, "🙈"],
   [39, "🔥"],
