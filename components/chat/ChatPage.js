@@ -174,6 +174,7 @@ class ChatPage extends React.Component {
     this.props.navigator.push({
       chatroomId: conversation._id,
       participants: conversation.participants,
+      conversation: conversation,
       myProfile: this.props.myProfile,
       name: global.pageNames().conversation,
     });
