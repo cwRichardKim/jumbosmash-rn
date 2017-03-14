@@ -13,6 +13,10 @@ shouldNotAnimate: whether the button should have a slight bounce on touch. defau
 animateInFrom: dictionary {x, y} with number of pixels in the x / y axis to start an animate in from
   eg: {x:0, y:10} starts 10 pixels down and animates into view
 isLoading: true / false, shows loading indicator. will not run onPress if true
+disabled: should not animate and does not call onPress
+hasShadow: shows shadow, reduces when disabled
+disabledOpacity: opacity the button animates to when it is disabled
+disabledOnPress: function called when button is disabled
 */
 
 import React, {Component} from 'react';
@@ -20,10 +24,13 @@ import {
   StyleSheet,
   View,
   Image,
+  Text,
   TouchableWithoutFeedback,
   Animated,
   ActivityIndicator,
 } from 'react-native';
+
+import GlobalStyles from "./GlobalStyles.js";
 
 class CircleButton extends Component {
   constructor(props) {
@@ -31,6 +38,7 @@ class CircleButton extends Component {
     this.state = {
       springValue: new Animated.Value(1.0),
       pan: new Animated.ValueXY({x:0, y:0}),
+      opacity: new Animated.Value(props.style.opacity || 1),
     }
   }
 
@@ -45,6 +53,7 @@ class CircleButton extends Component {
     if (this.props.componentDidMount) {
       this.props.componentDidMount();
     }
+    this._updateOpacity();
     if (this.props.animateInFrom) {
       Animated.spring(
         this.state.pan,
@@ -57,7 +66,7 @@ class CircleButton extends Component {
   }
 
   _onPressIn() {
-    if (!this.props.shouldNotAnimate) {
+    if (!this.props.shouldNotAnimate && !this.props.disabled) {
       this.state.springValue.setValue(0.9);
       Animated.timing(
         this.state.springValue,
@@ -67,10 +76,15 @@ class CircleButton extends Component {
   }
 
   _onPress() {
-    if (this.props.onPress && !this.props.isLoading) {
+    if (this.props.onPress && !this.props.isLoading && !this.props.disabled) {
       this.props.onPress();
+    } else if (this.props.disabled) {
+      this.props.disabledOnPress();
     }
-    if (!this.props.shouldNotAnimate) {
+  }
+
+  _onPressOut() {
+    if (!this.props.shouldNotAnimate && !this.props.disabled) {
       Animated.spring(
         this.state.springValue,
         {
@@ -81,14 +95,24 @@ class CircleButton extends Component {
     }
   }
 
-  _shouldRenderImageOrLoadingIndicator () {
+  _shouldRenderContentOrLoadingIndicator () {
     if (!this.props.isLoading) {
-      return(
-        <Image
-          style={[styles.image]}
-          source={this.props.source ? this.props.source : null}
-        />
-      );
+      if (this.props.source) {
+        return(
+          <Image
+            style={[styles.image]}
+            source={this.props.source ? this.props.source : null}
+          />
+        );
+      } else if (this.props.text) {
+        return(
+          <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
+            <Text style={[GlobalStyles.text, this.props.textStyle || {}]}>{this.props.text}</Text>
+          </View>
+        );
+      } else {
+        return(<View/>);
+      }
     } else {
       return(
         <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
@@ -98,12 +122,40 @@ class CircleButton extends Component {
     }
   }
 
+  _updateOpacity() {
+    let opacity = this.props.style.opacity || 1;
+    if (this.props.disabled) {
+      opacity = this.props.disabledOpacity || 0.5;
+    }
+    if (opacity != this.state.opacity._value) {
+      Animated.timing(
+        this.state.opacity,
+        {
+          toValue: opacity,
+          duration: 200,
+        }
+      ).start();
+    }
+  }
+
+  componentDidUpdate () {
+    this._updateOpacity();
+  }
+
   render() {
     let translate = this.state.pan.getTranslateTransform();
+    let shadow = {};
+    if (this.props.hasShadow && !this.props.disabled) {
+      shadow = GlobalStyles.buttonShadow;
+    } else if (this.props.hasShadow) {
+      shadow = GlobalStyles.lowButtonShadow;
+    }
     return(
       <Animated.View
         style={[styles.container,
                 this.props.style ? this.props.style : {},
+                {opacity: this.state.opacity},
+                shadow,
                 {transform:[{scale: this.state.springValue},
                             translate[0],
                             translate[1]]}]}
@@ -112,8 +164,9 @@ class CircleButton extends Component {
           style={styles.touchArea}
           onPress={this._onPress.bind(this)}
           onPressIn={this._onPressIn.bind(this)}
+          onPressOut={this._onPressOut.bind(this)}
         >
-          {this._shouldRenderImageOrLoadingIndicator()}
+          {this._shouldRenderContentOrLoadingIndicator()}
         </TouchableWithoutFeedback>
       </Animated.View>
     );

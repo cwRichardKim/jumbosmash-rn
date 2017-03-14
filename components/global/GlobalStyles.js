@@ -45,6 +45,19 @@ module.exports = StyleSheet.create({
     shadowRadius: 4,
     shadowOpacity: 0.1,
   },
+  lowButtonShadow: {
+    // android shadow
+    elevation: 2,
+    shadowColor: '#000000',
+
+    // ios shadow
+    shadowOffset: {
+      width: 0,
+      height: 4,
+    },
+    shadowRadius: 4,
+    shadowOpacity: 0.05,
+  },
   text: {
     fontSize: 15,
     fontFamily: 'Avenir Next',
