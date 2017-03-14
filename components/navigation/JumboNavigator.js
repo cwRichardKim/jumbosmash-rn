@@ -209,7 +209,6 @@ class JumboNavigator extends Component {
   _renderNavBarCenter(route, navigator, index, navState) {
     if (route.name == PageNames.conversation) {
       let participants = global.otherParticipants(route.participants, this.props.myProfile.id);
-      console.log("LALALA: " + JSON.stringify(route.participants));
       return (
         <View style={styles.navigationBarTitleContainer}>
           <Image style={styles.avatarPhoto} source={participants ? {uri: participants[0].photo} : null}/>
