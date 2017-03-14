@@ -14,6 +14,7 @@ import {
   Image,
   Dimensions,
   Alert,
+  AsyncStorage,
 } from 'react-native';
 
 import YesView          from './YesView.js'
@@ -26,6 +27,8 @@ const global = require('../global/GlobalFunctions.js');
 const CARD_REFRESH_BUFFER = 30; // There should always be at least this many cards left, else fetch more
 const CARD_WIDTH = Dimensions.get('window').width - 40;
 const DECK_SIZE = 3; // number of cards rendered at a time
+const StorageKeys = global.storageKeys();
+const MAX_SWIPES_REMEMBERED = 40;
 
 class SwipingPage extends Component {
   constructor(props) {
@@ -35,13 +38,22 @@ class SwipingPage extends Component {
 
     this.state = {
       cardIndex: 0,
+      canUndoCount: 0,
+      likePoints: [],
+      likeCount: 0,
+      dislikeCount: 0,
     }
+  }
+
+  componentDidMount() {
+    this._shouldRetrieveLikePoints(true);
   }
 
   componentWillUnmount() {
     if (this.props.removeSeenCards) {
       this.props.removeSeenCards(this.state.cardIndex);
     }
+    this.saveLikePoints();
   }
 
   // this function deals with the data (number of cards) and should have no impact on visuals
@@ -84,9 +96,8 @@ class SwipingPage extends Component {
       }
     }).then((responseJson) => {
       if (responseJson.code == "MATCH") {
-        //TODO: @jared handle what to do when match on swiping page
         if (this.props.notifyUserOfMatchWith) {
-          // this.props.notifyUserOfMatchWith(responseJson.theprofile) <- @jared
+          this.props.notifyUserOfMatchWith(responseJson.swipedProfile)
         }
       }
     }).catch((error) => {
@@ -94,15 +105,106 @@ class SwipingPage extends Component {
     });
   }
 
+  // increments the count and stores it
+  _incrementSwipeCount (isLike) {
+    var queue = this.state.likePoints;
+    queue.push(isLike);
+    var wasLike = null;
+    if (queue.length > MAX_SWIPES_REMEMBERED) {
+      wasLike = queue.shift();
+    }
+    let newLikeCount = this.state.likeCount;
+    let newDislikeCount = this.state.dislikeCount;
+
+    if (isLike) {
+      newLikeCount += 1;
+    } else {
+      newDislikeCount += 1;
+    }
+
+    if (wasLike === true) {
+      newLikeCount -= 1;
+    } else if (wasLike === false && wasLike !== null) {
+      newDislikeCount -= 1;
+    }
+
+    this.setState({
+      likePoints: queue,
+      likeCount: newLikeCount,
+      dislikeCount: newDislikeCount,
+    });
+  }
+
+  // public function, saves the array to storage
+  saveLikePoints () {
+    if (this) {
+      try {
+        AsyncStorage.setItem(StorageKeys.likePoints, this.state.likePoints.toString());
+      } catch (error) {
+        throw error;
+      }
+    }
+  }
+
+  // retrieves the like and dislike counts and sets them to state
+  async _shouldRetrieveLikePoints (isLike) {
+    var likePoints = 0;
+    try {
+      likePoints = await AsyncStorage.getItem(StorageKeys.likePoints);
+
+      // successfully retrieved something
+      if (likePoints !== null && typeof(likePoints) !== "undefined") {
+        likePoints = likePoints.split(",");
+      } else {
+        likePoints = [];
+      }
+      // error accessing storage
+    } catch (error) {
+      throw error;
+    }
+
+    let likeCount = 0;
+    let dislikeCount = 0;
+
+    for (var i in likePoints) {
+      let boolVal = likePoints[i] === "true";
+      if (boolVal) {
+        likeCount += 1;
+      } else {
+        dislikeCount += 1;
+      }
+      likePoints[i] = boolVal;
+    }
+
+    this.setState({
+      likePoints,
+      likeCount,
+      dislikeCount,
+    });
+  }
+
   _handleRightSwipeForIndex(cardIndex) {
     let profile = this.props.profiles[cardIndex];
     this._asyncUpdateLikeList(this.props.myProfile.id, profile.id);
     this._swipeErrorCheck(cardIndex, profile);
+    this.setState({canUndoCount: 0});
+    this._incrementSwipeCount(true);
   }
 
   _handleLeftSwipeForIndex(cardIndex) {
     let card = this.props.profiles[cardIndex];
     this._swipeErrorCheck(cardIndex, card);
+    this.setState({canUndoCount: this.state.canUndoCount + 1});
+    this._incrementSwipeCount(false);
+  }
+
+  _undo() {
+    if (this.state.canUndoCount > 0 && this.state.cardIndex > 0) {
+      this.setState({
+        cardIndex: this.state.cardIndex - 1,
+        canUndoCount: this.state.canUndoCount - 1,
+      });
+    }
   }
 
   _cardsExist() {
@@ -177,8 +279,13 @@ class SwipingPage extends Component {
 
           <View style={styles.swipeButtonsView}>
             <SwipeButtonsView
-              leftButtonFunction = {this._swipeLeftButtonPressed.bind(this)}
-              rightButtonFunction = {this._swipeRightButtonPressed.bind(this)}
+              leftButtonFunction={this._swipeLeftButtonPressed.bind(this)}
+              rightButtonFunction={this._swipeRightButtonPressed.bind(this)}
+              undo={this._undo.bind(this)}
+              canUndo={this.state.canUndoCount > 0 && this.state.cardIndex > 0}
+              likeCount={this.state.likeCount}
+              dislikeCount={this.state.dislikeCount}
+              maxSwipesRemembered={MAX_SWIPES_REMEMBERED}
             />
           </View>
           {/* // temporarily removing the yes / no views

@@ -37,6 +37,9 @@ class RectButton extends Component {
     if (this.props.onPress) {
       this.props.onPress();
     }
+  }
+
+  _onPressOut() {
     Animated.spring(
       this.state.springValue,
       {
@@ -57,6 +60,7 @@ class RectButton extends Component {
           style={styles.touchArea}
           onPress={this._onPress.bind(this)}
           onPressIn={this._onPressIn.bind(this)}
+          onPressOut={this._onPressOut.bind(this)}
         >
           <View style={styles.view}>
             <Text style={[GlobalStyles.text, this.props.textStyles]}>{this.props.text ? this.props.text : ""}</Text>
