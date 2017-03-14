@@ -91,11 +91,12 @@ class SaveButton extends Component {
         <Animated.View style={[styles.saveButtonContainer,
           {transform: this.state.pan.getTranslateTransform()}]}>
           <CircleButton
-            style={[GlobalStyles.buttonShadow, styles.saveButton]}
+            style={[styles.saveButton]}
             source={require("./images/saveButton.png")}
             onPress={this._onPress.bind(this)}
             animateInFrom={showButton ? {x: 0, y: 100} : null}
             isLoading={this.props.saveButtonState == SaveButtonState.saving}
+            hasShadow={true}
           />
         </Animated.View>
       );

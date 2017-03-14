@@ -44,6 +44,7 @@ module.exports = {
     return ({
       profiles: prefix+"profiles",
       lastIndex: prefix+"lastIndex",
+      likePoints: prefix+"likePoints",
     })
   },
   mod: function (n, m) {
