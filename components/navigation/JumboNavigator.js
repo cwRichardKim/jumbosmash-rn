@@ -16,6 +16,7 @@ import {
   TouchableOpacity,
   Alert,
   Animated,
+  Image,
 } from 'react-native';
 
 import SwipingPage            from "../cards/SwipingPage.js";
@@ -29,6 +30,7 @@ import MatchView              from './MatchView.js';
 import NotificationBannerView from "./NotificationBannerView.js";
 import GlobalStyles           from "../global/GlobalStyles.js";
 
+const global = require('../global/GlobalFunctions.js');
 const PageNames = require("../global/GlobalFunctions").pageNames();
 
 const NAVBAR_HEIGHT = (Platform.OS === 'ios') ? 64 : 64; // TODO: check the android tabbar height
@@ -159,8 +161,7 @@ class JumboNavigator extends Component {
           navigator={navigator}
           chatroomId={route.chatroomId}
           participants={route.participants}
-          userId={route.userId}
-          setCurrentParticipant={this.props.setCurrentParticipant}
+          myProfile={this.props.myProfile}
           firebase={this.props.firebase}
         />
       );
@@ -207,11 +208,13 @@ class JumboNavigator extends Component {
 
   _renderNavBarCenter(route, navigator, index, navState) {
     if (route.name == PageNames.conversation) {
+      let participants = global.otherParticipants(route.participants, this.props.myProfile.id);
+      console.log("LALALA: " + JSON.stringify(route.participants));
       return (
         <View style={styles.navigationBarTitleContainer}>
-          <Image style={styles.avatarPhoto} source={this.state.currentParticipant ? {uri: this.state.currentParticipant.photo} : null}/>
+          <Image style={styles.avatarPhoto} source={participants ? {uri: participants[0].photo} : null}/>
           <Text style={styles.navigationBarTitleText}>
-            {this.state.currentParticipant ? this.state.currentParticipant.firstName : null}
+            {participants? participants[0].firstName : null}
           </Text>
         </View>
       );

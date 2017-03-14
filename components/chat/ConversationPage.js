@@ -33,8 +33,6 @@ class ConversationPage extends Component {
   }
 
   componentDidMount() {
-    this.props.setCurrentParticipant(null); // TODO: @jared @richard might not need this anymore because navigator will always show
-    // send initial chat bot
     this._messagesRef.on('child_added', (child) => {
       var pos = 'right';
       if (child.val().user._id != this.props.myProfile.id) {
@@ -52,7 +50,6 @@ class ConversationPage extends Component {
   }
 
   componentWillUnmount() {
-    this.props.setCurrentParticipant(null); // TODO: @jared @richard might not need this anymore because navigator will always show
   }
 
   onSend(messages = []) {
@@ -64,7 +61,7 @@ class ConversationPage extends Component {
         user: {
           _id: this.props.myProfile.id,
           name: this.props.myProfile.firstName,
-          avatar: this.props.myProfile.photo,
+          avatar: this.props.myProfile.photos[0].small,
         },
         date: new Date().getTime(),
       });
