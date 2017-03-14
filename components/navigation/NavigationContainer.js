@@ -73,6 +73,9 @@ class NavigationContainer extends Component {
     if (this && currentAppState == "inactive" && this.navigator.swipingPage) {
       let index = this.navigator.swipingPage.state.cardIndex;
       this._removeSeenCards(index);
+      if (this.navigator && this.navigator.swipingPage) {
+        this.navigator.swipingPage.saveLikePoints();
+      }
     }
   }
 

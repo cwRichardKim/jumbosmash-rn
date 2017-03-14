@@ -193,6 +193,7 @@ class ProfilePhotoPicker extends Component {
             style={styles.majorButton}
             source={(this._photoExists(0)) ? require("./images/removeButton.png") : require("./images/addButton.png")}
             onPress={() => this._photoButtonPressedForPhotoIndex(0)}
+            hasShadow={false}
           />
         </View>
         <View style={styles.minorPhotosContainer}>
@@ -202,6 +203,7 @@ class ProfilePhotoPicker extends Component {
               style={[styles.minorButton, {top: SMALL_PHOTO_WIDTH - 15}]}
               source={(this._photoExists(1)) ? require("./images/removeButton.png") : require("./images/addButton.png")}
               onPress={() => this._photoButtonPressedForPhotoIndex(1)}
+              hasShadow={false}
             />
           </View>
           <View style={styles.minorPhotoViewBottom}>
@@ -210,6 +212,7 @@ class ProfilePhotoPicker extends Component {
               style={[styles.minorButton, {bottom: - 4}]}
               source={(this._photoExists(2)) ? require("./images/removeButton.png") : require("./images/addButton.png")}
               onPress={() => this._photoButtonPressedForPhotoIndex(2)}
+              hasShadow={false}
             />
           </View>
         </View>
