@@ -81,7 +81,7 @@ class SwipingPage extends Component {
   }
 
   async _asyncUpdateLikeList(profId, swipeId) {
-    let url = "https://jumbosmash2017.herokuapp.com/profile/like/".concat(profId).concat("/").concat(swipeId).concat("/").concat(this.props.token);
+    let url = "https://jumbosmash2017.herokuapp.com/profile/like/".concat(profId).concat("/").concat(swipeId).concat("/").concat(this.props.token.val);
     fetch(url, {
       method: 'POST',
       headers: {
