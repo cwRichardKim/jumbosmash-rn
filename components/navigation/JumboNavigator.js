@@ -22,8 +22,6 @@ import {
 import SwipingPage            from "../cards/SwipingPage.js";
 import ChatPage               from "../chat/ChatPage.js";
 import ConversationPage       from "../chat/ConversationPage.js"
-import AuthContainer          from "../login/AuthContainer.js";
-// import SignupPage             from "../login/SignupPage.js";
 import SettingsPage           from "../settings/SettingsPage.js";
 import ProfileCardView        from '../cards/ProfileCardView.js';
 import MatchView              from './MatchView.js';
@@ -123,6 +121,7 @@ class JumboNavigator extends Component {
           updateProfile={this.props.updateProfile}
           firebase={this.props.firebase}
           setHasUnsavedSettings={(hasUnsavedSettings) => {this.setState({hasUnsavedSettings})}}
+          routeNavigator={this.props.routeNavigator}
         />
       );
     } else if (route.name == PageNames.cardsPage) {
@@ -149,12 +148,6 @@ class JumboNavigator extends Component {
           navBarHeight={NAVBAR_HEIGHT}
           pageHeight={PAGE_HEIGHT}
           token={this.props.token}
-        />
-      );
-    } else if (route.name == PageNames.loginPage) {
-      return (
-        <AuthContainer
-          firebase={this.props.firebase}
         />
       );
     } else if (route.name == PageNames.conversation) {
@@ -228,11 +221,6 @@ class JumboNavigator extends Component {
             this.changePage(PageNames.cardsPage);
           }}>
             <Text>Swipe!</Text>
-          </TouchableOpacity>
-          <TouchableOpacity onPress={() => {
-            this.changePage(PageNames.loginPage);
-          }}>
-            <Text>Login (temp)</Text>
           </TouchableOpacity>
           <Animated.View style={[styles.navBarSelector, {transform: this.state.selectorBarPan.getTranslateTransform()}]}/>
         </View>

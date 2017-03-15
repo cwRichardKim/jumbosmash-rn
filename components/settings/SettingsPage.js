@@ -23,8 +23,12 @@ import ProfilePhotoPicker from "./ProfilePhotoPicker.js";
 import SaveButton         from "./SaveButton.js";
 import RectButton         from "../global/RectButton.js";
 import GlobalStyles       from "../global/GlobalStyles.js";
+import AuthErrors         from "../login/AuthErrors.js"
 
-const SaveButtonState = require('../global/GlobalFunctions.js').saveButtonStates();
+
+const GlobalFunctions = require('../global/GlobalFunctions.js');
+const PageNames = GlobalFunctions.pageNames();
+const SaveButtonState = GlobalFunctions.saveButtonStates();
 let Mailer = require('NativeModules').RNMail;
 
 class SettingsPage extends Component {
@@ -203,6 +207,18 @@ class SettingsPage extends Component {
     }
   }
 
+  _logout() {
+    this.props.firebase.auth().signOut()
+      .then(() => {
+        this.props.routeNavigator.replace({name: PageNames.auth});
+      })
+      .catch((error) => {
+        AuthErrors.handleLogoutError(error);
+        throw error;
+      }
+    );
+  }
+
   render() {
     return (
       <View style={[styles.container, {marginTop: this.props.navBarHeight, height: this.props.pageHeight}]}>
@@ -270,7 +286,12 @@ class SettingsPage extends Component {
           />
           <View style={styles.line}/>
           <RectButton
-            style={styles.supportButton}
+            style={[styles.rectButton, styles.logoutButton]}
+            onPress={this._logout.bind(this)}
+            text="Logout"
+          />
+          <RectButton
+            style={[styles.rectButton, styles.supportButton]}
             onPress={this._sendMail.bind(this)}
             text="Help / Feedback"
           />
@@ -326,13 +347,19 @@ const styles = StyleSheet.create({
     marginTop: 20,
     padding: 16,
   },
-  supportButton: {
+  rectButton: {
     height: 70,
     marginTop: 20,
     backgroundColor: '#F2585A',
     marginLeft: 16,
     marginRight: 16,
     borderRadius: 5,
+  },
+  logoutButton: {
+    backgroundColor: '#C5C3C3',
+  },
+  supportButton: {
+    backgroundColor: '#F2585A',
   },
   aboutText: {
     textAlign: 'center',
