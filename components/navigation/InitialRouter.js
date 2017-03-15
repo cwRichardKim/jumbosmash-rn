@@ -10,14 +10,17 @@ import {
   StyleSheet,
   View,
   Navigator,
+  AsyncStorage,
 } from 'react-native';
 
 import NavigationContainer        from "./NavigationContainer.js";
 import AuthContainer              from "../login/AuthContainer.js";
-import DummyData                  from "./DummyData.js";
-import ThankYouPage               from "./ThankYouPage.js"
+import DummyData                  from "../misc/DummyData.js";
+import ThankYouPage               from "../misc/ThankYouPage.js";
+import LoadingPage                from "../misc/LoadingPage.js";
 
 const PageNames = require("../global/GlobalFunctions.js").pageNames();
+const StorageKeys = require("../global/GlobalFunctions.js").storageKeys();
 
 const firebase = require('firebase');
 const firebaseConfig = {
@@ -31,20 +34,49 @@ firebase.initializeApp(firebaseConfig);
 class InitialRouter extends Component {
   constructor(props) {
     super(props);
-    this.didGetUser = false;
+    this.didGetUserAndProfile = false;
+    this.state = {
+      myProfile: null,
+    }
   }
 
   componentDidMount() {
-    firebase.auth().onAuthStateChanged(function(user) {
-      if (!this.didGetUser) {
-        this.didGetUser = true;
-        if (user && user.emailVerified) {
-          this.navigator.replace({name: PageNames.appHome})
+    this._shouldFetchUserAndProfile();
+  }
+
+  async _shouldFetchUserAndProfile() {
+    firebase.auth().onAuthStateChanged(async function(user) {
+      if (!this.didGetUserAndProfile) {
+        this.didGetUserAndProfile = true;
+        let myProfile = await this._shouldFetchUserAndProfile();
+        myProfile = DummyData.myProfile; //TODO: @richard remove this once accounts are created
+        if (user && user.emailVerified && myProfile) {
+          this.setState({myProfile});
+          this.navigator.replace({name: PageNames.appHome});
         } else {
-          this.navigator.replace({name: PageNames.auth})
+          this.navigator.replace({name: PageNames.auth});
         }
       }
     }.bind(this));
+  }
+
+  async _shouldFetchMyProfileFromStorage() {
+    try {
+      let storedMyProfile = await AsyncStorage.getItem(StorageKeys.myProfile);
+      if (storedMyProfile !== null && typeof(storedMyProfile) !== "undefined") {
+        storedMyProfile = JSON.parse(storedMyProfile);
+        if (storedMyProfile && storedMyProfile.id) {
+          return storedMyProfile;
+        } else {
+          return null;
+        }
+      } else {
+        return null;
+      }
+    } catch (error) {
+      throw error; //TODO @richard notify user
+      return null;
+    }
   }
 
   _renderNavigatorScene (route, navigator) {
@@ -61,11 +93,12 @@ class InitialRouter extends Component {
           dummyMyProfile={DummyData.myProfile}
           firebase={firebase}
           routeNavigator={navigator}
+          myProfile={this.state.myProfile}
         />
       );
     } else if (route.name == PageNames.loadingPage) {
       return (
-        <View/>
+        <LoadingPage/>
       );
     } else {
       return (

@@ -34,7 +34,6 @@ class NavigationContainer extends Component {
     this.token = {val: null};
     this.state = {
       profiles: [],
-      myProfile: this.props.dummyMyProfile,
     };
   }
 
@@ -125,7 +124,6 @@ class NavigationContainer extends Component {
         if (storedProfiles.constructor === Array && storedProfiles.length > 0){
           this.setState({
             profiles: storedProfiles,
-            myProfile: (this.state.myProfile == this.props.dummyMyProfile) ? storedProfiles[0] : this.state.myProfile, //TODO: @richard temporary while we don't have a real profile
           });
           this._removeProfilesFromStorage();
 
@@ -172,10 +170,9 @@ class NavigationContainer extends Component {
   // lastID: the lastID we got from the previous list of profiles
   // count: how many profiles to fetch. 0 or null is all
   async _fetchProfiles(lastID, count) {
-    console.log("VAL " + this.token.val);
     let index = await this._getLastIndex();
     // console.log("request made with last index: "+index.toString()); //TODO @richard testing code remove
-    let id = this.state.myProfile.id.toString(); //TODO: @richard replace
+    let id = this.props.myProfile.id.toString(); //TODO: @richard replace
     let batch = count ? count.toString() : FETCH_BATCH_SIZE.toString();
     let url = "https://jumbosmash2017.herokuapp.com/profile/batch/"+id+"/"+index+"/"+batch+"/"+this.token.val;
     return fetch(url)
@@ -186,7 +183,6 @@ class NavigationContainer extends Component {
         throw ("status" in response) ? response["status"] : "Unknown Error";
       }
     }).then((responseJson) => {
-      console.log("RESPONSE " + JSON.stringify(responseJson));
       this._setLastIndex(responseJson[responseJson.length - 1].index);
       // for (var i = 0; i < responseJson.length; i++) { //TODO @richard testing code remove
       //   console.log(responseJson[i].index.toString() + " " + responseJson[i].firstName);
@@ -194,7 +190,6 @@ class NavigationContainer extends Component {
       global.shuffle(responseJson);
       this.setState({
         profiles: this.state.profiles.concat(responseJson),
-        myProfile: (this.state.myProfile == this.props.dummyMyProfile) ? responseJson[0] : this.state.myProfile, //TODO: @richard temporary while we don't have a real profile
       })
     })
     .catch((error) => {
@@ -227,10 +222,10 @@ class NavigationContainer extends Component {
   async _updateProfile(profileChanges) {
     //TODO: @richard this is temporary while the backend isn't up yet
     let newProfile = {};
-    for (let key in this.state.myProfile) {
-      newProfile[key] = (key in profileChanges) ? profileChanges[key] : this.state.myProfile[key];
+    for (let key in this.props.myProfile) {
+      newProfile[key] = (key in profileChanges) ? profileChanges[key] : this.props.myProfile[key];
     }
-    let updateSuccess = await this._asyncUpdateServerProfile(this.state.myProfile.id, profileChanges, newProfile);
+    let updateSuccess = await this._asyncUpdateServerProfile(this.props.myProfile.id, profileChanges, newProfile);
     // TODO: @richard on success, return the profile
     return newProfile;
   }
@@ -243,7 +238,7 @@ class NavigationContainer extends Component {
           initialRoute={{ name: PageNames.cardsPage }}
           fetchProfiles={this._fetchProfiles.bind(this)}
           profiles={this.state.profiles}
-          myProfile={this.state.myProfile}
+          myProfile={this.props.myProfile}
           updateProfile={this._updateProfile.bind(this)}
           firebase={this.props.firebase}
           token={this.token}
