@@ -47,7 +47,6 @@ class SwipingPage extends Component {
 
   componentDidMount() {
     this._shouldRetrieveLikePoints(true);
-    console.log("AUTHY " + this.props.token);
   }
 
   componentWillUnmount() {
@@ -82,7 +81,7 @@ class SwipingPage extends Component {
   }
 
   async _asyncUpdateLikeList(profId, swipeId) {
-    let url = "https://jumbosmash2017.herokuapp.com/profile/like/".concat(profId).concat("/").concat(swipeId);
+    let url = "https://jumbosmash2017.herokuapp.com/profile/like/".concat(profId).concat("/").concat(swipeId).concat("/").concat(this.props.token);
     fetch(url, {
       method: 'POST',
       headers: {

@@ -29,28 +29,28 @@ const FETCH_BATCH_SIZE = 100;
 class NavigationContainer extends Component {
   constructor(props) {
     super(props);
+    this.token = {val: null};
     this.state = {
       profiles: [],
       myProfile: this.props.dummyMyProfile,
     };
   }
 
-  componentWillMount() {
-    if (firebase.auth().currentUser) {
-      firebase.auth()
-        .currentUser
-        .getToken(true)
-        .then(function(idToken) {
-          this.state.token = idToken;
-          console.log("THIS HAPPENED: " + idToken);
-        }).catch(function(error) {
-          console.log(error);
-        });
-    }
-  }
   componentDidMount() {
     AppState.addEventListener('change', this._handleAppStateChange.bind(this));
     this._shouldRetrieveProfilesFromStorage();
+    if (this.props.firebase.auth().currentUser) {
+      this.props.firebase.auth()
+        .currentUser
+        .getToken(true)
+        .then(function(idToken) {
+          console.log("TOKEN " + idToken);
+          this.token.val = idToken;
+          console.log("TOKENNNNNNN " + this.token);
+        }.bind(this)).catch(function(error) {
+          console.log(error);
+        });
+    }
   }
 
   componentWillUnmount () {
@@ -244,6 +244,7 @@ class NavigationContainer extends Component {
           myProfile={this.state.myProfile}
           updateProfile={this._updateProfile.bind(this)}
           firebase={this.props.firebase}
+          token={this.token}
           removeSeenCards={this._removeSeenCards.bind(this)}
           routeNavigator={this.props.routeNavigator}
         />
