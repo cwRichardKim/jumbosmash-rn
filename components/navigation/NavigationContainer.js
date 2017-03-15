@@ -23,31 +23,8 @@ const global = require('../global/GlobalFunctions.js');
 const PageNames = global.pageNames();
 const StorageKeys = global.storageKeys();
 
-const firebase = require('firebase');
-const firebaseConfig = {
-  apiKey: "AIzaSyCqxU8ZGcg7Tx-iJoB_IROCG_yj41kWA6A",
-  authDomain: "jumbosmash-ddb99.firebase.com",
-  databaseURL: "https://jumbosmash-ddb99.firebaseio.com/",
-  storageBucket: "jumbosmash-ddb99.appspot.com",
-};
-firebase.initializeApp(firebaseConfig);
-
 const FIRST_BATCH_SIZE = 50;
 const FETCH_BATCH_SIZE = 100;
-
-//TODO: @richard delete this later
-const testProfile = {
-  id: "586edd82837823188a297728",
-  firstName: "Test",
-  lastName: "Profile",
-  description: "kasjf laksj dglkasj dlgja slkgjalskdjglkasdjg laksdj glkasjd giasjg laksdj lkasjd glaksj dglkajd glkajsdg lk alkgj akldg",
-  major: "something",
-  photos: [
-    {large: "https://d13yacurqjgara.cloudfront.net/users/109914/screenshots/905742/elephant_love.jpg", small: "https://d13yacurqjgara.cloudfront.net/users/109914/screenshots/905742/elephant_love.jpg"},
-    {large: "https://d13yacurqjgara.cloudfront.net/users/1095591/screenshots/2711715/polywood_01_elephant_01_dribbble.jpg", small: "https://d13yacurqjgara.cloudfront.net/users/1095591/screenshots/2711715/polywood_01_elephant_01_dribbble.jpg"},
-    {large: "https://d13yacurqjgara.cloudfront.net/users/179241/screenshots/2633954/chris-fernandez-elephant-2.jpg", small: "https://d13yacurqjgara.cloudfront.net/users/179241/screenshots/2633954/chris-fernandez-elephant-2.jpg"},
-  ]
-}
 
 class NavigationContainer extends Component {
   constructor(props) {
@@ -55,7 +32,7 @@ class NavigationContainer extends Component {
 
     this.state = {
       profiles: [],
-      myProfile: testProfile,
+      myProfile: this.props.dummyMyProfile,
       currentRecipient: null, // used for the nav bar in ConversationPage
     };
   }
@@ -137,7 +114,7 @@ class NavigationContainer extends Component {
         if (storedProfiles.constructor === Array && storedProfiles.length > 0){
           this.setState({
             profiles: storedProfiles,
-            myProfile: (this.state.myProfile == testProfile) ? storedProfiles[0] : this.state.myProfile, //TODO: @richard temporary while we don't have a real profile
+            myProfile: (this.state.myProfile == this.props.dummyMyProfile) ? storedProfiles[0] : this.state.myProfile, //TODO: @richard temporary while we don't have a real profile
           });
           this._removeProfilesFromStorage();
 
@@ -204,7 +181,7 @@ class NavigationContainer extends Component {
       global.shuffle(responseJson);
       this.setState({
         profiles: this.state.profiles.concat(responseJson),
-        myProfile: (this.state.myProfile == testProfile) ? responseJson[0] : this.state.myProfile, //TODO: @richard temporary while we don't have a real profile
+        myProfile: (this.state.myProfile == this.props.dummyMyProfile) ? responseJson[0] : this.state.myProfile, //TODO: @richard temporary while we don't have a real profile
       })
     })
     .catch((error) => {
@@ -262,7 +239,7 @@ class NavigationContainer extends Component {
           profiles={this.state.profiles}
           myProfile={this.state.myProfile}
           updateProfile={this._updateProfile.bind(this)}
-          firebase={firebase}
+          firebase={this.props.firebase}
           removeSeenCards={this._removeSeenCards.bind(this)}
           setCurrentParticipant={this._setCurrentParticipant.bind(this)}
         />

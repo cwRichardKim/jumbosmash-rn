@@ -18,6 +18,8 @@ import {
 import LoginPage              from './LoginPage.js';
 import AuthErrors             from './AuthErrors.js';
 
+const PageNames = require("../global/GlobalFunctions.js").pageNames();
+
 class AccountPage extends Component {
 
   constructor(props) {
@@ -25,7 +27,7 @@ class AccountPage extends Component {
     this.state = {
     }
   }
-  
+
   logout(){
     this.props.firebase.auth().signOut()
       .then(() => {
@@ -37,6 +39,11 @@ class AccountPage extends Component {
       .catch((error) => {
         AuthErrors.handleLogoutError(error);
       })
+  }
+
+  componentDidMount() {
+    console.log(this.props.routeNavigator ? "1" : "0");
+    
   }
 
   getCurrentLoggedInUser() {
@@ -57,6 +64,12 @@ class AccountPage extends Component {
     }
   }
 
+  _authCompleted() {
+    console.log(this.props.routeNavigator ? "1" : "0");
+
+    this.props.routeNavigator.replace({name: PageNames.appHome});
+  }
+
   render() {
     return (
       <View style={styles.container}>
@@ -67,6 +80,11 @@ class AccountPage extends Component {
             onPress={this.logout.bind(this)}
             title="Logout"
             accessibilityLabel="Logout"
+          />
+          <Button
+            onPress={this._authCompleted.bind(this)}
+            title="go to app"
+            accessibilityLabel="go to app"
           />
         </View>
       </View>

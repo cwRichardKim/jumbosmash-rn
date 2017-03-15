@@ -74,6 +74,27 @@ class ProfileCardView extends Component {
     );
   }
 
+  _shouldRenderSafeNameText() {
+    let lName = this.props.lastName.toLowerCase();
+    let fName = this.props.firstName.toLowerCase();
+    let email = this.props.email;
+
+    if (lName.length <=2 || !(email.includes(lName) || email.includes(fName))) {
+      let emailName = email.split("@")[0];
+      emailName = emailName.split(".");
+      if (emailName.length >= 2) {
+        emailName = emailName[0] +"."+emailName[1][0];
+      } else {
+        emailName = emailName[0];
+      }
+      return(
+        <Text style={styles.safetyNameText}>
+          ({emailName})
+        </Text>
+      );
+    }
+  }
+
   render() {
     let pageHeight = this.props.pageHeight;
     let _scrollView: ScrollView;
@@ -87,13 +108,13 @@ class ProfileCardView extends Component {
         <Animated.View style={[GlobalStyles.absoluteCover]}>
           <ScrollView style={styles.touchArea}
             ref={(scrollView) => { _scrollView = scrollView; }}
-            scrollEventThrottle={16}
           >
             <View style={[styles.card, {minHeight: pageHeight + BORDER_RADIUS}]}>
               {this._renderImages()}
               <TouchableWithoutFeedback style={{flex:1}} onPress={this._closeProfileCard.bind(this)}>
                 <View style={styles.textContainer}>
-                  <Text style={[GlobalStyles.text, styles.title]}>{this.props.firstName} {this.props.lastName}</Text>
+                  <Text style={[GlobalStyles.boldText, styles.title]}>{this.props.firstName} {this.props.lastName} {this._shouldRenderSafeNameText()}</Text>
+                  <Text style={[GlobalStyles.subtext, styles.subTitle]}>{this.props.major}</Text>
                   <Text style={[GlobalStyles.text, styles.text]}>{this.props.description}</Text>
                 </View>
               </TouchableWithoutFeedback>
@@ -172,16 +193,23 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
   },
   title: {
-    fontWeight: "bold",
-    fontSize: 20,
     padding: 20,
+    paddingBottom: 7,
+  },
+  subTitle: {
+    paddingLeft: 20,
+    paddingBottom: 15,
   },
   text: {
-    fontSize: 20,
     paddingLeft: 20,
     paddingRight: 20,
     paddingBottom: 50,
   },
+  safetyNameText: {
+    opacity: 0.5,
+    fontSize: 15,
+    fontWeight: "100",
+  }
 });
 
 export default ProfileCardView;

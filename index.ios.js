@@ -13,12 +13,12 @@ import {
   View,
 } from 'react-native';
 
-import NavigationContainer  from "./components/navigation/NavigationContainer.js"
+import InitialRouter  from "./components/navigation/InitialRouter.js"
 
 export default class jumbosmash extends Component {
   render() {
     return (
-      <NavigationContainer/>
+      <InitialRouter/>
     );
   }
 }
