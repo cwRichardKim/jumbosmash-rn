@@ -63,7 +63,7 @@ class RectButton extends Component {
           onPressOut={this._onPressOut.bind(this)}
         >
           <View style={styles.view}>
-            <Text style={[GlobalStyles.text, this.props.textStyles]}>{this.props.text ? this.props.text : ""}</Text>
+            <Text style={[GlobalStyles.text, this.props.textStyle]}>{this.props.text ? this.props.text : ""}</Text>
           </View>
         </TouchableWithoutFeedback>
       </Animated.View>
