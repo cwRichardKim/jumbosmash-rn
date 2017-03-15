@@ -136,6 +136,8 @@ class JumboNavigator extends Component {
           pageHeight={PAGE_HEIGHT}
           firebase={this.props.firebase}
           token={this.props.token}
+          updateProfile={this.props.updateProfile}
+          pushNotification={this.props.pushNotification}
           removeSeenCards={this.props.removeSeenCards}
           notifyUserOfMatchWith={this._notifyUserOfMatchWith.bind(this)}
           openProfileCard={this._openProfileCard.bind(this)}

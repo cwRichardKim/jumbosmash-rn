@@ -29,6 +29,7 @@ const FETCH_BATCH_SIZE = 100;
 class NavigationContainer extends Component {
   constructor(props) {
     super(props);
+    this.PushNotification = require('react-native-push-notification');
     // don't change the structure of how this is stored. Could
     // make a lot of things break whether you realize it or not
     this.token = {val: null};
@@ -45,12 +46,51 @@ class NavigationContainer extends Component {
         .getToken(true)
         .then(function(idToken) {
           this.token.val = idToken;
+          this._configureNotifications();
           this._shouldRetrieveProfilesFromStorage();
         }.bind(this)).catch(function(error) {
           console.log(error);
         });
     }
     AppState.addEventListener('change', this._handleAppStateChange.bind(this));
+
+  }
+
+  _configureNotifications () {
+    this.PushNotification.configure({
+
+        // (optional) Called when Token is generated (iOS and Android)
+        onRegister: function(token) {
+            console.log( 'TOKEN:', token );
+            this._saveUserToken(token, this.state.myProfile);
+        }.bind(this),
+
+        // (required) Called when a remote or local notification is opened or received
+        onNotification: function(notification) {
+            console.log( 'NOTIFICATION:', notification );
+        }.bind(this),
+
+        // ANDROID ONLY: GCM Sender ID (optional - not required for local notifications, but is need to receive remote push notifications)
+        senderID: "YOUR GCM SENDER ID",
+
+        // IOS ONLY (optional): default: all - Permissions to register.
+        permissions: {
+            alert: true,
+            badge: true,
+            sound: true
+        },
+
+        // Should the initial notification be popped automatically
+        // default: true
+        popInitialNotification: true,
+
+        /**
+          * (optional) default: true
+          * - Specified if permissions (ios) and token (android and ios) will requested or not,
+          * - if not, you must call PushNotificationsHandler.requestPermissions() later
+          */
+        requestPermissions: false,
+    });
   }
 
   componentWillUnmount () {
@@ -65,6 +105,10 @@ class NavigationContainer extends Component {
         this.navigator.swipingPage.saveLikePoints();
       }
     }
+  }
+
+  _saveUserToken (token, id) {
+    this._updateProfile({deviceIdList: [token]})
   }
 
   // Called when the app is closed from SwipingPage.js
@@ -172,7 +216,6 @@ class NavigationContainer extends Component {
   // lastID: the lastID we got from the previous list of profiles
   // count: how many profiles to fetch. 0 or null is all
   async _fetchProfiles(lastID, count) {
-    console.log("VAL " + this.token.val);
     let index = await this._getLastIndex();
     // console.log("request made with last index: "+index.toString()); //TODO @richard testing code remove
     let id = this.state.myProfile.id.toString(); //TODO: @richard replace
@@ -186,7 +229,6 @@ class NavigationContainer extends Component {
         throw ("status" in response) ? response["status"] : "Unknown Error";
       }
     }).then((responseJson) => {
-      console.log("RESPONSE " + JSON.stringify(responseJson));
       this._setLastIndex(responseJson[responseJson.length - 1].index);
       // for (var i = 0; i < responseJson.length; i++) { //TODO @richard testing code remove
       //   console.log(responseJson[i].index.toString() + " " + responseJson[i].firstName);
@@ -208,7 +250,7 @@ class NavigationContainer extends Component {
   }
 
   async _asyncUpdateServerProfile(id, profileChanges, newProfile) {
-    let url = "https://jumbosmash2017.herokuapp.com/profile/id/".concat(id).concat(this.token.val);
+    let url = "https://jumbosmash2017.herokuapp.com/profile/id/".concat(id).concat("/").concat(this.token.val);
     fetch(url, {
       method: 'POST',
       headers: {
@@ -216,6 +258,7 @@ class NavigationContainer extends Component {
       },
       body: JSON.stringify(profileChanges),
     }).then((response) => {
+      console.log(response);
       this.setState({
         myProfile: newProfile,
       });
@@ -247,6 +290,7 @@ class NavigationContainer extends Component {
           updateProfile={this._updateProfile.bind(this)}
           firebase={this.props.firebase}
           token={this.token}
+          pushNotification={this.PushNotification}
           removeSeenCards={this._removeSeenCards.bind(this)}
           routeNavigator={this.props.routeNavigator}
         />
