@@ -29,6 +29,8 @@ const FETCH_BATCH_SIZE = 100;
 class NavigationContainer extends Component {
   constructor(props) {
     super(props);
+    // don't change the structure of how this is stored. Could
+    // make a lot of things break whether you realize it or not
     this.token = {val: null};
     this.state = {
       profiles: [],
@@ -37,20 +39,18 @@ class NavigationContainer extends Component {
   }
 
   componentDidMount() {
-    AppState.addEventListener('change', this._handleAppStateChange.bind(this));
-    this._shouldRetrieveProfilesFromStorage();
     if (this.props.firebase.auth().currentUser) {
       this.props.firebase.auth()
         .currentUser
         .getToken(true)
         .then(function(idToken) {
-          console.log("TOKEN " + idToken);
           this.token.val = idToken;
-          console.log("TOKENNNNNNN " + this.token);
+          this._shouldRetrieveProfilesFromStorage();
         }.bind(this)).catch(function(error) {
           console.log(error);
         });
     }
+    AppState.addEventListener('change', this._handleAppStateChange.bind(this));
   }
 
   componentWillUnmount () {
@@ -172,11 +172,12 @@ class NavigationContainer extends Component {
   // lastID: the lastID we got from the previous list of profiles
   // count: how many profiles to fetch. 0 or null is all
   async _fetchProfiles(lastID, count) {
+    console.log("VAL " + this.token.val);
     let index = await this._getLastIndex();
     // console.log("request made with last index: "+index.toString()); //TODO @richard testing code remove
     let id = this.state.myProfile.id.toString(); //TODO: @richard replace
     let batch = count ? count.toString() : FETCH_BATCH_SIZE.toString();
-    let url = "https://jumbosmash2017.herokuapp.com/profile/batch/"+id+"/"+index+"/"+batch;
+    let url = "https://jumbosmash2017.herokuapp.com/profile/batch/"+id+"/"+index+"/"+batch+"/"+this.token.val;
     return fetch(url)
     .then((response) => {
       if ("status" in response && response["status"] >= 200 && response["status"] < 300) {
@@ -185,6 +186,7 @@ class NavigationContainer extends Component {
         throw ("status" in response) ? response["status"] : "Unknown Error";
       }
     }).then((responseJson) => {
+      console.log("RESPONSE " + JSON.stringify(responseJson));
       this._setLastIndex(responseJson[responseJson.length - 1].index);
       // for (var i = 0; i < responseJson.length; i++) { //TODO @richard testing code remove
       //   console.log(responseJson[i].index.toString() + " " + responseJson[i].firstName);
@@ -206,7 +208,7 @@ class NavigationContainer extends Component {
   }
 
   async _asyncUpdateServerProfile(id, profileChanges, newProfile) {
-    let url = "https://jumbosmash2017.herokuapp.com/profile/id/".concat(id);
+    let url = "https://jumbosmash2017.herokuapp.com/profile/id/".concat(id).concat(this.token.val);
     fetch(url, {
       method: 'POST',
       headers: {
