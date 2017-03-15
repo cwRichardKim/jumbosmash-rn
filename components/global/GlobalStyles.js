@@ -62,4 +62,15 @@ module.exports = StyleSheet.create({
     fontSize: 15,
     fontFamily: 'Avenir Next',
   },
+  subtext: {
+    fontSize: 15,
+    fontFamily: 'Avenir Next',
+    color: '#A5A3A3',
+    fontWeight: "500",
+  },
+  boldText: {
+    fontSize: 20,
+    fontFamily: 'Avenir Next',
+    fontWeight: "bold",
+  }
 });

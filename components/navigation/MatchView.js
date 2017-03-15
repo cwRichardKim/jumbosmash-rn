@@ -158,15 +158,17 @@ class MatchView extends Component {
             <Animated.View style={[styles.rectButton, {transform: [{scale: this.state.foregroundScale}]}]}>
               <RectButton
                 style={[styles.matchButton]}
-                text="Go To Chat"
+                text="smash now"
                 onPress={() => this._close(true)}
+                textStyle={{fontWeight:"600"}}
               />
             </Animated.View>
             <Animated.View style={[styles.rectButton, {transform: [{scale: this.state.foregroundScale}]}]}>
               <RectButton
                 style={[styles.closeButton]}
-                text="Close"
+                text="smash later"
                 onPress={() => this._close(false)}
+                textStyle={{fontWeight:"600"}}
               />
             </Animated.View>
           </View>

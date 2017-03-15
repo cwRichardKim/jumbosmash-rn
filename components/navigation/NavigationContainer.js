@@ -23,46 +23,34 @@ const global = require('../global/GlobalFunctions.js');
 const PageNames = global.pageNames();
 const StorageKeys = global.storageKeys();
 
-const firebase = require('firebase');
-const firebaseConfig = {
-  apiKey: "AIzaSyCqxU8ZGcg7Tx-iJoB_IROCG_yj41kWA6A",
-  authDomain: "jumbosmash-ddb99.firebase.com",
-  databaseURL: "https://jumbosmash-ddb99.firebaseio.com/",
-  storageBucket: "jumbosmash-ddb99.appspot.com",
-};
-firebase.initializeApp(firebaseConfig);
-
 const FIRST_BATCH_SIZE = 50;
 const FETCH_BATCH_SIZE = 100;
-
-//TODO: @richard delete this later
-const testProfile = {
-  id: "586edd82837823188a297728",
-  firstName: "Test",
-  lastName: "Profile",
-  description: "kasjf laksj dglkasj dlgja slkgjalskdjglkasdjg laksdj glkasjd giasjg laksdj lkasjd glaksj dglkajd glkajsdg lk alkgj akldg",
-  major: "something",
-  photos: [
-    {large: "https://d13yacurqjgara.cloudfront.net/users/109914/screenshots/905742/elephant_love.jpg", small: "https://d13yacurqjgara.cloudfront.net/users/109914/screenshots/905742/elephant_love.jpg"},
-    {large: "https://d13yacurqjgara.cloudfront.net/users/1095591/screenshots/2711715/polywood_01_elephant_01_dribbble.jpg", small: "https://d13yacurqjgara.cloudfront.net/users/1095591/screenshots/2711715/polywood_01_elephant_01_dribbble.jpg"},
-    {large: "https://d13yacurqjgara.cloudfront.net/users/179241/screenshots/2633954/chris-fernandez-elephant-2.jpg", small: "https://d13yacurqjgara.cloudfront.net/users/179241/screenshots/2633954/chris-fernandez-elephant-2.jpg"},
-  ]
-}
 
 class NavigationContainer extends Component {
   constructor(props) {
     super(props);
-
+    // don't change the structure of how this is stored. Could
+    // make a lot of things break whether you realize it or not
+    this.token = {val: null};
     this.state = {
       profiles: [],
-      myProfile: testProfile,
+      myProfile: this.props.dummyMyProfile,
     };
   }
 
   componentDidMount() {
+    if (this.props.firebase.auth().currentUser) {
+      this.props.firebase.auth()
+        .currentUser
+        .getToken(true)
+        .then(function(idToken) {
+          this.token.val = idToken;
+          this._shouldRetrieveProfilesFromStorage();
+        }.bind(this)).catch(function(error) {
+          console.log(error);
+        });
+    }
     AppState.addEventListener('change', this._handleAppStateChange.bind(this));
-    this._shouldRetrieveProfilesFromStorage();
-    console.log("AUTH: " + JSON.stringify(firebase.auth()));
   }
 
   componentWillUnmount () {
@@ -137,7 +125,7 @@ class NavigationContainer extends Component {
         if (storedProfiles.constructor === Array && storedProfiles.length > 0){
           this.setState({
             profiles: storedProfiles,
-            myProfile: (this.state.myProfile == testProfile) ? storedProfiles[0] : this.state.myProfile, //TODO: @richard temporary while we don't have a real profile
+            myProfile: (this.state.myProfile == this.props.dummyMyProfile) ? storedProfiles[0] : this.state.myProfile, //TODO: @richard temporary while we don't have a real profile
           });
           this._removeProfilesFromStorage();
 
@@ -184,11 +172,12 @@ class NavigationContainer extends Component {
   // lastID: the lastID we got from the previous list of profiles
   // count: how many profiles to fetch. 0 or null is all
   async _fetchProfiles(lastID, count) {
+    console.log("VAL " + this.token.val);
     let index = await this._getLastIndex();
     // console.log("request made with last index: "+index.toString()); //TODO @richard testing code remove
     let id = this.state.myProfile.id.toString(); //TODO: @richard replace
     let batch = count ? count.toString() : FETCH_BATCH_SIZE.toString();
-    let url = "https://jumbosmash2017.herokuapp.com/profile/batch/"+id+"/"+index+"/"+batch;
+    let url = "https://jumbosmash2017.herokuapp.com/profile/batch/"+id+"/"+index+"/"+batch+"/"+this.token.val;
     return fetch(url)
     .then((response) => {
       if ("status" in response && response["status"] >= 200 && response["status"] < 300) {
@@ -197,6 +186,7 @@ class NavigationContainer extends Component {
         throw ("status" in response) ? response["status"] : "Unknown Error";
       }
     }).then((responseJson) => {
+      console.log("RESPONSE " + JSON.stringify(responseJson));
       this._setLastIndex(responseJson[responseJson.length - 1].index);
       // for (var i = 0; i < responseJson.length; i++) { //TODO @richard testing code remove
       //   console.log(responseJson[i].index.toString() + " " + responseJson[i].firstName);
@@ -204,7 +194,7 @@ class NavigationContainer extends Component {
       global.shuffle(responseJson);
       this.setState({
         profiles: this.state.profiles.concat(responseJson),
-        myProfile: (this.state.myProfile == testProfile) ? responseJson[0] : this.state.myProfile, //TODO: @richard temporary while we don't have a real profile
+        myProfile: (this.state.myProfile == this.props.dummyMyProfile) ? responseJson[0] : this.state.myProfile, //TODO: @richard temporary while we don't have a real profile
       })
     })
     .catch((error) => {
@@ -218,7 +208,7 @@ class NavigationContainer extends Component {
   }
 
   async _asyncUpdateServerProfile(id, profileChanges, newProfile) {
-    let url = "https://jumbosmash2017.herokuapp.com/profile/id/".concat(id);
+    let url = "https://jumbosmash2017.herokuapp.com/profile/id/".concat(id).concat(this.token.val);
     fetch(url, {
       method: 'POST',
       headers: {
@@ -255,8 +245,10 @@ class NavigationContainer extends Component {
           profiles={this.state.profiles}
           myProfile={this.state.myProfile}
           updateProfile={this._updateProfile.bind(this)}
-          firebase={firebase}
+          firebase={this.props.firebase}
+          token={this.token}
           removeSeenCards={this._removeSeenCards.bind(this)}
+          routeNavigator={this.props.routeNavigator}
         />
       </View>
     );
