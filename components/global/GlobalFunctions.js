@@ -32,11 +32,14 @@ module.exports = {
   },
   pageNames: function () {
     return ({
-      loginPage: "LOGINPAGE", //TODO: @richard temporary
       cardsPage: "CARDSPAGE",
       chatPage: "CHATPAGE",
       settingsPage: "SETTINGSPAGE",
-      conversation: "CONVERSATIONPAGE"
+      conversation: "CONVERSATIONPAGE",
+      auth: "AUTHPAGE",
+      prerelease: "PRERELEASE",
+      expiredPage: "EXPIREDPAGE",
+      appHome: "APPHOMEPAGE",
     })
   },
   storageKeys: function () {

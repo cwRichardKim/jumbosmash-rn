@@ -2,7 +2,7 @@
 
 /*
 This is the first page. It sets up the navigator for authentication, and then
-pushes to LoginPage. 
+pushes to LoginPage.
 */
 
 import React, {Component} from 'react';
@@ -21,7 +21,7 @@ import LoginPage              from "./LoginPage.js";
 import AccountPage            from "./AccountPage.js";
 import SignupPage             from "./SignupPage.js";
 
-class AuthContainer extends Component {    
+class AuthContainer extends Component {
 
   constructor(props){
     super(props);
@@ -41,16 +41,17 @@ class AuthContainer extends Component {
   render(){
     return (
       <Navigator
-        initialRoute={{component: this.state.component}}    
+        initialRoute={{component: this.state.component}}
         configureScene={() => {
           return Navigator.SceneConfigs.FloatFromRight;
         }}
         renderScene={(route, navigator) => {
           if(route.component){
-            return React.createElement(route.component, 
-              { navigator: navigator, 
+            return React.createElement(route.component,
+              { navigator: navigator,
+                routeNavigator: this.props.routeNavigator,
                 firebase: this.props.firebase,
-                email_ext: "@tufts.edu" }); 
+                email_ext: "@tufts.edu" });
           }
         }}
       />
