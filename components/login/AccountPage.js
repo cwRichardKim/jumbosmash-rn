@@ -60,8 +60,6 @@ class AccountPage extends Component {
   }
 
   _authCompleted() {
-    console.log(this.props.routeNavigator ? "1" : "0");
-
     this.props.routeNavigator.replace({name: PageNames.appHome});
   }
 
