@@ -45,7 +45,8 @@ class ChatPage extends React.Component {
   }
 
   _fetchConversationsAsync () {
-    return fetch('https://jumbosmash2017.herokuapp.com/chat/id/' + this.props.myProfile.id)
+    console.log("TOKEN: " + this.props.token.val);
+    return fetch('https://jumbosmash2017.herokuapp.com/chat/id/' + this.props.myProfile.id + "/" + this.props.token.val)
       .then((response) => {
         if ("status" in response && response["status"] >= 200 && response["status"] < 300) {
           return response.json();
