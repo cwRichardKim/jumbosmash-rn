@@ -52,13 +52,26 @@ const testProfile = {
 class NavigationContainer extends Component {
   constructor(props) {
     super(props);
-
     this.state = {
       profiles: [],
       myProfile: testProfile,
+      token: null,
     };
   }
 
+  componentWillMount() {
+    if (firebase.auth().currentUser) {
+      firebase.auth()
+        .currentUser
+        .getToken(true)
+        .then(function(idToken) {
+          this.state.token = idToken;
+          console.log("THIS HAPPENED: " + idToken);
+        }).catch(function(error) {
+          console.log(error);
+        });
+    }
+  }
   componentDidMount() {
     AppState.addEventListener('change', this._handleAppStateChange.bind(this));
     this._shouldRetrieveProfilesFromStorage();
@@ -254,6 +267,7 @@ class NavigationContainer extends Component {
           profiles={this.state.profiles}
           myProfile={this.state.myProfile}
           updateProfile={this._updateProfile.bind(this)}
+          token={this.state.token}
           firebase={firebase}
           removeSeenCards={this._removeSeenCards.bind(this)}
         />
