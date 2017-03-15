@@ -22,7 +22,6 @@ import NoView           from './NoView.js'
 import SwipeButtonsView from './SwipeButtonsView.js'
 import Card             from './Card.js';
 import NoMoreCards      from './NoMoreCards.js';
-let PushNotification = require('react-native-push-notification');
 const global = require('../global/GlobalFunctions.js');
 
 const CARD_REFRESH_BUFFER = 30; // There should always be at least this many cards left, else fetch more
@@ -48,39 +47,6 @@ class SwipingPage extends Component {
 
   componentDidMount() {
     this._shouldRetrieveLikePoints(true);
-    PushNotification.configure({
-
-        // (optional) Called when Token is generated (iOS and Android)
-        onRegister: function(token) {
-            console.log( 'TOKEN:', token );
-        },
-
-        // (required) Called when a remote or local notification is opened or received
-        onNotification: function(notification) {
-            console.log( 'NOTIFICATION:', notification );
-        },
-
-        // ANDROID ONLY: GCM Sender ID (optional - not required for local notifications, but is need to receive remote push notifications)
-        senderID: "YOUR GCM SENDER ID",
-
-        // IOS ONLY (optional): default: all - Permissions to register.
-        permissions: {
-            alert: true,
-            badge: true,
-            sound: true
-        },
-
-        // Should the initial notification be popped automatically
-        // default: true
-        popInitialNotification: true,
-
-        /**
-          * (optional) default: true
-          * - Specified if permissions (ios) and token (android and ios) will requested or not,
-          * - if not, you must call PushNotificationsHandler.requestPermissions() later
-          */
-        requestPermissions: true,
-    });
   }
 
   componentWillUnmount() {
@@ -218,6 +184,9 @@ class SwipingPage extends Component {
   }
 
   _handleRightSwipeForIndex(cardIndex) {
+    //TODO: have first pop-up and also check to see if asked before
+    this.props.pushNotification.requestPermissions();
+
     let profile = this.props.profiles[cardIndex];
     this._asyncUpdateLikeList(this.props.myProfile.id, profile.id);
     this._swipeErrorCheck(cardIndex, profile);
