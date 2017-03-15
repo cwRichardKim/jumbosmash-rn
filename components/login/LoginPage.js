@@ -21,8 +21,8 @@ import {
 import SignupPage             from './SignupPage.js';
 import AccountPage            from './AccountPage.js';
 import AuthErrors             from './AuthErrors.js';
-import forgotPasswordPage     from './forgotPasswordPage.js';
-import FormatInput            from './formatInput.js';
+import forgotPasswordPage     from './ForgotPasswordPage.js';
+import FormatInput            from './FormatInput.js';
 
 class LoginPage extends Component {
   
