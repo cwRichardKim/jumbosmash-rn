@@ -31,13 +31,23 @@ firebase.initializeApp(firebaseConfig);
 class InitialRouter extends Component {
   constructor(props) {
     super(props);
+    this.didGetUser = false;
+  }
 
-    this.state = {
-    };
+  componentDidMount() {
+    firebase.auth().onAuthStateChanged(function(user) {
+      if (!this.didGetUser) {
+        this.didGetUser = true;
+        if (user && user.emailVerified) {
+          this.navigator.replace({name: PageNames.appHome})
+        } else {
+          this.navigator.replace({name: PageNames.auth})
+        }
+      }
+    }.bind(this));
   }
 
   _renderNavigatorScene (route, navigator) {
-    let user=firebase.auth().currentUser;
     if (route.name == PageNames.expiredPage) {
       return (
         <ThankYouPage
@@ -53,6 +63,10 @@ class InitialRouter extends Component {
           routeNavigator={navigator}
         />
       );
+    } else if (route.name == PageNames.loadingPage) {
+      return (
+        <View/>
+      );
     } else {
       return (
         <AuthContainer
@@ -64,14 +78,9 @@ class InitialRouter extends Component {
   }
 
   render() {
-    let user = firebase.auth().currentUser;
-    let userIsLoggedIn = user && user.emailVerified;
     let appHasExpired = false;
 
-    let initialRouteName = PageNames.appHome;
-    if (!userIsLoggedIn) {
-      initialRouteName = PageNames.auth;
-    }
+    let initialRouteName = PageNames.loadingPage;
     if (appHasExpired) {
       initialRouteName = PageNames.expiredPage;
     }
