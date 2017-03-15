@@ -62,6 +62,7 @@ class NavigationContainer extends Component {
   componentDidMount() {
     AppState.addEventListener('change', this._handleAppStateChange.bind(this));
     this._shouldRetrieveProfilesFromStorage();
+    console.log("AUTH: " + JSON.stringify(firebase.auth()));
   }
 
   componentWillUnmount () {
