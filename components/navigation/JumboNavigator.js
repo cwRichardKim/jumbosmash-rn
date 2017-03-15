@@ -134,6 +134,7 @@ class JumboNavigator extends Component {
           fetchProfiles={this.props.fetchProfiles}
           navBarHeight={NAVBAR_HEIGHT}
           pageHeight={PAGE_HEIGHT}
+          token={this.props.token}
           removeSeenCards={this.props.removeSeenCards}
           notifyUserOfMatchWith={this._notifyUserOfMatchWith.bind(this)}
           openProfileCard={this._openProfileCard.bind(this)}
@@ -146,6 +147,7 @@ class JumboNavigator extends Component {
           myProfile={this.props.myProfile}
           navBarHeight={NAVBAR_HEIGHT}
           pageHeight={PAGE_HEIGHT}
+          token={this.props.token}
         />
       );
     } else if (route.name == PageNames.conversation) {
@@ -157,6 +159,7 @@ class JumboNavigator extends Component {
           conversation={route.conversation}
           myProfile={this.props.myProfile}
           firebase={this.props.firebase}
+          token={this.props.token}
         />
       );
     }
