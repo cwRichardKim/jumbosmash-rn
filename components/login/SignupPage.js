@@ -21,7 +21,7 @@ import LoginPage              from './LoginPage.js';
 import AuthErrors             from './AuthErrors.js';
 import VerifyDatabase         from './VerifyDatabase.js';
 import VerifyEmailActivation  from './VerifyEmailActivation.js'
-import FormatInput            from './formatInput.js';
+import FormatInput            from './FormatInput.js';
 
 class SignupPage extends Component {
 

@@ -16,7 +16,7 @@ import {
 } from 'react-native';
 
 import LoginPage              from './LoginPage.js';
-import FormatInput            from './formatInput.js';
+import FormatInput            from './FormatInput.js';
 
 const PageNames = require("../global/GlobalFunctions.js").pageNames();
 
