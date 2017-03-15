@@ -14,7 +14,6 @@ import {
   PanResponder,
   Image,
   TouchableWithoutFeedback,
-  ActivityIndicator,
 } from 'react-native';
 
 import clamp          from 'clamp';
