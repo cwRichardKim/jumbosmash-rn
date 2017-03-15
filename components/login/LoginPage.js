@@ -30,7 +30,6 @@ class LoginPage extends Component {
     super(props);
     this.state = {
       email_input: '',
-      email: null, 
       password:'',
     }
   }
