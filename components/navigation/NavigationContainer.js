@@ -233,7 +233,6 @@ class NavigationContainer extends Component {
           updateProfile={this._updateProfile.bind(this)}
           firebase={this.props.firebase}
           removeSeenCards={this._removeSeenCards.bind(this)}
-          setCurrentParticipant={this._setCurrentParticipant.bind(this)}
           routeNavigator={this.props.routeNavigator}
         />
       </View>
