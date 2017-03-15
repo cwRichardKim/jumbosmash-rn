@@ -40,6 +40,7 @@ module.exports = {
       prerelease: "PRERELEASE",
       expiredPage: "EXPIREDPAGE",
       appHome: "APPHOMEPAGE",
+      loadingPage: "LOADINGPAGE",
     })
   },
   storageKeys: function () {
