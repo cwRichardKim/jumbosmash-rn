@@ -47,6 +47,7 @@ class SwipingPage extends Component {
 
   componentDidMount() {
     this._shouldRetrieveLikePoints(true);
+    console.log("AUTHY " + this.props.token);
   }
 
   componentWillUnmount() {
