@@ -20,7 +20,7 @@ import {
 import LoginPage              from "./LoginPage.js";
 import AccountPage            from "./AccountPage.js";
 import SignupPage             from "./SignupPage.js";
-import forgotPasswordPage     from './ForgotPasswordPage.js';
+import ForgotPasswordPage     from './ForgotPasswordPage.js';
 
 class AuthContainer extends Component {
 

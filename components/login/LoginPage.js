@@ -21,7 +21,7 @@ import {
 import SignupPage             from './SignupPage.js';
 import AccountPage            from './AccountPage.js';
 import AuthErrors             from './AuthErrors.js';
-import forgotPasswordPage     from './ForgotPasswordPage.js';
+import ForgotPasswordPage     from './ForgotPasswordPage.js';
 import FormatInput            from './FormatInput.js';
 
 class LoginPage extends Component {
@@ -57,7 +57,7 @@ class LoginPage extends Component {
 
   goToForgotPassword() {
     this.props.navigator.push({
-      component: forgotPasswordPage
+      component: ForgotPasswordPage
     });
   }
 
