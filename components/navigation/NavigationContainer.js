@@ -33,7 +33,6 @@ class NavigationContainer extends Component {
     this.state = {
       profiles: [],
       myProfile: this.props.dummyMyProfile,
-      currentRecipient: null, // used for the nav bar in ConversationPage
     };
   }
 
@@ -220,13 +219,6 @@ class NavigationContainer extends Component {
     let updateSuccess = await this._asyncUpdateServerProfile(this.state.myProfile.id, profileChanges, newProfile);
     // TODO: @richard on success, return the profile
     return newProfile;
-  }
-
-  // sets participant of chat using callback
-  _setCurrentParticipant(currentParticipant) {
-    if (currentParticipant) {
-      this.setState({currentParticipant});
-    }
   }
 
   render() {

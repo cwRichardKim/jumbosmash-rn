@@ -24,6 +24,7 @@ class ConversationPage extends Component {
     this.state = {
       messages: this._messages,
       typingText: null,
+      conversation: this.props.conversation,
     };
 
   }
@@ -33,8 +34,6 @@ class ConversationPage extends Component {
   }
 
   componentDidMount() {
-    this.props.setCurrentParticipant(null); // TODO: @jared @richard might not need this anymore because navigator will always show
-    // send initial chat bot
     this._messagesRef.on('child_added', (child) => {
       var pos = 'right';
       if (child.val().user._id != this.props.myProfile.id) {
@@ -47,12 +46,30 @@ class ConversationPage extends Component {
         position: pos,
         date: new Date(child.val().date),
       });
+      this.state.conversation.lastSent = {'profileId': child.val().user._id, 'message': child.val().text}
+      this.state.conversation.read = true;
     });
-
   }
 
   componentWillUnmount() {
-    this.props.setCurrentParticipant(null); // TODO: @jared @richard might not need this anymore because navigator will always show
+    //TODO: there is a bug here with unmount. sent message go back to table then come
+    //back and send another message
+    this._asyncUpdateConversation(this.props.chatroomId, this.state.conversation);
+  }
+
+  async _asyncUpdateConversation(id, chatChanges) {
+    let url = "https://jumbosmash2017.herokuapp.com/chat/id/".concat(id);
+    fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(chatChanges),
+    }).then((response) => {
+      console.log("RESPONSE: \n" + response);
+    }).catch((error) => {
+      //DO NOTHING (user doesn't really need to know this didn't work)
+    });
   }
 
   onSend(messages = []) {
@@ -64,7 +81,7 @@ class ConversationPage extends Component {
         user: {
           _id: this.props.myProfile.id,
           name: this.props.myProfile.firstName,
-          avatar: this.props.myProfile.photo,
+          avatar: this.props.myProfile.photos[0].small,
         },
         date: new Date().getTime(),
       });
