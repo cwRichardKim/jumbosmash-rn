@@ -21,7 +21,8 @@ import {
 import SignupPage             from './SignupPage.js';
 import AccountPage            from './AccountPage.js';
 import AuthErrors             from './AuthErrors.js';
-// import Redirect               from './Redirect.js';
+import forgotPasswordPage     from './forgotPasswordPage.js';
+import FormatInput            from './formatInput.js';
 
 class LoginPage extends Component {
   
@@ -29,13 +30,14 @@ class LoginPage extends Component {
     super(props);
     this.state = {
       email_input: '',
+      email: null, 
       password:'',
     }
   }
 
   login(){
 
-    var email = this.state.email_input + this.props.email_ext;
+    var email = FormatInput.email(this.state.email_input, this.props.email_ext);
     var password = this.state.password;
 
     this.props.firebase.auth().signInWithEmailAndPassword(email, password)
@@ -53,9 +55,15 @@ class LoginPage extends Component {
       })
   }
 
+  goToForgotPassword() {
+    this.props.navigator.push({
+      component: forgotPasswordPage
+    });
+  }
+
   goToSignupPage() {
     this.props.navigator.push({
-          component: SignupPage
+      component: SignupPage
     });
   }
 
@@ -68,7 +76,7 @@ class LoginPage extends Component {
               style={styles.first}
               onChangeText={(text) => this.setState({email_input: text})}
               value={this.state.email_input}
-              placeholder={"Enter your username"}
+              placeholder={"Enter your tufts email"}
             />
             <Text style={styles.last}> {this.props.email_ext} </Text>
           </View>
@@ -91,6 +99,12 @@ class LoginPage extends Component {
             onPress={this.goToSignupPage.bind(this)}
             title="New here? Go to Signup"
             accessibilityLabel="Go to signup page"
+          />
+
+          <Button
+            onPress={this.goToForgotPassword.bind(this)}
+            title="Forgot password?"
+            accessibilityLabel="Forgot password?"
           />
         </View>
       </View>
