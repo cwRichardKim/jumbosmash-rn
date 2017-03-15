@@ -54,13 +54,17 @@ module.exports = {
     return ((n % m) + m) % m;
   },
   otherParticipants: function (participants, userId) {
-    let ar = [];
-    let len = participants.length;
-    for(var i = 0; i < len; i++) {
-      if(participants[i].profileId != userId) {
-        ar.push(participants[i]);
+    if (participants) {
+      let ar = [];
+      let len = participants.length;
+      for(var i = 0; i < len; i++) {
+        if(participants[i].profileId != userId) {
+          ar.push(participants[i]);
+        }
       }
+      return ar;
+    } else {
+      return null;
     }
-    return ar;
   },
 }
