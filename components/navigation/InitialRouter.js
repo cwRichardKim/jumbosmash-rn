@@ -38,10 +38,6 @@ class InitialRouter extends Component {
 
   _renderNavigatorScene (route, navigator) {
     let user=firebase.auth().currentUser;
-    if (user) {
-      console.log(user.emailVerified);
-      console.log(route);
-    }
     if (route.name == PageNames.expiredPage) {
       return (
         <ThankYouPage
