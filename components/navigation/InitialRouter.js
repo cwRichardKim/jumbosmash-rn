@@ -38,8 +38,6 @@ class InitialRouter extends Component {
 
   _renderNavigatorScene (route, navigator) {
     let user=firebase.auth().currentUser;
-    console.log(route);
-    console.log("ASDFASDF");
     if (user) {
       console.log(user.emailVerified);
       console.log(route);
@@ -52,11 +50,11 @@ class InitialRouter extends Component {
         />
       )
     } else if (route.name == PageNames.appHome) {
-      console.log("home");
       return (
         <NavigationContainer
           dummyMyProfile={DummyData.myProfile}
           firebase={firebase}
+          routeNavigator={navigator}
         />
       );
     } else {

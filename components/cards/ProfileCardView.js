@@ -79,7 +79,7 @@ class ProfileCardView extends Component {
     let fName = this.props.firstName.toLowerCase();
     let email = this.props.email;
 
-    if (lName.length <=2 || !(email.includes(lName) || email.includes(fName))) {
+    if (fName.length <= 2 || lName.length <=2 || !(email.includes(lName) || email.includes(fName))) {
       let emailName = email.split("@")[0];
       emailName = emailName.split(".");
       if (emailName.length >= 2) {

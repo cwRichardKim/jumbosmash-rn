@@ -119,6 +119,7 @@ class JumboNavigator extends Component {
           updateProfile={this.props.updateProfile}
           firebase={this.props.firebase}
           setHasUnsavedSettings={(hasUnsavedSettings) => {this.setState({hasUnsavedSettings})}}
+          routeNavigator={this.props.routeNavigator}
         />
       );
     } else if (route.name == PageNames.cardsPage) {
