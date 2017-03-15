@@ -41,11 +41,6 @@ class AccountPage extends Component {
       })
   }
 
-  componentDidMount() {
-    console.log(this.props.routeNavigator ? "1" : "0");
-    
-  }
-
   getCurrentLoggedInUser() {
     var user = this.props.firebase.auth().currentUser;
     var name, email, photoUrl, uid, emailVerified;
