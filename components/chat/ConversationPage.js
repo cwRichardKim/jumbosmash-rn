@@ -15,6 +15,7 @@ class ConversationPage extends Component {
     super(props);
 
     //will open up and get ref to particular chat between two users
+    // TODO: make so need auth to get ref
     const path = "messages/".concat(this.props.chatroomId);
     this._messagesRef = this.props.firebase.database().ref(path);
 
@@ -58,7 +59,7 @@ class ConversationPage extends Component {
   }
 
   async _asyncUpdateConversation(id, chatChanges) {
-    let url = "https://jumbosmash2017.herokuapp.com/chat/id/".concat(id);
+    let url = "https://jumbosmash2017.herokuapp.com/chat/update/".concat(id).concat("/").concat(this.props.token.val);
     fetch(url, {
       method: 'POST',
       headers: {
@@ -66,9 +67,25 @@ class ConversationPage extends Component {
       },
       body: JSON.stringify(chatChanges),
     }).then((response) => {
-      console.log("RESPONSE: \n" + response);
+      console.log("Successfully updated last sent");
     }).catch((error) => {
+      console.log(error);
       //DO NOTHING (user doesn't really need to know this didn't work)
+    });
+  }
+
+  async _notifyParticipants() {
+    let url = "https://jumbosmash2017.herokuapp.com/chat/message/".concat(this.props.myProfile.id).concat("/").concat(this.props.token.val);
+    fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({conversation: this.props.conversation, firstName: this.props.myProfile.firstName}),
+    }).then((response) => {
+      console.log("Successfully notified participants");
+    }).catch((error) => {
+      console.log(error);
     });
   }
 
@@ -86,6 +103,7 @@ class ConversationPage extends Component {
         date: new Date().getTime(),
       });
     }
+    this._notifyParticipants()
   }
 
   onReceive(message) {

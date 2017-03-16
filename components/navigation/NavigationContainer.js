@@ -29,7 +29,6 @@ const FETCH_BATCH_SIZE = 100;
 class NavigationContainer extends Component {
   constructor(props) {
     super(props);
-    this.PushNotification = require('react-native-push-notification');
     // don't change the structure of how this is stored. Could
     // make a lot of things break whether you realize it or not
     this.token = {val: null};
@@ -46,7 +45,6 @@ class NavigationContainer extends Component {
         .getToken(true)
         .then(function(idToken) {
           this.token.val = idToken;
-          this._configureNotifications();
           this._shouldRetrieveProfilesFromStorage();
         }.bind(this)).catch(function(error) {
           console.log(error);
@@ -54,43 +52,6 @@ class NavigationContainer extends Component {
     }
     AppState.addEventListener('change', this._handleAppStateChange.bind(this));
 
-  }
-
-  _configureNotifications () {
-    this.PushNotification.configure({
-
-        // (optional) Called when Token is generated (iOS and Android)
-        onRegister: function(token) {
-            console.log( 'TOKEN:', token );
-            this._saveUserToken(token, this.state.myProfile);
-        }.bind(this),
-
-        // (required) Called when a remote or local notification is opened or received
-        onNotification: function(notification) {
-            console.log( 'NOTIFICATION:', notification );
-        }.bind(this),
-
-        // ANDROID ONLY: GCM Sender ID (optional - not required for local notifications, but is need to receive remote push notifications)
-        senderID: "YOUR GCM SENDER ID",
-
-        // IOS ONLY (optional): default: all - Permissions to register.
-        permissions: {
-            alert: true,
-            badge: true,
-            sound: true
-        },
-
-        // Should the initial notification be popped automatically
-        // default: true
-        popInitialNotification: true,
-
-        /**
-          * (optional) default: true
-          * - Specified if permissions (ios) and token (android and ios) will requested or not,
-          * - if not, you must call PushNotificationsHandler.requestPermissions() later
-          */
-        requestPermissions: false,
-    });
   }
 
   componentWillUnmount () {
@@ -290,7 +251,6 @@ class NavigationContainer extends Component {
           updateProfile={this._updateProfile.bind(this)}
           firebase={this.props.firebase}
           token={this.token}
-          pushNotification={this.PushNotification}
           removeSeenCards={this._removeSeenCards.bind(this)}
           routeNavigator={this.props.routeNavigator}
         />

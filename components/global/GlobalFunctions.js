@@ -49,6 +49,7 @@ module.exports = {
       profiles: prefix+"profiles",
       lastIndex: prefix+"lastIndex",
       likePoints: prefix+"likePoints",
+      notificationToken: prefix+"notificationToken",
     })
   },
   mod: function (n, m) {
