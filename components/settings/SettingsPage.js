@@ -25,7 +25,6 @@ import RectButton         from "../global/RectButton.js";
 import GlobalStyles       from "../global/GlobalStyles.js";
 import AuthErrors         from "../login/AuthErrors.js"
 
-
 const GlobalFunctions = require('../global/GlobalFunctions.js');
 const PageNames = GlobalFunctions.pageNames();
 const SaveButtonState = GlobalFunctions.saveButtonStates();
@@ -206,7 +205,7 @@ class SettingsPage extends Component {
       )
     }
   }
-
+  
   _logout() {
     this.props.firebase.auth().signOut()
       .then(() => {
@@ -360,6 +359,9 @@ const styles = StyleSheet.create({
   },
   supportButton: {
     backgroundColor: '#F2585A',
+  },
+  updateProfileButton: {
+    backgroundColor: "cornflowerblue",
   },
   aboutText: {
     textAlign: 'center',

@@ -57,7 +57,7 @@ class NavigationContainer extends Component {
   }
 
   _handleAppStateChange (currentAppState) {
-    if (this && currentAppState == "inactive" && this.navigator.swipingPage) {
+    if (this && currentAppState == "inactive" && this.navigator && this.navigator.swipingPage) {
       let index = this.navigator.swipingPage.state.cardIndex;
       this._removeSeenCards(index);
       if (this.navigator && this.navigator.swipingPage) {

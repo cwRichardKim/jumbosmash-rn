@@ -26,8 +26,10 @@ class AuthContainer extends Component {
 
   constructor(props){
     super(props);
+    this.studentProfile = null;
     this.state = {
       component: LoginPage, // default is not logged in
+      email: null, 
     };
   }
 
@@ -37,6 +39,10 @@ class AuthContainer extends Component {
     if (user && user.emailVerified) {
       this.setState( {component: AccountPage})
     }
+  }
+
+  setStudentProfile(profile) {
+    this.studentProfile = profile;
   }
 
   render(){
@@ -52,6 +58,10 @@ class AuthContainer extends Component {
               { navigator: navigator,
                 routeNavigator: this.props.routeNavigator,
                 firebase: this.props.firebase,
+                setEmail: (email) => {this.setState({email})},
+                email: this.state.email,
+                setStudentProfile: this.setStudentProfile.bind(this),
+                studentProfile: this.studentProfile,
                 email_ext: "@tufts.edu" });
           }
         }}
