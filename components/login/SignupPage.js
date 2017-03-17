@@ -21,6 +21,7 @@ import LoginPage              from './LoginPage.js';
 import AuthErrors             from './AuthErrors.js';
 import VerifyDatabase         from './VerifyDatabase.js';
 import VerifyEmailActivation  from './VerifyEmailActivation.js'
+import FormatInput            from './FormatInput.js';
 
 class SignupPage extends Component {
 
@@ -34,16 +35,11 @@ class SignupPage extends Component {
 
   async signup() {
 
-    let email = this.formatEmail();
+    let email = FormatInput.email(this.state.email_input, this.props.email_ext);
     let password = this.state.password;
 
     (await VerifyDatabase.doesStudentExist(email)) ? this.createAccount(email, password) : VerifyDatabase.doesNotExist();
 
-  }
-
-  formatEmail() {
-    let em = (this.state.email_input).toLowerCase().trim() + this.props.email_ext;
-    return em;
   }
 
   createAccount(email, password) {
