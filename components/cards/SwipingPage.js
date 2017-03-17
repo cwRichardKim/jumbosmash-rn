@@ -185,7 +185,6 @@ class SwipingPage extends Component {
 
   _handleRightSwipeForIndex(cardIndex) {
     //TODO: have first pop-up and also check to see if asked before
-    this.props.pushNotificationsHandler.requestPermissions();
 
     let profile = this.props.profiles[cardIndex];
     this._asyncUpdateLikeList(this.props.myProfile.id, profile.id);
