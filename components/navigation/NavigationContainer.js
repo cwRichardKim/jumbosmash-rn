@@ -50,6 +50,7 @@ class NavigationContainer extends Component {
         });
     }
     AppState.addEventListener('change', this._handleAppStateChange.bind(this));
+
   }
 
   componentWillUnmount () {
@@ -64,6 +65,10 @@ class NavigationContainer extends Component {
         this.navigator.swipingPage.saveLikePoints();
       }
     }
+  }
+
+  _saveUserToken (token, id) {
+    this._updateProfile({deviceIdList: [token]})
   }
 
   // Called when the app is closed from SwipingPage.js
@@ -203,7 +208,7 @@ class NavigationContainer extends Component {
   }
 
   async _asyncUpdateServerProfile(id, profileChanges, newProfile) {
-    let url = "https://jumbosmash2017.herokuapp.com/profile/id/".concat(id).concat(this.token.val);
+    let url = "https://jumbosmash2017.herokuapp.com/profile/id/".concat(id).concat("/").concat(this.token.val);
     fetch(url, {
       method: 'POST',
       headers: {
@@ -211,6 +216,7 @@ class NavigationContainer extends Component {
       },
       body: JSON.stringify(profileChanges),
     }).then((response) => {
+      console.log(response);
       this.setState({
         myProfile: newProfile,
       });

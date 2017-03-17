@@ -29,6 +29,7 @@ import NotificationBannerView from "./NotificationBannerView.js";
 import GlobalStyles           from "../global/GlobalStyles.js";
 
 const global = require('../global/GlobalFunctions.js');
+const pushNotifications = require('../global/PushNotifications.js');
 const PageNames = require("../global/GlobalFunctions").pageNames();
 
 const NAVBAR_HEIGHT = (Platform.OS === 'ios') ? 64 : 54; // TODO: check the android tabbar height
@@ -40,6 +41,7 @@ class JumboNavigator extends Component {
   constructor(props) {
     super(props);
 
+    this.pushNotificationsHandler = require('react-native-push-notification');
     this.currentPage = this.props.initialRoute ? this.props.initialRoute.name : PageNames.cardsPage;
 
     this.state = {
@@ -67,6 +69,44 @@ class JumboNavigator extends Component {
     // }, 2000);
 
     // this._notifyUserOfMatchWith(this.props.myProfile)
+    this._configureNotifications();
+  }
+
+
+  _configureNotifications () {
+    this.pushNotificationsHandler.configure({
+
+        // (optional) Called when Token is generated (iOS and Android)
+        onRegister: function(token) {
+            pushNotifications.onRegister(token,
+              {authToken: this.props.token,
+               profile: this.props.myProfile});
+        }.bind(this),
+
+        // (required) Called when a remote or local notification is opened or received
+        onNotification: function(notification) {
+            pushNotifications.onNotification(notification,
+              {banner: this.notificationBanner,
+               onPress: () => {this.changePage(PageNames.chatPage)},
+               firebase: this.props.firebase});
+        }.bind(this),
+
+        // ANDROID ONLY: GCM Sender ID (optional - not required for local notifications, but is need to receive remote push notifications)
+        senderID: "YOUR GCM SENDER ID",
+
+        // IOS ONLY (optional): default: all - Permissions to register.
+        permissions: {
+            alert: true,
+            badge: true,
+            sound: true
+        },
+
+        // Should the initial notification be popped automatically
+        // default: true
+        popInitialNotification: true,
+
+        requestPermissions: false,
+    });
   }
 
   _animateSelectorBarTo(pageName) {
@@ -134,7 +174,10 @@ class JumboNavigator extends Component {
           fetchProfiles={this.props.fetchProfiles}
           navBarHeight={NAVBAR_HEIGHT}
           pageHeight={PAGE_HEIGHT}
+          firebase={this.props.firebase}
           token={this.props.token}
+          updateProfile={this.props.updateProfile}
+          pushNotificationsHandler={this.pushNotificationsHandler}
           removeSeenCards={this.props.removeSeenCards}
           notifyUserOfMatchWith={this._notifyUserOfMatchWith.bind(this)}
           openProfileCard={this._openProfileCard.bind(this)}
@@ -147,6 +190,7 @@ class JumboNavigator extends Component {
           myProfile={this.props.myProfile}
           navBarHeight={NAVBAR_HEIGHT}
           pageHeight={PAGE_HEIGHT}
+          pushNotificationsHandler={this.pushNotificationHandler}
           token={this.props.token}
         />
       );
@@ -160,6 +204,7 @@ class JumboNavigator extends Component {
           myProfile={this.props.myProfile}
           firebase={this.props.firebase}
           token={this.props.token}
+          pushNotificationsHandler={this.pushNotificationHandler}
         />
       );
     }
