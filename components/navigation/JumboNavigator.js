@@ -78,7 +78,9 @@ class JumboNavigator extends Component {
 
         // (optional) Called when Token is generated (iOS and Android)
         onRegister: function(token) {
-            pushNotifications.onRegister(token, {profileId: this.props.myProfile.id});
+            pushNotifications.onRegister(token,
+              {authToken: this.props.token,
+               profile: this.props.myProfile});
         }.bind(this),
 
         // (required) Called when a remote or local notification is opened or received
