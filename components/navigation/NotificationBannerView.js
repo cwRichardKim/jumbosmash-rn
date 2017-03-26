@@ -16,17 +16,25 @@ import {
   StyleSheet,
   Text,
   View,
+  Image,
   TouchableHighlight,
   Animated,
   PanResponder
 } from 'react-native';
 
 import GlobalStyles   from "../global/GlobalStyles.js";
+import SimpleBadge    from "../global/SimpleBadge.js";
 
 const VERTICAL_THRESHOLD = 10; // distance pull/push required to register action
-const BANNER_SHOW_HEIGHT = 75; // perceived height of banner
+const BANNER_SHOW_HEIGHT = 90; // perceived height of banner
 const BANNER_TOTAL_HEIGHT = 200; // perceived + hidden height of banner
 const MAX_BANNER_PULL = 20; // max distance allowed for downward pull (decelerated)
+const LOGO_PADDING = 25;
+const LOGO_HEIGHT = BANNER_SHOW_HEIGHT - 2 * LOGO_PADDING;
+const BADGE_HEIGHT = 25;
+const PULL_INDICATOR_WIDTH = 40;
+const PULL_INDICATOR_HEIGHT = 8;
+const PULL_INDICATOR_BOTTOM = 8;
 
 const INITIAL_POSITION = {x:0, y: -BANNER_TOTAL_HEIGHT - 10};
 const SHOW_POSITION = {x:0, y: BANNER_SHOW_HEIGHT - BANNER_TOTAL_HEIGHT};
@@ -149,14 +157,31 @@ class NotificationBannerView extends Component {
                                         outputRange:[origY - BANNER_SHOW_HEIGHT, origY, origY + MAX_BANNER_PULL],
                                         extrapolateRight: 'clamp',
                                       });
-    let numMsgs = this.state.numMessages;
+    let numMsgs = (this.state.numMessages <= 1) ? 0 : this.state.numMessages;
     return(
       <Animated.View
-        style={[styles.container, this.props.style, {transform:[{translateY}]}]}
+        style={[styles.container, GlobalStyles.strongShadow, this.props.style, {transform:[{translateY}]}]}
         {...this._panResponder.panHandlers}>
         <TouchableHighlight style={{flex:1}} onPress={this._notificationBannerTapped.bind(this)}>
           <View style={[styles.view]}>
-            <Text style={[GlobalStyles.text, styles.text]}>{this.state.message}{numMsgs > 1 ? " ("+numMsgs.toString()+")" : ""}</Text>
+            <Image
+              source={require("../global/images/logo-med.jpg")}
+              style={styles.image}
+            />
+            <Text
+              style={[GlobalStyles.text, styles.text]}
+              lineBreakMode="tail"
+              numberOfLines={2}
+            >
+              {this.state.message}
+            </Text>
+            <SimpleBadge
+              style={styles.badge}
+              value={numMsgs}
+            />
+            <View style={styles.pullIndicatorContainer}>
+              <View style={styles.pullIndicator}/>
+            </View>
           </View>
         </TouchableHighlight>
       </Animated.View>
@@ -174,17 +199,48 @@ const styles = StyleSheet.create({
   },
   view: {
     flex: 1,
-    alignItems: "center",
+    alignItems: "flex-start",
+    paddingTop: 7,
     justifyContent: "center",
-    backgroundColor: "gray",
-    borderRadius: 5,
+    backgroundColor: "white",
+    borderRadius: 10,
   },
   text: {
     paddingTop: BANNER_TOTAL_HEIGHT - BANNER_SHOW_HEIGHT,
+    paddingRight: LOGO_PADDING,
+    paddingLeft: LOGO_HEIGHT + LOGO_PADDING * 2,
     fontSize: 16,
-    color: 'white',
     backgroundColor: 'transparent',
-  }
+  },
+  image: {
+    position: "absolute",
+    top: BANNER_TOTAL_HEIGHT - BANNER_SHOW_HEIGHT + LOGO_PADDING + 5,
+    left: LOGO_PADDING,
+    height: LOGO_HEIGHT,
+    width: LOGO_HEIGHT,
+    borderRadius: LOGO_HEIGHT / 2,
+  },
+  badge: {
+    position: "absolute",
+    top: BANNER_TOTAL_HEIGHT - BANNER_SHOW_HEIGHT + BADGE_HEIGHT,
+    left: LOGO_PADDING + LOGO_HEIGHT / 2,
+    width: BADGE_HEIGHT,
+    height: BADGE_HEIGHT,
+  },
+  pullIndicatorContainer: {
+    position: "absolute",
+    bottom: PULL_INDICATOR_BOTTOM,
+    left: 0,
+    right: 0,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  pullIndicator: {
+    width: PULL_INDICATOR_WIDTH,
+    height: PULL_INDICATOR_HEIGHT,
+    borderRadius: PULL_INDICATOR_HEIGHT / 2,
+    backgroundColor: '#F2F2F2',
+  },
 });
 
 export default NotificationBannerView;
