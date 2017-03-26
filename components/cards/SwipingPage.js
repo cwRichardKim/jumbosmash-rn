@@ -239,7 +239,7 @@ class SwipingPage extends Component {
         handleRightSwipeForIndex={this._handleRightSwipeForIndex.bind(this)}
         handleLeftSwipeForIndex={this._handleLeftSwipeForIndex.bind(this)}
         swipeDidComplete={this._swipeDidComplete.bind(this)}
-        index={index}
+        cardIndex={index}
         positionInDeck={positionInDeck}
         cardWidth={CARD_WIDTH}
       />
