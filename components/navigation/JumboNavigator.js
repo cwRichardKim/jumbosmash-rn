@@ -131,18 +131,29 @@ class JumboNavigator extends Component {
   // This is used to replace the current page with another page, not to push a
   // new page on top of the current one.
   changePage(pageName) {
-    this._animateSelectorBarTo(pageName);
     let currentlyOnSettings = this.currentPage == PageNames.settingsPage;
     let leavingSettings = currentlyOnSettings && pageName != PageNames.settingsPage;
     if (leavingSettings && this.state.hasUnsavedSettings) {
       Alert.alert(
-        "Leaving unsaved changes",
-        "Save your changes with the circular 'save' button at the bottom-right!",
-        [{text: "OK", onPress:( ) => {
-          this.navigator.replace({name: pageName});
-        }}]
+        "Unsaved Changes",
+        "Would you like to save or discard the changes you've made?",
+        [
+          {
+            text: "Save", onPress: () => {
+              if (this.settingsPage) {
+                this.settingsPage.saveButtonPressed();
+              }
+            }
+          }, {
+            text: "Discard", onPress: () => {
+              this._animateSelectorBarTo(pageName);
+              this.navigator.replace({name: pageName});
+            }
+          }
+        ]
       );
     } else {
+      this._animateSelectorBarTo(pageName);
       this.navigator.replace({name: pageName});;
     }
   }
@@ -156,6 +167,7 @@ class JumboNavigator extends Component {
       return (
         <SettingsPage
           {...this.props.myProfile}
+          ref={(elem) => {this.settingsPage = elem}}
           pageHeight={PAGE_HEIGHT}
           navBarHeight={NAVBAR_HEIGHT}
           updateProfile={this.props.updateProfile}
