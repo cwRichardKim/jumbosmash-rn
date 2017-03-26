@@ -97,7 +97,6 @@ class SaveButton extends Component {
     let hideButton = this.props.saveButtonState == SaveButtonState.hide;
     let showButton = this.props.saveButtonState == SaveButtonState.show;
     let buttonIsLoading = this.props.saveButtonState == SaveButtonState.saving;
-console.log(this.keyboardHeight);
     if (showButton) {
       this._bounce();
     }

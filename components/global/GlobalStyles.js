@@ -6,6 +6,8 @@ usage example:
 import GlobalStyles from './GlobalStyles.js'
 */
 
+const TINT_COLOR = "#715BB9";
+
 import React, {Component} from 'react';
 import {
   StyleSheet,
@@ -22,46 +24,46 @@ module.exports = StyleSheet.create({
   basicShadow: {
     // android shadow
     elevation: 3,
-    shadowColor: '#000000',
+    shadowColor: TINT_COLOR,
 
     // ios shadow
     shadowOffset: {
-      width: 0,
-      height: 7,
+      width: 4,
+      height: 4,
     },
-    shadowRadius: 14,
-    shadowOpacity: 0.06,
+    shadowRadius: 4,
+    shadowOpacity: 0.15,
   },
   strongShadow: {
     // android shadow
     elevation: 2,
-    shadowColor: '#000000',
+    shadowColor: TINT_COLOR,
 
     // ios shadow
     shadowOffset: {
-      width: 0,
-      height: 5,
+      width: 4,
+      height: 4,
     },
     shadowRadius: 8,
-    shadowOpacity: 0.2,
+    shadowOpacity: 0.3,
   },
   buttonShadow: {
     // android shadow
     elevation: 3,
-    shadowColor: '#000000',
+    shadowColor: TINT_COLOR,
 
     // ios shadow
     shadowOffset: {
-      width: 0,
+      width: 4,
       height: 4,
     },
     shadowRadius: 4,
-    shadowOpacity: 0.1,
+    shadowOpacity: 0.15,
   },
-  lowButtonShadow: {
+  weakShadow: {
     // android shadow
     elevation: 2,
-    shadowColor: '#000000',
+    shadowColor: TINT_COLOR,
 
     // ios shadow
     shadowOffset: {

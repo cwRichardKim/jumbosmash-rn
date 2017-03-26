@@ -191,6 +191,7 @@ class NavigationContainer extends Component {
       if (responseJson.length > 0) {
         this._setLastIndex(responseJson[responseJson.length - 1].index);
       } else {
+        //TODO @richard test this
         console.log("on fetching new profiles, we hit a case where nothing was returned (likely due to this being the last index)")
         this._setLastIndex(0);
       }
