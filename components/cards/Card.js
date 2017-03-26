@@ -168,15 +168,16 @@ class Card extends Component {
     let cardShadow = {
       // android shadow
       elevation: 3,
-      shadowColor: popCard ? '#715BB9' : '#000000',
+      // shadowColor: popCard ? '#715BB9' : '#000000',
+      shadowColor: '#715BB9',
 
       // ios shadow
       shadowOffset: {
-        width: 0,
-        height: 7,
+        width: 4,
+        height: 4,
       },
-      shadowRadius: 14,
-      shadowOpacity: popCard ? 0.5 : 0.06,
+      shadowRadius: 5,
+      shadowOpacity: popCard ? 0.5 : 0.08,
     }
 
     return (
@@ -191,6 +192,7 @@ class Card extends Component {
                 _key={this.props.id}
                 thumbnail={{uri: (this.props.photos && this.props.photos.length >=1) ? this.props.photos[0].small : ""}}
               />
+
               <View style={styles.textContainer}>
                 <Text style={[globalStyles.text, styles.text]}>
                   {this.props.firstName}

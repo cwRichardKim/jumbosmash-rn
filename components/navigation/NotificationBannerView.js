@@ -160,7 +160,7 @@ class NotificationBannerView extends Component {
     let numMsgs = (this.state.numMessages <= 1) ? 0 : this.state.numMessages;
     return(
       <Animated.View
-        style={[styles.container, GlobalStyles.strongShadow, this.props.style, {transform:[{translateY}]}]}
+        style={[styles.container, GlobalStyles.basicShadow, this.props.style, {transform:[{translateY}]}]}
         {...this._panResponder.panHandlers}>
         <TouchableHighlight style={{flex:1}} onPress={this._notificationBannerTapped.bind(this)}>
           <View style={[styles.view]}>
@@ -202,8 +202,7 @@ const styles = StyleSheet.create({
     alignItems: "flex-start",
     paddingTop: 7,
     justifyContent: "center",
-    backgroundColor: "white",
-    borderRadius: 10,
+    backgroundColor: "#715BB9",
   },
   text: {
     paddingTop: BANNER_TOTAL_HEIGHT - BANNER_SHOW_HEIGHT,
@@ -211,6 +210,7 @@ const styles = StyleSheet.create({
     paddingLeft: LOGO_HEIGHT + LOGO_PADDING * 2,
     fontSize: 16,
     backgroundColor: 'transparent',
+    color: 'white',
   },
   image: {
     position: "absolute",
@@ -239,7 +239,8 @@ const styles = StyleSheet.create({
     width: PULL_INDICATOR_WIDTH,
     height: PULL_INDICATOR_HEIGHT,
     borderRadius: PULL_INDICATOR_HEIGHT / 2,
-    backgroundColor: '#F2F2F2',
+    backgroundColor: 'white',
+    opacity: .3,
   },
 });
 

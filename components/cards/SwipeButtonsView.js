@@ -115,7 +115,8 @@ class SwipeButtonsView extends Component {
               onPress={this.props.undo}
               disabled={!this.props.canUndo}
               hasShadow={true}
-              disabledOpacity={0.5}
+              hasLowShadow={true}
+              disabledOpacity={0.3}
               disabledOnPress={this._undoDisabledOnPress.bind(this)}
             />
           </View>

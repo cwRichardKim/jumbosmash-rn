@@ -58,15 +58,15 @@ class JumboNavigator extends Component {
 
   componentDidMount() {
     // example notification calling function
-    // this.notificationBanner.showWithMessage("test", ()=>{
-    //   this.changePage(PageNames.chatPage);
-    // });
-    //
-    // setTimeout(() => {
-    //   this.notificationBanner.showWithMessage("next message arrived this is a longer message, 2 things and ore things here we go", ()=>{
-    //     this.changePage(PageNames.chatPage);
-    //   });
-    // }, 2000);
+    this.notificationBanner.showWithMessage("test", ()=>{
+      this.changePage(PageNames.chatPage);
+    });
+
+    setTimeout(() => {
+      this.notificationBanner.showWithMessage("next message arrived this is a longer message, 2 things and ore things here we go", ()=>{
+        this.changePage(PageNames.chatPage);
+      });
+    }, 2000);
 
     // this._notifyUserOfMatchWith(this.props.myProfile)
     this._configureNotifications();
@@ -288,7 +288,7 @@ class JumboNavigator extends Component {
   // returns UI element of the navigation bar
   _renderNavigationBar() {
     return (
-      <Navigator.NavigationBar style={[GlobalStyles.basicShadow, styles.navigationBarContainer]}
+      <Navigator.NavigationBar style={[GlobalStyles.weakShadow, styles.navigationBarContainer]}
         routeMapper={{
           LeftButton: this._renderNavBarLeftButton.bind(this),
           RightButton: this._renderNavBarRightButton.bind(this),
