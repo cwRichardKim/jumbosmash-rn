@@ -157,7 +157,8 @@ class SettingsPage extends Component {
   }
 
   // This function updates the current information to the server
-  _saveButtonPressed() {
+  // public: can be called by JumboNavigator
+  saveButtonPressed() {
     this._asyncUpdatePropertiesRequest();
   }
 
@@ -331,7 +332,7 @@ class SettingsPage extends Component {
         </ScrollView>
         <SaveButton
           ref="saveButton"
-          onPress={this._saveButtonPressed.bind(this)}
+          onPress={this.saveButtonPressed.bind(this)}
           saveButtonState={this.state.saveButtonState}
           keyboardHeight={this.keyboardHeight}
         />
