@@ -307,6 +307,7 @@ class JumboNavigator extends Component {
           <ProfileCardView {...this.props.profiles[this.swipingPage.state.cardIndex]}
             pageHeight={PAGE_HEIGHT + NAVBAR_HEIGHT}
             exitFunction={this._closeProfileCard.bind(this)}
+            cardIndex={this.swipingPage.state.cardIndex}
           />
         </View>
       );
