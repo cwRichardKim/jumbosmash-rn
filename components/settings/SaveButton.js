@@ -21,9 +21,23 @@ class SaveButton extends Component {
   constructor(props) {
     super(props);
     this.isBouncing = false;
+
+    this.keyboardHeight = this.props.keyboardHeight;
+
     this.state = {
-      pan: new Animated.ValueXY({x:0, y:0}),
+      pan: new Animated.ValueXY({x:0, y: this.keyboardHeight}),
     }
+  }
+
+  // public function
+  keyboardHeightDidChange(keyboardHeight) {
+    this.keyboardHeight = keyboardHeight;
+    Animated.spring(
+      this.state.pan,
+      {
+        toValue: {x: 0, y: - this.keyboardHeight}
+      }
+    ).start();
   }
 
   _bounce() {
@@ -34,7 +48,7 @@ class SaveButton extends Component {
           Animated.timing(
             this.state.pan,
             {
-              toValue: {x: 0, y: -10},
+              toValue: {x: 0, y: -10 - this.keyboardHeight},
               easing: Easing.out(Easing.ease),
               duration: 200,
             }
@@ -42,7 +56,7 @@ class SaveButton extends Component {
             Animated.timing(
               this.state.pan,
               {
-                toValue: {x: 0, y: 0},
+                toValue: {x: 0, y: 0 - this.keyboardHeight},
                 easing: Easing.bounce,
               }
             ).start(() => {
@@ -83,6 +97,7 @@ class SaveButton extends Component {
     let hideButton = this.props.saveButtonState == SaveButtonState.hide;
     let showButton = this.props.saveButtonState == SaveButtonState.show;
     let buttonIsLoading = this.props.saveButtonState == SaveButtonState.saving;
+console.log(this.keyboardHeight);
     if (showButton) {
       this._bounce();
     }

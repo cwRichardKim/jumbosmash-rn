@@ -32,6 +32,19 @@ module.exports = StyleSheet.create({
     shadowRadius: 14,
     shadowOpacity: 0.06,
   },
+  strongShadow: {
+    // android shadow
+    elevation: 2,
+    shadowColor: '#000000',
+
+    // ios shadow
+    shadowOffset: {
+      width: 0,
+      height: 5,
+    },
+    shadowRadius: 8,
+    shadowOpacity: 0.2,
+  },
   buttonShadow: {
     // android shadow
     elevation: 3,

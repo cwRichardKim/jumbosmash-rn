@@ -63,7 +63,7 @@ class JumboNavigator extends Component {
     // });
     //
     // setTimeout(() => {
-    //   this.notificationBanner.showWithMessage("next message arrived", ()=>{
+    //   this.notificationBanner.showWithMessage("next message arrived this is a longer message, 2 things and ore things here we go", ()=>{
     //     this.changePage(PageNames.chatPage);
     //   });
     // }, 2000);
