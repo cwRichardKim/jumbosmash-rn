@@ -92,7 +92,7 @@ class SwipeButtonsView extends Component {
   _statusOnPress() {
     Alert.alert(
       "Your Status: "+this._getEmojiStatus(),
-      "Your thirst status changes as you swipe. This is private to you 🔒",
+      "Your thirst status changes to match your swiping behavior. Don't worry, nobody else has to know \n💦🔒🙈",
       [{text:"KEEP SMASHIN\'", onPress: ()=>{}},]
     );
   }

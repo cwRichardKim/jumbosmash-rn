@@ -60,7 +60,7 @@ class SettingsPage extends Component {
    let keyboardAppeared = keyboard.startCoordinates.screenY > keyboard.endCoordinates.screenY;
    this.keyboardHeight = keyboardAppeared ? keyboard.endCoordinates.height : 0;
    if (this.refs.saveButton) {
-     this.refs.saveButton.keyboardHeightDidChange(this.keyboardHeight);
+     this.refs.saveButton.keyboardHeightWillChange(this.keyboardHeight);
    }
 }
 

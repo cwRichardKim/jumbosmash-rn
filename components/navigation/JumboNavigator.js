@@ -58,15 +58,15 @@ class JumboNavigator extends Component {
 
   componentDidMount() {
     // example notification calling function
-    this.notificationBanner.showWithMessage("test", ()=>{
-      this.changePage(PageNames.chatPage);
-    });
-
-    setTimeout(() => {
-      this.notificationBanner.showWithMessage("next message arrived this is a longer message, 2 things and ore things here we go", ()=>{
-        this.changePage(PageNames.chatPage);
-      });
-    }, 2000);
+    // this.notificationBanner.showWithMessage("test", ()=>{
+    //   this.changePage(PageNames.chatPage);
+    // });
+    //
+    // setTimeout(() => {
+    //   this.notificationBanner.showWithMessage("next message arrived this is a longer message, 2 things and ore things here we go", ()=>{
+    //     this.changePage(PageNames.chatPage);
+    //   });
+    // }, 2000);
 
     // this._notifyUserOfMatchWith(this.props.myProfile)
     this._configureNotifications();
