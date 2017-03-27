@@ -63,7 +63,7 @@ class JumboNavigator extends Component {
     // });
     //
     // setTimeout(() => {
-    //   this.notificationBanner.showWithMessage("next message arrived", ()=>{
+    //   this.notificationBanner.showWithMessage("next message arrived this is a longer message, 2 things and ore things here we go", ()=>{
     //     this.changePage(PageNames.chatPage);
     //   });
     // }, 2000);
@@ -131,18 +131,29 @@ class JumboNavigator extends Component {
   // This is used to replace the current page with another page, not to push a
   // new page on top of the current one.
   changePage(pageName) {
-    this._animateSelectorBarTo(pageName);
     let currentlyOnSettings = this.currentPage == PageNames.settingsPage;
     let leavingSettings = currentlyOnSettings && pageName != PageNames.settingsPage;
     if (leavingSettings && this.state.hasUnsavedSettings) {
       Alert.alert(
-        "Leaving unsaved changes",
-        "Save your changes with the circular 'save' button at the bottom-right!",
-        [{text: "OK", onPress:( ) => {
-          this.navigator.replace({name: pageName});
-        }}]
+        "Unsaved Changes",
+        "Would you like to save or discard the changes you've made?",
+        [
+          {
+            text: "Save", onPress: () => {
+              if (this.settingsPage) {
+                this.settingsPage.saveButtonPressed();
+              }
+            }
+          }, {
+            text: "Discard", onPress: () => {
+              this._animateSelectorBarTo(pageName);
+              this.navigator.replace({name: pageName});
+            }
+          }
+        ]
       );
     } else {
+      this._animateSelectorBarTo(pageName);
       this.navigator.replace({name: pageName});;
     }
   }
@@ -156,6 +167,7 @@ class JumboNavigator extends Component {
       return (
         <SettingsPage
           {...this.props.myProfile}
+          ref={(elem) => {this.settingsPage = elem}}
           pageHeight={PAGE_HEIGHT}
           navBarHeight={NAVBAR_HEIGHT}
           updateProfile={this.props.updateProfile}
@@ -276,7 +288,7 @@ class JumboNavigator extends Component {
   // returns UI element of the navigation bar
   _renderNavigationBar() {
     return (
-      <Navigator.NavigationBar style={[GlobalStyles.basicShadow, styles.navigationBarContainer]}
+      <Navigator.NavigationBar style={[GlobalStyles.weakShadow, styles.navigationBarContainer]}
         routeMapper={{
           LeftButton: this._renderNavBarLeftButton.bind(this),
           RightButton: this._renderNavBarRightButton.bind(this),
@@ -295,6 +307,7 @@ class JumboNavigator extends Component {
           <ProfileCardView {...this.props.profiles[this.swipingPage.state.cardIndex]}
             pageHeight={PAGE_HEIGHT + NAVBAR_HEIGHT}
             exitFunction={this._closeProfileCard.bind(this)}
+            cardIndex={this.swipingPage.state.cardIndex}
           />
         </View>
       );
