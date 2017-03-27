@@ -30,7 +30,7 @@ class SaveButton extends Component {
   }
 
   // public function
-  keyboardHeightDidChange(keyboardHeight) {
+  keyboardHeightWillChange(keyboardHeight) {
     this.keyboardHeight = keyboardHeight;
     Animated.spring(
       this.state.pan,

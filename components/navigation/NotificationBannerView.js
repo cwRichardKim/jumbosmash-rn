@@ -157,7 +157,7 @@ class NotificationBannerView extends Component {
                                         outputRange:[origY - BANNER_SHOW_HEIGHT, origY, origY + MAX_BANNER_PULL],
                                         extrapolateRight: 'clamp',
                                       });
-    let numMsgs = (this.state.numMessages <= 1) ? 0 : this.state.numMessages;
+    let badgeCount = (this.state.numMessages <= 1) ? 0 : this.state.numMessages;
     return(
       <Animated.View
         style={[styles.container, GlobalStyles.basicShadow, this.props.style, {transform:[{translateY}]}]}
@@ -177,7 +177,7 @@ class NotificationBannerView extends Component {
             </Text>
             <SimpleBadge
               style={styles.badge}
-              value={numMsgs}
+              value={badgeCount}
             />
             <View style={styles.pullIndicatorContainer}>
               <View style={styles.pullIndicator}/>
