@@ -154,6 +154,19 @@ class Card extends Component {
     }
   }
 
+  //TODO @richard remove later, for debugging purposes
+  _renderIndexView() {
+    if (__DEV__) {
+      return (
+        <View style={styles.indexView}>
+          <Text>{"[i: " +this.props.cardIndex.toString()+ ", card: "+this.props.index.toString() +"]"}</Text>
+        </View>
+      )
+    } else {
+      return null;
+    }
+  }
+
   render() {
     let [pan, enter] = [this.state.pan, this.state.enter];
     let [translateX, translateY] = [pan.x, pan.y];
@@ -192,7 +205,7 @@ class Card extends Component {
                 _key={this.props.id}
                 thumbnail={{uri: (this.props.photos && this.props.photos.length >=1) ? this.props.photos[0].small : ""}}
               />
-
+              {this._renderIndexView()}
               <View style={styles.textContainer}>
                 <Text style={[globalStyles.text, styles.text]}>
                   {this.props.firstName}
@@ -246,6 +259,15 @@ const styles = StyleSheet.create({
     marginLeft: 7,
     marginBottom: 4,
   },
+  indexView: {
+    position: 'absolute',
+    top: 10,
+    right: 10,
+    backgroundColor: 'white',
+    opacity: 0.8,
+    padding: 5,
+    borderRadius: 5,
+  }
 });
 
 export default Card;
