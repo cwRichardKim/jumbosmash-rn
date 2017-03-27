@@ -145,10 +145,10 @@ class CircleButton extends Component {
   render() {
     let translate = this.state.pan.getTranslateTransform();
     let shadow = {};
-    if (this.props.hasShadow && !this.props.disabled) {
+    if (this.props.hasShadow && !this.props.disabled && this.props.hasLowShadow !== true) {
       shadow = GlobalStyles.buttonShadow;
-    } else if (this.props.hasShadow) {
-      shadow = GlobalStyles.lowButtonShadow;
+    } else if (this.props.hasShadow || this.props.hasLowShadow) {
+      shadow = GlobalStyles.weakShadow;
     }
     return(
       <Animated.View

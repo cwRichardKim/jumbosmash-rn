@@ -188,7 +188,13 @@ class NavigationContainer extends Component {
         throw ("status" in response) ? response["status"] : "Unknown Error";
       }
     }).then((responseJson) => {
-      this._setLastIndex(responseJson[responseJson.length - 1].index);
+      if (responseJson.length > 0) {
+        this._setLastIndex(responseJson[responseJson.length - 1].index);
+      } else {
+        //TODO @richard test this
+        console.log("on fetching new profiles, we hit a case where nothing was returned (likely due to this being the last index)")
+        this._setLastIndex(0);
+      }
       // for (var i = 0; i < responseJson.length; i++) { //TODO @richard testing code remove
       //   console.log(responseJson[i].index.toString() + " " + responseJson[i].firstName);
       // }
