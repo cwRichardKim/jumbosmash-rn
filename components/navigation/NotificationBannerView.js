@@ -18,6 +18,7 @@ import {
   View,
   Image,
   TouchableHighlight,
+  TouchableOpacity,
   Animated,
   PanResponder
 } from 'react-native';
@@ -33,8 +34,9 @@ const LOGO_PADDING = 25;
 const LOGO_HEIGHT = BANNER_SHOW_HEIGHT - 2 * LOGO_PADDING;
 const BADGE_HEIGHT = 25;
 const PULL_INDICATOR_WIDTH = 40;
-const PULL_INDICATOR_HEIGHT = 8;
+const PULL_INDICATOR_HEIGHT = 6;
 const PULL_INDICATOR_BOTTOM = 8;
+const CLOSE_BUTTON_WIDTH = 20;
 
 const INITIAL_POSITION = {x:0, y: -BANNER_TOTAL_HEIGHT - 10};
 const SHOW_POSITION = {x:0, y: BANNER_SHOW_HEIGHT - BANNER_TOTAL_HEIGHT};
@@ -122,12 +124,15 @@ class NotificationBannerView extends Component {
           toValue: SHOW_POSITION,
           friction,
         }
-      ).start(callback);
+      ).start(() => {if (typeof callback === "function") {callback()}});
     }
+    clearTimeout(this.timeout);
+    this.timeout = setTimeout(this._hideNotificationBanner.bind(this), 4000);
     this.setState({numMessages: this.state.numMessages + 1});
   }
 
   _hideNotificationBanner(callback, friction = 5) {
+    this.setState({numMessages: 0});
     Animated.spring(
       this.state.pan,
       {
@@ -135,10 +140,9 @@ class NotificationBannerView extends Component {
         friction,
       }
     ).start(() => {
-      if (callback) {
+      if (typeof callback === "function") {
         callback();
       }
-      this.setState({numMessages: 0});
     });
   }
 
@@ -175,6 +179,12 @@ class NotificationBannerView extends Component {
             >
               {this.state.message}
             </Text>
+            <TouchableOpacity style={styles.closeButton} onPress={this._hideNotificationBanner.bind(this)}>
+              <Image
+                source={require("./images/banner-close.png")}
+                style={styles.closeButtonImage}
+              />
+            </TouchableOpacity>
             <SimpleBadge
               style={styles.badge}
               value={badgeCount}
@@ -206,7 +216,7 @@ const styles = StyleSheet.create({
   },
   text: {
     paddingTop: BANNER_TOTAL_HEIGHT - BANNER_SHOW_HEIGHT,
-    paddingRight: LOGO_PADDING,
+    paddingRight: LOGO_PADDING + CLOSE_BUTTON_WIDTH,
     paddingLeft: LOGO_HEIGHT + LOGO_PADDING * 2,
     fontSize: 16,
     backgroundColor: 'transparent',
@@ -242,6 +252,19 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     opacity: .3,
   },
+  closeButton: {
+    position: 'absolute',
+    height: CLOSE_BUTTON_WIDTH,
+    width: CLOSE_BUTTON_WIDTH,
+    right: 20,
+    bottom: (BANNER_SHOW_HEIGHT - CLOSE_BUTTON_WIDTH) / 2 - 5,
+  },
+  closeButtonImage: {
+    height: CLOSE_BUTTON_WIDTH,
+    width: CLOSE_BUTTON_WIDTH,
+    resizeMode: 'contain',
+    opacity: 0.5,
+  }
 });
 
 export default NotificationBannerView;

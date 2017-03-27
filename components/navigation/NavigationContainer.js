@@ -180,6 +180,7 @@ class NavigationContainer extends Component {
     let id = this.props.myProfile.id.toString(); //TODO: @richard replace
     let batch = count ? count.toString() : FETCH_BATCH_SIZE.toString();
     let url = "https://jumbosmash2017.herokuapp.com/profile/batch/"+id+"/"+index+"/"+batch+"/"+this.token.val;
+    console.log("Fetching profiles for "+id+" batch size: " + batch + " index: " + index);
     return fetch(url)
     .then((response) => {
       if ("status" in response && response["status"] >= 200 && response["status"] < 300) {
@@ -188,6 +189,9 @@ class NavigationContainer extends Component {
         throw ("status" in response) ? response["status"] : "Unknown Error";
       }
     }).then((responseJson) => {
+      if (__DEV__) { //TODO @richard remove. for debugging purposes
+        this.navigator.notificationBanner.showWithMessage("Retrieved " + responseJson.length + " profiles. prev index: "+index+", indexes: " + responseJson[0].index.toString() + " - " + responseJson[responseJson.length-1].index.toString())
+      }
       if (responseJson.length > 0) {
         this._setLastIndex(responseJson[responseJson.length - 1].index);
       } else {

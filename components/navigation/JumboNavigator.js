@@ -35,7 +35,7 @@ const PageNames = require("../global/GlobalFunctions").pageNames();
 const NAVBAR_HEIGHT = (Platform.OS === 'ios') ? 64 : 54; // TODO: check the android tabbar height
 const PAGE_HEIGHT = Dimensions.get('window').height - NAVBAR_HEIGHT;
 const PAGE_WIDTH = Dimensions.get('window').width;
-const NAVBAR_SELECTOR_WIDTH = PAGE_WIDTH / 4;
+const NAVBAR_SELECTOR_WIDTH = PAGE_WIDTH * 0.2;
 
 class JumboNavigator extends Component {
   constructor(props) {
@@ -114,7 +114,7 @@ class JumboNavigator extends Component {
     if (pageName == PageNames.settingsPage) {
       destinationX = - (PAGE_WIDTH - NAVBAR_SELECTOR_WIDTH) / 2;
     } else if (pageName == PageNames.chatPage) {
-      destinationX = PAGE_WIDTH - NAVBAR_SELECTOR_WIDTH * 2.5;
+      destinationX = PAGE_WIDTH / 2 - NAVBAR_SELECTOR_WIDTH / 2;
     }
 
     Animated.spring (
@@ -237,7 +237,10 @@ class JumboNavigator extends Component {
             this.changePage(PageNames.settingsPage);
           }}
         >
-          <Text>Account</Text>
+          <Image
+            source={this.currentPage == PageNames.settingPage ? require("./images/settings-select.png") : require("./images/settings-unselect.png")}
+            style={styles.navBarIcon}
+          />
         </TouchableOpacity>
       );
     }
@@ -254,7 +257,10 @@ class JumboNavigator extends Component {
             this.changePage(PageNames.chatPage);
           }}
         >
-          <Text>Chat</Text>
+          <Image
+            source={this.currentPage == PageNames.chatPage ? require("./images/chat-select.png") : require("./images/chat-unselect.png")}
+            style={styles.navBarIcon}
+          />
         </TouchableOpacity>
       );
     }
@@ -277,9 +283,15 @@ class JumboNavigator extends Component {
           <TouchableOpacity onPress={() => {
             this.changePage(PageNames.cardsPage);
           }}>
-            <Text>Swipe!</Text>
+            <Image
+              source={this.currentPage == PageNames.cardsPage ? require("./images/heart-select.png") : require("./images/heart-unselect.png")}
+              style={styles.navBarIcon}
+            />
           </TouchableOpacity>
-          <Animated.View style={[styles.navBarSelector, {transform: this.state.selectorBarPan.getTranslateTransform()}]}/>
+          <Animated.Image
+            source={require("./images/selector-bar.png")}
+            style={[styles.navBarSelector, {transform: this.state.selectorBarPan.getTranslateTransform()}]}
+          />
         </View>
       );
     }
@@ -407,12 +419,17 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     width: NAVBAR_SELECTOR_WIDTH,
   },
+  navBarIcon: {
+    height: 20,
+    resizeMode: 'contain',
+  },
   navBarSelector: {
     position: 'absolute',
     bottom: 0,
-    height: 5,
     width: NAVBAR_SELECTOR_WIDTH,
     backgroundColor: 'black',
+    height: 2,
+    resizeMode: 'contain',
   }
 });
 
