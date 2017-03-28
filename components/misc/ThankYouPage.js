@@ -31,7 +31,7 @@ class ThankYouPage extends Component {
   }
 
   _openAboutURL() {
-    let aboutURL = "https://google.com";
+    let aboutURL = "http://tufts.io/jumbosmash2017";
     if (Linking.canOpenURL(aboutURL)) {
       Linking.openURL(aboutURL);
     } else {
