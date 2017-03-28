@@ -71,22 +71,22 @@ module.exports = {
       return null;
     }
   },
-  calculateAppActivityState: function () {
+  calculateAppExpirationState: function () {
     let today = new Date();
     let startDate = new Date(2017, 4, 12); // may 12th, midnight (month indexed at 0)
     let endDate = new Date(2017,4,22); // may 22nd, midnight
 
-    return this.appActivityStates().expired; //TODO @richard remove this
+    return this.appExpirationStates().active; //TODO @richard remove this
 
     if (today > startDate && today < startDate) {
-      return (this.appActivityStates().active);
+      return (this.appExpirationStates().active);
     } else if (today < startDate) {
-      return (this.appActivityStates().preRelease);
+      return (this.appExpirationStates().preRelease);
     } else {
-      return (this.appActivityStates().expired)
+      return (this.appExpirationStates().expired)
     }
   },
-  appActivityStates: function() {
+  appExpirationStates: function() {
     return ({
       active: "APPACTIVE",
       preRelease: "APPPRERELEASE",

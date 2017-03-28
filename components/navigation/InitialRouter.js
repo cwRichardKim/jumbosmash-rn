@@ -23,8 +23,8 @@ import GlobalFunctions            from "../global/GlobalFunctions.js";
 const PageNames = require("../global/GlobalFunctions.js").pageNames();
 const StorageKeys = require("../global/GlobalFunctions.js").storageKeys();
 
-const AppActivityStates = GlobalFunctions.appActivityStates();
-const APP_STATE = GlobalFunctions.calculateAppActivityState();
+const AppExpirationStates = GlobalFunctions.appExpirationStates();
+const APP_STATE = GlobalFunctions.calculateAppExpirationState();
 
 const firebase = require('firebase');
 const firebaseConfig = {
@@ -84,9 +84,9 @@ class InitialRouter extends Component {
 
   // this function is called
   _loadPage(page) {
-    if (this.shouldOverridePageLoads === true || APP_STATE === AppActivityStates.active) {
+    if (this.shouldOverridePageLoads === true || APP_STATE === AppExpirationStates.active) {
       this.navigator.replace({name: page});
-    } else if (APP_STATE === AppActivityStates.preRelease) {
+    } else if (APP_STATE === AppExpirationStates.preRelease) {
 
     } else {
 
@@ -140,7 +140,7 @@ class InitialRouter extends Component {
   render() {
     let initialRouteName = PageNames.loadingPage;
 
-    if (APP_STATE === AppActivityStates.expired) {
+    if (APP_STATE === AppExpirationStates.expired) {
       initialRouteName = PageNames.expiredPage;
     }
 
