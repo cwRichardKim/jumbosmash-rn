@@ -174,7 +174,7 @@ class AccountPage extends Component {
   _createAccount() {
     if (this._checkPropertiesAreValid()) {
       let url = "https://jumbosmash2017.herokuapp.com/profile/add/".concat(this.token.val);
-      let body = JSON.stringify({
+      let body = {
         id: this.studentProfile._id,
         firstName: this.state.firstName,
         middleName: this.studentProfile.middleName,
@@ -184,13 +184,13 @@ class AccountPage extends Component {
         description: this.state.description,
         email: this.studentProfile.email,
         photos: this._reArrangePhotos(),
-      });
+      };
       fetch(url, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: body,
+        body: JSON.stringify(body),
       }).then((response) => {
         if ("status" in response && response["status"] >= 200 && response["status"] < 300) {
           return response.json();
@@ -199,7 +199,7 @@ class AccountPage extends Component {
         }
       }).then((responseJson) => {
         Alert.alert("Your account has been created.");
-        console.log(responseJson);
+        this.props.setMyProfile(body);
         this._authCompleted();
       }).catch((error) => {
         throw error; //TODO @richard show error thing
