@@ -18,9 +18,13 @@ import AuthContainer              from "../login/AuthContainer.js";
 import DummyData                  from "../misc/DummyData.js";
 import ThankYouPage               from "../misc/ThankYouPage.js";
 import LoadingPage                from "../misc/LoadingPage.js";
+import GlobalFunctions            from "../global/GlobalFunctions.js";
 
 const PageNames = require("../global/GlobalFunctions.js").pageNames();
 const StorageKeys = require("../global/GlobalFunctions.js").storageKeys();
+
+const AppExpirationStates = GlobalFunctions.appExpirationStates();
+const APP_STATE = GlobalFunctions.calculateAppExpirationState();
 
 const firebase = require('firebase');
 const firebaseConfig = {
@@ -35,6 +39,8 @@ class InitialRouter extends Component {
   constructor(props) {
     super(props);
     this.didGetUserAndProfile = false;
+    this.shouldOverridePageLoads = false; //allows user to override the expired or prerelease page
+
     this.state = {
       myProfile: null,
     }
@@ -48,13 +54,13 @@ class InitialRouter extends Component {
     firebase.auth().onAuthStateChanged(async function(user) {
       if (!this.didGetUserAndProfile) {
         this.didGetUserAndProfile = true;
-        let myProfile = await this._shouldFetchUserAndProfile();
+        let myProfile = await this._shouldFetchMyProfileFromStorage();
         myProfile = DummyData.myProfile; //TODO: @richard remove this once accounts are created
         if (user && user.emailVerified && myProfile) {
           this.setState({myProfile});
-          this.navigator.replace({name: PageNames.appHome});
+          this._loadPage(PageNames.appHome);
         } else {
-          this.navigator.replace({name: PageNames.auth});
+          this._loadPage(PageNames.auth);
         }
       }
     }.bind(this));
@@ -67,15 +73,35 @@ class InitialRouter extends Component {
         storedMyProfile = JSON.parse(storedMyProfile);
         if (storedMyProfile && storedMyProfile.id) {
           return storedMyProfile;
-        } else {
-          return null;
         }
-      } else {
-        return null;
       }
     } catch (error) {
       throw error; //TODO @richard notify user
       return null;
+    }
+    return null;
+  }
+
+  // this function is called
+  _loadPage(page) {
+    if (this.shouldOverridePageLoads === true || APP_STATE === AppExpirationStates.active) {
+      this.navigator.replace({name: page});
+    } else if (APP_STATE === AppExpirationStates.preRelease) {
+
+    } else {
+
+    }
+  }
+
+  // called by thank you page or prerelease pages, allows user to change pages
+  _changePageFromAppNonActivityPages(action) {
+    const overrideActions = GlobalFunctions.overrideActions();
+    if (action === overrideActions.openApp) {
+      this.shouldOverridePageLoads = true;
+      this._shouldFetchUserAndProfile();
+    } else if (action == overrideActions.demoApp) {
+      this.shouldOverridePageLoads = true;
+      this._shouldFetchUserAndProfile(); //TODO @richard change with dummy data
     }
   }
 
@@ -85,6 +111,7 @@ class InitialRouter extends Component {
         <ThankYouPage
           dummyMyProfile={DummyData.myProfile}
           dummyProfiles={DummyData.profiles}
+          changePage={this._changePageFromAppNonActivityPages.bind(this)}
         />
       )
     } else if (route.name == PageNames.appHome) {
@@ -111,10 +138,9 @@ class InitialRouter extends Component {
   }
 
   render() {
-    let appHasExpired = false;
-
     let initialRouteName = PageNames.loadingPage;
-    if (appHasExpired) {
+
+    if (APP_STATE === AppExpirationStates.expired) {
       initialRouteName = PageNames.expiredPage;
     }
 
