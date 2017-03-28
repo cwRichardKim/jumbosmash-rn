@@ -22,14 +22,16 @@ import AccountPage            from "./AccountPage.js";
 import SignupPage             from "./SignupPage.js";
 import ForgotPasswordPage     from './ForgotPasswordPage.js';
 
+const StorageKeys = require("../global/GlobalFunctions").storageKeys();
+
 class AuthContainer extends Component {
 
   constructor(props){
     super(props);
-    this.studentProfile = null;
+    this.studentProfile = null; // student object of the user (not the profile object)
     this.state = {
       component: LoginPage, // default is not logged in
-      email: null, 
+      email: null,
     };
   }
 
@@ -43,6 +45,11 @@ class AuthContainer extends Component {
 
   setStudentProfile(profile) {
     this.studentProfile = profile;
+  }
+
+  setMyProfile(profile) {
+    this.props.setMyProfile(profile);
+    AsyncStorage.setItem(StorageKeys.myProfile, JSON.stringify(profile));
   }
 
   render(){
@@ -62,6 +69,8 @@ class AuthContainer extends Component {
                 email: this.state.email,
                 setStudentProfile: this.setStudentProfile.bind(this),
                 studentProfile: this.studentProfile,
+                setMyProfile: this.setMyProfile.bind(this),
+                myProfile: this.props.myProfile,
                 email_ext: "@tufts.edu" });
           }
         }}
