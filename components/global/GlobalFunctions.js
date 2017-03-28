@@ -71,4 +71,35 @@ module.exports = {
       return null;
     }
   },
+  calculateAppActivityState: function () {
+    let today = new Date();
+    let startDate = new Date(2017, 4, 12); // may 12th, midnight (month indexed at 0)
+    let endDate = new Date(2017,4,22); // may 22nd, midnight
+
+    return this.appActivityStates().active; //TODO @richard remove this
+
+    if (today > startDate && today < startDate) {
+      return (this.appActivityStates().active);
+    } else if (today < startDate) {
+      return (this.appActivityStates().preRelease);
+    } else {
+      return (this.appActivityStates().expired)
+    }
+  },
+  appActivityStates: function() {
+    return ({
+      active: "APPACTIVE",
+      preRelease: "APPPRERELEASE",
+      expired: "APPEXPIRED",
+    })
+  },
+  betaTesters: function() {
+    return "Zoe Baghdoyan, Josh Beri, Frankie Caiazzo, Tafari Duncan, Orlando Economos, Jason Fan, Derek Fieldhouse, Shana Gallagher, Lucy Gerhart, Ryan Gill, Cori Jacoby, Nishant Joshi, Dhruv Khurana, Rebecca Larson, Ian Leaman, Ann Lin, Emily Lin, Brian McGough, Jordan Meisel, Mackenzie Merriam, Sylvia R. Ofama, Isha Patnaik, Luis Rebollar, Joaquin Rodgriguez, Ben Sack, Maya Salcido White, Katie Saviano, Kabir Singh, Clare Stone, Lilly Tahmasebi, Aubrey Tan, Mudit Tandon, Joshua Terry, Nicholas Turiano, Harry Weissman, Gideon Wulfsohn";
+  },
+  overrideActions: function() { //override the app inactivity (used for app demo / using after expiration)
+    return({
+      openApp: "OPENAPP",
+      demoApp: "DEMOAPP",
+    });
+  }
 }
