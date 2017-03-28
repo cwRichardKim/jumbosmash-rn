@@ -92,7 +92,7 @@ class SwipeButtonsView extends Component {
   _statusOnPress() {
     Alert.alert(
       "Your Status: "+this._getEmojiStatus(),
-      "Your thirst status changes as you swipe",
+      "Your thirst status changes to match your swiping behavior. Don't worry, nobody else has to know \n💦🔒🙈",
       [{text:"KEEP SMASHIN\'", onPress: ()=>{}},]
     );
   }
@@ -115,7 +115,8 @@ class SwipeButtonsView extends Component {
               onPress={this.props.undo}
               disabled={!this.props.canUndo}
               hasShadow={true}
-              disabledOpacity={0.5}
+              hasLowShadow={true}
+              disabledOpacity={0.3}
               disabledOnPress={this._undoDisabledOnPress.bind(this)}
             />
           </View>

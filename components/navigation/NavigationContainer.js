@@ -50,6 +50,7 @@ class NavigationContainer extends Component {
         });
     }
     AppState.addEventListener('change', this._handleAppStateChange.bind(this));
+
   }
 
   componentWillUnmount () {
@@ -64,6 +65,10 @@ class NavigationContainer extends Component {
         this.navigator.swipingPage.saveLikePoints();
       }
     }
+  }
+
+  _saveUserToken (token, id) {
+    this._updateProfile({deviceIdList: [token]})
   }
 
   // Called when the app is closed from SwipingPage.js
@@ -175,6 +180,7 @@ class NavigationContainer extends Component {
     let id = this.props.myProfile.id.toString();
     let batch = count ? count.toString() : FETCH_BATCH_SIZE.toString();
     let url = "https://jumbosmash2017.herokuapp.com/profile/batch/"+id+"/"+index+"/"+batch+"/"+this.token.val;
+    console.log("Fetching profiles for "+id+" batch size: " + batch + " index: " + index);
     return fetch(url)
     .then((response) => {
       if ("status" in response && response["status"] >= 200 && response["status"] < 300) {
@@ -183,7 +189,16 @@ class NavigationContainer extends Component {
         throw ("status" in response) ? response["status"] : "Unknown Error";
       }
     }).then((responseJson) => {
-      this._setLastIndex(responseJson[responseJson.length - 1].index);
+      if (__DEV__) { //TODO @richard remove. for debugging purposes
+        this.navigator.notificationBanner.showWithMessage("Retrieved " + responseJson.length + " profiles. prev index: "+index+", indexes: " + responseJson[0].index.toString() + " - " + responseJson[responseJson.length-1].index.toString())
+      }
+      if (responseJson.length > 0) {
+        this._setLastIndex(responseJson[responseJson.length - 1].index);
+      } else {
+        //TODO @richard test this
+        console.log("on fetching new profiles, we hit a case where nothing was returned (likely due to this being the last index)")
+        this._setLastIndex(0);
+      }
       // for (var i = 0; i < responseJson.length; i++) { //TODO @richard testing code remove
       //   console.log(responseJson[i].index.toString() + " " + responseJson[i].firstName);
       // }
@@ -211,7 +226,6 @@ class NavigationContainer extends Component {
       },
       body: JSON.stringify(profileChanges),
     }).then((response) => {
-      console.log(newProfile);
       if (global.isGoodResponse(response)) {
         this.props.setMyProfile(newProfile);
       } else {

@@ -184,6 +184,8 @@ class SwipingPage extends Component {
   }
 
   _handleRightSwipeForIndex(cardIndex) {
+    //TODO: have first pop-up and also check to see if asked before
+
     let profile = this.props.profiles[cardIndex];
     this._asyncUpdateLikeList(this.props.myProfile.id, profile.id);
     this._swipeErrorCheck(cardIndex, profile);
@@ -237,7 +239,7 @@ class SwipingPage extends Component {
         handleRightSwipeForIndex={this._handleRightSwipeForIndex.bind(this)}
         handleLeftSwipeForIndex={this._handleLeftSwipeForIndex.bind(this)}
         swipeDidComplete={this._swipeDidComplete.bind(this)}
-        index={index}
+        cardIndex={index}
         positionInDeck={positionInDeck}
         cardWidth={CARD_WIDTH}
       />

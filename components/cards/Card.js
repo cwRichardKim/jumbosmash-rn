@@ -18,7 +18,8 @@ import {
 
 import clamp          from 'clamp';
 import LoadableImage  from '../global/LoadableImage.js';
-import GlobalStyles   from "../global/GlobalStyles.js";
+
+const globalStyles = require("../global/GlobalStyles.js");
 
 const SWIPE_THRESHOLD = 90;
 
@@ -73,10 +74,10 @@ class Card extends Component {
           // if it's a right swipe
           if (isRight) {
             // do something with the data, this function has no impact on the visuals
-            this.props.handleRightSwipeForIndex(this.props.index);
+            this.props.handleRightSwipeForIndex(this.props.cardIndex);
           } else { // else if if it's a left swipe
             // do something with the data, this function has no impact on the visuals
-            this.props.handleLeftSwipeForIndex(this.props.index);
+            this.props.handleLeftSwipeForIndex(this.props.cardIndex);
           }
           let xdistance = (xvelocity + 0.5) * this.props.cardWidth;
           let ydistance = (yvelocity - 0.3) * this.props.cardWidth;
@@ -109,9 +110,9 @@ class Card extends Component {
         duration: 200,
       }).start(() => {
         if (isRight) {
-          this.props.handleRightSwipeForIndex(this.props.index);
+          this.props.handleRightSwipeForIndex(this.props.cardIndex);
         } else {
-          this.props.handleLeftSwipeForIndex(this.props.index);
+          this.props.handleLeftSwipeForIndex(this.props.cardIndex);
         }
         this._swipeDidComplete();
       });
@@ -133,28 +134,70 @@ class Card extends Component {
   _swipeDidComplete() {
     if (this.props.swipeDidComplete) {
       // this function deals with the data (number of cards) and should have no impact on visuals
-      this.props.swipeDidComplete(this.props.index);
+      this.props.swipeDidComplete(this.props.cardIndex);
     }
     // reuses view for next card, center the card
     this.state.pan.setValue({x: 0, y: 0});
     this.isSwiping = false;
   }
 
+  _shouldRenderCheck(isTeamMember) {
+    if (isTeamMember) {
+      return (
+        <Image
+          source={require("./images/check.png")}
+          style={styles.check}
+        />
+      );
+    } else {
+      return null;
+    }
+  }
+
+  //TODO @richard remove later, for debugging purposes
+  _renderIndexView() {
+    if (__DEV__) {
+      return (
+        <View style={styles.indexView}>
+          <Text>{"[i: " +this.props.cardIndex.toString()+ ", card: "+this.props.index.toString() +"]"}</Text>
+        </View>
+      )
+    } else {
+      return null;
+    }
+  }
+
   render() {
     let [pan, enter] = [this.state.pan, this.state.enter];
-
     let [translateX, translateY] = [pan.x, pan.y];
-
     let rotate = pan.x.interpolate({inputRange: [-200, 0, 200], outputRange: ["-10deg", "0deg", "10deg"]});
     let scale = enter;
 
     let animatedCardstyles = this.props.positionInDeck == 0 ? {transform: [{translateX}, {translateY}, {rotate}, {scale}]} : {};
 
+    let isTeamMember = this.props.teamMember === true;
+    let popCard = isTeamMember && this.props.positionInDeck == 0;
+
+    let cardShadow = {
+      // android shadow
+      elevation: 3,
+      // shadowColor: popCard ? '#715BB9' : '#000000',
+      shadowColor: '#715BB9',
+
+      // ios shadow
+      shadowOffset: {
+        width: 4,
+        height: 4,
+      },
+      shadowRadius: 5,
+      shadowOpacity: popCard ? 0.5 : 0.08,
+    }
+
     return (
-      <Animated.View style={[GlobalStyles.absoluteCover, styles.cardView, animatedCardstyles, {zIndex: 10 - this.props.positionInDeck}]} {...this._panResponder.panHandlers}>
+      <Animated.View style={[globalStyles.absoluteCover, styles.cardView, animatedCardstyles, {zIndex: 10 - this.props.positionInDeck}]} {...this._panResponder.panHandlers}>
         <TouchableWithoutFeedback style={styles.touchArea}
           onPress={this.props.onPress}>
-          <View style={[GlobalStyles.basicShadow, styles.shadowView]}>
+          <View style={[cardShadow, styles.shadowView]}>
             <View style={styles.card}>
               <LoadableImage
                 source={{uri: (this.props.photos && this.props.photos.length >= 1) ? this.props.photos[0].large : ""}}
@@ -162,8 +205,12 @@ class Card extends Component {
                 _key={this.props.id}
                 thumbnail={{uri: (this.props.photos && this.props.photos.length >=1) ? this.props.photos[0].small : ""}}
               />
+              {this._renderIndexView()}
               <View style={styles.textContainer}>
-                <Text style={[GlobalStyles.text, styles.text]}>{this.props.firstName}</Text>
+                <Text style={[globalStyles.text, styles.text]}>
+                  {this.props.firstName}
+                </Text>
+                {this._shouldRenderCheck(isTeamMember)}
               </View>
             </View>
           </View>
@@ -184,6 +231,7 @@ const styles = StyleSheet.create({
   shadowView: {
     flex: 1,
     borderRadius: borderRadius,
+    backgroundColor: "white",
   },
   card: {
     borderRadius: borderRadius,
@@ -195,12 +243,30 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   textContainer: {
-    justifyContent: "center",
+    justifyContent: "flex-start",
+    flexDirection: "row",
+    alignItems: "center",
     minHeight: 60,
+    padding: 20,
   },
   text: {
-    padding: 20,
     fontSize: 20,
+  },
+  check: {
+    height: 25,
+    width: 25,
+    resizeMode: "contain",
+    marginLeft: 7,
+    marginBottom: 4,
+  },
+  indexView: {
+    position: 'absolute',
+    top: 10,
+    right: 10,
+    backgroundColor: 'white',
+    opacity: 0.8,
+    padding: 5,
+    borderRadius: 5,
   }
 });
 

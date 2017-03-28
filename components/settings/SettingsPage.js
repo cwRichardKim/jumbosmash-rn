@@ -18,6 +18,7 @@ import {
   Alert,
   Animated,
   AsyncStorage,
+  Keyboard,
 } from 'react-native';
 
 import ProfilePhotoPicker from "./ProfilePhotoPicker.js";
@@ -35,6 +36,9 @@ let Mailer = require('NativeModules').RNMail;
 class SettingsPage extends Component {
   constructor(props) {
     super(props);
+
+    this.keyboardHeight = 0;
+
     this.state = {
       firstName: props.firstName,
       lastName: props.lastName,
@@ -44,6 +48,22 @@ class SettingsPage extends Component {
       saveButtonState: SaveButtonState.hide,
     }
   }
+
+  componentWillMount () {
+    this.keyboardFrameWillChangeListener = Keyboard.addListener('keyboardWillChangeFrame', this._keyboardWillChangeFrame.bind(this));
+  }
+
+  componentWillUnmount () {
+    this.keyboardFrameWillChangeListener.remove();
+  }
+
+ _keyboardWillChangeFrame (keyboard) {
+   let keyboardAppeared = keyboard.startCoordinates.screenY > keyboard.endCoordinates.screenY;
+   this.keyboardHeight = keyboardAppeared ? keyboard.endCoordinates.height : 0;
+   if (this.refs.saveButton) {
+     this.refs.saveButton.keyboardHeightWillChange(this.keyboardHeight);
+   }
+}
 
   // after the request is made, this function sets the new states correctly from the server
   _updateStates(newProfile) {
@@ -138,7 +158,8 @@ class SettingsPage extends Component {
   }
 
   // This function updates the current information to the server
-  _saveButtonPressed() {
+  // public: can be called by JumboNavigator
+  saveButtonPressed() {
     this._asyncUpdatePropertiesRequest();
   }
 
@@ -317,8 +338,9 @@ class SettingsPage extends Component {
         </ScrollView>
         <SaveButton
           ref="saveButton"
-          onPress={this._saveButtonPressed.bind(this)}
+          onPress={this.saveButtonPressed.bind(this)}
           saveButtonState={this.state.saveButtonState}
+          keyboardHeight={this.keyboardHeight}
         />
       </View>
     );
