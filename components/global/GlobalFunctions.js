@@ -37,7 +37,7 @@ module.exports = {
       settingsPage: "SETTINGSPAGE",
       conversation: "CONVERSATIONPAGE",
       auth: "AUTHPAGE",
-      prerelease: "PRERELEASE",
+      preRelease: "PRERELEASE",
       expiredPage: "EXPIREDPAGE",
       appHome: "APPHOMEPAGE",
       loadingPage: "LOADINGPAGE",

@@ -18,6 +18,7 @@ import {
 } from 'react-native';
 
 import JumboNavigator         from "./JumboNavigator.js"
+import DummyData              from "../misc/DummyData.js";
 
 const global = require('../global/GlobalFunctions.js');
 const PageNames = global.pageNames();
@@ -175,52 +176,61 @@ class NavigationContainer extends Component {
   // lastID: the lastID we got from the previous list of profiles
   // count: how many profiles to fetch. 0 or null is all
   async _fetchProfiles(count) {
-    let index = await this._getLastIndex();
-    let id = this.props.myProfile.id.toString();
-    let batch = count ? count.toString() : FETCH_BATCH_SIZE.toString();
-    let url = "https://jumbosmash2017.herokuapp.com/profile/batch/"+id+"/"+index+"/"+batch+"/"+this.token.val;
-    console.log("Fetching profiles for "+id+" batch size: " + batch + " index: " + index);
-    return fetch(url)
-    .then((response) => {
-      if (global.isGoodResponse(response)) {
-        return response.json();
-      } else {
-        throw ("status" in response) ? response["status"] : "Unknown Error";
-      }
-    }).then((responseJson) => {
-      if (responseJson.length > 0) {
-        if (__DEV__) { //TODO @richard remove. for debugging purposes
-          this.navigator.notificationBanner.showWithMessage("Retrieved " + responseJson.length + " profiles. prev index: "+index+", indexes: " + responseJson[0].index.toString() + " - " + responseJson[responseJson.length-1].index.toString())
-        }
-        this._setLastIndex(responseJson[responseJson.length - 1].index);
-        // for (var i = 0; i < responseJson.length; i++) { //TODO @richard testing code remove
-        //   console.log(responseJson[i].index.toString() + " " + responseJson[i].firstName);
-        // }
-        global.shuffle(responseJson);
-        this.setState({
-          profiles: this.state.profiles.concat(responseJson),
-        })
-      } else {
-        if (this._getLastIndex() === 0) {
-          // we're in a special case where the user has swiped right on everyone or
-          //TODO @richard notify the user
+    if (this.props.shouldUseDummyData) {
+      this.setState({
+        profiles: this.state.profiles.concat(DummyData.profiles),
+      })
+    } else {
+      let index = await this._getLastIndex();
+      let id = this.props.myProfile.id.toString();
+      let batch = count ? count.toString() : FETCH_BATCH_SIZE.toString();
+      let url = "https://jumbosmash2017.herokuapp.com/profile/batch/"+id+"/"+index+"/"+batch+"/"+this.token.val;
+      console.log("Fetching profiles for "+id+" batch size: " + batch + " index: " + index);
+      return fetch(url)
+      .then((response) => {
+        if (global.isGoodResponse(response)) {
+          return response.json();
         } else {
-          this._setLastIndex(0);
-          this._fetchProfiles(FETCH_BATCH_SIZE);
+          throw ("status" in response) ? response["status"] : "Unknown Error";
         }
-      }
-    })
-    .catch((error) => {
-      //TODO: @richard replace with real catch case
-      Alert.alert(
-        "Something Went Wrong :(",
-        error.toString(),
-        [{text: "OK", onPress: ()=>{}}]
-      );
-    });
+      }).then((responseJson) => {
+        if (responseJson.length > 0) {
+          if (__DEV__) { //TODO @richard remove. for debugging purposes
+            this.navigator.notificationBanner.showWithMessage("Retrieved " + responseJson.length + " profiles. prev index: "+index+", indexes: " + responseJson[0].index.toString() + " - " + responseJson[responseJson.length-1].index.toString())
+          }
+          this._setLastIndex(responseJson[responseJson.length - 1].index);
+          // for (var i = 0; i < responseJson.length; i++) { //TODO @richard testing code remove
+          //   console.log(responseJson[i].index.toString() + " " + responseJson[i].firstName);
+          // }
+          global.shuffle(responseJson);
+          this.setState({
+            profiles: this.state.profiles.concat(responseJson),
+          })
+        } else {
+          if (this._getLastIndex() === 0) {
+            // we're in a special case where the user has swiped right on everyone or
+            //TODO @richard notify the user
+          } else {
+            this._setLastIndex(0);
+            this._fetchProfiles(FETCH_BATCH_SIZE);
+          }
+        }
+      })
+      .catch((error) => {
+        //TODO: @richard replace with real catch case
+        Alert.alert(
+          "Something Went Wrong :(",
+          error.toString(),
+          [{text: "OK", onPress: ()=>{}}]
+        );
+      });
+    }
   }
 
   async _asyncUpdateServerProfile(id, profileChanges, newProfile) {
+    if (this.props.shouldUseDummyData) {
+      return;
+    }
     let url = "https://jumbosmash2017.herokuapp.com/profile/update/".concat(id).concat("/").concat(this.token.val);
     fetch(url, {
       method: 'POST',
