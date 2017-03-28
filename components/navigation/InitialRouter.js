@@ -35,6 +35,9 @@ class InitialRouter extends Component {
   constructor(props) {
     super(props);
     this.didGetUserAndProfile = false;
+
+    this.firstTimeMyProfile = null; // first login / signup, this is required because state isn't guaranteed to update in time
+
     this.state = {
       myProfile: null,
     }
@@ -42,6 +45,11 @@ class InitialRouter extends Component {
 
   componentDidMount() {
     this._shouldFetchUserAndProfile();
+  }
+
+  _setMyProfile (myProfile) {
+    this.setState(myProfile);
+    this.firstTimeMyProfile = myProfile;
   }
 
   async _shouldFetchUserAndProfile() {
@@ -92,8 +100,8 @@ class InitialRouter extends Component {
           dummyMyProfile={DummyData.myProfile}
           firebase={firebase}
           routeNavigator={navigator}
-          myProfile={this.state.myProfile}
-          setMyProfile={(myProfile) => {this.setState(myProfile)}}
+          myProfile={this.state.myProfile || this.firstTimeMyProfile}
+          setMyProfile={this._setMyProfile.bind(this)}
         />
       );
     } else if (route.name == PageNames.loadingPage) {
@@ -105,7 +113,7 @@ class InitialRouter extends Component {
         <AuthContainer
           firebase={firebase}
           routeNavigator={navigator}
-          setMyProfile={(myProfile) => {this.setState(myProfile)}}
+          setMyProfile={this._setMyProfile.bind(this)}
         />
       )
     }

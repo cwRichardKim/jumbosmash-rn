@@ -172,7 +172,7 @@ class NavigationContainer extends Component {
   async _fetchProfiles(lastID, count) {
     let index = await this._getLastIndex();
     // console.log("request made with last index: "+index.toString()); //TODO @richard testing code remove
-    let id = this.props.myProfile.id.toString(); //TODO: @richard replace
+    let id = this.props.myProfile.id.toString();
     let batch = count ? count.toString() : FETCH_BATCH_SIZE.toString();
     let url = "https://jumbosmash2017.herokuapp.com/profile/batch/"+id+"/"+index+"/"+batch+"/"+this.token.val;
     return fetch(url)
