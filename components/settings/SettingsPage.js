@@ -18,7 +18,6 @@ import {
   Alert,
   Animated,
   Keyboard,
-  AsyncStorage,
 } from 'react-native';
 
 import ProfilePhotoPicker from "./ProfilePhotoPicker.js";
@@ -31,7 +30,6 @@ import AuthErrors         from "../login/AuthErrors.js"
 const GlobalFunctions = require('../global/GlobalFunctions.js');
 const PageNames = GlobalFunctions.pageNames();
 const SaveButtonState = GlobalFunctions.saveButtonStates();
-const StorageKeys = GlobalFunctions.storageKeys();
 let Mailer = require('NativeModules').RNMail;
 
 class SettingsPage extends Component {
@@ -233,11 +231,6 @@ class SettingsPage extends Component {
   _logout() {
     this.props.firebase.auth().signOut()
       .then(() => {
-        try {
-          AsyncStorage.removeItem(StorageKeys.profiles);
-        } catch (error) {
-          throw "Error: Remove from storage: " + error;
-        }
         this.props.routeNavigator.replace({name: PageNames.auth});
       })
       .catch((error) => {
