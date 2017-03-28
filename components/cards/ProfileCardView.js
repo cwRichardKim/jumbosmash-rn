@@ -95,7 +95,21 @@ class ProfileCardView extends Component {
     }
   }
 
+  _shouldRenderCheck(isTeamMember) {
+    if (isTeamMember) {
+      return (
+        <Image
+          source={require("./images/check.png")}
+          style={styles.check}
+        />
+      );
+    } else {
+      return null;
+    }
+  }
+
   render() {
+    let isTeamMember = this.props.teamMember === true;
     let pageHeight = this.props.pageHeight;
     let _scrollView: ScrollView;
     return (
@@ -113,7 +127,10 @@ class ProfileCardView extends Component {
               {this._renderImages()}
               <TouchableWithoutFeedback style={{flex:1}} onPress={this._closeProfileCard.bind(this)}>
                 <View style={styles.textContainer}>
-                  <Text style={[GlobalStyles.boldText, styles.title]}>{this.props.firstName} {this.props.lastName} {this._shouldRenderSafeNameText()}</Text>
+                  <View style={styles.titleContainer}>
+                    <Text style={[GlobalStyles.boldText, styles.title]}>{this.props.firstName} {this.props.lastName} {this._shouldRenderSafeNameText()}</Text>
+                    {this._shouldRenderCheck(isTeamMember)}
+                  </View>
                   <Text style={[GlobalStyles.subtext, styles.subTitle]}>{this.props.major}</Text>
                   <Text style={[GlobalStyles.text, styles.text]}>{this.props.description}</Text>
                 </View>
@@ -192,9 +209,21 @@ const styles = StyleSheet.create({
   textContainer: {
     backgroundColor: 'white',
   },
-  title: {
+  titleContainer: {
+    justifyContent: "flex-start",
+    flexDirection: "row",
+    alignItems: "center",
     padding: 20,
     paddingBottom: 7,
+  },
+  title: {
+  },
+  check: {
+    height: 25,
+    width: 25,
+    resizeMode: "contain",
+    marginLeft: 3,
+    marginBottom: 4,
   },
   subTitle: {
     paddingLeft: 20,

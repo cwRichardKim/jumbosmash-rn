@@ -29,17 +29,19 @@ import NotificationBannerView from "./NotificationBannerView.js";
 import GlobalStyles           from "../global/GlobalStyles.js";
 
 const global = require('../global/GlobalFunctions.js');
+const pushNotifications = require('../global/PushNotifications.js');
 const PageNames = require("../global/GlobalFunctions").pageNames();
 
 const NAVBAR_HEIGHT = (Platform.OS === 'ios') ? 64 : 54; // TODO: check the android tabbar height
 const PAGE_HEIGHT = Dimensions.get('window').height - NAVBAR_HEIGHT;
 const PAGE_WIDTH = Dimensions.get('window').width;
-const NAVBAR_SELECTOR_WIDTH = PAGE_WIDTH / 4;
+const NAVBAR_SELECTOR_WIDTH = PAGE_WIDTH * 0.2;
 
 class JumboNavigator extends Component {
   constructor(props) {
     super(props);
 
+    this.pushNotificationsHandler = require('react-native-push-notification');
     this.currentPage = this.props.initialRoute ? this.props.initialRoute.name : PageNames.cardsPage;
 
     this.state = {
@@ -61,12 +63,50 @@ class JumboNavigator extends Component {
     // });
     //
     // setTimeout(() => {
-    //   this.notificationBanner.showWithMessage("next message arrived", ()=>{
+    //   this.notificationBanner.showWithMessage("next message arrived this is a longer message, 2 things and ore things here we go", ()=>{
     //     this.changePage(PageNames.chatPage);
     //   });
     // }, 2000);
 
     // this._notifyUserOfMatchWith(this.props.myProfile)
+    this._configureNotifications();
+  }
+
+
+  _configureNotifications () {
+    this.pushNotificationsHandler.configure({
+
+        // (optional) Called when Token is generated (iOS and Android)
+        onRegister: function(token) {
+            pushNotifications.onRegister(token,
+              {authToken: this.props.token,
+               profile: this.props.myProfile});
+        }.bind(this),
+
+        // (required) Called when a remote or local notification is opened or received
+        onNotification: function(notification) {
+            pushNotifications.onNotification(notification,
+              {banner: this.notificationBanner,
+               onPress: () => {this.changePage(PageNames.chatPage)},
+               firebase: this.props.firebase});
+        }.bind(this),
+
+        // ANDROID ONLY: GCM Sender ID (optional - not required for local notifications, but is need to receive remote push notifications)
+        senderID: "YOUR GCM SENDER ID",
+
+        // IOS ONLY (optional): default: all - Permissions to register.
+        permissions: {
+            alert: true,
+            badge: true,
+            sound: true
+        },
+
+        // Should the initial notification be popped automatically
+        // default: true
+        popInitialNotification: true,
+
+        requestPermissions: false,
+    });
   }
 
   _animateSelectorBarTo(pageName) {
@@ -74,7 +114,7 @@ class JumboNavigator extends Component {
     if (pageName == PageNames.settingsPage) {
       destinationX = - (PAGE_WIDTH - NAVBAR_SELECTOR_WIDTH) / 2;
     } else if (pageName == PageNames.chatPage) {
-      destinationX = PAGE_WIDTH - NAVBAR_SELECTOR_WIDTH * 2.5;
+      destinationX = PAGE_WIDTH / 2 - NAVBAR_SELECTOR_WIDTH / 2;
     }
 
     Animated.spring (
@@ -91,18 +131,29 @@ class JumboNavigator extends Component {
   // This is used to replace the current page with another page, not to push a
   // new page on top of the current one.
   changePage(pageName) {
-    this._animateSelectorBarTo(pageName);
     let currentlyOnSettings = this.currentPage == PageNames.settingsPage;
     let leavingSettings = currentlyOnSettings && pageName != PageNames.settingsPage;
     if (leavingSettings && this.state.hasUnsavedSettings) {
       Alert.alert(
-        "Leaving unsaved changes",
-        "Save your changes with the circular 'save' button at the bottom-right!",
-        [{text: "OK", onPress:( ) => {
-          this.navigator.replace({name: pageName});
-        }}]
+        "Unsaved Changes",
+        "Would you like to save or discard the changes you've made?",
+        [
+          {
+            text: "Save", onPress: () => {
+              if (this.settingsPage) {
+                this.settingsPage.saveButtonPressed();
+              }
+            }
+          }, {
+            text: "Discard", onPress: () => {
+              this._animateSelectorBarTo(pageName);
+              this.navigator.replace({name: pageName});
+            }
+          }
+        ]
       );
     } else {
+      this._animateSelectorBarTo(pageName);
       this.navigator.replace({name: pageName});;
     }
   }
@@ -116,6 +167,7 @@ class JumboNavigator extends Component {
       return (
         <SettingsPage
           {...this.props.myProfile}
+          ref={(elem) => {this.settingsPage = elem}}
           pageHeight={PAGE_HEIGHT}
           navBarHeight={NAVBAR_HEIGHT}
           updateProfile={this.props.updateProfile}
@@ -134,7 +186,10 @@ class JumboNavigator extends Component {
           fetchProfiles={this.props.fetchProfiles}
           navBarHeight={NAVBAR_HEIGHT}
           pageHeight={PAGE_HEIGHT}
+          firebase={this.props.firebase}
           token={this.props.token}
+          updateProfile={this.props.updateProfile}
+          pushNotificationsHandler={this.pushNotificationsHandler}
           removeSeenCards={this.props.removeSeenCards}
           notifyUserOfMatchWith={this._notifyUserOfMatchWith.bind(this)}
           openProfileCard={this._openProfileCard.bind(this)}
@@ -147,6 +202,7 @@ class JumboNavigator extends Component {
           myProfile={this.props.myProfile}
           navBarHeight={NAVBAR_HEIGHT}
           pageHeight={PAGE_HEIGHT}
+          pushNotificationsHandler={this.pushNotificationHandler}
           token={this.props.token}
         />
       );
@@ -160,6 +216,7 @@ class JumboNavigator extends Component {
           myProfile={this.props.myProfile}
           firebase={this.props.firebase}
           token={this.props.token}
+          pushNotificationsHandler={this.pushNotificationHandler}
         />
       );
     }
@@ -180,7 +237,10 @@ class JumboNavigator extends Component {
             this.changePage(PageNames.settingsPage);
           }}
         >
-          <Text>Account</Text>
+          <Image
+            source={this.currentPage == PageNames.settingPage ? require("./images/settings-select.png") : require("./images/settings-unselect.png")}
+            style={styles.navBarIcon}
+          />
         </TouchableOpacity>
       );
     }
@@ -197,7 +257,10 @@ class JumboNavigator extends Component {
             this.changePage(PageNames.chatPage);
           }}
         >
-          <Text>Chat</Text>
+          <Image
+            source={this.currentPage == PageNames.chatPage ? require("./images/chat-select.png") : require("./images/chat-unselect.png")}
+            style={styles.navBarIcon}
+          />
         </TouchableOpacity>
       );
     }
@@ -220,9 +283,15 @@ class JumboNavigator extends Component {
           <TouchableOpacity onPress={() => {
             this.changePage(PageNames.cardsPage);
           }}>
-            <Text>Swipe!</Text>
+            <Image
+              source={this.currentPage == PageNames.cardsPage ? require("./images/heart-select.png") : require("./images/heart-unselect.png")}
+              style={styles.navBarIcon}
+            />
           </TouchableOpacity>
-          <Animated.View style={[styles.navBarSelector, {transform: this.state.selectorBarPan.getTranslateTransform()}]}/>
+          <Animated.Image
+            source={require("./images/selector-bar.png")}
+            style={[styles.navBarSelector, {transform: this.state.selectorBarPan.getTranslateTransform()}]}
+          />
         </View>
       );
     }
@@ -231,7 +300,7 @@ class JumboNavigator extends Component {
   // returns UI element of the navigation bar
   _renderNavigationBar() {
     return (
-      <Navigator.NavigationBar style={[GlobalStyles.basicShadow, styles.navigationBarContainer]}
+      <Navigator.NavigationBar style={[GlobalStyles.weakShadow, styles.navigationBarContainer]}
         routeMapper={{
           LeftButton: this._renderNavBarLeftButton.bind(this),
           RightButton: this._renderNavBarRightButton.bind(this),
@@ -250,6 +319,7 @@ class JumboNavigator extends Component {
           <ProfileCardView {...this.props.profiles[this.swipingPage.state.cardIndex]}
             pageHeight={PAGE_HEIGHT + NAVBAR_HEIGHT}
             exitFunction={this._closeProfileCard.bind(this)}
+            cardIndex={this.swipingPage.state.cardIndex}
           />
         </View>
       );
@@ -349,12 +419,17 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     width: NAVBAR_SELECTOR_WIDTH,
   },
+  navBarIcon: {
+    height: 20,
+    resizeMode: 'contain',
+  },
   navBarSelector: {
     position: 'absolute',
     bottom: 0,
-    height: 5,
     width: NAVBAR_SELECTOR_WIDTH,
     backgroundColor: 'black',
+    height: 2,
+    resizeMode: 'contain',
   }
 });
 
