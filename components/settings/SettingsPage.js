@@ -78,7 +78,7 @@ class SettingsPage extends Component {
 
   _allPhotosAreNull(photos) {
     for (var i in photos) {
-      if (photos[i] != null && photos[i].large != null && photos[i].small != null) {
+      if (photos[i] != null && photos[i].large != null && photos[i].small != null && photos[i].large.length > 0) {
         return false;
       }
     }
