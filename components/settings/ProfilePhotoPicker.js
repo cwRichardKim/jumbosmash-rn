@@ -100,6 +100,9 @@ class ProfilePhotoPicker extends Component {
     // User has to hit save to make changes permanent in the server
     if (this.props.updatePhotos) {
       let newPhotos = (this.props.photos) ? this.props.photos.slice() : [{large:"", small:""}, {large:"", small:""}, {large:"", small:""}];
+      if (!newPhotos[index]) {
+        newPhotos[index] = {large:"", small:""};
+      }
       if (isLarge) {
         newPhotos[index].large = newPhoto;
       } else {

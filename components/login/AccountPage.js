@@ -30,7 +30,7 @@ class AccountPage extends Component {
   constructor(props) {
     super(props);
 
-    this.myProfile = props.studentProfile || null;
+    this.studentProfile = props.studentProfile || null;
     this.token = {val: null};
     this.state = {
       firstName: props.firstName,
@@ -42,15 +42,15 @@ class AccountPage extends Component {
   }
 
   componentDidMount() {
-    if (this.myProfile) {
-      this._updateStates(this.myProfile);
+    if (this.studentProfile) {
+      this._updateStates(this.studentProfile);
     } else {
       Alert.alert("THERE'S AN ERRROR. EMAIL US");
     }
 
     if (this.props.firebase.auth().currentUser) {
       this.props.firebase.auth()
-        .currentUser 
+        .currentUser
         .getToken(true)
         .then(function(idToken) {
           this.token.val = idToken;
@@ -64,8 +64,8 @@ class AccountPage extends Component {
 
   _doesProfileAlreadyExist(idToken) {
     // check if account has already been created
-    let url = "https://jumbosmash2017.herokuapp.com/profile/id/".concat(this.myProfile._id).concat("/").concat(this.token.val);
-    
+    let url = "https://jumbosmash2017.herokuapp.com/profile/id/".concat(this.studentProfile._id).concat("/").concat(this.token.val);
+
     fetch(url)
       .then((response) => {
         if ("status" in response && response["status"] >= 200 && response["status"] < 300) {
@@ -75,6 +75,7 @@ class AccountPage extends Component {
         }
       }).then((responseJson) => {
         if (responseJson) {
+          this.props.setMyProfile(responseJson);
           // account already exists
           Alert.alert("You already have a profile.")
           this._authCompleted();
@@ -110,7 +111,7 @@ class AccountPage extends Component {
     let photos = this.state.photos;
     var newPhotos = [];
     for (var i in photos) {
-      if (photos[i] != null && photos[i].large != null && photos[i].small != null) {
+      if (photos[i] != null && photos[i].large != null && photos[i].small != null && photos[i].large.length > 0) {
         newPhotos.push(photos[i]);
       }
     }
@@ -173,23 +174,23 @@ class AccountPage extends Component {
   _createAccount() {
     if (this._checkPropertiesAreValid()) {
       let url = "https://jumbosmash2017.herokuapp.com/profile/add/".concat(this.token.val);
-
+      let body = JSON.stringify({
+        id: this.studentProfile._id,
+        firstName: this.state.firstName,
+        middleName: this.studentProfile.middleName,
+        lastName: this.state.lastName,
+        school: this.studentProfile.school,
+        major: this.state.major,
+        description: this.state.description,
+        email: this.studentProfile.email,
+        photos: this._reArrangePhotos(),
+      });
       fetch(url, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          id: this.myProfile._id,
-          firstName: this.state.firstName,
-          middleName: this.myProfile.middleName,
-          lastName: this.state.lastName,
-          school: this.myProfile.school,
-          major: this.state.major,
-          description: this.state.description, 
-          email: this.myProfile.email,
-          photos: this._reArrangePhotos(),
-        }),
+        body: body,
       }).then((response) => {
         if ("status" in response && response["status"] >= 200 && response["status"] < 300) {
           return response.json();
@@ -198,6 +199,7 @@ class AccountPage extends Component {
         }
       }).then((responseJson) => {
         Alert.alert("Your account has been created.");
+        console.log(responseJson);
         this._authCompleted();
       }).catch((error) => {
         throw error; //TODO @richard show error thing
@@ -367,7 +369,7 @@ const styles = StyleSheet.create({
 //       <View style={styles.container}>
 //         <View style={styles.body}>
 //           <Text> {this.getCurrentLoggedInUser() } </Text>
-          
+
 //           <Button
 //             onPress={this.logout.bind(this)}
 //             title="Logout"

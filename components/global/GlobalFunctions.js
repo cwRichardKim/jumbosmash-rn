@@ -69,4 +69,7 @@ module.exports = {
       return null;
     }
   },
+  isGoodResponse: function (response) {
+    return ("status" in response && response["status"] >= 200 && response["status"] < 300);
+  }
 }

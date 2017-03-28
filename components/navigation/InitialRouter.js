@@ -48,8 +48,7 @@ class InitialRouter extends Component {
     firebase.auth().onAuthStateChanged(async function(user) {
       if (!this.didGetUserAndProfile) {
         this.didGetUserAndProfile = true;
-        let myProfile = await this._shouldFetchUserAndProfile();
-        myProfile = DummyData.myProfile; //TODO: @richard remove this once accounts are created
+        let myProfile = await this._shouldFetchMyProfileFromStorage();
         if (user && user.emailVerified && myProfile) {
           this.setState({myProfile});
           this.navigator.replace({name: PageNames.appHome});
@@ -94,6 +93,7 @@ class InitialRouter extends Component {
           firebase={firebase}
           routeNavigator={navigator}
           myProfile={this.state.myProfile}
+          setMyProfile={(myProfile) => {this.setState(myProfile)}}
         />
       );
     } else if (route.name == PageNames.loadingPage) {
@@ -105,6 +105,7 @@ class InitialRouter extends Component {
         <AuthContainer
           firebase={firebase}
           routeNavigator={navigator}
+          setMyProfile={(myProfile) => {this.setState(myProfile)}}
         />
       )
     }
