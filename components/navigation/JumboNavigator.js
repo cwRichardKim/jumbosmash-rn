@@ -238,7 +238,7 @@ class JumboNavigator extends Component {
           }}
         >
           <Image
-            source={this.currentPage == PageNames.settingPage ? require("./images/settings-select.png") : require("./images/settings-unselect.png")}
+            source={this.currentPage == PageNames.settingsPage ? require("./images/settings-select.png") : require("./images/settings-unselect.png")}
             style={styles.navBarIcon}
           />
         </TouchableOpacity>
