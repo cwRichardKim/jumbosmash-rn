@@ -22,6 +22,7 @@ import RectButton         from "../global/RectButton.js";
 import GlobalStyles       from "../global/GlobalStyles.js";
 import AuthErrors         from "./AuthErrors.js"
 import ProfilePhotoPicker from "../settings/ProfilePhotoPicker.js";
+import GlobalFunctions    from "../global/GlobalFunctions.js";
 
 const PageNames = require("../global/GlobalFunctions.js").pageNames();
 
