@@ -337,9 +337,8 @@ class SettingsPage extends Component {
           <View style={styles.bottom}>
             <Text style={styles.aboutText}>
               JumboSmash was brought to you by:{"\n"}
-              Devs: Elif Kinli, Richard Kim, Jared Moskowitz,{"\n"}
-              Jade Chan{"\n"}
-              Designers: Shanshan Duan, Bruno Olmedo{"\n\n"}
+              Devs: {GlobalFunctions.developers()+"\n"}
+              Designers: {GlobalFunctions.designers()+"\n\n"}
               Beta Testers:{"\n"+GlobalFunctions.betaTesters()}
             </Text>
           </View>
