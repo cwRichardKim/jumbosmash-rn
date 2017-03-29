@@ -98,8 +98,8 @@ class ThankYouPage extends Component {
             />
           </View>
           <View style={[styles.textContainer, styles.thankYous]}>
-            <Text style={[GlobalStyles.boldText, {marginBottom: 10}]}>Thanks to:</Text>
-            <Text style={GlobalStyles.text}>The team is Richard Kim, Elif Kinli, Jared Moskowitz, Jade Chan, Shanshan Duan, Bruno "daddy" Olmedo, and Justin Sullivan.{"\n\n"}However, we’d like to thank our many beta testers including:{"\n"}</Text>
+            <Text style={[GlobalStyles.boldText, {marginBottom: 10}]}>Our Team:</Text>
+            <Text style={GlobalStyles.text}>Developers: {GlobalFunctions.developers()}{"\nDesigners: "+GlobalFunctions.designers()}.{"\n\n"}We’d also like to thank our many beta testers including:{"\n"}</Text>
             <Text style={[GlobalStyles.text, {textAlign: 'center'}]}>{GlobalFunctions.betaTesters()}</Text>
           </View>
         </ScrollView>

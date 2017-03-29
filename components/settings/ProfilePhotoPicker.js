@@ -181,6 +181,7 @@ class ProfilePhotoPicker extends Component {
         if (userCancelled) {
           // potentially handle cancelled condition
         } else {
+          Alert.alert("Error", "Couldn't access your photos. Try going to settings and reallowing photo permissions for jumbosmash. If that doesn't work, email us at team@jumbosmash.com", [{text:"OK", onPress:()=>{}}])
           throw error;
         }
       });
