@@ -11,13 +11,16 @@ import {
   Text,
   ScrollView,
   Dimensions,
+  AsyncStorage,
   Alert,
 } from 'react-native';
 
 import GlobalStyles           from "../global/GlobalStyles.js";
 import GlobalFunctions        from "../global/GlobalFunctions.js"
 import RectButton             from "../global/RectButton.js";
+import AuthErrors             from "../login/AuthErrors.js";
 let Mailer = require('NativeModules').RNMail;
+const StorageKeys = GlobalFunctions.storageKeys();
 const OverrideActions = GlobalFunctions.overrideActions();
 const HEIGHT = Dimensions.get('window').height;
 const WIDTH = Dimensions.get('window').width;
@@ -32,8 +35,8 @@ class PreReleasePage extends Component {
 
   _loadPreReleaseApp() {
     Alert.alert(
-      "Opening app in pre-release state",
-      "Jumbosmash will be released on May 12th, 2017.\n\nIn this pre-release state, the app will function normally, but some features might seem empty. For example, chats and matches will only exist if an early-access beta tester swiped right on you.\n\nteam@jumbosmash.com for questions!",
+      "You're here early",
+      "Official release: May 12th, 2017.\n\nThe 'pre-release state' is fully functional, but chats and matches might be scarce due to the limited number of early-access users.\n\nteam@jumbosmash.com for questions!",
       [
         {text:"Open in Pre-release State", onPress:()=>{this.props.changePage(OverrideActions.openApp)}},
       ]
@@ -63,27 +66,40 @@ class PreReleasePage extends Component {
   _shouldLoadPreReleaseButton () {
     if (this.props.myProfile && (this.props.myProfile.teamMember === true || this.props.myProfile.betaTester === true)) {
       return (
-        <View style={styles.buttonContainer}>
-          <RectButton
-            style={[styles.button, styles.smashButton]}
-            textStyle={styles.buttonText}
-            text="PRE-RELEASE"
-            onPress={this._loadPreReleaseApp.bind(this)}
-          />
-        </View>
+        <RectButton
+          style={[styles.button, styles.smashButton]}
+          textStyle={styles.buttonText}
+          text="Enter (you have special access 😁)"
+          onPress={this._loadPreReleaseApp.bind(this)}
+        />
       )
     } else {
       return (
-        <View style={styles.buttonContainer}>
-          <RectButton
-            style={[styles.button, styles.smashButton]}
-            textStyle={styles.buttonText}
-            text="Request Early Access"
-            onPress={this._sendMail.bind(this)}
-          />
-        </View>
+        <RectButton
+          style={[styles.button, styles.smashButton]}
+          textStyle={styles.buttonText}
+          text="Request Early Access"
+          onPress={this._sendMail.bind(this)}
+        />
       )
     }
+  }
+
+  _logout() {
+    this.props.firebase.auth().signOut()
+      .then(() => {
+        try {
+          AsyncStorage.removeItem(StorageKeys.myProfile);
+        } catch (error) {
+          throw "Error: Remove from storage: " + error;
+        }
+        this.props.changePage(OverrideActions.logout);
+      })
+      .catch((error) => {
+        AuthErrors.handleLogoutError(error);
+        throw error;
+      }
+    );
   }
 
   render() {
@@ -97,7 +113,15 @@ class PreReleasePage extends Component {
             <Text style={[GlobalStyles.boldText, {marginBottom: 10}]}>Only X more days until release</Text>
             <Text style={GlobalStyles.text}>text etc etc</Text>
           </View>
-          {this._shouldLoadPreReleaseButton()}
+          <View style={styles.buttonContainer}>
+            {this._shouldLoadPreReleaseButton()}
+            <RectButton
+              style={[styles.button, styles.smashButton]}
+              textStyle={styles.buttonText}
+              text="Logout"
+              onPress={this._logout.bind(this)}
+            />
+          </View>
         </ScrollView>
       </View>
     )
