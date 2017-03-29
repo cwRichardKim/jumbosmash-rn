@@ -49,7 +49,7 @@ class JumboNavigator extends Component {
       // navigator, only add things that pertain to UI
       chatNotifCount: 0,
       hasUnsavedSettings: false,
-      showProfile: false,
+      profileToShow: null,
       showMatchView: false,
       matchedProfile: null, // profile of the person you matched with for MatchView
       selectorBarPan: new Animated.ValueXY({x:0, y:0}),
@@ -166,7 +166,7 @@ class JumboNavigator extends Component {
     if (route.name == PageNames.settingsPage) {
       return (
         <SettingsPage
-          {...this.props.myProfile}
+          myProfile={this.props.myProfile}
           ref={(elem) => {this.settingsPage = elem}}
           pageHeight={PAGE_HEIGHT}
           navBarHeight={NAVBAR_HEIGHT}
@@ -174,6 +174,7 @@ class JumboNavigator extends Component {
           firebase={this.props.firebase}
           setHasUnsavedSettings={(hasUnsavedSettings) => {this.setState({hasUnsavedSettings})}}
           routeNavigator={this.props.routeNavigator}
+          showProfileCardForProfile={this._showProfileCardForProfile.bind(this)}
         />
       );
     } else if (route.name == PageNames.cardsPage) {
@@ -192,7 +193,9 @@ class JumboNavigator extends Component {
           pushNotificationsHandler={this.pushNotificationsHandler}
           removeSeenCards={this.props.removeSeenCards}
           notifyUserOfMatchWith={this._notifyUserOfMatchWith.bind(this)}
-          openProfileCard={this._openProfileCard.bind(this)}
+          openProfileCard={()=>{this._showProfileCardForProfile(null)}}
+          shouldUseDummyData={this.props.shouldUseDummyData}
+
         />
       );
     } else if (route.name == PageNames.chatPage) {
@@ -204,6 +207,7 @@ class JumboNavigator extends Component {
           pageHeight={PAGE_HEIGHT}
           pushNotificationsHandler={this.pushNotificationHandler}
           token={this.props.token}
+          shouldUseDummyData={this.props.shouldUseDummyData}
         />
       );
     } else if (route.name == PageNames.conversation) {
@@ -217,6 +221,7 @@ class JumboNavigator extends Component {
           firebase={this.props.firebase}
           token={this.props.token}
           pushNotificationsHandler={this.pushNotificationHandler}
+          showProfileCardForProfile={this._showProfileCardForProfile.bind(this)}
         />
       );
     }
@@ -310,31 +315,35 @@ class JumboNavigator extends Component {
     );
   }
 
-  // Profile card UI
-
+  // given a profile, shows the profile over the navigator
   _shouldRenderProfileView() {
-    if (this.state.showProfile && this.swipingPage.state.cardIndex < this.props.profiles.length) {
+    if (this.state.profileToShow !== null) {
       return(
-        <View style={[GlobalStyles.absoluteCover ,styles.coverView]}>
-          <ProfileCardView {...this.props.profiles[this.swipingPage.state.cardIndex]}
+        <View style={[GlobalStyles.absoluteCover, styles.coverView]}>
+          <ProfileCardView {...(this.state.profileToShow)}
             pageHeight={PAGE_HEIGHT + NAVBAR_HEIGHT}
             exitFunction={this._closeProfileCard.bind(this)}
-            cardIndex={this.swipingPage.state.cardIndex}
           />
         </View>
       );
     }
   }
 
-  _openProfileCard() {
+  // called to show a profile card. if no card is set, it will show
+  // the card with the current index
+  _showProfileCardForProfile(profile) {
+    let profileToShow = profile;
+    if (profile === null && this.swipingPage.state.cardIndex < this.props.profiles.length) {
+      profileToShow = this.props.profiles[this.swipingPage.state.cardIndex];
+    }
     this.setState({
-      showProfile: true,
+      profileToShow: profileToShow,
     })
   }
 
   _closeProfileCard() {
     this.setState({
-      showProfile: false,
+      profileToShow: null,
     })
   }
 

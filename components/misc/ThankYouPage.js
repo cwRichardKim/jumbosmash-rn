@@ -57,7 +57,7 @@ class ThankYouPage extends Component {
   _loadDemoPage() {
     Alert.alert(
       "Jumbosmash Demo",
-      "The Jumbosmash Demo uses fake profiles to see the app after Senior Week is over",
+      "The Demo uses fake profiles to see what the app was like now that Senior Week is over",
       [
         {text:"See the demo!", onPress:()=>{this.props.changePage(OverrideActions.demoApp)}},
         {text:"Close", onPress:()=>{}},
