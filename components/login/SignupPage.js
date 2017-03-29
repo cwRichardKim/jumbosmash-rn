@@ -27,6 +27,7 @@ class SignupPage extends Component {
 
   constructor(props) {
     super(props);
+
     this.state = {
       email_input: '',
       password:'',
@@ -38,7 +39,13 @@ class SignupPage extends Component {
     let email = FormatInput.email(this.state.email_input, this.props.email_ext);
     let password = this.state.password;
 
-    (await VerifyDatabase.doesStudentExist(email)) ? this.createAccount(email, password) : VerifyDatabase.doesNotExist();
+    let studentProfile = await VerifyDatabase.doesStudentExist(email);
+    if (studentProfile){
+      this.createAccount(email, password);
+      this.props.setStudentProfile(studentProfile);
+    } else {
+      VerifyDatabase.doesNotExist();
+    }
 
   }
 
@@ -58,7 +65,7 @@ class SignupPage extends Component {
 
   goToLoginPage() {
     this.props.navigator.push({
-      component: LoginPage
+      component: LoginPage,
     });
   }
 
@@ -71,7 +78,7 @@ class SignupPage extends Component {
               style={styles.first}
               onChangeText={(text) => this.setState({email_input: text})}
               value={this.state.email_input}
-              placeholder={"Enter your tufts email"}
+              placeholder={this.props.email || "Enter your tufts email"}
             />
             <Text style={styles.last}> {this.props.email_ext} </Text>
           </View>

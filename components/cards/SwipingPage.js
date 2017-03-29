@@ -22,6 +22,7 @@ import NoView           from './NoView.js'
 import SwipeButtonsView from './SwipeButtonsView.js'
 import Card             from './Card.js';
 import NoMoreCards      from './NoMoreCards.js';
+import DummyData        from '../misc/DummyData.js'
 const global = require('../global/GlobalFunctions.js');
 
 const CARD_REFRESH_BUFFER = 30; // There should always be at least this many cards left, else fetch more
@@ -80,7 +81,25 @@ class SwipingPage extends Component {
     }
   }
 
+  // Has a random chance to show a dummy match if we in demo mode
+  _showDummyMatchWithId(swipeId) {
+    if (Math.random() > 0.5) {
+      let dummyProfs = DummyData.profiles;
+      let prof;
+      for(var i in dummyProfs) {
+        if (dummyProfs[i].id == swipeId) {
+          prof = dummyProfs[i];
+        }
+      }
+      this.props.notifyUserOfMatchWith(prof);
+    }
+  }
+
   async _asyncUpdateLikeList(profId, swipeId) {
+    if (this.props.shouldUseDummyData === true) {
+      this._showDummyMatchWithId(swipeId);
+      return;
+    }
     let url = "https://jumbosmash2017.herokuapp.com/profile/like/".concat(profId).concat("/").concat(swipeId).concat("/").concat(this.props.token.val);
     fetch(url, {
       method: 'POST',
@@ -239,7 +258,7 @@ class SwipingPage extends Component {
         handleRightSwipeForIndex={this._handleRightSwipeForIndex.bind(this)}
         handleLeftSwipeForIndex={this._handleLeftSwipeForIndex.bind(this)}
         swipeDidComplete={this._swipeDidComplete.bind(this)}
-        index={index}
+        cardIndex={index}
         positionInDeck={positionInDeck}
         cardWidth={CARD_WIDTH}
       />
