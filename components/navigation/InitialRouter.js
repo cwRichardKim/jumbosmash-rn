@@ -160,6 +160,7 @@ class InitialRouter extends Component {
       return (
         <PreReleasePage
           changePage={this._changePageFromAppNonActivityPages.bind(this)}
+          myProfile={this.state.myProfile}
         />
       )
     } else if (route.name == PageNames.appHome) {
