@@ -218,7 +218,7 @@ class AccountPage extends Component {
   }
 
   _authCompleted() {
-    this.props.routeNavigator.replace({name: PageNames.appHome});
+    this.props.loadPage(PageNames.appHome);
   }
 
   render() {
