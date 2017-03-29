@@ -80,7 +80,7 @@ module.exports = {
     let endDate = new Date(2017,4,22); // may 22nd, midnight
 
     if (__DEV__) {
-      return this.appExpirationStates().active; //TODO @richard remove this
+      return this.appExpirationStates().expired; //TODO @richard remove this
     }
 
     if (today > startDate && today < startDate) {
@@ -99,12 +99,25 @@ module.exports = {
     })
   },
   betaTesters: function() {
-    return "Zoe Baghdoyan, Josh Beri, Frankie Caiazzo, Tafari Duncan, Orlando Economos, Jason Fan, Derek Fieldhouse, Shana Gallagher, Lucy Gerhart, Ryan Gill, Cori Jacoby, Nishant Joshi, Dhruv Khurana, Rebecca Larson, Ian Leaman, Ann Lin, Emily Lin, Brian McGough, Jordan Meisel, Mackenzie Merriam, Sylvia R. Ofama, Isha Patnaik, Luis Rebollar, Joaquin Rodgriguez, Ben Sack, Maya Salcido White, Katie Saviano, Kabir Singh, Clare Stone, Lilly Tahmasebi, Aubrey Tan, Mudit Tandon, Joshua Terry, Nicholas Turiano, Harry Weissman, Gideon Wulfsohn";
+    let testers = ["Zoe Baghdoyan", "Josh Beri", "Frankie Caiazzo", "Tafari Duncan", "Orlando Economos", "Jason Fan", "Derek Fieldhouse", "Shana Gallagher", "Lucy Gerhart", "Ryan Gill", "Cori Jacoby", "Nishant Joshi", "Dhruv Khurana", "Rebecca Larson", "Ian Leaman", "Ann Lin", "Emily Lin", "Brian McGough", "Jordan Meisel", "Mackenzie Merriam", "Sylvia R. Ofama", "Isha Patnaik", "Luis Rebollar", "Joaquin Rodgriguez", "Ben Sack", "Maya Salcido White", "Katie Saviano", "Kabir Singh", "Clare Stone", "Lilly Tahmasebi", "Aubrey Tan", "Mudit Tandon", "Joshua Terry", "Nicholas Turiano", "Harry Weissman", "Gideon Wulfsohn"];
+    this.shuffle(testers);
+    return testers.join(", ");
+  },
+  developers: function() {
+    let devs = ["Elif Kinli", "Jade Chan", "Jared Moskowitz", "Justin Sullivan", "Richard Kim"];
+    this.shuffle(devs);
+    return devs.join(", ");
+  },
+  designers: function() {
+    let des = ["Bruno 'daddy' Olmedo", "Shanshan Duan"];
+    this.shuffle(des);
+    return des.join(", ");
   },
   overrideActions: function() { //override the app inactivity (used for app demo / using after expiration)
     return({
       openApp: "OPENAPP",
       demoApp: "DEMOAPP",
+      logout: "LOGOUT",
     });
   }
 }

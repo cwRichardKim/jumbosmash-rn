@@ -142,10 +142,15 @@ class InitialRouter extends Component {
       this.shouldOverridePageLoads = true;
       this.didGetUserAndProfile = false;
       this._shouldFetchUserAndProfile();
-    } else if (action == overrideActions.demoApp) {
+    } else if (action === overrideActions.demoApp) {
       this.shouldOverridePageLoads = true;
-      this.shouldUseDummyData = true
-      this._shouldFetchUserAndProfile(); //TODO @richard change with dummy data
+      this.shouldUseDummyData = true;
+      this._shouldFetchUserAndProfile();
+    } else if (action === overrideActions.logout) {
+      this.shouldOverridePageLoads = false;
+      this.shouldUseDummyData = false;
+      this.navigator.replace({name: PageNames.auth});
+      this._shouldFetchUserAndProfile();
     }
   }
 
@@ -160,7 +165,8 @@ class InitialRouter extends Component {
       return (
         <PreReleasePage
           changePage={this._changePageFromAppNonActivityPages.bind(this)}
-          myProfile={this.state.myProfile}
+          myProfile={this.state.myProfile || this.firstTimeMyProfile}
+          firebase={firebase}
         />
       )
     } else if (route.name == PageNames.appHome) {
