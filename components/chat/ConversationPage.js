@@ -9,6 +9,8 @@ import React, {Component} from 'react';
 import View from 'react-native';
 import { GiftedChat } from 'react-native-gifted-chat';
 
+let Mailer = require('NativeModules').RNMail;
+
 
 class ConversationPage extends Component {
   constructor(props) {
