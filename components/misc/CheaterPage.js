@@ -31,10 +31,6 @@ class CheaterPage extends Component {
     };
   }
 
-componentDidMount() {
-  console.log("i'm  here")
-}
-
   render() {
     return (
       <View style={styles.textContainer}>
