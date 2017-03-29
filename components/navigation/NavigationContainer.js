@@ -39,7 +39,9 @@ class NavigationContainer extends Component {
   }
 
   componentDidMount() {
-    if (this.props.firebase.auth().currentUser) {
+    if (this.props.shouldUseDummyData) {
+      this._shouldRetrieveProfilesFromStorage();
+    } else if (this.props.firebase.auth().currentUser) {
       this.props.firebase.auth()
         .currentUser
         .getToken(true)
@@ -51,7 +53,6 @@ class NavigationContainer extends Component {
         });
     }
     AppState.addEventListener('change', this._handleAppStateChange.bind(this));
-
   }
 
   componentWillUnmount () {
@@ -177,8 +178,11 @@ class NavigationContainer extends Component {
   // count: how many profiles to fetch. 0 or null is all
   async _fetchProfiles(count) {
     if (this.props.shouldUseDummyData) {
+      let dummyProfs = DummyData.profiles;
+      global.shuffle(dummyProfs);
+      dummyProfs = dummyProfs.concat(dummyProfs).concat(dummyProfs).concat(dummyProfs);
       this.setState({
-        profiles: this.state.profiles.concat(DummyData.profiles),
+        profiles: this.state.profiles.concat(dummyProfs),
       })
     } else {
       let index = await this._getLastIndex();
@@ -281,6 +285,7 @@ class NavigationContainer extends Component {
           token={this.token}
           removeSeenCards={this._removeSeenCards.bind(this)}
           routeNavigator={this.props.routeNavigator}
+          shouldUseDummyData={this.props.shouldUseDummyData}
         />
       </View>
     );

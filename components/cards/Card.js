@@ -156,7 +156,7 @@ class Card extends Component {
 
   //TODO @richard remove later, for debugging purposes
   _renderIndexView() {
-    if (__DEV__) {
+    if (__DEV__ && this.props.index) {
       return (
         <View style={styles.indexView}>
           <Text>{"[i: " +this.props.cardIndex.toString()+ ", card: "+this.props.index.toString() +"]"}</Text>
