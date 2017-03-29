@@ -17,6 +17,7 @@ import {
   Image,
   Alert,
   Animated,
+  AsyncStorage,
   Keyboard,
 } from 'react-native';
 
@@ -26,8 +27,8 @@ import RectButton         from "../global/RectButton.js";
 import GlobalStyles       from "../global/GlobalStyles.js";
 import AuthErrors         from "../login/AuthErrors.js"
 
-
 const GlobalFunctions = require('../global/GlobalFunctions.js');
+const StorageKeys = GlobalFunctions.storageKeys();
 const PageNames = GlobalFunctions.pageNames();
 const SaveButtonState = GlobalFunctions.saveButtonStates();
 let Mailer = require('NativeModules').RNMail;
@@ -77,7 +78,7 @@ class SettingsPage extends Component {
 
   _allPhotosAreNull(photos) {
     for (var i in photos) {
-      if (photos[i] != null && photos[i].large != null && photos[i].small != null) {
+      if (photos[i] != null && photos[i].large != null && photos[i].small != null && photos[i].large.length > 0) {
         return false;
       }
     }
@@ -90,7 +91,7 @@ class SettingsPage extends Component {
     let photos = this.state.photos;
     var newPhotos = [];
     for (var i in photos) {
-      if (photos[i] != null && photos[i].large != null && photos[i].small != null) {
+      if (photos[i] != null && photos[i].large != null && photos[i].small != null && photos[i].large.length > 0) {
         newPhotos.push(photos[i]);
       }
     }
@@ -231,6 +232,11 @@ class SettingsPage extends Component {
   _logout() {
     this.props.firebase.auth().signOut()
       .then(() => {
+        try {
+          AsyncStorage.removeItem(StorageKeys.myProfile);
+        } catch (error) {
+          throw "Error: Remove from storage: " + error;
+        }
         this.props.routeNavigator.replace({name: PageNames.auth});
       })
       .catch((error) => {
@@ -381,6 +387,9 @@ const styles = StyleSheet.create({
   },
   supportButton: {
     backgroundColor: '#F2585A',
+  },
+  updateProfileButton: {
+    backgroundColor: "cornflowerblue",
   },
   aboutText: {
     textAlign: 'center',

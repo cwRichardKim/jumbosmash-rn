@@ -37,7 +37,7 @@ module.exports = {
       settingsPage: "SETTINGSPAGE",
       conversation: "CONVERSATIONPAGE",
       auth: "AUTHPAGE",
-      prerelease: "PRERELEASE",
+      preRelease: "PRERELEASE",
       expiredPage: "EXPIREDPAGE",
       appHome: "APPHOMEPAGE",
       loadingPage: "LOADINGPAGE",
@@ -70,6 +70,9 @@ module.exports = {
     } else {
       return null;
     }
+  },
+  isGoodResponse: function (response) {
+    return ("status" in response && response["status"] >= 200 && response["status"] < 300);
   },
   calculateAppExpirationState: function () {
     let today = new Date();
