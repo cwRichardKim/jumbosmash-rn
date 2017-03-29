@@ -75,8 +75,10 @@ module.exports = {
     let today = new Date();
     let startDate = new Date(2017, 4, 12); // may 12th, midnight (month indexed at 0)
     let endDate = new Date(2017,4,22); // may 22nd, midnight
-
-    return this.appExpirationStates().expired; //TODO @richard remove this
+    
+    if (__DEV__) {
+      return this.appExpirationStates().active; //TODO @richard remove this
+    }
 
     if (today > startDate && today < startDate) {
       return (this.appExpirationStates().active);
