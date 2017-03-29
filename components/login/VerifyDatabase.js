@@ -19,13 +19,11 @@ class VerifyDatabase extends Component {
 
   static async doesStudentExist(email) {
     let url = "https://jumbosmash2017.herokuapp.com/student/email/" + email;
-    let isFound = false;
   
     try {
       let response = await fetch(url);
       let responseJson = await response.json(); 
-      (responseJson) ? isFound = true : isFound = false;
-      return isFound;
+      return responseJson || null;
     } catch (error) {
       throw error;
       Alert.alert("there's been an error!");
