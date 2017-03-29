@@ -98,7 +98,6 @@ class Card extends Component {
 
   componentDidMount() {
     this._animateEntrance();
-    console.log(this.props.photos);
   }
 
   _programmaticSwipeAnimation(isRight) {
