@@ -30,23 +30,10 @@ class PreReleasePage extends Component {
     };
   }
 
-  _openAboutURL() {
-    let aboutURL = "http://tufts.io/jumbosmash2017";
-    if (Linking.canOpenURL(aboutURL)) {
-      Linking.openURL(aboutURL);
-    } else {
-      Alert.alert(
-        "Unable to open link with your device",
-        "Try going to "+aboutURL+" in your local browser",
-        [{text: "OK", onPress: ()=>{}}]
-      )
-    }
-  }
-
   _loadPreReleaseApp() {
     Alert.alert(
       "Opening app in pre-release state",
-      "Jumbosmash will be released on May 12th, 2017.\n\nOnly developers and beta testers have access to the app before then. In this pre-release state, the app will function normally, but some features might seem empty. For example, no chats or matches will exist since no user will have swiped right on you.\n\nteam@jumbosmash.com for questions!",
+      "Jumbosmash will be released on May 12th, 2017.\n\nIn this pre-release state, the app will function normally, but some features might seem empty. For example, chats and matches will only exist if an early-access beta tester swiped right on you.\n\nteam@jumbosmash.com for questions!",
       [
         {text:"Open in Pre-release State", onPress:()=>{this.props.changePage(OverrideActions.openApp)}},
       ]
