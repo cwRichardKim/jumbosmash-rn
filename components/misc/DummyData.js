@@ -90,9 +90,8 @@ module.exports = {
       major: "Engineering Psychology",
       teamMember: true,
       photos: [
-        {large: "https://d13yacurqjgara.cloudfront.net/users/109914/screenshots/905742/elephant_love.jpg", small: "https://d13yacurqjgara.cloudfront.net/users/109914/screenshots/905742/elephant_love.jpg"},
-        {large: "https://d13yacurqjgara.cloudfront.net/users/1095591/screenshots/2711715/polywood_01_elephant_01_dribbble.jpg", small: "https://d13yacurqjgara.cloudfront.net/users/1095591/screenshots/2711715/polywood_01_elephant_01_dribbble.jpg"},
-        {large: "https://d13yacurqjgara.cloudfront.net/users/179241/screenshots/2633954/chris-fernandez-elephant-2.jpg", small: "https://d13yacurqjgara.cloudfront.net/users/179241/screenshots/2633954/chris-fernandez-elephant-2.jpg"},
+        {large: "https://imgur.com/g84yh3e.jpg", small: "https://imgur.com/SZXgYlg.jpg"},
+        {large: "https://imgur.com/f8M8pp8.jpg", small: "https://imgur.com/g9XOecs.jpg"},
       ]
     },
     {
@@ -104,9 +103,9 @@ module.exports = {
       major: "Engineering Psychology",
       teamMember: true,
       photos: [
-        {large: "https://d13yacurqjgara.cloudfront.net/users/109914/screenshots/905742/elephant_love.jpg", small: "https://d13yacurqjgara.cloudfront.net/users/109914/screenshots/905742/elephant_love.jpg"},
-        {large: "https://d13yacurqjgara.cloudfront.net/users/1095591/screenshots/2711715/polywood_01_elephant_01_dribbble.jpg", small: "https://d13yacurqjgara.cloudfront.net/users/1095591/screenshots/2711715/polywood_01_elephant_01_dribbble.jpg"},
-        {large: "https://d13yacurqjgara.cloudfront.net/users/179241/screenshots/2633954/chris-fernandez-elephant-2.jpg", small: "https://d13yacurqjgara.cloudfront.net/users/179241/screenshots/2633954/chris-fernandez-elephant-2.jpg"},
+        {large: "https://imgur.com/jNNkPTV.jpg", small: "https://imgur.com/pUpqN8E.jpg"},
+        {large: "https://imgur.com/R4awa3I.jpg", small: "https://imgur.com/LXchotw.jpg"},
+        {large: "https://imgur.com/PenF6JC.jpg", small: "https://imgur.com/AUj0Xlo.jpg"},
       ]
     },
     {
