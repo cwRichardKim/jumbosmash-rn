@@ -86,7 +86,7 @@ class NavigationContainer extends Component {
     if (oldCurrentProfile !== newCurrentProfile) {
       throw "Removing Cards Did Not Work";
     }
-    if (this.navigator.swipingPage) {
+    if (this.navigator && this.navigator.swipingPage) {
       this.navigator.swipingPage.setState({
         cardIndex: 0,
       });
@@ -192,6 +192,10 @@ class NavigationContainer extends Component {
       console.log("Fetching profiles for "+id+" batch size: " + batch + " index: " + index);
       return fetch(url)
       .then((response) => {
+        if (global.isUserCheatingWithResponse(response)) {
+          this.props.showCheaterPage();
+          throw "Time settings are off";
+        }
         if (global.isGoodResponse(response)) {
           return response.json();
         } else {

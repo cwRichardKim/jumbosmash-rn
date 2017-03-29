@@ -20,12 +20,12 @@ import ThankYouPage               from "../misc/ThankYouPage.js";
 import PreReleasePage             from "../misc/PreReleasePage.js";
 import LoadingPage                from "../misc/LoadingPage.js";
 import GlobalFunctions            from "../global/GlobalFunctions.js";
+import CheaterPage                from "../misc/CheaterPage.js";
 
 const PageNames = require("../global/GlobalFunctions.js").pageNames();
 const StorageKeys = require("../global/GlobalFunctions.js").storageKeys();
 
 const AppExpirationStates = GlobalFunctions.appExpirationStates();
-const APP_STATE = GlobalFunctions.calculateAppExpirationState();
 
 const firebase = require('firebase');
 const firebaseConfig = {
@@ -58,6 +58,10 @@ class InitialRouter extends Component {
     // dummy data
     this.shouldUseDummyData = false;
 
+    // check the server date to see if the user changed their date locally
+    // and mark them as cheaters if they did
+    this.userIsCheating = false;
+
     this.state = {
       myProfile: null,
     }
@@ -74,6 +78,11 @@ class InitialRouter extends Component {
   _setMyProfile (myProfile) {
     this.setState(myProfile);
     this.firstTimeMyProfile = myProfile;
+  }
+
+  _showCheaterPage() {
+    this.userIsCheating = true;
+    this.navigator.replace({name: PageNames.cheaterPage});
   }
 
   // This function is what decides what page to load. While this function is
@@ -123,9 +132,12 @@ class InitialRouter extends Component {
   // specifically overrides it. This prevents shouldFetchUserAndProfile from
   // opening the app when it has already expired
   _loadPage(page) {
-    if (this.shouldOverridePageLoads === true || APP_STATE === AppExpirationStates.active) {
+    let appState = GlobalFunctions.calculateAppExpirationState();
+    if (this.userIsCheating) {
+      this._showCheaterPage();
+    } else if (this.shouldOverridePageLoads === true || appState === AppExpirationStates.active) {
       this.navigator.replace({name: page});
-    } else if (APP_STATE === AppExpirationStates.preRelease) {
+    } else if (appState === AppExpirationStates.preRelease) {
       if (page === PageNames.auth) {
         this.navigator.replace({name: page});
       } else if (!this.shouldOverridePageLoads) {
@@ -177,7 +189,12 @@ class InitialRouter extends Component {
           myProfile={this.state.myProfile || this.firstTimeMyProfile}
           setMyProfile={this._setMyProfile.bind(this)}
           shouldUseDummyData={this.shouldUseDummyData}
+          showCheaterPage={this._showCheaterPage.bind(this)}
         />
+      );
+    } else if (route.name == PageNames.cheaterPage) {
+      return (
+        <CheaterPage/>
       );
     } else if (route.name == PageNames.loadingPage) {
       return (
@@ -205,8 +222,8 @@ class InitialRouter extends Component {
     */
 
     let initialRouteName = PageNames.loadingPage;
-
-    if (APP_STATE === AppExpirationStates.expired) {
+    let appExpirationState = GlobalFunctions.calculateAppExpirationState();
+    if (appExpirationState === AppExpirationStates.expired) {
       initialRouteName = PageNames.expiredPage;
     }
 
