@@ -19,7 +19,6 @@ import { View,
          TouchableHighlight,
          Alert,
          RefreshControl,} from 'react-native';
-import ConversationPage from './ConversationPage';
 let global = require('../global/GlobalFunctions.js');
 
 //TODO: check for servuce being down
