@@ -36,7 +36,7 @@ class PreReleasePage extends Component {
   _loadPreReleaseApp() {
     Alert.alert(
       "You're here early",
-      "Official release: May 12th, 2017.\n\nThe app will function normally, but some features might seem empty. For example, chats and matches will only exist if another early-access user swipes right on you.\n\nteam@jumbosmash.com for questions!",
+      "Official release: May 12th, 2017.\n\nThe 'pre-release state' is fully functional, but chats and matches might be scarce due to the limited number of early-access users.\n\nteam@jumbosmash.com for questions!",
       [
         {text:"Open in Pre-release State", onPress:()=>{this.props.changePage(OverrideActions.openApp)}},
       ]
