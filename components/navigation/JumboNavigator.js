@@ -18,6 +18,7 @@ import {
   Animated,
   Image,
 } from 'react-native';
+import ActionSheet        from 'react-native-actionsheet';
 
 import SwipingPage            from "../cards/SwipingPage.js";
 import ChatPage               from "../chat/ChatPage.js";
@@ -27,6 +28,14 @@ import ProfileCardView        from '../cards/ProfileCardView.js';
 import MatchView              from './MatchView.js';
 import NotificationBannerView from "./NotificationBannerView.js";
 import GlobalStyles           from "../global/GlobalStyles.js";
+
+let Mailer = require('NativeModules').RNMail;
+
+const REPORT_AS = 'Report';
+const SHOW_PROFILE_AS = 'Show profile';
+const UNMATCH_AS = 'Unsmatch';
+const actionSheetButtons = ['Cancel', SHOW_PROFILE_AS, UNMATCH_AS, REPORT_AS];
+const CANCEL_INDEX = 0;
 
 const global = require('../global/GlobalFunctions.js');
 const pushNotifications = require('../global/PushNotifications.js');
@@ -253,7 +262,11 @@ class JumboNavigator extends Component {
 
   _renderNavBarRightButton(route, navigator, index, navState) {
     if (route.name == PageNames.conversation) {
-      return null;
+      return (
+        <TouchableOpacity onPress={() => {this.ActionSheet.show()}}>
+          <Text>options</Text>
+        </TouchableOpacity>
+      );
     } else {
       return (
         <TouchableOpacity
@@ -315,7 +328,57 @@ class JumboNavigator extends Component {
     );
   }
 
+  // Action Sheet
+
+  // return UI element for action sheet
+  _renderActionSheet() {
+    return(
+      <ActionSheet
+        ref={(ref) => this.ActionSheet = ref}
+        options={actionSheetButtons}
+        cancelButtonIndex={CANCEL_INDEX}
+        tintColor={'#E53B6E'}
+        onPress={this._handleActionSheetPress.bind(this)}
+      />
+    );
+  }
+
+  _handleActionSheetPress(index) {
+    if (actionSheetButtons[index] == REPORT_AS) {
+      this._sendReport();
+    } else if (actionSheetButtons[index] == SHOW_PROFILE_AS) {
+      //TODO: @jared show profile card
+    } else if (actionSheetButtons[index] == UNMATCH_AS) {
+      //TODO: @jared unmatch
+    }
+  }
+
+
+  _sendReport() {
+    if (Mailer && Mailer.mail) {
+      Mailer.mail({
+        subject: 'Report',
+        recipients: ['team@jumbosmash.com'],
+        body: '',
+      }, (error, event) => {
+        if(error) {
+          Alert.alert('Error', 'Could not send mail. Try sending an email to team@jumbosmash.com through your mail client');
+        }
+      });
+    } else {
+      Alert.alert(
+        "Unsupported Device",
+        "Sorry, your device doesn't support in-app email :(\nSend your question / feedback to team@jumbosmash.com with your mail client",
+        [{text:"OK", onPress:()=>{}}]
+      )
+    }
+  }
+
+  // Profile card UI
+
+
   // given a profile, shows the profile over the navigator
+
   _shouldRenderProfileView() {
     if (this.state.profileToShow !== null) {
       return(
@@ -394,6 +457,7 @@ class JumboNavigator extends Component {
         {this._shouldRenderProfileView()}
         {this._shouldRenderMatchView()}
         <NotificationBannerView ref={(elem) => {this.notificationBanner = elem}}/>
+        {this._renderActionSheet()}
       </View>
     );
   }
