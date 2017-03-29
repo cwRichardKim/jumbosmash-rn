@@ -23,21 +23,31 @@ import AccountPage            from './AccountPage.js';
 import AuthErrors             from './AuthErrors.js';
 import ForgotPasswordPage     from './ForgotPasswordPage.js';
 import FormatInput            from './FormatInput.js';
+import VerifyDatabase     from "./VerifyDatabase.js";
 
 class LoginPage extends Component {
   
   constructor(props) {
     super(props);
+
+    // this.myProfile = props.studentProfile || null;
+
     this.state = {
       email_input: '',
       password:'',
     }
   }
 
-  login(){
+  async login(){
 
     var email = FormatInput.email(this.state.email_input, this.props.email_ext);
     var password = this.state.password;
+    this.props.setEmail(email);
+
+    if (!this.props.studentProfile) {
+      let studentProfile = await VerifyDatabase.doesStudentExist(email);
+      this.props.setStudentProfile(studentProfile);
+    }
 
     this.props.firebase.auth().signInWithEmailAndPassword(email, password)
       .then((user) => {
