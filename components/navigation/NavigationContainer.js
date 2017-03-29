@@ -177,9 +177,7 @@ class NavigationContainer extends Component {
   // lastID: the lastID we got from the previous list of profiles
   // count: how many profiles to fetch. 0 or null is all
   async _fetchProfiles(count) {
-    console.log("fetching profiles");
     if (this.props.shouldUseDummyData) {
-      console.log("dummy profs");
       let dummyProfs = DummyData.profiles;
       global.shuffle(dummyProfs);
       dummyProfs = dummyProfs.concat(dummyProfs).concat(dummyProfs).concat(dummyProfs);
@@ -187,7 +185,6 @@ class NavigationContainer extends Component {
         profiles: this.state.profiles.concat(dummyProfs),
       })
     } else {
-      console.log("not dummy profs");
       let index = await this._getLastIndex();
       let id = this.props.myProfile.id.toString();
       let batch = count ? count.toString() : FETCH_BATCH_SIZE.toString();
