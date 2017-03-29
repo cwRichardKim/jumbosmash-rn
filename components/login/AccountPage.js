@@ -45,7 +45,11 @@ class AccountPage extends Component {
     if (this.studentProfile) {
       this._updateStates(this.studentProfile);
     } else {
-      Alert.alert("THERE'S AN ERRROR. EMAIL US");
+      // going to login page
+      Alert.alert("you're not logged in yet, go to loginpage");
+      this.props.navigator.push({
+        component: LoginPage
+      });
     }
 
     if (this.props.firebase.auth().currentUser) {
