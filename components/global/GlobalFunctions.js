@@ -80,7 +80,7 @@ module.exports = {
     let endDate = new Date(2017,4,22); // may 22nd, midnight
 
     if (__DEV__) {
-      return this.appExpirationStates().expired; //TODO @richard remove this
+      return this.appExpirationStates().active; //TODO @richard remove this
     }
 
     if (today > startDate && today < startDate) {
