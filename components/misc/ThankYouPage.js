@@ -43,6 +43,28 @@ class ThankYouPage extends Component {
     }
   }
 
+  _loadExpiredApp() {
+    Alert.alert(
+      "Warning: app may be shut down",
+      "Jumbosmash might still work, but there's a decent chance we shut down the server due to cost reasons. Cross your fingers and give it a shot! 🤞",
+      [
+        {text:"KEEP SMASHIN'", onPress:()=>{this.props.changePage(OverrideActions.openApp)}},
+        {text:"Close", onPress:()=>{}},
+      ]
+    )
+  }
+
+  _loadDemoPage() {
+    Alert.alert(
+      "Jumbosmash Demo",
+      "The Jumbosmash Demo uses fake profiles to see the app after Senior Week is over",
+      [
+        {text:"See the demo!", onPress:()=>{this.props.changePage(OverrideActions.demoApp)}},
+        {text:"Close", onPress:()=>{}},
+      ]
+    )
+  }
+
   render() {
     return (
       <View style={{flex: 1}}>
@@ -60,13 +82,13 @@ class ThankYouPage extends Component {
               style={[styles.button, styles.smashButton]}
               textStyle={styles.buttonText}
               text="Keep Smashin'"
-              onPress={() => {this.props.changePage(OverrideActions.openApp)}}
+              onPress={this._loadExpiredApp.bind(this)}
             />
             <RectButton
               style={[styles.button, styles.dummyButton]}
               textStyle={styles.buttonText}
               text="Demo the App (dummy profiles)"
-              onPress={() => {this.props.changePage(OverrideActions.demoApp)}}
+              onPress={this._loadDemoPage.bind(this)}
             />
             <RectButton
               style={[styles.button, styles.aboutButton]}

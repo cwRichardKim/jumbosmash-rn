@@ -98,9 +98,11 @@ class InitialRouter extends Component {
     const overrideActions = GlobalFunctions.overrideActions();
     if (action === overrideActions.openApp) {
       this.shouldOverridePageLoads = true;
+      this.didGetUserAndProfile = false;
       this._shouldFetchUserAndProfile();
     } else if (action == overrideActions.demoApp) {
       this.shouldOverridePageLoads = true;
+      this.didGetUserAndProfile = false;
       this._shouldFetchUserAndProfile(); //TODO @richard change with dummy data
     }
   }
