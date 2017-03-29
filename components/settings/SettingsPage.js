@@ -17,6 +17,8 @@ import {
   Image,
   Alert,
   Animated,
+  AsyncStorage,
+  Keyboard,
 } from 'react-native';
 
 import ProfilePhotoPicker from "./ProfilePhotoPicker.js";
@@ -25,8 +27,8 @@ import RectButton         from "../global/RectButton.js";
 import GlobalStyles       from "../global/GlobalStyles.js";
 import AuthErrors         from "../login/AuthErrors.js"
 
-
 const GlobalFunctions = require('../global/GlobalFunctions.js');
+const StorageKeys = GlobalFunctions.storageKeys();
 const PageNames = GlobalFunctions.pageNames();
 const SaveButtonState = GlobalFunctions.saveButtonStates();
 let Mailer = require('NativeModules').RNMail;
@@ -34,15 +36,34 @@ let Mailer = require('NativeModules').RNMail;
 class SettingsPage extends Component {
   constructor(props) {
     super(props);
+
+    this.keyboardHeight = 0;
+
     this.state = {
-      firstName: props.firstName,
-      lastName: props.lastName,
-      description: props.description,
-      major: props.major,
-      photos: props.photos,
+      firstName: props.myProfile.firstName,
+      lastName: props.myProfile.lastName,
+      description: props.myProfile.description,
+      major: props.myProfile.major,
+      photos: props.myProfile.photos,
       saveButtonState: SaveButtonState.hide,
     }
   }
+
+  componentWillMount () {
+    this.keyboardFrameWillChangeListener = Keyboard.addListener('keyboardWillChangeFrame', this._keyboardWillChangeFrame.bind(this));
+  }
+
+  componentWillUnmount () {
+    this.keyboardFrameWillChangeListener.remove();
+  }
+
+ _keyboardWillChangeFrame (keyboard) {
+   let keyboardAppeared = keyboard.startCoordinates.screenY > keyboard.endCoordinates.screenY;
+   this.keyboardHeight = keyboardAppeared ? keyboard.endCoordinates.height : 0;
+   if (this.refs.saveButton) {
+     this.refs.saveButton.keyboardHeightWillChange(this.keyboardHeight);
+   }
+}
 
   // after the request is made, this function sets the new states correctly from the server
   _updateStates(newProfile) {
@@ -57,7 +78,7 @@ class SettingsPage extends Component {
 
   _allPhotosAreNull(photos) {
     for (var i in photos) {
-      if (photos[i] != null && photos[i].large != null && photos[i].small != null) {
+      if (photos[i] != null && photos[i].large != null && photos[i].small != null && photos[i].large.length > 0) {
         return false;
       }
     }
@@ -70,7 +91,7 @@ class SettingsPage extends Component {
     let photos = this.state.photos;
     var newPhotos = [];
     for (var i in photos) {
-      if (photos[i] != null && photos[i].large != null && photos[i].small != null) {
+      if (photos[i] != null && photos[i].large != null && photos[i].small != null && photos[i].large.length > 0) {
         newPhotos.push(photos[i]);
       }
     }
@@ -137,7 +158,8 @@ class SettingsPage extends Component {
   }
 
   // This function updates the current information to the server
-  _saveButtonPressed() {
+  // public: can be called by JumboNavigator
+  saveButtonPressed() {
     this._asyncUpdatePropertiesRequest();
   }
 
@@ -210,6 +232,11 @@ class SettingsPage extends Component {
   _logout() {
     this.props.firebase.auth().signOut()
       .then(() => {
+        try {
+          AsyncStorage.removeItem(StorageKeys.myProfile);
+        } catch (error) {
+          throw "Error: Remove from storage: " + error;
+        }
         this.props.routeNavigator.replace({name: PageNames.auth});
       })
       .catch((error) => {
@@ -217,6 +244,10 @@ class SettingsPage extends Component {
         throw error;
       }
     );
+  }
+
+  _viewProfile() {
+    this.props.showProfileCardForProfile(this.props.myProfile);
   }
 
   render() {
@@ -286,12 +317,20 @@ class SettingsPage extends Component {
           />
           <View style={styles.line}/>
           <RectButton
-            style={[styles.rectButton, styles.logoutButton]}
+            style={[styles.rectButton]}
+            textStyle={styles.buttonText}
+            onPress={this._viewProfile.bind(this)}
+            text="View Profile"
+          />
+          <RectButton
+            style={[styles.rectButton]}
+            textStyle={styles.buttonText}
             onPress={this._logout.bind(this)}
             text="Logout"
           />
           <RectButton
-            style={[styles.rectButton, styles.supportButton]}
+            style={[styles.rectButton]}
+            textStyle={styles.buttonText}
             onPress={this._sendMail.bind(this)}
             text="Help / Feedback"
           />
@@ -301,8 +340,7 @@ class SettingsPage extends Component {
               Devs: Elif Kinli, Richard Kim, Jared Moskowitz,{"\n"}
               Jade Chan{"\n"}
               Designers: Shanshan Duan, Bruno Olmedo{"\n\n"}
-              Beta Testers:{"\n"}
-              Zoe Baghdoyan, Josh Beri, Frankie Caiazzo, Tafari Duncan, Orlando Economos, Jason Fan, Derek Fieldhouse, Shana Gallagher, Lucy Gerhart, Ryan Gill, Cori Jacoby, Nishant Joshi, Dhruv Khurana, Rebecca Larson, Ian Leaman, Ann Lin, Emily Lin, Brian McGough, Jordan Meisel, Mackenzie Merriam, Sylvia R. Ofama, Isha Patnaik, Luis Rebollar, Joaquin Rodgriguez, Ben Sack, Maya Salcido White, Katie Saviano, Kabir Singh, Clare Stone, Lilly Tahmasebi, Aubrey Tan, Mudit Tandon, Joshua Terry, Nicholas Turiano, Harry Weissman, Gideon Wulfsohn
+              Beta Testers:{"\n"+GlobalFunctions.betaTesters()}
             </Text>
           </View>
           <View style={styles.hiddenText}>
@@ -311,8 +349,9 @@ class SettingsPage extends Component {
         </ScrollView>
         <SaveButton
           ref="saveButton"
-          onPress={this._saveButtonPressed.bind(this)}
+          onPress={this.saveButtonPressed.bind(this)}
           saveButtonState={this.state.saveButtonState}
+          keyboardHeight={this.keyboardHeight}
         />
       </View>
     );
@@ -348,18 +387,19 @@ const styles = StyleSheet.create({
     padding: 16,
   },
   rectButton: {
-    height: 70,
-    marginTop: 20,
-    backgroundColor: '#F2585A',
+    height: 60,
+    marginTop: 15,
+    backgroundColor: '#715BB9',
     marginLeft: 16,
     marginRight: 16,
     borderRadius: 5,
   },
-  logoutButton: {
-    backgroundColor: '#C5C3C3',
+  buttonText: {
+    color: "white",
+    fontWeight:"600",
   },
-  supportButton: {
-    backgroundColor: '#F2585A',
+  updateProfileButton: {
+    backgroundColor: "cornflowerblue",
   },
   aboutText: {
     textAlign: 'center',

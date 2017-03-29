@@ -44,7 +44,7 @@ const PageNames = require("../global/GlobalFunctions").pageNames();
 const NAVBAR_HEIGHT = (Platform.OS === 'ios') ? 64 : 54; // TODO: check the android tabbar height
 const PAGE_HEIGHT = Dimensions.get('window').height - NAVBAR_HEIGHT;
 const PAGE_WIDTH = Dimensions.get('window').width;
-const NAVBAR_SELECTOR_WIDTH = PAGE_WIDTH / 4;
+const NAVBAR_SELECTOR_WIDTH = PAGE_WIDTH * 0.2;
 
 class JumboNavigator extends Component {
   constructor(props) {
@@ -58,7 +58,7 @@ class JumboNavigator extends Component {
       // navigator, only add things that pertain to UI
       chatNotifCount: 0,
       hasUnsavedSettings: false,
-      showProfile: false,
+      profileToShow: null,
       showMatchView: false,
       matchedProfile: null, // profile of the person you matched with for MatchView
       selectorBarPan: new Animated.ValueXY({x:0, y:0}),
@@ -72,7 +72,7 @@ class JumboNavigator extends Component {
     // });
     //
     // setTimeout(() => {
-    //   this.notificationBanner.showWithMessage("next message arrived", ()=>{
+    //   this.notificationBanner.showWithMessage("next message arrived this is a longer message, 2 things and ore things here we go", ()=>{
     //     this.changePage(PageNames.chatPage);
     //   });
     // }, 2000);
@@ -123,7 +123,7 @@ class JumboNavigator extends Component {
     if (pageName == PageNames.settingsPage) {
       destinationX = - (PAGE_WIDTH - NAVBAR_SELECTOR_WIDTH) / 2;
     } else if (pageName == PageNames.chatPage) {
-      destinationX = PAGE_WIDTH - NAVBAR_SELECTOR_WIDTH * 2.5;
+      destinationX = PAGE_WIDTH / 2 - NAVBAR_SELECTOR_WIDTH / 2;
     }
 
     Animated.spring (
@@ -140,18 +140,29 @@ class JumboNavigator extends Component {
   // This is used to replace the current page with another page, not to push a
   // new page on top of the current one.
   changePage(pageName) {
-    this._animateSelectorBarTo(pageName);
     let currentlyOnSettings = this.currentPage == PageNames.settingsPage;
     let leavingSettings = currentlyOnSettings && pageName != PageNames.settingsPage;
     if (leavingSettings && this.state.hasUnsavedSettings) {
       Alert.alert(
-        "Leaving unsaved changes",
-        "Save your changes with the circular 'save' button at the bottom-right!",
-        [{text: "OK", onPress:( ) => {
-          this.navigator.replace({name: pageName});
-        }}]
+        "Unsaved Changes",
+        "Would you like to save or discard the changes you've made?",
+        [
+          {
+            text: "Save", onPress: () => {
+              if (this.settingsPage) {
+                this.settingsPage.saveButtonPressed();
+              }
+            }
+          }, {
+            text: "Discard", onPress: () => {
+              this._animateSelectorBarTo(pageName);
+              this.navigator.replace({name: pageName});
+            }
+          }
+        ]
       );
     } else {
+      this._animateSelectorBarTo(pageName);
       this.navigator.replace({name: pageName});;
     }
   }
@@ -164,13 +175,15 @@ class JumboNavigator extends Component {
     if (route.name == PageNames.settingsPage) {
       return (
         <SettingsPage
-          {...this.props.myProfile}
+          myProfile={this.props.myProfile}
+          ref={(elem) => {this.settingsPage = elem}}
           pageHeight={PAGE_HEIGHT}
           navBarHeight={NAVBAR_HEIGHT}
           updateProfile={this.props.updateProfile}
           firebase={this.props.firebase}
           setHasUnsavedSettings={(hasUnsavedSettings) => {this.setState({hasUnsavedSettings})}}
           routeNavigator={this.props.routeNavigator}
+          showProfileCardForProfile={this._showProfileCardForProfile.bind(this)}
         />
       );
     } else if (route.name == PageNames.cardsPage) {
@@ -189,7 +202,9 @@ class JumboNavigator extends Component {
           pushNotificationsHandler={this.pushNotificationsHandler}
           removeSeenCards={this.props.removeSeenCards}
           notifyUserOfMatchWith={this._notifyUserOfMatchWith.bind(this)}
-          openProfileCard={this._openProfileCard.bind(this)}
+          openProfileCard={()=>{this._showProfileCardForProfile(null)}}
+          shouldUseDummyData={this.props.shouldUseDummyData}
+
         />
       );
     } else if (route.name == PageNames.chatPage) {
@@ -201,6 +216,7 @@ class JumboNavigator extends Component {
           pageHeight={PAGE_HEIGHT}
           pushNotificationsHandler={this.pushNotificationHandler}
           token={this.props.token}
+          shouldUseDummyData={this.props.shouldUseDummyData}
         />
       );
     } else if (route.name == PageNames.conversation) {
@@ -214,6 +230,7 @@ class JumboNavigator extends Component {
           firebase={this.props.firebase}
           token={this.props.token}
           pushNotificationsHandler={this.pushNotificationHandler}
+          showProfileCardForProfile={this._showProfileCardForProfile.bind(this)}
         />
       );
     }
@@ -234,7 +251,10 @@ class JumboNavigator extends Component {
             this.changePage(PageNames.settingsPage);
           }}
         >
-          <Text>Account</Text>
+          <Image
+            source={this.currentPage == PageNames.settingsPage ? require("./images/settings-select.png") : require("./images/settings-unselect.png")}
+            style={styles.navBarIcon}
+          />
         </TouchableOpacity>
       );
     }
@@ -255,7 +275,10 @@ class JumboNavigator extends Component {
             this.changePage(PageNames.chatPage);
           }}
         >
-          <Text>Chat</Text>
+          <Image
+            source={this.currentPage == PageNames.chatPage ? require("./images/chat-select.png") : require("./images/chat-unselect.png")}
+            style={styles.navBarIcon}
+          />
         </TouchableOpacity>
       );
     }
@@ -278,9 +301,15 @@ class JumboNavigator extends Component {
           <TouchableOpacity onPress={() => {
             this.changePage(PageNames.cardsPage);
           }}>
-            <Text>Swipe!</Text>
+            <Image
+              source={this.currentPage == PageNames.cardsPage ? require("./images/heart-select.png") : require("./images/heart-unselect.png")}
+              style={styles.navBarIcon}
+            />
           </TouchableOpacity>
-          <Animated.View style={[styles.navBarSelector, {transform: this.state.selectorBarPan.getTranslateTransform()}]}/>
+          <Animated.Image
+            source={require("./images/selector-bar.png")}
+            style={[styles.navBarSelector, {transform: this.state.selectorBarPan.getTranslateTransform()}]}
+          />
         </View>
       );
     }
@@ -289,7 +318,7 @@ class JumboNavigator extends Component {
   // returns UI element of the navigation bar
   _renderNavigationBar() {
     return (
-      <Navigator.NavigationBar style={[GlobalStyles.basicShadow, styles.navigationBarContainer]}
+      <Navigator.NavigationBar style={[GlobalStyles.weakShadow, styles.navigationBarContainer]}
         routeMapper={{
           LeftButton: this._renderNavBarLeftButton.bind(this),
           RightButton: this._renderNavBarRightButton.bind(this),
@@ -347,11 +376,14 @@ class JumboNavigator extends Component {
 
   // Profile card UI
 
+
+  // given a profile, shows the profile over the navigator
+
   _shouldRenderProfileView() {
-    if (this.state.showProfile && this.swipingPage.state.cardIndex < this.props.profiles.length) {
+    if (this.state.profileToShow !== null) {
       return(
-        <View style={[GlobalStyles.absoluteCover ,styles.coverView]}>
-          <ProfileCardView {...this.props.profiles[this.swipingPage.state.cardIndex]}
+        <View style={[GlobalStyles.absoluteCover, styles.coverView]}>
+          <ProfileCardView {...(this.state.profileToShow)}
             pageHeight={PAGE_HEIGHT + NAVBAR_HEIGHT}
             exitFunction={this._closeProfileCard.bind(this)}
           />
@@ -360,15 +392,21 @@ class JumboNavigator extends Component {
     }
   }
 
-  _openProfileCard() {
+  // called to show a profile card. if no card is set, it will show
+  // the card with the current index
+  _showProfileCardForProfile(profile) {
+    let profileToShow = profile;
+    if (profile === null && this.swipingPage.state.cardIndex < this.props.profiles.length) {
+      profileToShow = this.props.profiles[this.swipingPage.state.cardIndex];
+    }
     this.setState({
-      showProfile: true,
+      profileToShow: profileToShow,
     })
   }
 
   _closeProfileCard() {
     this.setState({
-      showProfile: false,
+      profileToShow: null,
     })
   }
 
@@ -454,12 +492,17 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     width: NAVBAR_SELECTOR_WIDTH,
   },
+  navBarIcon: {
+    height: 20,
+    resizeMode: 'contain',
+  },
   navBarSelector: {
     position: 'absolute',
     bottom: 0,
-    height: 5,
     width: NAVBAR_SELECTOR_WIDTH,
     backgroundColor: 'black',
+    height: 2,
+    resizeMode: 'contain',
   }
 });
 

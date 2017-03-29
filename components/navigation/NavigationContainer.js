@@ -18,6 +18,7 @@ import {
 } from 'react-native';
 
 import JumboNavigator         from "./JumboNavigator.js"
+import DummyData              from "../misc/DummyData.js";
 
 const global = require('../global/GlobalFunctions.js');
 const PageNames = global.pageNames();
@@ -38,7 +39,9 @@ class NavigationContainer extends Component {
   }
 
   componentDidMount() {
-    if (this.props.firebase.auth().currentUser) {
+    if (this.props.shouldUseDummyData) {
+      this._shouldRetrieveProfilesFromStorage();
+    } else if (this.props.firebase.auth().currentUser) {
       this.props.firebase.auth()
         .currentUser
         .getToken(true)
@@ -50,7 +53,6 @@ class NavigationContainer extends Component {
         });
     }
     AppState.addEventListener('change', this._handleAppStateChange.bind(this));
-
   }
 
   componentWillUnmount () {
@@ -58,7 +60,7 @@ class NavigationContainer extends Component {
   }
 
   _handleAppStateChange (currentAppState) {
-    if (this && currentAppState == "inactive" && this.navigator.swipingPage) {
+    if (this && currentAppState == "inactive" && this.navigator && this.navigator.swipingPage) {
       let index = this.navigator.swipingPage.state.cardIndex;
       this._removeSeenCards(index);
       if (this.navigator && this.navigator.swipingPage) {
@@ -134,15 +136,15 @@ class NavigationContainer extends Component {
 
           // data is not of the correct type
         } else {
-          this._fetchProfiles(0, FIRST_BATCH_SIZE);
+          this._fetchProfiles(FIRST_BATCH_SIZE);
         }
         // storage is null / empty
       } else {
-        this._fetchProfiles(0, FIRST_BATCH_SIZE);
+        this._fetchProfiles(FIRST_BATCH_SIZE);
       }
       // error accessing storage
     } catch (error) {
-      this._fetchProfiles(0, FIRST_BATCH_SIZE);
+      this._fetchProfiles(FIRST_BATCH_SIZE);
       throw error;
     }
   }
@@ -174,41 +176,66 @@ class NavigationContainer extends Component {
   // fetches new profiles and adds them to the profiles array
   // lastID: the lastID we got from the previous list of profiles
   // count: how many profiles to fetch. 0 or null is all
-  async _fetchProfiles(lastID, count) {
-    let index = await this._getLastIndex();
-    // console.log("request made with last index: "+index.toString()); //TODO @richard testing code remove
-    let id = this.props.myProfile.id.toString(); //TODO: @richard replace
-    let batch = count ? count.toString() : FETCH_BATCH_SIZE.toString();
-    let url = "https://jumbosmash2017.herokuapp.com/profile/batch/"+id+"/"+index+"/"+batch+"/"+this.token.val;
-    return fetch(url)
-    .then((response) => {
-      if ("status" in response && response["status"] >= 200 && response["status"] < 300) {
-        return response.json();
-      } else {
-        throw ("status" in response) ? response["status"] : "Unknown Error";
-      }
-    }).then((responseJson) => {
-      this._setLastIndex(responseJson[responseJson.length - 1].index);
-      // for (var i = 0; i < responseJson.length; i++) { //TODO @richard testing code remove
-      //   console.log(responseJson[i].index.toString() + " " + responseJson[i].firstName);
-      // }
-      global.shuffle(responseJson);
+  async _fetchProfiles(count) {
+    if (this.props.shouldUseDummyData) {
+      let dummyProfs = DummyData.profiles;
+      global.shuffle(dummyProfs);
+      dummyProfs = dummyProfs.concat(dummyProfs).concat(dummyProfs).concat(dummyProfs);
       this.setState({
-        profiles: this.state.profiles.concat(responseJson),
+        profiles: this.state.profiles.concat(dummyProfs),
       })
-    })
-    .catch((error) => {
-      //TODO: @richard replace with real catch case
-      Alert.alert(
-        "Something Went Wrong :(",
-        error.toString(),
-        [{text: "OK", onPress: ()=>{}}]
-      );
-    });
+    } else {
+      let index = await this._getLastIndex();
+      let id = this.props.myProfile.id.toString();
+      let batch = count ? count.toString() : FETCH_BATCH_SIZE.toString();
+      let url = "https://jumbosmash2017.herokuapp.com/profile/batch/"+id+"/"+index+"/"+batch+"/"+this.token.val;
+      console.log("Fetching profiles for "+id+" batch size: " + batch + " index: " + index);
+      return fetch(url)
+      .then((response) => {
+        if (global.isGoodResponse(response)) {
+          return response.json();
+        } else {
+          throw ("status" in response) ? response["status"] : "Unknown Error";
+        }
+      }).then((responseJson) => {
+        if (responseJson.length > 0) {
+          if (__DEV__) { //TODO @richard remove. for debugging purposes
+            this.navigator.notificationBanner.showWithMessage("Retrieved " + responseJson.length + " profiles. prev index: "+index+", indexes: " + responseJson[0].index.toString() + " - " + responseJson[responseJson.length-1].index.toString())
+          }
+          this._setLastIndex(responseJson[responseJson.length - 1].index);
+          // for (var i = 0; i < responseJson.length; i++) { //TODO @richard testing code remove
+          //   console.log(responseJson[i].index.toString() + " " + responseJson[i].firstName);
+          // }
+          global.shuffle(responseJson);
+          this.setState({
+            profiles: this.state.profiles.concat(responseJson),
+          })
+        } else {
+          if (this._getLastIndex() === 0) {
+            // we're in a special case where the user has swiped right on everyone or
+            //TODO @richard notify the user
+          } else {
+            this._setLastIndex(0);
+            this._fetchProfiles(FETCH_BATCH_SIZE);
+          }
+        }
+      })
+      .catch((error) => {
+        //TODO: @richard replace with real catch case
+        Alert.alert(
+          "Something Went Wrong :(",
+          error.toString(),
+          [{text: "OK", onPress: ()=>{}}]
+        );
+      });
+    }
   }
 
   async _asyncUpdateServerProfile(id, profileChanges, newProfile) {
-    let url = "https://jumbosmash2017.herokuapp.com/profile/id/".concat(id).concat("/").concat(this.token.val);
+    if (this.props.shouldUseDummyData) {
+      return;
+    }
+    let url = "https://jumbosmash2017.herokuapp.com/profile/update/".concat(id).concat("/").concat(this.token.val);
     fetch(url, {
       method: 'POST',
       headers: {
@@ -216,10 +243,15 @@ class NavigationContainer extends Component {
       },
       body: JSON.stringify(profileChanges),
     }).then((response) => {
-      console.log(response);
-      this.setState({
-        myProfile: newProfile,
-      });
+      if (global.isGoodResponse(response)) {
+        this.props.setMyProfile(newProfile);
+      } else {
+        Alert.alert(
+          "Error",
+          "We were unable to update your profile. Try quitting the app, or send us an email at team@jumbosmash.com and we can try to make the change manually",
+          [{text: 'OK', onPress: () => {}},]
+        )
+      }
     }).catch((error) => {
       throw error; //TODO @richard show error thing
     });
@@ -229,7 +261,10 @@ class NavigationContainer extends Component {
     //TODO: @richard this is temporary while the backend isn't up yet
     let newProfile = {};
     for (let key in this.props.myProfile) {
-      newProfile[key] = (key in profileChanges) ? profileChanges[key] : this.props.myProfile[key];
+      newProfile[key] = this.props.myProfile[key];
+    }
+    for (let key in profileChanges) {
+      newProfile[key] = profileChanges[key];
     }
     let updateSuccess = await this._asyncUpdateServerProfile(this.props.myProfile.id, profileChanges, newProfile);
     // TODO: @richard on success, return the profile
@@ -250,6 +285,7 @@ class NavigationContainer extends Component {
           token={this.token}
           removeSeenCards={this._removeSeenCards.bind(this)}
           routeNavigator={this.props.routeNavigator}
+          shouldUseDummyData={this.props.shouldUseDummyData}
         />
       </View>
     );
