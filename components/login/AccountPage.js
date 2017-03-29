@@ -23,6 +23,7 @@ import GlobalStyles       from "../global/GlobalStyles.js";
 import AuthErrors         from "./AuthErrors.js"
 import ProfilePhotoPicker from "../settings/ProfilePhotoPicker.js";
 import GlobalFunctions    from "../global/GlobalFunctions.js";
+import LoginPage          from "./LoginPage.js"
 
 const PageNames = require("../global/GlobalFunctions.js").pageNames();
 

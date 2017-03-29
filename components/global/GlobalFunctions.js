@@ -41,6 +41,7 @@ module.exports = {
       expiredPage: "EXPIREDPAGE",
       appHome: "APPHOMEPAGE",
       loadingPage: "LOADINGPAGE",
+      cheaterPage: "CHEATERPAGE",
     })
   },
   storageKeys: function () {
@@ -74,10 +75,36 @@ module.exports = {
   isGoodResponse: function (response) {
     return ("status" in response && response["status"] >= 200 && response["status"] < 300);
   },
-  calculateAppExpirationState: function () {
+  dates: function () {
+    return({
+      startDate: new Date(2017, 4, 12), // may 12th, midnight (month indexed at 0)
+      endDate: new Date(2017,4,22), // may 22nd, midnight
+    })
+  },
+  // if the server date exists and is not during the active time, but the
+  // user's date does say it is active time, then the user is time-cheating
+  isUserCheatingWithServerDate: function (serverDate) {
     let today = new Date();
-    let startDate = new Date(2017, 4, 12); // may 12th, midnight (month indexed at 0)
-    let endDate = new Date(2017,4,22); // may 22nd, midnight
+    let startDate = this.dates().startDate;
+    let endDate = this.dates().endDate;
+    let one_hour = 1000*60*60;
+    let isServerDateEarly = serverDate && serverDate < startDate;
+    let isServerDateDifferent = serverDate && Math.abs(today.getTime() - serverDate.getTime()) > one_hour;
+    return isServerDateEarly && isServerDateDifferent;
+  },
+  isUserCheatingWithResponse: function (response) {
+    if (response && response.headers) {
+      let serverDate = new Date(response.headers.get('Date'));
+      if (serverDate) {
+        return this.isUserCheatingWithServerDate(serverDate)
+      }
+    }
+    return false
+  },
+  calculateAppExpirationState: function () { // serverDate is a verified date from our servers
+    let today = new Date();
+    let startDate = this.dates().startDate;
+    let endDate = this.dates().endDate;
 
     if (__DEV__) {
       return this.appExpirationStates().active; //TODO @richard remove this
@@ -96,6 +123,7 @@ module.exports = {
       active: "APPACTIVE",
       preRelease: "APPPRERELEASE",
       expired: "APPEXPIRED",
+      cheater: "CHEATER",
     })
   },
   betaTesters: function() {

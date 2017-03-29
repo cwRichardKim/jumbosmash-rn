@@ -81,7 +81,6 @@ class JumboNavigator extends Component {
     this._configureNotifications();
   }
 
-
   _configureNotifications () {
     this.pushNotificationsHandler.configure({
 
