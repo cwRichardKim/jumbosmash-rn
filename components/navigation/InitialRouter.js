@@ -26,6 +26,7 @@ const PageNames = require("../global/GlobalFunctions.js").pageNames();
 const StorageKeys = require("../global/GlobalFunctions.js").storageKeys();
 
 const AppExpirationStates = GlobalFunctions.appExpirationStates();
+const APP_STATE = GlobalFunctions.calculateAppExpirationState();
 
 const firebase = require('firebase');
 const firebaseConfig = {
@@ -222,8 +223,7 @@ class InitialRouter extends Component {
     */
 
     let initialRouteName = PageNames.loadingPage;
-    let appExpirationState = GlobalFunctions.calculateAppExpirationState();
-    if (appExpirationState === AppExpirationStates.expired) {
+    if (APP_STATE === AppExpirationStates.expired) {
       initialRouteName = PageNames.expiredPage;
     }
 
