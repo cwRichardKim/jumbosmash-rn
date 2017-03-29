@@ -77,7 +77,7 @@ class ProfileCardView extends Component {
   _shouldRenderSafeNameText() {
     let lName = this.props.lastName.toLowerCase();
     let fName = this.props.firstName.toLowerCase();
-    let email = this.props.email;
+    let email = this.props.email.toLowerCase();
 
     if (fName.length <= 2 || lName.length <=2 || !(email.includes(lName) || email.includes(fName))) {
       let emailName = email.split("@")[0];

@@ -39,7 +39,9 @@ class NavigationContainer extends Component {
   }
 
   componentDidMount() {
-    if (this.props.firebase.auth().currentUser) {
+    if (this.props.shouldUseDummyData) {
+      this._shouldRetrieveProfilesFromStorage();
+    } else if (this.props.firebase.auth().currentUser) {
       this.props.firebase.auth()
         .currentUser
         .getToken(true)
@@ -51,7 +53,6 @@ class NavigationContainer extends Component {
         });
     }
     AppState.addEventListener('change', this._handleAppStateChange.bind(this));
-
   }
 
   componentWillUnmount () {
@@ -176,11 +177,17 @@ class NavigationContainer extends Component {
   // lastID: the lastID we got from the previous list of profiles
   // count: how many profiles to fetch. 0 or null is all
   async _fetchProfiles(count) {
+    console.log("fetching profiles");
     if (this.props.shouldUseDummyData) {
+      console.log("dummy profs");
+      let dummyProfs = DummyData.profiles;
+      global.shuffle(dummyProfs);
+      dummyProfs = dummyProfs.concat(dummyProfs).concat(dummyProfs).concat(dummyProfs);
       this.setState({
-        profiles: this.state.profiles.concat(DummyData.profiles),
+        profiles: this.state.profiles.concat(dummyProfs),
       })
     } else {
+      console.log("not dummy profs");
       let index = await this._getLastIndex();
       let id = this.props.myProfile.id.toString();
       let batch = count ? count.toString() : FETCH_BATCH_SIZE.toString();
@@ -281,6 +288,7 @@ class NavigationContainer extends Component {
           token={this.token}
           removeSeenCards={this._removeSeenCards.bind(this)}
           routeNavigator={this.props.routeNavigator}
+          shouldUseDummyData={this.props.shouldUseDummyData}
         />
       </View>
     );

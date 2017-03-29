@@ -40,11 +40,11 @@ class SettingsPage extends Component {
     this.keyboardHeight = 0;
 
     this.state = {
-      firstName: props.firstName,
-      lastName: props.lastName,
-      description: props.description,
-      major: props.major,
-      photos: props.photos,
+      firstName: props.myProfile.firstName,
+      lastName: props.myProfile.lastName,
+      description: props.myProfile.description,
+      major: props.myProfile.major,
+      photos: props.myProfile.photos,
       saveButtonState: SaveButtonState.hide,
     }
   }
@@ -246,6 +246,10 @@ class SettingsPage extends Component {
     );
   }
 
+  _viewProfile() {
+    this.props.showProfileCardForProfile(this.props.myProfile);
+  }
+
   render() {
     return (
       <View style={[styles.container, {marginTop: this.props.navBarHeight, height: this.props.pageHeight}]}>
@@ -313,12 +317,20 @@ class SettingsPage extends Component {
           />
           <View style={styles.line}/>
           <RectButton
-            style={[styles.rectButton, styles.logoutButton]}
+            style={[styles.rectButton]}
+            textStyle={styles.buttonText}
+            onPress={this._viewProfile.bind(this)}
+            text="View Profile"
+          />
+          <RectButton
+            style={[styles.rectButton]}
+            textStyle={styles.buttonText}
             onPress={this._logout.bind(this)}
             text="Logout"
           />
           <RectButton
-            style={[styles.rectButton, styles.supportButton]}
+            style={[styles.rectButton]}
+            textStyle={styles.buttonText}
             onPress={this._sendMail.bind(this)}
             text="Help / Feedback"
           />
@@ -375,18 +387,16 @@ const styles = StyleSheet.create({
     padding: 16,
   },
   rectButton: {
-    height: 70,
-    marginTop: 20,
-    backgroundColor: '#F2585A',
+    height: 60,
+    marginTop: 15,
+    backgroundColor: '#715BB9',
     marginLeft: 16,
     marginRight: 16,
     borderRadius: 5,
   },
-  logoutButton: {
-    backgroundColor: '#C5C3C3',
-  },
-  supportButton: {
-    backgroundColor: '#F2585A',
+  buttonText: {
+    color: "white",
+    fontWeight:"600",
   },
   updateProfileButton: {
     backgroundColor: "cornflowerblue",

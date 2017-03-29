@@ -17,6 +17,7 @@ import NavigationContainer        from "./NavigationContainer.js";
 import AuthContainer              from "../login/AuthContainer.js";
 import DummyData                  from "../misc/DummyData.js";
 import ThankYouPage               from "../misc/ThankYouPage.js";
+import PreReleasePage             from "../misc/PreReleasePage.js";
 import LoadingPage                from "../misc/LoadingPage.js";
 import GlobalFunctions            from "../global/GlobalFunctions.js";
 
@@ -124,6 +125,12 @@ class InitialRouter extends Component {
   _loadPage(page) {
     if (this.shouldOverridePageLoads === true || APP_STATE === AppExpirationStates.active) {
       this.navigator.replace({name: page});
+    } else if (APP_STATE === AppExpirationStates.preRelease) {
+      if (page === PageNames.auth) {
+        this.navigator.replace({name: page});
+      } else if (!this.shouldOverridePageLoads) {
+        this.navigator.replace({name: PageNames.preRelease});
+      }
     }
   }
 
@@ -137,7 +144,6 @@ class InitialRouter extends Component {
       this._shouldFetchUserAndProfile();
     } else if (action == overrideActions.demoApp) {
       this.shouldOverridePageLoads = true;
-      this.didGetUserAndProfile = false;
       this.shouldUseDummyData = true
       this._shouldFetchUserAndProfile(); //TODO @richard change with dummy data
     }
@@ -147,6 +153,12 @@ class InitialRouter extends Component {
     if (route.name == PageNames.expiredPage) {
       return (
         <ThankYouPage
+          changePage={this._changePageFromAppNonActivityPages.bind(this)}
+        />
+      )
+    } else if (route.name == PageNames.preRelease) {
+      return (
+        <PreReleasePage
           changePage={this._changePageFromAppNonActivityPages.bind(this)}
         />
       )
@@ -170,6 +182,7 @@ class InitialRouter extends Component {
           firebase={firebase}
           routeNavigator={navigator}
           setMyProfile={this._setMyProfile.bind(this)}
+          loadPage={this._loadPage.bind(this)}
         />
       )
     }

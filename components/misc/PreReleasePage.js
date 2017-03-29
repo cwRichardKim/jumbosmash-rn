@@ -1,7 +1,7 @@
 'use strict';
 
 /*
-page that shows after the app is finished / the server shut down
+page that shows before the app is released
 */
 
 import React, {Component} from 'react';
@@ -11,7 +11,6 @@ import {
   Text,
   ScrollView,
   Dimensions,
-  Linking,
   Alert,
 } from 'react-native';
 
@@ -23,7 +22,7 @@ const HEIGHT = Dimensions.get('window').height;
 const WIDTH = Dimensions.get('window').width;
 const PADDING = 20;
 
-class ThankYouPage extends Component {
+class PreReleasePage extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -43,24 +42,12 @@ class ThankYouPage extends Component {
     }
   }
 
-  _loadExpiredApp() {
+  _loadPrereleaseApp() {
     Alert.alert(
-      "Warning: app may be shut down",
-      "Jumbosmash might still work, but there's a decent chance we shut down the server due to cost reasons. Cross your fingers and give it a shot! 🤞",
+      "Opening app in pre-release state",
+      "Jumbosmash will be released on May 12th, 2017.\n\nOnly developers and beta testers have access to the app before then. In this pre-release state, the app will function normally, but some features might seem empty. For example, no chats or matches will exist since no user will have swiped right on you.\n\nteam@jumbosmash.com for questions!",
       [
-        {text:"KEEP SMASHIN'", onPress:()=>{this.props.changePage(OverrideActions.openApp)}},
-        {text:"Close", onPress:()=>{}},
-      ]
-    )
-  }
-
-  _loadDemoPage() {
-    Alert.alert(
-      "Jumbosmash Demo",
-      "The Demo uses fake profiles to see what the app was like now that Senior Week is over",
-      [
-        {text:"See the demo!", onPress:()=>{this.props.changePage(OverrideActions.demoApp)}},
-        {text:"Close", onPress:()=>{}},
+        {text:"Open in Pre-release State", onPress:()=>{this.props.changePage(OverrideActions.openApp)}},
       ]
     )
   }
@@ -70,37 +57,19 @@ class ThankYouPage extends Component {
       <View style={{flex: 1}}>
         <ScrollView style={styles.scrollView}>
           <View style={styles.header}>
-            <Text style={[GlobalStyles.boldText, styles.title]}>Congratulations{"\n"}Class of 2017</Text>
+            <Text style={[GlobalStyles.boldText, styles.title]}>Welcome to Jumbosmash ;)</Text>
           </View>
           <View style={styles.textContainer}>
             <Text style={[GlobalStyles.boldText, {marginBottom: 10}]}>We hope you had fun</Text>
             <Text style={GlobalStyles.text}>Using JumboSmash, we certainly had fun making it. We wish you all the best of luck and hope you keep in contact with your matches. Off to the real world we go!</Text>
-            <Text style={[GlobalStyles.text, styles.emojiText]}>🙈🙊🙉🍆🍑</Text>
           </View>
           <View style={styles.buttonContainer}>
             <RectButton
               style={[styles.button, styles.smashButton]}
               textStyle={styles.buttonText}
-              text="Keep Smashin'"
-              onPress={this._loadExpiredApp.bind(this)}
+              text="PRE-RELEASE"
+              onPress={this._loadPrereleaseApp.bind(this)}
             />
-            <RectButton
-              style={[styles.button, styles.dummyButton]}
-              textStyle={styles.buttonText}
-              text="Demo the App (dummy profiles)"
-              onPress={this._loadDemoPage.bind(this)}
-            />
-            <RectButton
-              style={[styles.button, styles.aboutButton]}
-              textStyle={styles.buttonText}
-              text="Making of / About the Team"
-              onPress={this._openAboutURL.bind(this)}
-            />
-          </View>
-          <View style={[styles.textContainer, styles.thankYous]}>
-            <Text style={[GlobalStyles.boldText, {marginBottom: 10}]}>Thanks to:</Text>
-            <Text style={GlobalStyles.text}>The team is Richard Kim, Elif Kinli, Jared Moskowitz, Jade Chan, Shanshan Duan, Bruno "daddy" Olmedo, and Justin Sullivan.{"\n\n"}However, we’d like to thank our many beta testers including:{"\n"}</Text>
-            <Text style={[GlobalStyles.text, {textAlign: 'center'}]}>{GlobalFunctions.betaTesters()}</Text>
           </View>
         </ScrollView>
       </View>
@@ -127,10 +96,6 @@ const styles = StyleSheet.create({
     padding: PADDING,
     paddingBottom: 0,
   },
-  emojiText: {
-    textAlign: 'center',
-    margin: 20,
-  },
   buttonContainer: {
     padding: PADDING,
     width: WIDTH,
@@ -148,18 +113,9 @@ const styles = StyleSheet.create({
     color: "white",
     fontWeight:"600",
   },
-  dummyButton: {
-    backgroundColor: "#715BB9",
-  },
   smashButton: {
     backgroundColor: "#715BB9",
   },
-  aboutButton: {
-    backgroundColor: "#715BB9"
-  },
-  thankYous: {
-    marginBottom: 50,
-  }
 });
 
-  export default ThankYouPage;
+  export default PreReleasePage;

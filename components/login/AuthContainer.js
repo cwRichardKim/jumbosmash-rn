@@ -71,6 +71,7 @@ class AuthContainer extends Component {
                 studentProfile: this.studentProfile,
                 setMyProfile: this.setMyProfile.bind(this),
                 myProfile: this.props.myProfile,
+                loadPage: this.props.loadPage.bind(this),
                 email_ext: "@tufts.edu" });
           }
         }}
