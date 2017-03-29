@@ -197,7 +197,6 @@ class AccountPage extends Component {
         },
         body: JSON.stringify(body),
       }).then((response) => {
-        console.log(response);
         if ("status" in response && response["status"] >= 200 && response["status"] < 300) {
           return response.json();
         } else {
