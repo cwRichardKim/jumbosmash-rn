@@ -185,6 +185,8 @@ class NavigationContainer extends Component {
       this.setState({
         profiles: this.state.profiles.concat(dummyProfs),
       })
+    } else if (!this.props.myProfile) {
+      setTimeout(this._fetchProfiles.bind(this), 200);
     } else {
       let index = await this._getLastIndex();
       let id = this.props.myProfile.id.toString();
@@ -236,10 +238,27 @@ class NavigationContainer extends Component {
     }
   }
 
+  // rearranges photos pushed to the front eg: [null, x, y] -> [x, y, null]
+  _reArrangePhotos() {
+    let photos = this.props.myProfile.photos;
+    var newPhotos = [];
+    for (var i in photos) {
+      if (photos[i] != null && photos[i].large != null && photos[i].small != null && photos[i].large.length > 0) {
+        newPhotos.push(photos[i]);
+      }
+    }
+    while (newPhotos.length < photos.length) {
+      newPhotos.push(null);
+    }
+    this.props.updateMyProfile({"photos": newPhotos});
+    return newPhotos;
+  }
+
   async _asyncUpdateServerProfile(id, newProfile) {
     if (this.props.shouldUseDummyData) {
       return;
     }
+    newProfile["photos"] = this._reArrangePhotos();
     let url = "https://jumbosmash2017.herokuapp.com/profile/update/".concat(id).concat("/").concat(this.token.val);
     fetch(url, {
       method: 'POST',

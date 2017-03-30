@@ -70,7 +70,7 @@ class InitialRouter extends Component {
   // state.myProfile is used as the primary "myProfile" reference and rerenders
   // all the pages
   _setMyProfile (myProfile) {
-    this.setState(myProfile);
+    this.setState({myProfile: myProfile});
     AsyncStorage.setItem(StorageKeys.myProfile, JSON.stringify(myProfile));
   }
 
@@ -83,7 +83,6 @@ class InitialRouter extends Component {
     for (var key in changes) {
       newProfile[key] = changes[key];
     }
-
     this._setMyProfile(newProfile);
   }
 
