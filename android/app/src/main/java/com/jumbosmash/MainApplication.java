@@ -4,11 +4,6 @@ import android.app.Application;
 import android.util.Log;
 
 import com.facebook.react.ReactApplication;
-import com.dieam.reactnativepushnotification.ReactNativePushNotificationPackage;
-import fr.bamlab.rnimageresizer.ImageResizerPackage;
-import com.chirag.RNMail.RNMail;
-import com.RNFetchBlob.RNFetchBlobPackage;
-import com.reactnative.ivpusic.imagepicker.PickerPackage;
 import com.facebook.react.ReactInstanceManager;
 import com.facebook.react.ReactNativeHost;
 import com.facebook.react.ReactPackage;
@@ -28,12 +23,7 @@ public class MainApplication extends Application implements ReactApplication {
     @Override
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
-          new MainReactPackage(),
-            new ReactNativePushNotificationPackage(),
-            new ImageResizerPackage(),
-            new RNMail(),
-            new RNFetchBlobPackage(),
-            new PickerPackage()
+          new MainReactPackage()
       );
     }
   };
