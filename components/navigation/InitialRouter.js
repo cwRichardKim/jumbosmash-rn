@@ -44,12 +44,6 @@ class InitialRouter extends Component {
     // this flag is to make sure _shouldFetchUserAndProfile is only called once
     this.didGetUserAndProfile = false;
 
-    // first time login / signup, this is required because state isn't guaranteed
-    // to update in time. this.state.myProfile is used to rerender pages when
-    // myProfile changes, this.firstTimeMyProfile is used to create the pages in
-    // the first place
-    this.firstTimeMyProfile = null;
-
     // allows user to override the expired or prerelease page. for example,
     // if user sees expired page but chooses to continue using the app,
     // this is set to true
@@ -74,11 +68,23 @@ class InitialRouter extends Component {
 
   // This function allows any child page to set the myProfile for the entire app
   // state.myProfile is used as the primary "myProfile" reference and rerenders
-  // all the pages, but the first time we load, setState does not guarantee it
-  // finish before render is called, so we're using firstTimeMyProfile as well
+  // all the pages
   _setMyProfile (myProfile) {
     this.setState(myProfile);
-    this.firstTimeMyProfile = myProfile;
+    AsyncStorage.setItem(StorageKeys.myProfile, JSON.stringify(myProfile));
+  }
+
+  // updates myProfile given a list of changes
+  _updateMyProfile(changes) {
+    let newProfile = {};
+    for (var key in this.state.myProfile) {
+      newProfile[key] = this.state.myProfile[key];
+    }
+    for (var key in changes) {
+      newProfile[key] = changes[key];
+    }
+
+    this._setMyProfile(newProfile);
   }
 
   _showCheaterPage() {
@@ -178,7 +184,7 @@ class InitialRouter extends Component {
       return (
         <PreReleasePage
           changePage={this._changePageFromAppNonActivityPages.bind(this)}
-          myProfile={this.state.myProfile || this.firstTimeMyProfile}
+          myProfile={this.state.myProfile}
           firebase={firebase}
         />
       )
@@ -187,8 +193,9 @@ class InitialRouter extends Component {
         <NavigationContainer
           firebase={firebase}
           routeNavigator={navigator}
-          myProfile={this.state.myProfile || this.firstTimeMyProfile}
+          myProfile={this.state.myProfile}
           setMyProfile={this._setMyProfile.bind(this)}
+          updateMyProfile={this._updateMyProfile.bind(this)}
           shouldUseDummyData={this.shouldUseDummyData}
           showCheaterPage={this._showCheaterPage.bind(this)}
         />
