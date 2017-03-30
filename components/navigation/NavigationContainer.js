@@ -259,7 +259,6 @@ class NavigationContainer extends Component {
       return;
     }
     newProfile["photos"] = this._reArrangePhotos();
-    console.log(newProfile);
     let url = "https://jumbosmash2017.herokuapp.com/profile/update/".concat(id).concat("/").concat(this.token.val);
     fetch(url, {
       method: 'POST',
