@@ -84,7 +84,7 @@ class InitialRouter extends Component {
       newProfile[key] = changes[key];
     }
 
-    this.setState({myProfile: newProfile});
+    this._setMyProfile(newProfile);
   }
 
   _showCheaterPage() {
