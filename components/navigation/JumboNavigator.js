@@ -154,6 +154,9 @@ class JumboNavigator extends Component {
             }
           }, {
             text: "Discard", onPress: () => {
+              if (this.settingsPage && this.settingsPage.oldProfile) {
+                this.props.updateMyProfile(this.settingsPage.oldProfile);
+              }
               this._animateSelectorBarTo(pageName);
               this.navigator.replace({name: pageName});
             }
@@ -178,11 +181,12 @@ class JumboNavigator extends Component {
           ref={(elem) => {this.settingsPage = elem}}
           pageHeight={PAGE_HEIGHT}
           navBarHeight={NAVBAR_HEIGHT}
-          updateProfile={this.props.updateProfile}
+          updateProfileToServer={this.props.updateProfileToServer}
           firebase={this.props.firebase}
           setHasUnsavedSettings={(hasUnsavedSettings) => {this.setState({hasUnsavedSettings})}}
           routeNavigator={this.props.routeNavigator}
           showProfileCardForProfile={this._showProfileCardForProfile.bind(this)}
+          updateMyProfile={this.props.updateMyProfile}
         />
       );
     } else if (route.name == PageNames.cardsPage) {
@@ -197,7 +201,7 @@ class JumboNavigator extends Component {
           pageHeight={PAGE_HEIGHT}
           firebase={this.props.firebase}
           token={this.props.token}
-          updateProfile={this.props.updateProfile}
+          updateProfileToServer={this.props.updateProfileToServer}
           pushNotificationsHandler={this.pushNotificationsHandler}
           removeSeenCards={this.props.removeSeenCards}
           notifyUserOfMatchWith={this._notifyUserOfMatchWith.bind(this)}

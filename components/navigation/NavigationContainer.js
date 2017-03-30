@@ -69,8 +69,9 @@ class NavigationContainer extends Component {
     }
   }
 
-  _saveUserToken (token, id) {
-    this._updateProfile({deviceIdList: [token]})
+  async _saveUserToken (token, id) {
+    await this.props.updateMyProfile({deviceIdList: [token]});
+    this._updateProfileToServer();
   }
 
   // Called when the app is closed from SwipingPage.js
@@ -235,7 +236,7 @@ class NavigationContainer extends Component {
     }
   }
 
-  async _asyncUpdateServerProfile(id, profileChanges, newProfile) {
+  async _asyncUpdateServerProfile(id, newProfile) {
     if (this.props.shouldUseDummyData) {
       return;
     }
@@ -245,10 +246,14 @@ class NavigationContainer extends Component {
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify(profileChanges),
+      body: JSON.stringify(newProfile),
     }).then((response) => {
       if (global.isGoodResponse(response)) {
-        this.props.setMyProfile(newProfile);
+        Alert.alert(
+          "Success!",
+          "Successfully updated your profile",
+          [{text: 'OK', onPress: () => {}},]
+        )
       } else {
         Alert.alert(
           "Error",
@@ -261,18 +266,9 @@ class NavigationContainer extends Component {
     });
   }
 
-  async _updateProfile(profileChanges) {
-    //TODO: @richard this is temporary while the backend isn't up yet
-    let newProfile = {};
-    for (let key in this.props.myProfile) {
-      newProfile[key] = this.props.myProfile[key];
-    }
-    for (let key in profileChanges) {
-      newProfile[key] = profileChanges[key];
-    }
-    let updateSuccess = await this._asyncUpdateServerProfile(this.props.myProfile.id, profileChanges, newProfile);
-    // TODO: @richard on success, return the profile
-    return newProfile;
+  async _updateProfileToServer() {
+    let updateSuccess = await this._asyncUpdateServerProfile(this.props.myProfile.id, this.props.myProfile);
+    return updateSuccess;
   }
 
   render() {
@@ -284,12 +280,13 @@ class NavigationContainer extends Component {
           fetchProfiles={this._fetchProfiles.bind(this)}
           profiles={this.state.profiles}
           myProfile={this.props.myProfile}
-          updateProfile={this._updateProfile.bind(this)}
+          updateProfileToServer={this._updateProfileToServer.bind(this)}
           firebase={this.props.firebase}
           token={this.token}
           removeSeenCards={this._removeSeenCards.bind(this)}
           routeNavigator={this.props.routeNavigator}
           shouldUseDummyData={this.props.shouldUseDummyData}
+          updateMyProfile={this.props.updateMyProfile}
         />
       </View>
     );

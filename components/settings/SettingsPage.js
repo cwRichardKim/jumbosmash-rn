@@ -38,13 +38,9 @@ class SettingsPage extends Component {
     super(props);
 
     this.keyboardHeight = 0;
+    this.oldProfile = props.myProfile;
 
     this.state = {
-      firstName: props.myProfile.firstName,
-      lastName: props.myProfile.lastName,
-      description: props.myProfile.description,
-      major: props.myProfile.major,
-      photos: props.myProfile.photos,
       saveButtonState: SaveButtonState.hide,
     }
   }
@@ -65,17 +61,6 @@ class SettingsPage extends Component {
    }
 }
 
-  // after the request is made, this function sets the new states correctly from the server
-  _updateStates(newProfile) {
-    this.setState({
-      firstName: newProfile.firstName,
-      lastName: newProfile.lastName,
-      description: newProfile.description,
-      major: newProfile.major,
-      photos: newProfile.photos,
-    })
-  }
-
   _allPhotosAreNull(photos) {
     for (var i in photos) {
       if (photos[i] != null && photos[i].large != null && photos[i].small != null && photos[i].large.length > 0) {
@@ -88,7 +73,7 @@ class SettingsPage extends Component {
   // returns the photos pushed to the front eg: [null, x, y] -> [x, y, null]
   // returns false if all photos are null
   _reArrangePhotos() {
-    let photos = this.state.photos;
+    let photos = this.props.myProfile.photos;
     var newPhotos = [];
     for (var i in photos) {
       if (photos[i] != null && photos[i].large != null && photos[i].small != null && photos[i].large.length > 0) {
@@ -104,13 +89,13 @@ class SettingsPage extends Component {
   // returns true if all checks are met, returns false and calls proper
   // errors if not
   _checkPropertiesAreValid () {
-    if (this._allPhotosAreNull(this.state.photos)) {
+    if (this._allPhotosAreNull(this.props.myProfile.photos)) {
       Alert.alert(
         "Must have at least 1 photo!",
         "Please add at least 1 photo before saving",
         [{text: 'OK', onPress: () => {}},],
       );
-    } else if (this.state.firstName.length < 1) {
+    } else if (this.props.myProfile.firstName.length < 1) {
       Alert.alert(
         "Must include your name!",
         "",
@@ -123,22 +108,16 @@ class SettingsPage extends Component {
   }
 
   async _asyncUpdatePropertiesRequest () {
-    if (this.props.updateProfile) {
+    if (this.props.updateProfileToServer) {
       if (this._checkPropertiesAreValid()) {
         this.setState({
           saveButtonState: SaveButtonState.saving,
         });
-        this.props.updateProfile({
-          firstName: this.state.firstName,
-          lastName: this.state.lastName,
-          description: this.state.description,
-          major: this.state.major,
-          photos: this._reArrangePhotos(),
-        }).then((newProfileResponse) => { // success
-          this._updateStates(newProfileResponse);
-          this.refs.saveButton.animateOut(() => {
-            this._changesSuccessfullyUpdated();
-          });
+        this.props.updateProfileToServer()
+          .then((newProfileResponse) => { // success
+            this.refs.saveButton.animateOut(() => {
+              this._changesSuccessfullyUpdated();
+            });
         }).catch((error) => {
           Alert.alert(
             "Update Error",
@@ -192,19 +171,19 @@ class SettingsPage extends Component {
     }
   }
 
-  _changeWasMade(changeStateFunc) {
-    this.setState({saveButtonState:SaveButtonState.show})
-    if (this.props.setHasUnsavedSettings){
+  _changeWasMade(changes) {
+    this.setState({saveButtonState:SaveButtonState.show});
+    if (this.props.setHasUnsavedSettings) {
       this.props.setHasUnsavedSettings(true);
     }
-    if (changeStateFunc) {
-      changeStateFunc();
+    if (changes) {
+      this.props.updateMyProfile(changes);
     }
   }
 
   _changesSuccessfullyUpdated() {
     this.setState({saveButtonState: SaveButtonState.hide});
-    if (this.props.setHasUnsavedSettings){
+    if (this.props.setHasUnsavedSettings) {
       this.props.setHasUnsavedSettings(false);
     }
   }
@@ -255,7 +234,7 @@ class SettingsPage extends Component {
       <View style={[styles.container, {marginTop: this.props.navBarHeight, height: this.props.pageHeight}]}>
         <ScrollView ref='scrollView'>
           <ProfilePhotoPicker
-            photos={this.state.photos}
+            photos={this.props.myProfile.photos}
             updatePhotos={this._updatePhotos.bind(this)}
             firebase={this.props.firebase}
           />
@@ -263,8 +242,8 @@ class SettingsPage extends Component {
 
           <View style={styles.line}/>
           <TextInput style={[GlobalStyles.text, styles.textListItem, styles.textInput]}
-            onChangeText={(firstName) => {this._changeWasMade(()=>{this.setState({firstName})})}}
-            value={this.state.firstName}
+            onChangeText={(firstName) => {this._changeWasMade({"firstName":firstName})}}
+            value={this.props.myProfile.firstName}
             color="#C3C1C1"
             maxLength={80}
             ref='firstName'
@@ -278,8 +257,8 @@ class SettingsPage extends Component {
 
           <View style={styles.line}/>
           <TextInput style={[GlobalStyles.text, styles.textListItem, styles.textInput]}
-            onChangeText={(lastName) => {this._changeWasMade(()=>{this.setState({lastName})})}}
-            value={this.state.lastName}
+            onChangeText={(lastName) => {this._changeWasMade({"lastName":lastName})}}
+            value={this.props.myProfile.lastName}
             color="#C3C1C1"
             maxLength={80}
             ref='lastName'
@@ -293,8 +272,8 @@ class SettingsPage extends Component {
 
           <View style={styles.line}/>
           <TextInput style={[GlobalStyles.text, styles.textListItem, styles.textInput, {height: 100, paddingTop: 5, paddingBottom: 5}]}
-            onChangeText={(description) => {this._changeWasMade(()=>{this.setState({description})})}}
-            value={this.state.description}
+            onChangeText={(description) => {this._changeWasMade({"description":description})}}
+            value={this.props.myProfile.description}
             color="#C3C1C1"
             multiline={true}
             maxLength={500}
@@ -307,8 +286,8 @@ class SettingsPage extends Component {
 
           <View style={styles.line}/>
           <TextInput style={[GlobalStyles.text, styles.textListItem, styles.textInput]}
-            onChangeText={(major) => {this._changeWasMade(()=>{this.setState({major})})}}
-            value={this.state.major}
+            onChangeText={(major) => {this._changeWasMade({"major":major})}}
+            value={this.props.myProfile.major}
             color="#C3C1C1"
             maxLength={100}
             ref='major'
