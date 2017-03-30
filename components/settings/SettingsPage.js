@@ -70,22 +70,6 @@ class SettingsPage extends Component {
     return true;
   }
 
-  // returns the photos pushed to the front eg: [null, x, y] -> [x, y, null]
-  // returns false if all photos are null
-  _reArrangePhotos() {
-    let photos = this.props.myProfile.photos;
-    var newPhotos = [];
-    for (var i in photos) {
-      if (photos[i] != null && photos[i].large != null && photos[i].small != null && photos[i].large.length > 0) {
-        newPhotos.push(photos[i]);
-      }
-    }
-    while (newPhotos.length < photos.length) {
-      newPhotos.push(null);
-    }
-    return newPhotos;
-  }
-
   // returns true if all checks are met, returns false and calls proper
   // errors if not
   _checkPropertiesAreValid () {
@@ -161,7 +145,7 @@ class SettingsPage extends Component {
   // allows ProfilePhotoPicker to adjust the photos
   _updatePhotos(photos) {
     if (photos && photos.length >= 3) {
-      this._changeWasMade(()=>{this.setState({photos})});
+      this._changeWasMade({"photos":photos});
     } else {
       Alert.alert(
         "Photo Error",
