@@ -49,7 +49,6 @@ class AuthContainer extends Component {
 
   setMyProfile(profile) {
     this.props.setMyProfile(profile);
-    AsyncStorage.setItem(StorageKeys.myProfile, JSON.stringify(profile));
   }
 
   render(){
