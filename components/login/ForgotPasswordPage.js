@@ -1,7 +1,8 @@
 'use strict';
 
 /*
-This page is the current representation of a logged in user.
+
+This page is handles when a user forgot their password.
 */
 
 import React, {Component} from 'react';
@@ -20,7 +21,7 @@ import FormatInput            from './FormatInput.js';
 
 const PageNames = require("../global/GlobalFunctions.js").pageNames();
 
-class forgotPasswordPage extends Component {
+class ForgotPasswordPage extends Component {
 
   constructor(props) {
     super(props);
@@ -29,29 +30,31 @@ class forgotPasswordPage extends Component {
     }
   }
 
-  forgotPassword() {
+  _forgotPassword() {
     if (!this.state.email_input) {
-      Alert.alert("please type in your email address");
+      Alert.alert("Please type in your email address");
     } else {
+      this.props.setEmailInput(this.state.email_input);
       let email = FormatInput.email(this.state.email_input, this.props.email_ext);
 
       this.props.firebase.auth().sendPasswordResetEmail(email)
         .then(() => {
-          Alert.alert("We've sent you an email with further instructions. Contact us @ ________________ if you think there's still an issue.");
-          this.props.navigator.push({
-            component: LoginPage
+          Alert.alert("We've sent you an email to change your password. If you run into any additional issues, contact us team@jumbosmash.com");
+          // this._goToLoginPage(); // TODO: why doesn't this function call work!
+          this.props.navigator.replace({
+            name: LoginPage
           });
         })
         .catch((error) => {
           throw error;
-          Alert.alert("sorry, an error occured! Please contact us @ ________________.");
+          Alert.alert("Sorry, an error occured. Contact us at team@jumbosmash.com with a summary of your issue.");
         })
     }
   }
 
-  goToLoginPage() {
-    this.props.navigator.push({
-      component: LoginPage
+  _goToLoginPage() {
+    this.props.navigator.replace({
+      name: LoginPage
     });
   }
 
@@ -70,14 +73,14 @@ class forgotPasswordPage extends Component {
           </View>
 
           <Button
-            onPress={this.forgotPassword.bind(this)}
+            onPress={this._forgotPassword.bind(this)}
             title="I forgot my password!"
             accessibilityLabel="I forgot my password!"
           />
 
           <Button
             style={styles.button}
-            onPress={this.goToLoginPage.bind(this)}
+            onPress={this._goToLoginPage.bind(this)}
             title="I remember my password, go to Login"
             accessibilityLabel="I remember my password, go to login"
           />
@@ -116,4 +119,4 @@ var styles = StyleSheet.create({
   }
 })
 
-export default forgotPasswordPage;
+export default ForgotPasswordPage;
