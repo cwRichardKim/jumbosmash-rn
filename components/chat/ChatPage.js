@@ -181,7 +181,14 @@ class ChatPage extends React.Component {
       textAlign: 'center',
       fontWeight: (read == undefined || read) ? 'normal' : '500',});
     };
-    let read = conversation.lastSent.read;
+
+    let read = false;
+    for(var i = 0; i < len; i++) {
+      if (conversation.participants[i].profileId == this.props.myProfile.id) {
+        read = conversation.participants[i].read;
+      }
+    }
+
     return (
       <TouchableHighlight onPress={() => this.rowPressed(conversation)}
           underlayColor='#dddddd'>
