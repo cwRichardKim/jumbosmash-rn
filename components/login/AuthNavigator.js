@@ -44,23 +44,7 @@ class AuthNavigator extends Component {
   }
   
   _renderAuthScenes(route, navigator) {
-    if (route.name == LoginPage){
-      return (
-        <LoginPage
-          navigator = {navigator} 
-          routeNavigator = {this.props.routeNavigator}
-          firebase = {this.props.firebase}
-          
-          setEmailInput = {(emailInput) => {this.emailInput = emailInput}}
-          emailInput = {this.emailInput}
-          email_ext = "@tufts.edu"
-
-          setStudentProfile = {(studentProfile) => this.studentProfile = studentProfile}
-          setToken = {(token) => this.token = token}
-          loadPage = {this.props.loadPage.bind(this)}
-        />
-      )
-    } else if (route.name == ForgotPasswordPage) {
+    if (route.name == ForgotPasswordPage) {
       return(
         <ForgotPasswordPage
           navigator = {navigator} 
@@ -92,15 +76,29 @@ class AuthNavigator extends Component {
           firebase = {this.props.firebase}
           email_ext = "@tufts.edu"
 
+          setMyProfile = {this.props.setMyProfile}
           studentProfile = {this.studentProfile}
           token = {this.token}
           loadPage = {this.props.loadPage.bind(this)}
-
-          setMyProfile = {this.props.setMyProfile}
         />
       )
     } else {
-      // ? TODO
+      // Default is LoginPage
+      return (
+        <LoginPage
+          navigator = {navigator} 
+          routeNavigator = {this.props.routeNavigator}
+          firebase = {this.props.firebase}
+          
+          setEmailInput = {(emailInput) => {this.emailInput = emailInput}}
+          emailInput = {this.emailInput}
+          email_ext = "@tufts.edu"
+
+          setMyProfile = {this.props.setMyProfile}
+          setToken = {(token) => this.token = token}
+          loadPage = {this.props.loadPage.bind(this)}
+        />
+      )
     }
   }
 

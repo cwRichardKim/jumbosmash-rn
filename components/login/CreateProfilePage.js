@@ -157,9 +157,8 @@ class CreateProfilePage extends Component {
           throw ("status" in response) ? response["status"] : "Unknown Error";
         }
       }).then((responseJson) => {
-        this.props.setMyProfile(body); 
-
         // Authentication Process complete!
+        this.props.setMyProfile(body); 
         this.props.loadPage(PageNames.appHome);
       }).catch((error) => {
         throw error; //TODO @richard show error thing
