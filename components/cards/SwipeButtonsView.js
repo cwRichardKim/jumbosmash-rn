@@ -132,7 +132,7 @@ class SwipeButtonsView extends Component {
           <View style={styles.emojiContainer}>
             <CircleButton
               style={[styles.button]}
-              textStyle={{textAlign: 'center', fontWeight: '600'}}
+              textStyle={{textAlign: 'center', fontWeight: '300', color: "#7C7C7C"}}
               onPress={this._statusOnPress.bind(this)}
               hasShadow={false}
               text={"status\n"+emojiStatus}

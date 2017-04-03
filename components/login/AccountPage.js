@@ -238,7 +238,6 @@ class AccountPage extends Component {
           <TextInput style={[GlobalStyles.text, styles.textListItem, styles.textInput]}
             onChangeText={(firstName) => this.setState({firstName})}
             value={this.state.firstName}
-            color="#C3C1C1"
             maxLength={80}
             ref='firstName'
             onFocus={this._inputFocused.bind(this, 'firstName')}
@@ -253,7 +252,6 @@ class AccountPage extends Component {
           <TextInput style={[GlobalStyles.text, styles.textListItem, styles.textInput]}
             onChangeText={(lastName) => this.setState({lastName})}
             value={this.state.lastName}
-            color="#C3C1C1"
             maxLength={80}
             ref='lastName'
             onFocus={this._inputFocused.bind(this, 'lastName')}
@@ -268,7 +266,6 @@ class AccountPage extends Component {
           <TextInput style={[GlobalStyles.text, styles.textListItem, styles.textInput, {height: 100, paddingTop: 5, paddingBottom: 5}]}
             onChangeText={(description) => this.setState({description})}
             value={this.state.description}
-            color="#C3C1C1"
             multiline={true}
             maxLength={500}
             ref='description'
@@ -282,7 +279,6 @@ class AccountPage extends Component {
           <TextInput style={[GlobalStyles.text, styles.textListItem, styles.textInput]}
             onChangeText={(major) => this.setState({major})}
             value={this.state.major}
-            color="#C3C1C1"
             maxLength={100}
             ref='major'
             onFocus={this._inputFocused.bind(this, 'major')}
@@ -326,6 +322,7 @@ const styles = StyleSheet.create({
   },
   textInput: {
     height: 42,
+    color: "#C3C1C1",
   },
   line: {
     height: 1,
