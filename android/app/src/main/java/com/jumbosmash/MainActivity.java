@@ -1,7 +1,6 @@
 package com.jumbosmash;
 
 import com.facebook.react.ReactActivity;
-import com.chirag.RNMail.*;
 
 public class MainActivity extends ReactActivity {
 
@@ -13,12 +12,4 @@ public class MainActivity extends ReactActivity {
   protected String getMainComponentName() {
     return "jumbosmash";
   }
-  
-  @Override
-    protected List<ReactPackage> getPackages() {
-      return Arrays.<ReactPackage>asList(
-          new MainReactPackage(),
-          new RNMail()      // <------ add here
-      );
-    }
 }
