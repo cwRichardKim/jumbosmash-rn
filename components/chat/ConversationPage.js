@@ -50,7 +50,12 @@ class ConversationPage extends Component {
         date: new Date(child.val().date),
       });
       this.state.conversation.lastSent = {'profileId': child.val().user._id, 'message': child.val().text}
-      this.state.conversation.read = true;
+      let len = this.state.conversation.participants.length;
+      for(var i = 0; i < len; i++) {
+        if (this.state.conversation.participants[i].profileId == this.props.myProfile.id) {
+          this.state.conversation.participants[i].read = true;
+        }
+      }
     });
   }
 
