@@ -64,7 +64,6 @@ class LoginPage extends Component {
               .then(async (token) => {
                 let studentProfile = await Verification.getStudent(email);
                 this.props.setToken(token);
-                this.props.setStudentProfile(studentProfile);
                 
                 let url = "https://jumbosmash2017.herokuapp.com/profile/id/".concat(studentProfile._id).concat("/").concat(token);
                 try {
@@ -73,6 +72,7 @@ class LoginPage extends Component {
 
                   if (responseJson) {
                     // Authentication Process complete!
+                    this.props.setMyProfile(responseJson);
                     this.props.loadPage(PageNames.appHome);
                   } else {
                     this._goToCreateProfilePage();
