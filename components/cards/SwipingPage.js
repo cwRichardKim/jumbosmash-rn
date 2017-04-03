@@ -251,8 +251,9 @@ class SwipingPage extends Component {
   _renderCard(cardIndex) {
     let positionInDeck = global.mod((cardIndex - this.state.cardIndex), DECK_SIZE);
     let index = this.state.cardIndex + positionInDeck;
-    return (
-      <Card {...this.props.profiles[index]}
+    if (index < this.props.profiles.length) {
+      return (
+        <Card {...this.props.profiles[index]}
         ref={(elem) => {this.cards[cardIndex] = elem}}
         onPress={this.props.openProfileCard}
         handleRightSwipeForIndex={this._handleRightSwipeForIndex.bind(this)}
@@ -261,13 +262,16 @@ class SwipingPage extends Component {
         cardIndex={index}
         positionInDeck={positionInDeck}
         cardWidth={CARD_WIDTH}
-      />
-    );
+        />
+      );
+    } else {
+      return null;
+    }
   }
 
   // renders DECK_SIZE number of cards
   _shouldRenderCards() {
-    if (this.props.profiles && this.state.cardIndex < this.props.profiles.length - (DECK_SIZE - 1)) {
+    if (this.props.profiles && this.state.cardIndex < this.props.profiles.length) {
       return (
         <View style={{flex:1}}>
           {this._renderCard(0)}
