@@ -52,7 +52,6 @@ class NavigationContainer extends Component {
           console.log(error);
         });
     }
-    console.log("NAVIGATION");
     AppState.addEventListener('change', this._handleAppStateChange.bind(this));
   }
 
