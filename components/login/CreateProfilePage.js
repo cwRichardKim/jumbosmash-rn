@@ -1,7 +1,8 @@
 'use strict';
 
 /*
-This page is the current representation of a logged in user.
+
+This page is for a user who has not yet created a profile object. 
 */
 
 import React, {Component} from 'react';
@@ -25,70 +26,21 @@ import ProfilePhotoPicker from "../settings/ProfilePhotoPicker.js";
 import GlobalFunctions    from "../global/GlobalFunctions.js";
 import LoginPage          from "./LoginPage.js"
 
-const PageNames = require("../global/GlobalFunctions.js").pageNames();
 
-class AccountPage extends Component {
+class CreateProfilePage extends Component {
 
   constructor(props) {
     super(props);
 
     this.studentProfile = props.studentProfile || null;
-    this.token = {val: null};
+    this.token = props.token || null;
     this.state = {
-      firstName: props.firstName,
-      lastName: props.lastName,
-      description: props.description,
-      major: props.major,
-      photos: props.photos || null,
+      firstName: this.studentProfile.firstName,
+      lastName: this.studentProfile.lastName,
+      description: '',
+      major: this.studentProfile.major,
+      photos: null,
     }
-  }
-
-  componentDidMount() {
-    if (this.studentProfile) {
-      this._updateStates(this.studentProfile);
-    } else {
-      // going to login page
-      Alert.alert("you're not logged in yet, go to loginpage");
-      this.props.navigator.push({
-        component: LoginPage
-      });
-    }
-
-    if (this.props.firebase.auth().currentUser) {
-      this.props.firebase.auth()
-        .currentUser
-        .getToken(true)
-        .then(function(idToken) {
-          this.token.val = idToken;
-          this._doesProfileAlreadyExist(idToken);
-        }.bind(this))
-        .catch(function(error) {
-          console.log(error);
-        });
-    }
-  }
-
-  _doesProfileAlreadyExist(idToken) {
-    // check if account has already been created
-    let url = "https://jumbosmash2017.herokuapp.com/profile/id/".concat(this.studentProfile._id).concat("/").concat(this.token.val);
-
-    fetch(url)
-      .then((response) => {
-        if ("status" in response && response["status"] >= 200 && response["status"] < 300) {
-          return response.json();
-        } else {
-          throw ("status" in response) ? response["status"] : "Unknown Error";
-        }
-      }).then((responseJson) => {
-        if (responseJson) {
-          this.props.setMyProfile(responseJson);
-          // account already exists
-          Alert.alert("You already have a profile.")
-          this._authCompleted();
-        }
-      }).catch((error) => {
-        throw error; //TODO @richard show error thing
-      });
   }
 
   // after the request is made, this function sets the new states correctly from the server
@@ -179,7 +131,7 @@ class AccountPage extends Component {
 
   _createAccount() {
     if (this._checkPropertiesAreValid()) {
-      let url = "https://jumbosmash2017.herokuapp.com/profile/add/".concat(this.token.val);
+      let url = "https://jumbosmash2017.herokuapp.com/profile/add/".concat(this.token);
       let body = {
         id: this.studentProfile._id,
         firstName: this.state.firstName,
@@ -204,23 +156,20 @@ class AccountPage extends Component {
           throw ("status" in response) ? response["status"] : "Unknown Error";
         }
       }).then((responseJson) => {
-        Alert.alert("Your account has been created.");
         this.props.setMyProfile(body);
-        this._authCompleted();
+
+        // Authentication Process complete!
+        this.props.loadPage(PageNames.appHome);
       }).catch((error) => {
         throw error; //TODO @richard show error thing
       });
     } else {
       Alert.alert(
-        "Update Error",
+        "Account creation error",
         "Something went wrong :( Contact team@jumbosmash.com and let us know that we couldn't update your profile",
         [{text: 'OK', onPress: () => {}},],
       );
     }
-  }
-
-  _authCompleted() {
-    this.props.loadPage(PageNames.appHome);
   }
 
   render() {
@@ -368,48 +317,4 @@ const styles = StyleSheet.create({
   },
 });
 
-//   render() {
-//     return (
-//       <View style={styles.container}>
-//         <View style={styles.body}>
-//           <Text> {this.getCurrentLoggedInUser() } </Text>
-
-//           <Button
-//             onPress={this.logout.bind(this)}
-//             title="Logout"
-//             accessibilityLabel="Logout"
-//           />
-//           <Button
-//             onPress={this._authCompleted.bind(this)}
-//             title="go to app"
-//             accessibilityLabel="go to app"
-//           />
-//         </View>
-//       </View>
-//     );
-//   }
-// }
-
-// var styles = StyleSheet.create({
-//   container: {
-//     flex: 1,
-//     flexDirection: 'row',
-//     alignItems:'center'
-//   },
-//   body: {
-//     flex: 9,
-//     alignItems: 'center',
-//   },
-//   textinput: {
-//     height: 40,
-//     borderColor: 'gray',
-//     borderWidth: 1,
-//     margin: 10,
-//     flexDirection: 'row',
-//   },
-//   button: {
-//   }
-// })
-
-
-export default AccountPage;
+export default CreateProfilePage;

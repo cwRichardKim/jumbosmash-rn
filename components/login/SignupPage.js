@@ -1,8 +1,9 @@
 'use strict';
 
 /*
-This page handles account creation, 
-mainly responsible for retreiving email and password 
+
+This page handles the creation of an user.
+It is mainly responsible for retreiving email and password 
 from UI textinput boxes, and passing to firebase authentication.
 */
 
@@ -19,8 +20,7 @@ import {
 
 import LoginPage              from './LoginPage.js';
 import AuthErrors             from './AuthErrors.js';
-import VerifyDatabase         from './VerifyDatabase.js';
-import VerifyEmailActivation  from './VerifyEmailActivation.js'
+import Verification           from './Verification.js';
 import FormatInput            from './FormatInput.js';
 
 class SignupPage extends Component {
@@ -34,28 +34,26 @@ class SignupPage extends Component {
     }
   }
 
-  async signup() {
-
+  async _signup() {
+    this.props.setEmailInput(this.state.email_input);
     let email = FormatInput.email(this.state.email_input, this.props.email_ext);
     let password = this.state.password;
 
-    let studentProfile = await VerifyDatabase.doesStudentExist(email);
+    let studentProfile = await Verification.getStudent(email);
     if (studentProfile){
-      this.createAccount(email, password);
-      this.props.setStudentProfile(studentProfile);
+      this._createAccount(email, password);
     } else {
-      VerifyDatabase.doesNotExist();
+      Verification.doesNotExist();
     }
-
   }
 
-  createAccount(email, password) {
+  _createAccount(email, password) {
     /* Passing to firebase authentication function here */
     this.props.firebase.auth().createUserWithEmailAndPassword(email, password)
       // Success case
       .then((user) => {
-        VerifyEmailActivation.sendEmail(user);
-        this.goToLoginPage();
+        Verification.sendEmail(user);
+        this._goToLoginPage();
       })
       // Failure case: Signup Error
       .catch((error) => {
@@ -63,9 +61,9 @@ class SignupPage extends Component {
       })
   }
 
-  goToLoginPage() {
-    this.props.navigator.push({
-      component: LoginPage,
+  _goToLoginPage() {
+    this.props.navigator.replace({
+      name: LoginPage
     });
   }
 
@@ -78,7 +76,7 @@ class SignupPage extends Component {
               style={styles.first}
               onChangeText={(text) => this.setState({email_input: text})}
               value={this.state.email_input}
-              placeholder={this.props.email || "Enter your tufts email"}
+              placeholder={"Enter your tufts email"}
             />
             <Text style={styles.last}> {this.props.email_ext} </Text>
           </View>
@@ -93,14 +91,14 @@ class SignupPage extends Component {
 
           <Button
             style={styles.button}
-            onPress={this.signup.bind(this)}
+            onPress={this._signup.bind(this)}
             title="Signup"
             accessibilityLabel="Signup, creating an account"
           />
 
           <Button
             style={styles.button}
-            onPress={this.goToLoginPage.bind(this)}
+            onPress={this._goToLoginPage.bind(this)}
             title="Got an account, go to Login"
             accessibilityLabel="Already got an account, go to login"
           />
