@@ -14,12 +14,14 @@ import {
   Alert,
   AsyncStorage,
   Button,
+  Image,
 } from 'react-native';
 
 import LoginPage              from './LoginPage.js';
 import FormatInput            from './FormatInput.js';
 
 const PageNames = require("../global/GlobalFunctions.js").pageNames();
+const AuthStyle = require('./AuthStylesheet');
 
 class ForgotPasswordPage extends Component {
 
@@ -60,7 +62,7 @@ class ForgotPasswordPage extends Component {
 
   render() {
     return (
-      <View style={styles.container}>
+      <Image source={require("./img/bg.png")} style={AuthStyle.container}>
         <View style={styles.body}>
           <View style={styles.textinput}>
             <TextInput
@@ -86,17 +88,12 @@ class ForgotPasswordPage extends Component {
           />
 
         </View>
-      </View>
+      </Image>
     );
   }
 }
 
 var styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    flexDirection: 'row',
-    alignItems:'center'
-  },
   body: {
     flex: 9,
     alignItems: 'center',

@@ -94,17 +94,13 @@ class AuthNavigator extends Component {
 
           studentProfile = {this.studentProfile}
           token = {this.token}
-          setMyProfile = {(myProfile) => this.myProfile = myProfile}
           loadPage = {this.props.loadPage.bind(this)}
+
+          setMyProfile = {(myProfile) => this.myProfile = myProfile} // Left here from prevous code @richard
         />
       )
     } else {
-      return (
-        <LoginPage
-          navigator = {navigator} 
-          routeNavigator = {this.props.routeNavigator}
-        />
-      )
+      // ? TODO
     }
   }
 
@@ -115,18 +111,6 @@ class AuthNavigator extends Component {
       <Navigator
         initialRoute={{name: initialAuthPage }}
         renderScene={this._renderAuthScenes.bind(this)}
-            // return React.createElement(route.component,
-            //   { navigator: navigator,
-            //     routeNavigator: this.props.routeNavigator,
-            //     firebase: this.props.firebase,
-            //     setEmail: (email) => {this.setState({email})},
-            //     email: this.state.email,
-            //     setStudentProfile: this.setStudentProfile.bind(this),
-            //     studentProfile: this.studentProfile,
-            //     setMyProfile: this.setMyProfile.bind(this),
-            //     myProfile: this.props.myProfile,
-            //     loadPage: this.props.loadPage.bind(this),
-            //     email_ext: "@tufts.edu" });
       />
     );
   }

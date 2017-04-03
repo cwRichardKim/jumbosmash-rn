@@ -15,13 +15,16 @@ import {
   View,
   Alert,
   Button,
-  Navigator
+  Navigator,
+  Image,
 } from 'react-native';
 
 import LoginPage              from './LoginPage.js';
 import AuthErrors             from './AuthErrors.js';
 import Verification           from './Verification.js';
 import FormatInput            from './FormatInput.js';
+
+const AuthStyle = require('./AuthStylesheet');
 
 class SignupPage extends Component {
 
@@ -35,15 +38,19 @@ class SignupPage extends Component {
   }
 
   async _signup() {
-    this.props.setEmailInput(this.state.email_input);
-    let email = FormatInput.email(this.state.email_input, this.props.email_ext);
-    let password = this.state.password;
-
-    let studentProfile = await Verification.getStudent(email);
-    if (studentProfile){
-      this._createAccount(email, password);
+    if (!this.state.email_input) {
+      Alert.alert("Please type in your email address");
     } else {
-      Verification.doesNotExist();
+      this.props.setEmailInput(this.state.email_input);
+      let email = FormatInput.email(this.state.email_input, this.props.email_ext);
+      let password = this.state.password;
+
+      let studentProfile = await Verification.getStudent(email);
+      if (studentProfile){
+        this._createAccount(email, password);
+      } else {
+        Verification.doesNotExist();
+      }
     }
   }
 
@@ -69,8 +76,12 @@ class SignupPage extends Component {
 
   render() {
     return (
-      <View style={styles.container}>
-        <View style={styles.body}>
+      <Image source={require("./img/bg.png")} style={AuthStyle.container}>
+        <View style={AuthStyle.body}>
+          <View style={AuthStyle.logoPadding}>
+            <Image source={require('./img/logo.png')} style={AuthStyle.logo}/>
+          </View>
+          
           <View style={styles.textinput}>
             <TextInput
               style={styles.first}
@@ -103,17 +114,12 @@ class SignupPage extends Component {
             accessibilityLabel="Already got an account, go to login"
           />
         </View>
-      </View>
+      </Image>
     );
   }
 }
 
 var styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    flexDirection: 'row',
-    alignItems:'center'
-  },
   body: {
     flex: 9,
     alignItems: 'center',
