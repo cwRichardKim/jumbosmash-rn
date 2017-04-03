@@ -129,17 +129,15 @@ class LoginPage extends Component {
             </View>
           </View>
 
-          <View style={AuthStyle.textInputArea}>  
             <Text style={AuthStyle.textTitles}> Password: </Text>
-            <View style={AuthStyle.textinputBorder}>
             <TextInput
+            style={AuthStyle.textinputBorder}
               onChangeText={(text) => this.setState({password: text})}
               value={this.state.password}
               secureTextEntry={true}
               placeholder={"Password"}
             />
-            </View>
-          </View>
+
           <Button
             style={AuthStyle.forgotPasswordButton}
             onPress={this._goToForgotPassword.bind(this)}

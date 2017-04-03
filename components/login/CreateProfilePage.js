@@ -26,6 +26,7 @@ import ProfilePhotoPicker from "../settings/ProfilePhotoPicker.js";
 import GlobalFunctions    from "../global/GlobalFunctions.js";
 import LoginPage          from "./LoginPage.js"
 
+const PageNames = require("../global/GlobalFunctions.js").pageNames();
 
 class CreateProfilePage extends Component {
 
@@ -156,7 +157,7 @@ class CreateProfilePage extends Component {
           throw ("status" in response) ? response["status"] : "Unknown Error";
         }
       }).then((responseJson) => {
-        this.props.setMyProfile(body);
+        this.props.setMyProfile(body); 
 
         // Authentication Process complete!
         this.props.loadPage(PageNames.appHome);

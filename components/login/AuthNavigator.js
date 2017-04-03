@@ -96,7 +96,7 @@ class AuthNavigator extends Component {
           token = {this.token}
           loadPage = {this.props.loadPage.bind(this)}
 
-          setMyProfile = {(myProfile) => this.myProfile = myProfile} // Left here from prevous code @richard
+          setMyProfile = {this.props.setMyProfile}
         />
       )
     } else {

@@ -48,6 +48,7 @@ module.exports = StyleSheet.create({
   forgotPasswordButton: {
   	color: 'white',
   	fontSize: 12,
+    paddingTop: 50,
   }
 
 });
