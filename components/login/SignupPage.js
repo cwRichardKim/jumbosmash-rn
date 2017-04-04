@@ -103,10 +103,10 @@ class SignupPage extends Component {
           />
           </View>
 
-          <View style={AuthStyle.buttonContainer}>
+          <View style={styles.buttonContainer}>
             <RectButton 
-              style={[AuthStyle.solidButton]}
-              textStyle={AuthStyle.solidButtonText} 
+              style={[AuthStyle.solidButton, AuthStyle.buttonBlue]}
+              textStyle={[AuthStyle.solidButtonText, AuthStyle.bold]}
               onPress={this._signup.bind(this)}
               text="SIGNUP!"
             />
@@ -126,8 +126,9 @@ class SignupPage extends Component {
 }
 
 var styles = StyleSheet.create({
-
-
+  buttonContainer: {
+    marginTop: 70,
+  },
 })
 
 export default SignupPage;

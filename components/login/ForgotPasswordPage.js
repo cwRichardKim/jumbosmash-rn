@@ -79,10 +79,10 @@ class ForgotPasswordPage extends Component {
             <Text style={AuthStyle.emailExt}> {this.props.email_ext} </Text>
           </View>
 
-          <View style={AuthStyle.buttonContainer}>
+          <View style={styles.buttonContainer}>
             <RectButton
-              style={[AuthStyle.solidButton]}
-              textStyle={AuthStyle.solidButtonText}  
+              style={[AuthStyle.solidButton, AuthStyle.buttonBlue]}
+              textStyle={[AuthStyle.solidButtonText, AuthStyle.bold]}
               onPress={this._forgotPassword.bind(this)}
               text="Reset Password"
             />
@@ -101,6 +101,9 @@ class ForgotPasswordPage extends Component {
 }
 
 var styles = StyleSheet.create({
+  buttonContainer: {
+    marginTop: 160,
+  },
 
 })
 
