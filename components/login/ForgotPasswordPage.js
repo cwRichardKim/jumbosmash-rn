@@ -63,15 +63,19 @@ class ForgotPasswordPage extends Component {
   render() {
     return (
       <Image source={require("./img/bg.png")} style={AuthStyle.container}>
-        <View style={styles.body}>
-          <View style={styles.textinput}>
+        <View style={AuthStyle.logoContainer}>
+          <Image source={require('./img/logo.png')} style={AuthStyle.logo}/>
+        </View>
+        <View style={AuthStyle.body}>
+          <Text style={AuthStyle.textTitles}> Tufts Email: </Text>
+          <View style={AuthStyle.emailInputBorder}>
             <TextInput
-              style={styles.first}
+              style={AuthStyle.emailInput}
               onChangeText={(text) => this.setState({email_input: text})}
               value={this.state.email_input}
-              placeholder={"Enter your tufts email"}
+              placeholder={this.props.emailInput}
             />
-            <Text style={styles.last}> {this.props.email_ext} </Text>
+            <Text style={AuthStyle.emailExt}> {this.props.email_ext} </Text>
           </View>
 
           <Button

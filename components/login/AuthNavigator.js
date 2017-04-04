@@ -94,6 +94,7 @@ class AuthNavigator extends Component {
           emailInput = {this.emailInput}
           email_ext = "@tufts.edu"
 
+          setStudentProfile = {(studentProfile) => this.studentProfile = studentProfile}
           setMyProfile = {this.props.setMyProfile}
           setToken = {(token) => this.token = token}
           loadPage = {this.props.loadPage.bind(this)}

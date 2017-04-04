@@ -9,41 +9,51 @@ var {
 module.exports = StyleSheet.create({
   container: {
     flex: 1,
-    flexDirection: 'row',
     alignItems:'center',
     width: null,
     height: null,
   },
-  body: {
-    flex: 9,
-    alignItems: 'center',
-  },
   logo: {
-  	height: 100,
-  	width: 94,
+    height: 100,
+    width: 94,
   },
-  logoPadding: {
-  	paddingBottom: 60,
+  logoContainer: {
+    top: 100,
   },
-  textinputBorder: {
+  body: {
+    alignItems: 'center',
+    marginTop: 150,
+  },
+  emailInputBorder: {
     height: 40,
     borderColor: 'white',
     borderBottomWidth: 1.5,
     flexDirection: 'row',
     width: 300,
   },
-  first: {
+  emailInput: {
     flex: 3/4,
   },
-  last: {
+  emailExt: {
     flex: 1/4,
     alignSelf: 'center',
     color: 'white',
+  },
+  passwordInputBorder: {
+    height: 40,
+    borderColor: 'white',
+    borderBottomWidth: 1.5,
+    flexDirection: 'row',
+    width: 300,
+  },
+  passwordInput: {
+    flex: 1,
   },
   textTitles: {
   	color: 'white',
   	paddingTop: 30,
   	fontSize: 15,
+    alignSelf: 'flex-start',
   },
   forgotPasswordButton: {
   	color: 'white',
