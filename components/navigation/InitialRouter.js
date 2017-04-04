@@ -28,7 +28,7 @@ const StorageKeys = require("../global/GlobalFunctions.js").storageKeys();
 const AppExpirationStates = GlobalFunctions.appExpirationStates();
 const APP_STATE = GlobalFunctions.calculateAppExpirationState();
 
-var Analytics = require('react-native-firebase-analytics');
+const Analytics = require('react-native-firebase-analytics');
 const firebase = require('firebase');
 const firebaseConfig = {
   apiKey: "AIzaSyCqxU8ZGcg7Tx-iJoB_IROCG_yj41kWA6A",
@@ -67,14 +67,13 @@ class InitialRouter extends Component {
     this._shouldFetchUserAndProfile();
   }
 
-  _initializeFirebaseAnalytics(user) {
+  _initializeFirebaseAnalytics(user, hasAllParams) {
     let userId = (user && user.uid) ? user.uid : "unknown";
-    console.log(userId);
     Analytics.setUserId(userId);
     // Analytics.setUserProperty('propertyName', 'propertyValue');
 
-    Analytics.logEvent('view_item', {
-      'item_id': 'APP_OPEN'
+    Analytics.logEvent('app_open', {
+      'has_all_params': hasAllParams
     });
   }
 
@@ -116,11 +115,12 @@ class InitialRouter extends Component {
         if (!this.didGetUserAndProfile) {
           this.didGetUserAndProfile = true;
           let myProfile = await this._shouldFetchMyProfileFromStorage();
-          this._initializeFirebaseAnalytics(user);
           if (user && user.emailVerified && myProfile) {
             this.setState({myProfile});
+            this._initializeFirebaseAnalytics(user, true);
             this._loadPage(PageNames.appHome);
           } else {
+            this._initializeFirebaseAnalytics(user, false);
             this._loadPage(PageNames.auth);
           }
         }
@@ -155,6 +155,9 @@ class InitialRouter extends Component {
     if (this.userIsCheating) {
       this._showCheaterPage();
     } else if (this.shouldOverridePageLoads === true || appState === AppExpirationStates.active) {
+      Analytics.logEvent('override_open_app_home', {
+        'destination': page || "unkown"
+      });
       this.navigator.replace({name: page});
     } else if (appState === AppExpirationStates.preRelease) {
       if (page === PageNames.auth) {

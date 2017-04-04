@@ -20,6 +20,7 @@ import {
 import JumboNavigator         from "./JumboNavigator.js"
 import DummyData              from "../misc/DummyData.js";
 
+const Analytics = require('react-native-firebase-analytics');
 const global = require('../global/GlobalFunctions.js');
 const PageNames = global.pageNames();
 const StorageKeys = global.storageKeys();
@@ -53,6 +54,7 @@ class NavigationContainer extends Component {
           console.log(error);
         });
     }
+    Analytics.logEvent('open_app_home', {});
     AppState.addEventListener('change', this._handleAppStateChange.bind(this));
   }
 

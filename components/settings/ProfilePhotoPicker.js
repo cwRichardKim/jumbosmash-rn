@@ -23,6 +23,7 @@ import RNFetchBlob    from 'react-native-fetch-blob';
 
 //Turn local photo to blob for firebase uploading
 const Blob = RNFetchBlob.polyfill.Blob
+const Analytics = require('react-native-firebase-analytics');
 window.XMLHttpRequest = RNFetchBlob.polyfill.XMLHttpRequest
 window.Blob = Blob
 const fs = RNFetchBlob.fs;
@@ -156,16 +157,20 @@ class ProfilePhotoPicker extends Component {
   }
 
   _photoButtonPressedForPhotoIndex(index) {
+    let actionName = "";
     if (this.state.uploadingImageWithIndex >= 0) {
+      actionName = "working";
       Alert.alert(
         "One Sec",
         "Still working on your last photo! Should only take a few more seconds",
         [{text: "OK", onPress:()=>{}}]
       ); //TODO @richard: do a real error thing here, test this more thoroughly
     } else if (this._photoExists(index)) { // Deleting a photo
+      actionName = "deleting"
       this._changePhotoWithIndex(index, null, true);
       this._changePhotoWithIndex(index, null, false);
     } else { // Adding a photo, pull up image picker
+      actionName = "uploading"
       ImagePicker.openPicker({
         width: 700,
         height: 700,
@@ -180,12 +185,22 @@ class ProfilePhotoPicker extends Component {
         let userCancelled = error["code"].includes("CANCELLED");
         if (userCancelled) {
           // potentially handle cancelled condition
+          Analytics.logEvent('photo_upload_cancelled', {
+            'page': 'settings',
+          });
         } else {
+          Analytics.logEvent('error', {
+            'name': 'photo_upload_error',
+            'page': 'settings',
+          });
           Alert.alert("Error", "Couldn't access your photos. Try going to settings and reallowing photo permissions for jumbosmash. If that doesn't work, email us at team@jumbosmash.com", [{text:"OK", onPress:()=>{}}])
           throw error;
         }
       });
     }
+    Analytics.logEvent('change_photo_button', {
+      'action': actionName,
+    });
   }
 
   render() {

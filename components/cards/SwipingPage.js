@@ -24,6 +24,7 @@ import Card             from './Card.js';
 import NoMoreCards      from './NoMoreCards.js';
 import DummyData        from '../misc/DummyData.js'
 const global = require('../global/GlobalFunctions.js');
+const Analytics = require('react-native-firebase-analytics');
 
 const CARD_REFRESH_BUFFER = 30; // There should always be at least this many cards left, else fetch more
 const CARD_WIDTH = Dimensions.get('window').width - 40;
@@ -48,6 +49,7 @@ class SwipingPage extends Component {
 
   componentDidMount() {
     this._shouldRetrieveLikePoints(true);
+    Analytics.logEvent('open_swipe_page', {});
   }
 
   componentWillUnmount() {
@@ -211,6 +213,7 @@ class SwipingPage extends Component {
     this._swipeErrorCheck(cardIndex, profile);
     this.setState({canUndoCount: 0});
     this._incrementSwipeCount(true);
+    Analytics.logEvent('swipe_right', {});
   }
 
   _handleLeftSwipeForIndex(cardIndex) {
@@ -218,6 +221,7 @@ class SwipingPage extends Component {
     this._swipeErrorCheck(cardIndex, card);
     this.setState({canUndoCount: this.state.canUndoCount + 1});
     this._incrementSwipeCount(false);
+    Analytics.logEvent('swipe_left', {});
   }
 
   _undo() {
@@ -226,6 +230,7 @@ class SwipingPage extends Component {
         cardIndex: this.state.cardIndex - 1,
         canUndoCount: this.state.canUndoCount - 1,
       });
+      Analytics.logEvent('undo_button', {});
     }
   }
 
@@ -239,12 +244,14 @@ class SwipingPage extends Component {
   _swipeRightButtonPressed() {
     if (this._cardsExist()) {
       this.cards[this.state.cardIndex % DECK_SIZE].programmaticSwipeRight();
+      Analytics.logEvent('right_button', {});
     }
   }
 
   _swipeLeftButtonPressed() {
     if (this._cardsExist()  ) {
       this.cards[this.state.cardIndex % DECK_SIZE].programmaticSwipeLeft();
+      Analytics.logEvent('left_button', {});
     }
   }
 

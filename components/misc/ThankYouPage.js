@@ -19,6 +19,7 @@ import GlobalStyles           from "../global/GlobalStyles.js";
 import GlobalFunctions        from "../global/GlobalFunctions.js"
 import RectButton             from "../global/RectButton.js";
 const OverrideActions = GlobalFunctions.overrideActions();
+const Analytics = require('react-native-firebase-analytics');
 const HEIGHT = Dimensions.get('window').height;
 const WIDTH = Dimensions.get('window').width;
 const PADDING = 20;
@@ -28,6 +29,10 @@ class ThankYouPage extends Component {
     super(props);
     this.state = {
     };
+  }
+
+  componentDidMount () {
+    Analytics.logEvent('open_thank_you_page', {});
   }
 
   _openAboutURL() {
