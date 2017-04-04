@@ -19,6 +19,7 @@ import {
 
 import LoginPage              from './LoginPage.js';
 import FormatInput            from './FormatInput.js';
+import RectButton             from "../global/RectButton.js";
 
 const PageNames = require("../global/GlobalFunctions.js").pageNames();
 const AuthStyle = require('./AuthStylesheet');
@@ -78,19 +79,21 @@ class ForgotPasswordPage extends Component {
             <Text style={AuthStyle.emailExt}> {this.props.email_ext} </Text>
           </View>
 
-          <Button
-            onPress={this._forgotPassword.bind(this)}
-            title="I forgot my password!"
-            accessibilityLabel="I forgot my password!"
-          />
+          <View style={AuthStyle.buttonContainer}>
+            <RectButton
+              style={[AuthStyle.solidButton]}
+              textStyle={AuthStyle.solidButtonText}  
+              onPress={this._forgotPassword.bind(this)}
+              text="Reset Password"
+            />
 
-          <Button
-            style={styles.button}
-            onPress={this._goToLoginPage.bind(this)}
-            title="I remember my password, go to Login"
-            accessibilityLabel="I remember my password, go to login"
-          />
-
+            <RectButton
+              style={[AuthStyle.noBackgroundButton]}
+              textStyle={AuthStyle.noBackgroundButtonText}  
+              onPress={this._goToLoginPage.bind(this)}
+              text="JK! Take me back to login"
+            />
+          </View>
         </View>
       </Image>
     );
@@ -98,26 +101,7 @@ class ForgotPasswordPage extends Component {
 }
 
 var styles = StyleSheet.create({
-  body: {
-    flex: 9,
-    alignItems: 'center',
-  },
-  first: {
-    flex: 3/4,
-  },
-  last: {
-    flex: 1/4,
-    alignSelf: 'center',
-  },
-  textinput: {
-    height: 40,
-    borderColor: 'gray',
-    borderWidth: 1,
-    margin: 10,
-    flexDirection: 'row',
-  },
-  button: {
-  }
+
 })
 
 export default ForgotPasswordPage;

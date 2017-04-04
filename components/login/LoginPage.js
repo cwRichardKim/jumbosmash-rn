@@ -27,6 +27,7 @@ import AuthErrors             from './AuthErrors.js';
 import FormatInput            from './FormatInput.js';
 import Verification           from "./Verification.js";
 import GlobalFunctions        from "../global/GlobalFunctions.js";
+import RectButton             from "../global/RectButton.js";
 
 import ForgotPasswordPage     from './ForgotPasswordPage.js';
 import SignupPage             from './SignupPage.js';
@@ -136,27 +137,28 @@ class LoginPage extends Component {
             secureTextEntry={true}
           />
           </View>
-
-          <Button
-            style={AuthStyle.forgotPasswordButton}
-            onPress={this._goToForgotPassword.bind(this)}
-            title="Forgot password?"
-            accessibilityLabel="Forgot password?"
+          <RectButton
+              style={[AuthStyle.forgotPasswordButton]}
+              textStyle={AuthStyle.forgotPasswordButtonText}  
+              onPress={this._goToForgotPassword.bind(this)}
+              text="Forgot Password?"
           />
 
-          <Button
-            style={AuthStyle.button}
-            onPress={this._login.bind(this)}
-            title="Login"
-            accessibilityLabel="Login"
-          />
+          <View style={AuthStyle.buttonContainer}>
+            <RectButton
+              style={[AuthStyle.solidButton]}
+              textStyle={AuthStyle.solidButtonText}
+              onPress={this._login.bind(this)}
+              text="LOGIN"
+            />
 
-          <Button
-            style={AuthStyle.button}
-            onPress={this._goToSignupPage.bind(this)}
-            title="New here? Go to Signup"
-            accessibilityLabel="Go to signup page"
-          />
+            <RectButton
+              style={[AuthStyle.solidButton]}
+              textStyle={AuthStyle.solidButtonText}
+              onPress={this._goToSignupPage.bind(this)}
+              text="SIGNUP!"
+            />
+          </View>
         <Image/>
         </View>
       </Image>
