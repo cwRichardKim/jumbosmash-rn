@@ -63,8 +63,9 @@ class LoginPage extends Component {
               .getToken(true)
               .then(async (token) => {
                 let studentProfile = await Verification.getStudent(email);
+                this.props.setStudentProfile(studentProfile);
                 this.props.setToken(token);
-                
+
                 let url = "https://jumbosmash2017.herokuapp.com/profile/id/".concat(studentProfile._id).concat("/").concat(token);
                 try {
                   let response = await fetch(url);
@@ -111,32 +112,30 @@ class LoginPage extends Component {
   render() {
     return (
       <Image source={require("./img/bg.png")} style={AuthStyle.container}>
+        <View style={AuthStyle.logoContainer}>
+          <Image source={require('./img/logo.png')} style={AuthStyle.logo}/>
+        </View>
         <View style={AuthStyle.body}>
-          <View style={AuthStyle.logoPadding}>
-            <Image source={require('./img/logo.png')} style={AuthStyle.logo}/>
-          </View>
-
-          <View style={AuthStyle.textInputArea}>
-            <Text style={AuthStyle.textTitles}> Tufts Email: </Text>
-            <View style={AuthStyle.textinputBorder}>
-              <TextInput
-                style={AuthStyle.first}
-                onChangeText={(text) => this.setState({email_input: text})}
-                value={this.state.email_input}
-                placeholder={this.props.emailInput}
-              />
-              <Text style={AuthStyle.last}> {this.props.email_ext} </Text>
-            </View>
-          </View>
-
-            <Text style={AuthStyle.textTitles}> Password: </Text>
+          <Text style={AuthStyle.textTitles}> Tufts Email: </Text>
+          <View style={AuthStyle.emailInputBorder}>
             <TextInput
-            style={AuthStyle.textinputBorder}
-              onChangeText={(text) => this.setState({password: text})}
-              value={this.state.password}
-              secureTextEntry={true}
-              placeholder={"Password"}
+              style={AuthStyle.emailInput}
+              onChangeText={(text) => this.setState({email_input: text})}
+              value={this.state.email_input}
+              placeholder={this.props.emailInput}
             />
+            <Text style={AuthStyle.emailExt}> {this.props.email_ext} </Text>
+          </View>
+
+          <Text style={AuthStyle.textTitles}> Password: </Text>
+          <View style={AuthStyle.passwordInputBorder}>
+          <TextInput
+            style={AuthStyle.passwordInput}
+            onChangeText={(text) => this.setState({password: text})}
+            value={this.state.password}
+            secureTextEntry={true}
+          />
+          </View>
 
           <Button
             style={AuthStyle.forgotPasswordButton}

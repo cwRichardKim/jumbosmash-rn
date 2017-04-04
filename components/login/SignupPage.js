@@ -77,28 +77,30 @@ class SignupPage extends Component {
   render() {
     return (
       <Image source={require("./img/bg.png")} style={AuthStyle.container}>
-        <View style={AuthStyle.body}>
-          <View style={AuthStyle.logoPadding}>
+        <View style={AuthStyle.logoContainer}>
             <Image source={require('./img/logo.png')} style={AuthStyle.logo}/>
-          </View>
-          
-          <View style={styles.textinput}>
+        </View>
+        <View style={AuthStyle.body}>  
+          <Text style={AuthStyle.textTitles}> Tufts Email: </Text>
+          <View style={AuthStyle.emailInputBorder}>
             <TextInput
-              style={styles.first}
+              style={AuthStyle.emailInput}
               onChangeText={(text) => this.setState({email_input: text})}
               value={this.state.email_input}
-              placeholder={"Enter your tufts email"}
+              placeholder={this.props.emailInput}
             />
-            <Text style={styles.last}> {this.props.email_ext} </Text>
+            <Text style={AuthStyle.emailExt}> {this.props.email_ext} </Text>
           </View>
 
+          <Text style={AuthStyle.textTitles}> Password: </Text>
+          <View style={AuthStyle.passwordInputBorder}>
           <TextInput
-            style={styles.textinput}
+            style={AuthStyle.passwordInput}
             onChangeText={(text) => this.setState({password: text})}
             value={this.state.password}
             secureTextEntry={true}
-            placeholder={"Choose a password"}
           />
+          </View>
 
           <Button
             style={styles.button}
@@ -120,26 +122,7 @@ class SignupPage extends Component {
 }
 
 var styles = StyleSheet.create({
-  body: {
-    flex: 9,
-    alignItems: 'center',
-  },
-  first: {
-    flex: 3/4,
-  },
-  last: {
-    flex: 1/4,
-    alignSelf: 'center',
-  },
-  textinput: {
-    height: 40,
-    borderColor: 'gray',
-    borderWidth: 1,
-    margin: 10,
-    flexDirection: 'row',
-  },
-  button: {
-  }
+
 })
 
 export default SignupPage;
