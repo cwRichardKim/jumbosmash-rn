@@ -551,6 +551,7 @@ const styles = StyleSheet.create({
   navigationBarTitleContainer: {
     flexDirection: 'row',
     alignItems: 'center',
+    backgroundColor: 'red',
   },
   navigationBarTitleText: {
     marginLeft: 12,
