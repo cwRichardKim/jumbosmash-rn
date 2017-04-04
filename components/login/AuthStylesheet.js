@@ -33,6 +33,7 @@ module.exports = StyleSheet.create({
   },
   emailInput: {
     flex: 3/4,
+    color: 'white',
   },
   emailExt: {
     flex: 1/4,
@@ -48,6 +49,7 @@ module.exports = StyleSheet.create({
   },
   passwordInput: {
     flex: 1,
+    color: 'white',
   },
   textTitles: {
   	color: 'white',
