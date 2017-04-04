@@ -28,7 +28,7 @@ const StorageKeys = require("../global/GlobalFunctions.js").storageKeys();
 const AppExpirationStates = GlobalFunctions.appExpirationStates();
 const APP_STATE = GlobalFunctions.calculateAppExpirationState();
 
-var Analytics = require('react-native-firebase-analytics');
+const Analytics = require('react-native-firebase-analytics');
 const firebase = require('firebase');
 const firebaseConfig = {
   apiKey: "AIzaSyCqxU8ZGcg7Tx-iJoB_IROCG_yj41kWA6A",
@@ -69,7 +69,6 @@ class InitialRouter extends Component {
 
   _initializeFirebaseAnalytics(user) {
     let userId = (user && user.uid) ? user.uid : "unknown";
-    console.log(userId);
     Analytics.setUserId(userId);
     // Analytics.setUserProperty('propertyName', 'propertyValue');
 
@@ -101,6 +100,9 @@ class InitialRouter extends Component {
   _showCheaterPage() {
     this.userIsCheating = true;
     this.navigator.replace({name: PageNames.cheaterPage});
+    Analytics.logEvent('view_item', {
+      'item_id': 'CHEATER'
+    });
   }
 
   // This function is what decides what page to load. While this function is
@@ -136,6 +138,9 @@ class InitialRouter extends Component {
       if (storedMyProfile !== null && typeof(storedMyProfile) !== "undefined") {
         storedMyProfile = JSON.parse(storedMyProfile);
         if (storedMyProfile && storedMyProfile.id) {
+          Analytics.logEvent('view_item', {
+            'item_id': 'FETCHED_PROFILE_FROM_STORAGE'
+          });
           return storedMyProfile;
         }
       }
@@ -155,6 +160,9 @@ class InitialRouter extends Component {
     if (this.userIsCheating) {
       this._showCheaterPage();
     } else if (this.shouldOverridePageLoads === true || appState === AppExpirationStates.active) {
+      Analytics.logEvent('view_item', {
+        'item_id': 'OVERRIDE_OPEN_APP_HOME'
+      });
       this.navigator.replace({name: page});
     } else if (appState === AppExpirationStates.preRelease) {
       if (page === PageNames.auth) {
@@ -187,12 +195,18 @@ class InitialRouter extends Component {
 
   _renderNavigatorScene (route, navigator) {
     if (route.name == PageNames.expiredPage) {
+      Analytics.logEvent('view_item', {
+        'item_id': 'OPEN_THANK_YOU_PAGE'
+      });
       return (
         <ThankYouPage
           changePage={this._changePageFromAppNonActivityPages.bind(this)}
         />
       )
     } else if (route.name == PageNames.preRelease) {
+      Analytics.logEvent('view_item', {
+          'item_id': 'OPEN_PRERELEASE_PAGE'
+        });
       return (
         <PreReleasePage
           changePage={this._changePageFromAppNonActivityPages.bind(this)}
@@ -201,6 +215,9 @@ class InitialRouter extends Component {
         />
       )
     } else if (route.name == PageNames.appHome) {
+      Analytics.logEvent('view_item', {
+          'item_id': 'OPEN_APP_HOME_PAGE'
+        });
       return (
         <NavigationContainer
           firebase={firebase}
@@ -221,6 +238,9 @@ class InitialRouter extends Component {
         <LoadingPage/>
       );
     } else {
+      Analytics.logEvent('view_item', {
+          'item_id': 'OPEN_AUTH_PAGE'
+        });
       return (
         <AuthContainer
           firebase={firebase}
