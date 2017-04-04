@@ -56,9 +56,34 @@ module.exports = StyleSheet.create({
     alignSelf: 'flex-start',
   },
   forgotPasswordButton: {
-  	color: 'white',
-  	fontSize: 12,
-    paddingTop: 50,
+    height: 40,
+    alignSelf: 'flex-end',
+  },
+  forgotPasswordButtonText: {
+    color: 'white',
+    fontWeight: '400'
+  },
+  buttonContainer: {
+    marginTop: 30,
+  },
+  solidButton: {
+    height: 40,
+    width: 180,
+    marginTop: 15,
+    backgroundColor: 'gray',
+    borderRadius: 5,
+  },
+  solidButtonText: {
+    color: 'white',
+    fontWeight: '600',
+  },
+  noBackgroundButton: {
+    marginTop: 10,
+    height: 40,
+    width: 180,
+  },
+  noBackgroundButtonText: {
+    color: 'white',
+    fontWeight: '400'
   }
-
 });

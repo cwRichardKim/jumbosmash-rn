@@ -23,6 +23,7 @@ import LoginPage              from './LoginPage.js';
 import AuthErrors             from './AuthErrors.js';
 import Verification           from './Verification.js';
 import FormatInput            from './FormatInput.js';
+import RectButton             from "../global/RectButton.js";
 
 const AuthStyle = require('./AuthStylesheet');
 
@@ -102,19 +103,22 @@ class SignupPage extends Component {
           />
           </View>
 
-          <Button
-            style={styles.button}
-            onPress={this._signup.bind(this)}
-            title="Signup"
-            accessibilityLabel="Signup, creating an account"
-          />
+          <View style={AuthStyle.buttonContainer}>
+            <RectButton 
+              style={[AuthStyle.solidButton]}
+              textStyle={AuthStyle.solidButtonText} 
+              onPress={this._signup.bind(this)}
+              text="SIGNUP!"
+            />
 
-          <Button
-            style={styles.button}
-            onPress={this._goToLoginPage.bind(this)}
-            title="Got an account, go to Login"
-            accessibilityLabel="Already got an account, go to login"
-          />
+            <RectButton 
+              style={[AuthStyle.noBackgroundButton]}
+              textStyle={AuthStyle.noBackgroundButtonText}  
+              onPress={this._goToLoginPage.bind(this)}
+              text="Already have an account?"
+            />
+
+          </View>
         </View>
       </Image>
     );
@@ -122,6 +126,7 @@ class SignupPage extends Component {
 }
 
 var styles = StyleSheet.create({
+
 
 })
 
