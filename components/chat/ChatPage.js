@@ -72,6 +72,10 @@ class ChatPage extends React.Component {
     });
   }
 
+  refresh() {
+    this._onRefresh();
+  }
+
   setSearchText(event) {
    let searchText = event.nativeEvent.text;
    this.setState({searchText: searchText});
