@@ -66,7 +66,7 @@ class SwipeButtonsView extends Component {
 
   _undoDisabledOnPress() {
     Alert.alert(
-      "Can\'t undo right swipes 😉",
+      "You can only undo left swipes 😉",
       "",
       [
         {text:"Ah shit I f*cked up. Halp me", onPress:this._sendMail.bind(this)},

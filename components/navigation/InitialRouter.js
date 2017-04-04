@@ -189,10 +189,6 @@ class InitialRouter extends Component {
   }
 
   _renderNavigatorScene (route, navigator) {
-    Analytics.logEvent('open_page', {
-      'type': 'navigation',
-      'name': route.name
-    });
     if (route.name == PageNames.expiredPage) {
       return (
         <ThankYouPage

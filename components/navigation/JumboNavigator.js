@@ -37,6 +37,7 @@ const UNMATCH_AS = 'Unsmatch';
 const actionSheetButtons = ['Cancel', SHOW_PROFILE_AS, UNMATCH_AS, REPORT_AS];
 const CANCEL_INDEX = 0;
 
+const Analytics = require('react-native-firebase-analytics');
 const global = require('../global/GlobalFunctions.js');
 const pushNotifications = require('../global/PushNotifications.js');
 const PageNames = require("../global/GlobalFunctions").pageNames();
@@ -174,10 +175,6 @@ class JumboNavigator extends Component {
   // You have to give it its own route name and use navigator.push({name: route name})
   _renderNavigatorScene (route, navigator) {
     this.currentPage = route.name;
-    Analytics.logEvent('open_page', {
-      'type': 'app_home_subpage',
-      'name': route.name
-    });
     if (route.name == PageNames.settingsPage) {
       return (
         <SettingsPage
@@ -437,11 +434,13 @@ class JumboNavigator extends Component {
   // shows the correct notification for matching
   // if on the swiping page, then shows full match view, else shows a banner notif
   _notifyUserOfMatchWith(profile) {
+    let notificationType = "";
     if (profile != null && this.currentPage == PageNames.cardsPage) {
       this.setState({
         matchProfile: profile,
         showMatchView: true,
       });
+      notificationType = "match-page";
     } else if (profile != null) {
       this.setState({
         matchProfile: profile,
@@ -449,7 +448,11 @@ class JumboNavigator extends Component {
       this.notificationBanner.showWithMessage("New Match! Say Hello to " + profile.firstName, ()=>{
         this.changePage(PageNames.chatPage);
       });
+      notificationType = "banner"
     }
+    Analytics.logEvent('show_match', {
+      'type': notificationType
+    });
   }
 
   render() {

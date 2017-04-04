@@ -49,6 +49,10 @@ class SwipingPage extends Component {
 
   componentDidMount() {
     this._shouldRetrieveLikePoints(true);
+    Analytics.logEvent('open_page', {
+      'type': 'app_home_subpage',
+      'name': 'swiping'
+    });
   }
 
   componentWillUnmount() {
@@ -211,9 +215,7 @@ class SwipingPage extends Component {
     this._swipeErrorCheck(cardIndex, profile);
     this.setState({canUndoCount: 0});
     this._incrementSwipeCount(true);
-    Analytics.logEvent('swipe', {
-      'direction': 'right',
-    });
+    Analytics.logEvent('swipe-right', {});
   }
 
   _handleLeftSwipeForIndex(cardIndex) {
@@ -221,9 +223,7 @@ class SwipingPage extends Component {
     this._swipeErrorCheck(cardIndex, card);
     this.setState({canUndoCount: this.state.canUndoCount + 1});
     this._incrementSwipeCount(false);
-    Analytics.logEvent('swipe', {
-      'direction': 'left',
-    });
+    Analytics.logEvent('swipe-left', {});
   }
 
   _undo() {

@@ -23,6 +23,7 @@ let global = require('../global/GlobalFunctions.js');
 
 //TODO: check for servuce being down
 let _listView: ListView;
+const Analytics = require('react-native-firebase-analytics');
 const SCROLL_TO_Y = 0;
 
 class ChatPage extends React.Component {
@@ -41,6 +42,10 @@ class ChatPage extends React.Component {
     if (_listView) {
       _listView.scrollTo({x: 0, y: SCROLL_TO_Y, animated: true});
     }
+    Analytics.logEvent('open_page', {
+      'type': 'app_home_subpage',
+      'name': 'chat'
+    });
   }
 
   _fetchConversationsAsync () {
