@@ -1,7 +1,7 @@
 # Versions:
 ```
 react-native-cli: 1.0.0
-react-native: 0.37.0
+react-native: 0.42.3
 npm: 3.10.6
 node: 4.5.0
 ```
