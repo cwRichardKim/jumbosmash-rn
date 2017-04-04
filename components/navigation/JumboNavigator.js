@@ -53,6 +53,10 @@ class JumboNavigator extends Component {
     this.pushNotificationsHandler = require('react-native-push-notification');
     this.currentPage = this.props.initialRoute ? this.props.initialRoute.name : PageNames.cardsPage;
 
+    this.conversationParticipantBasic = null; // what is used in chat schema
+    this.conversationParticipant = null;
+    this.conversationId = null;
+
     this.state = {
       // WAIT. before you add anything here, remember that this is the UI of the
       // navigator, only add things that pertain to UI
@@ -169,6 +173,7 @@ class JumboNavigator extends Component {
     }
   }
 
+
   // Returns the content that the navigator should show.  Since route.name is "TabBar"
   // by default, it will show the TabBar.  In order to "push" a view on top of this view,
   // You have to give it its own route name and use navigator.push({name: route name})
@@ -213,6 +218,7 @@ class JumboNavigator extends Component {
     } else if (route.name == PageNames.chatPage) {
       return (
         <ChatPage
+          ref={(elem) => {this.chatPage = elem}}
           navigator={navigator}
           myProfile={this.props.myProfile}
           navBarHeight={NAVBAR_HEIGHT}
@@ -233,7 +239,6 @@ class JumboNavigator extends Component {
           firebase={this.props.firebase}
           token={this.props.token}
           pushNotificationsHandler={this.pushNotificationHandler}
-          showProfileCardForProfile={this._showProfileCardForProfile.bind(this)}
         />
       );
     }
@@ -265,6 +270,10 @@ class JumboNavigator extends Component {
 
   _renderNavBarRightButton(route, navigator, index, navState) {
     if (route.name == PageNames.conversation) {
+      let other = global.otherParticipants(route.participants, this.props.myProfile.id);
+      let len = other ? other.length : 0;
+      this.conversationParticipantBasic = len > 0 ? other[0] : null;
+      this.conversationId = route.chatroomId;
       return (
         <TouchableOpacity onPress={() => {this.ActionSheet.show()}}>
           <Text>options</Text>
@@ -346,13 +355,24 @@ class JumboNavigator extends Component {
     );
   }
 
-  _handleActionSheetPress(index) {
+  async _handleActionSheetPress(index) {
     if (actionSheetButtons[index] == REPORT_AS) {
       this._sendReport();
-    } else if (actionSheetButtons[index] == SHOW_PROFILE_AS) {
-      //TODO: @jared show profile card
+      return;
+    }
+
+    if (actionSheetButtons[index] == SHOW_PROFILE_AS) {
+      if (this.conversationParticipant == null) {
+        this.conversationParticipant = await this.fetchProfile(this.conversationParticipantBasic.profileId);
+      } else if (this.conversationParticipantBasic.profileId != this.conversationParticipant.id) {
+        this.conversationParticipant = await this.fetchProfile(this.conversationParticipantBasic.profileId);
+      }
+      this._showProfileCardForProfile(this.conversationParticipant);
     } else if (actionSheetButtons[index] == UNMATCH_AS) {
-      //TODO: @jared unmatch
+      //TODO: @jared also delete conversation on firebase
+      await this.unmatchProfile(this.conversationParticipantBasic.profileId);
+      this.navigator.pop();
+      this.chatPage.refresh();
     }
   }
 
@@ -375,6 +395,42 @@ class JumboNavigator extends Component {
         [{text:"OK", onPress:()=>{}}]
       )
     }
+  }
+
+  fetchProfile(profileId) {
+    let url = "https://jumbosmash2017.herokuapp.com/profile/id/".concat(profileId).concat("/").concat(this.props.token.val);
+    return fetch(url)
+      .then((response) => {
+        if ("status" in response && response["status"] >= 200 && response["status"] < 300) {
+          return response.json();
+        } else {
+          throw ("status" in response) ? response["status"] : "Unknown Error";
+        }
+      })
+      .then((profile) => {
+        return profile;
+      })
+      .catch((error) => {
+        console.error("ERROR " + error);
+      });
+  }
+
+  unmatchProfile(profileId) {
+    let url = "https://jumbosmash2017.herokuapp.com/chat/unmatch/".concat(this.conversationId).concat("/").concat(this.props.myProfile.id).concat("/").concat(this.conversationParticipantBasic.profileId).concat("/").concat(this.props.token.val);
+    fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: "",
+    }).then((response) => {
+      console.log("Successfully unmatched");
+    }).catch((error) => {
+      let errorString = "Sorry, we could not unmatch you and " + this.conversationParticipantBasic.firstName + " please try again later";
+      Alert.alert('Error', errorString);
+      console.log(error);
+      //DO NOTHING (user doesn't really need to know this didn't work)
+    });
   }
 
   // Profile card UI
