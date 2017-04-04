@@ -144,16 +144,16 @@ class LoginPage extends Component {
               text="Forgot Password?"
           />
 
-          <View style={AuthStyle.buttonContainer}>
+          <View style={styles.buttonContainer}>
             <RectButton
-              style={[AuthStyle.solidButton]}
-              textStyle={AuthStyle.solidButtonText}
+              style={[AuthStyle.solidButton, AuthStyle.buttonBlue]}
+              textStyle={[AuthStyle.solidButtonText, AuthStyle.bold]}
               onPress={this._login.bind(this)}
               text="LOGIN"
             />
 
             <RectButton
-              style={[AuthStyle.solidButton]}
+              style={[AuthStyle.solidButton, AuthStyle.buttonPink]}
               textStyle={AuthStyle.solidButtonText}
               onPress={this._goToSignupPage.bind(this)}
               text="SIGNUP!"
@@ -167,7 +167,9 @@ class LoginPage extends Component {
 }
 
 var styles = StyleSheet.create({
-
+  buttonContainer: {
+    marginTop: 30,
+  },
 })
 
 export default LoginPage;

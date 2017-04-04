@@ -63,19 +63,14 @@ module.exports = StyleSheet.create({
     color: 'white',
     fontWeight: '400'
   },
-  buttonContainer: {
-    marginTop: 30,
-  },
   solidButton: {
     height: 40,
     width: 180,
     marginTop: 15,
-    backgroundColor: 'gray',
     borderRadius: 5,
   },
   solidButtonText: {
     color: 'white',
-    fontWeight: '600',
   },
   noBackgroundButton: {
     marginTop: 10,
@@ -85,5 +80,14 @@ module.exports = StyleSheet.create({
   noBackgroundButtonText: {
     color: 'white',
     fontWeight: '400'
-  }
+  },
+  buttonBlue: {
+    backgroundColor: '#8787B2',
+  },
+  buttonPink: {
+    backgroundColor: '#A17990',
+  },
+  bold: {
+    fontWeight: '600',
+  },
 });
