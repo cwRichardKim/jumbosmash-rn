@@ -29,6 +29,7 @@ import RectButton     from '../global/RectButton.js';
 import GlobalStyles   from "../global/GlobalStyles.js";
 
 const BORDER_RADIUS = 10;
+const Analytics = require('react-native-firebase-analytics');
 const WIDTH = Dimensions.get('window').width;
 
 class MatchView extends Component {
@@ -127,6 +128,9 @@ class MatchView extends Component {
         }
         this.props.onClose();
       }
+    });
+    Analytics.logEvent('match_button_hit', {
+      'name': isSuccess ? 'smash_now' : 'smash_later',
     });
   }
 
