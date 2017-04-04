@@ -174,6 +174,10 @@ class JumboNavigator extends Component {
   // You have to give it its own route name and use navigator.push({name: route name})
   _renderNavigatorScene (route, navigator) {
     this.currentPage = route.name;
+    Analytics.logEvent('open_page', {
+      'type': 'app_home_subpage',
+      'name': route.name
+    });
     if (route.name == PageNames.settingsPage) {
       return (
         <SettingsPage

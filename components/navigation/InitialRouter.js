@@ -67,13 +67,13 @@ class InitialRouter extends Component {
     this._shouldFetchUserAndProfile();
   }
 
-  _initializeFirebaseAnalytics(user) {
+  _initializeFirebaseAnalytics(user, hasAllParams) {
     let userId = (user && user.uid) ? user.uid : "unknown";
     Analytics.setUserId(userId);
     // Analytics.setUserProperty('propertyName', 'propertyValue');
 
-    Analytics.logEvent('view_item', {
-      'item_id': 'APP_OPEN'
+    Analytics.logEvent('app_open', {
+      'has_all_params': hasAllParams
     });
   }
 
@@ -100,9 +100,6 @@ class InitialRouter extends Component {
   _showCheaterPage() {
     this.userIsCheating = true;
     this.navigator.replace({name: PageNames.cheaterPage});
-    Analytics.logEvent('view_item', {
-      'item_id': 'CHEATER'
-    });
   }
 
   // This function is what decides what page to load. While this function is
@@ -118,11 +115,12 @@ class InitialRouter extends Component {
         if (!this.didGetUserAndProfile) {
           this.didGetUserAndProfile = true;
           let myProfile = await this._shouldFetchMyProfileFromStorage();
-          this._initializeFirebaseAnalytics(user);
           if (user && user.emailVerified && myProfile) {
             this.setState({myProfile});
+            this._initializeFirebaseAnalytics(user, true);
             this._loadPage(PageNames.appHome);
           } else {
+            this._initializeFirebaseAnalytics(user, false);
             this._loadPage(PageNames.auth);
           }
         }
@@ -138,9 +136,6 @@ class InitialRouter extends Component {
       if (storedMyProfile !== null && typeof(storedMyProfile) !== "undefined") {
         storedMyProfile = JSON.parse(storedMyProfile);
         if (storedMyProfile && storedMyProfile.id) {
-          Analytics.logEvent('view_item', {
-            'item_id': 'FETCHED_PROFILE_FROM_STORAGE'
-          });
           return storedMyProfile;
         }
       }
@@ -160,8 +155,8 @@ class InitialRouter extends Component {
     if (this.userIsCheating) {
       this._showCheaterPage();
     } else if (this.shouldOverridePageLoads === true || appState === AppExpirationStates.active) {
-      Analytics.logEvent('view_item', {
-        'item_id': 'OVERRIDE_OPEN_APP_HOME'
+      Analytics.logEvent('override_open_app_home', {
+        'destination': page || "unkown"
       });
       this.navigator.replace({name: page});
     } else if (appState === AppExpirationStates.preRelease) {
@@ -194,19 +189,17 @@ class InitialRouter extends Component {
   }
 
   _renderNavigatorScene (route, navigator) {
+    Analytics.logEvent('open_page', {
+      'type': 'navigation',
+      'name': route.name
+    });
     if (route.name == PageNames.expiredPage) {
-      Analytics.logEvent('view_item', {
-        'item_id': 'OPEN_THANK_YOU_PAGE'
-      });
       return (
         <ThankYouPage
           changePage={this._changePageFromAppNonActivityPages.bind(this)}
         />
       )
     } else if (route.name == PageNames.preRelease) {
-      Analytics.logEvent('view_item', {
-          'item_id': 'OPEN_PRERELEASE_PAGE'
-        });
       return (
         <PreReleasePage
           changePage={this._changePageFromAppNonActivityPages.bind(this)}
@@ -215,9 +208,6 @@ class InitialRouter extends Component {
         />
       )
     } else if (route.name == PageNames.appHome) {
-      Analytics.logEvent('view_item', {
-          'item_id': 'OPEN_APP_HOME_PAGE'
-        });
       return (
         <NavigationContainer
           firebase={firebase}
@@ -238,9 +228,6 @@ class InitialRouter extends Component {
         <LoadingPage/>
       );
     } else {
-      Analytics.logEvent('view_item', {
-          'item_id': 'OPEN_AUTH_PAGE'
-        });
       return (
         <AuthContainer
           firebase={firebase}

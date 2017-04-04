@@ -27,6 +27,7 @@ import RectButton         from "../global/RectButton.js";
 import GlobalStyles       from "../global/GlobalStyles.js";
 import AuthErrors         from "../login/AuthErrors.js"
 
+const Analytics = require('react-native-firebase-analytics');
 const GlobalFunctions = require('../global/GlobalFunctions.js');
 const StorageKeys = GlobalFunctions.storageKeys();
 const PageNames = GlobalFunctions.pageNames();
@@ -123,6 +124,10 @@ class SettingsPage extends Component {
   // This function updates the current information to the server
   // public: can be called by JumboNavigator
   saveButtonPressed() {
+    Analytics.logEvent('button_hit', {
+      'name': 'save_settings_changes',
+      'page': 'settings'
+    });
     this._asyncUpdatePropertiesRequest();
   }
 
@@ -173,6 +178,10 @@ class SettingsPage extends Component {
   }
 
   _sendMail() {
+    Analytics.logEvent('button_hit', {
+      'name': 'feedback_email',
+      'page': 'settings'
+    });
     if (Mailer && Mailer.mail) {
       Mailer.mail({
         subject: 'Help / Feedback',
@@ -193,6 +202,10 @@ class SettingsPage extends Component {
   }
 
   _logout() {
+    Analytics.logEvent('button_hit', {
+      'name': 'logout',
+      'page': 'settings'
+    });
     this.props.firebase.auth().signOut()
       .then(() => {
         try {
@@ -210,6 +223,10 @@ class SettingsPage extends Component {
   }
 
   _viewProfile() {
+    Analytics.logEvent('button_hit', {
+      'name': 'view_profile',
+      'page': 'settings'
+    });
     this.props.showProfileCardForProfile(this.props.myProfile);
   }
 
