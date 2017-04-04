@@ -20,6 +20,7 @@ import CircleButton from "../global/CircleButton.js";
 import GlobalStyles from "../global/GlobalStyles.js";
 let Mailer = require('NativeModules').RNMail;
 
+const Analytics = require('react-native-firebase-analytics');
 const WIDTH = Dimensions.get("window").width;
 const MIN_SWIPES_FOR_EMOJIS = 20;
 
@@ -90,6 +91,11 @@ class SwipeButtonsView extends Component {
   }
 
   _statusOnPress() {
+    Analytics.logEvent('button_hit', {
+      'name': 'emoji_status',
+      'page': 'swiping',
+      'status': this._getEmojiStatus(),
+    });
     Alert.alert(
       "Your Status: "+this._getEmojiStatus(),
       "Your thirst status changes to reflect how often you swipe left or right. Don't worry, nobody else has to know \n💦🔒🙈",
