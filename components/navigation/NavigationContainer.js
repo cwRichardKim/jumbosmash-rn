@@ -53,6 +53,10 @@ class NavigationContainer extends Component {
           console.log(error);
         });
     }
+    Analytics.logEvent('open_page', {
+      'type': 'navigation',
+      'name': 'app_home'
+    });
     AppState.addEventListener('change', this._handleAppStateChange.bind(this));
   }
 

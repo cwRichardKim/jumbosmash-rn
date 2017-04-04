@@ -50,6 +50,13 @@ class SettingsPage extends Component {
     this.keyboardFrameWillChangeListener = Keyboard.addListener('keyboardWillChangeFrame', this._keyboardWillChangeFrame.bind(this));
   }
 
+  componentDidMount () {
+    Analytics.logEvent('open_page', {
+      'type': 'app_home_subpage',
+      'name': 'settings'
+    });
+  }
+
   componentWillUnmount () {
     this.keyboardFrameWillChangeListener.remove();
   }

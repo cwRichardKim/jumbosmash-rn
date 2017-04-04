@@ -11,6 +11,7 @@ import { GiftedChat } from 'react-native-gifted-chat';
 
 let Mailer = require('NativeModules').RNMail;
 
+const Analytics = require('react-native-firebase-analytics');
 
 class ConversationPage extends Component {
   constructor(props) {
@@ -56,6 +57,10 @@ class ConversationPage extends Component {
           this.state.conversation.participants[i].read = true;
         }
       }
+    });
+    Analytics.logEvent('open_page', {
+      'type': 'app_home_subpage',
+      'name': 'conversation'
     });
   }
 

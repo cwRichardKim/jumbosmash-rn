@@ -22,6 +22,7 @@ import AuthErrors             from "../login/AuthErrors.js";
 let Mailer = require('NativeModules').RNMail;
 const StorageKeys = GlobalFunctions.storageKeys();
 const OverrideActions = GlobalFunctions.overrideActions();
+const Analytics = require('react-native-firebase-analytics');
 const HEIGHT = Dimensions.get('window').height;
 const WIDTH = Dimensions.get('window').width;
 const PADDING = 20;
@@ -31,6 +32,13 @@ class PreReleasePage extends Component {
     super(props);
     this.state = {
     };
+  }
+
+  componentDidMount () {
+    Analytics.logEvent('open_page', {
+      'type': 'navigation',
+      'name': 'pre_release'
+    });
   }
 
   _loadPreReleaseApp() {

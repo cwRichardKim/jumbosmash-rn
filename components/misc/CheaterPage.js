@@ -20,6 +20,7 @@ import GlobalFunctions        from "../global/GlobalFunctions.js"
 import RectButton             from "../global/RectButton.js";
 import AuthErrors             from "../login/AuthErrors.js";
 
+const Analytics = require('react-native-firebase-analytics');
 const HEIGHT = Dimensions.get('window').height;
 const WIDTH = Dimensions.get('window').width;
 const PADDING = 20;
@@ -29,6 +30,13 @@ class CheaterPage extends Component {
     super(props);
     this.state = {
     };
+  }
+
+  componentDidMount () {
+    Analytics.logEvent('open_page', {
+      'type': 'navigation',
+      'name': 'cheater'
+    });
   }
 
   render() {
