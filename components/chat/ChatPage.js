@@ -60,7 +60,7 @@ class ChatPage extends React.Component {
         data.sort(function(a,b){
           return (b.lastSent && a.lastSent) ? new Date(b.lastSent.date) - new Date(a.lastSent.date) : 0;
         });
-        
+
         this.setState({
           dataSource: this.state.dataSource.cloneWithRows(data),
           rawData: data,
@@ -295,12 +295,8 @@ const styles = StyleSheet.create({
     borderColor: '#6A6ACB',
     borderWidth: 3,
   },
-  headerContainer: {
-    height: 40,
-    flex: 1,
-  },
   searchInput: {
-    height: 30,
+    height: 36,
     flex: 1,
     paddingHorizontal: 8,
     fontSize: 15,
