@@ -69,7 +69,7 @@ class SwipeButtonsView extends Component {
       "You can only undo left swipes 😉",
       "",
       [
-        {text:"Ah shit I f*cked up. Halp me", onPress:this._sendMail.bind(this)},
+        {text:"Ah sh*t I f*cked up. Halp me", onPress:this._sendMail.bind(this)},
         {text:"fine.", onPress: ()=>{}},
       ]
     );
@@ -91,9 +91,7 @@ class SwipeButtonsView extends Component {
   }
 
   _statusOnPress() {
-    Analytics.logEvent('button_hit', {
-      'name': 'emoji_status',
-      'page': 'swiping',
+    Analytics.logEvent('emoji_status_button', {
       'status': this._getEmojiStatus(),
     });
     Alert.alert(

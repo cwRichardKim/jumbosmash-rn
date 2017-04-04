@@ -42,10 +42,7 @@ class ChatPage extends React.Component {
     if (_listView) {
       _listView.scrollTo({x: 0, y: SCROLL_TO_Y, animated: true});
     }
-    Analytics.logEvent('open_page', {
-      'type': 'app_home_subpage',
-      'name': 'chat'
-    });
+    Analytics.logEvent('open_chat_page', {});
   }
 
   _fetchConversationsAsync () {

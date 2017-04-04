@@ -32,10 +32,7 @@ class ThankYouPage extends Component {
   }
 
   componentDidMount () {
-    Analytics.logEvent('open_page', {
-      'type': 'navigation',
-      'name': 'thank_you'
-    });
+    Analytics.logEvent('open_thank_you_page', {});
   }
 
   _openAboutURL() {

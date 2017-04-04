@@ -35,10 +35,7 @@ class PreReleasePage extends Component {
   }
 
   componentDidMount () {
-    Analytics.logEvent('open_page', {
-      'type': 'navigation',
-      'name': 'pre_release'
-    });
+    Analytics.logEvent('open_pre_release_page', {});
   }
 
   _loadPreReleaseApp() {
