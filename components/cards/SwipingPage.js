@@ -262,6 +262,7 @@ class SwipingPage extends Component {
         cardIndex={index}
         positionInDeck={positionInDeck}
         cardWidth={CARD_WIDTH}
+        numCards={this.props.profiles.length}
         />
       );
     } else {

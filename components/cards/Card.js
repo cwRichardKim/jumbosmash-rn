@@ -156,10 +156,10 @@ class Card extends Component {
 
   //TODO @richard remove later, for debugging purposes
   _renderIndexView() {
-    if (__DEV__ && this.props.index) {
+    if (__DEV__ && this.props.index && this.props.numCards) {
       return (
         <View style={styles.indexView}>
-          <Text>{"[i: " +this.props.cardIndex.toString()+ ", card: "+this.props.index.toString() +"]"}</Text>
+          <Text>{"[i: " +this.props.cardIndex.toString()+ ", card: "+this.props.index.toString() +" of: " + this.props.numCards.toString()+" cards]"}</Text>
         </View>
       )
     } else {

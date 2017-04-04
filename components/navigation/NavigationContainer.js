@@ -33,6 +33,7 @@ class NavigationContainer extends Component {
     // don't change the structure of how this is stored. Could
     // make a lot of things break whether you realize it or not
     this.token = {val: null};
+    this.isFetchInProgress = false; //flag to make sure only one fetch call is called at a time
     this.state = {
       profiles: [],
     };
@@ -188,6 +189,11 @@ class NavigationContainer extends Component {
     } else if (!this.props.myProfile) {
       setTimeout(this._fetchProfiles.bind(this), 200);
     } else {
+      if (this.isFetchInProgress) {
+        return;
+      }
+      this.isFetchInProgress = true;
+
       let index = await this._getLastIndex();
       let id = this.props.myProfile.id.toString();
       let batch = count ? count.toString() : FETCH_BATCH_SIZE.toString();
@@ -195,6 +201,7 @@ class NavigationContainer extends Component {
       console.log("Fetching profiles for "+id+" batch size: " + batch + " index: " + index);
       return fetch(url)
       .then((response) => {
+        this.isFetchInProgress = false;
         if (global.isUserCheatingWithResponse(response)) {
           this.props.showCheaterPage();
           throw "Time settings are off";
@@ -228,6 +235,7 @@ class NavigationContainer extends Component {
         }
       })
       .catch((error) => {
+        this.isFetchInProgress = false;
         //TODO: @richard replace with real catch case
         Alert.alert(
           "Something Went Wrong :(",

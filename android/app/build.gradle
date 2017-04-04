@@ -1,4 +1,5 @@
 apply plugin: "com.android.application"
+apply plugin: 'com.google.gms.google-services' // <- react-native-firebase-analytics
 
 import com.android.build.OutputFile
 
@@ -127,6 +128,7 @@ android {
 }
 
 dependencies {
+    compile project(':react-native-firebase-analytics')
     compile project(':react-native-push-notification')
     compile project(':react-native-image-resizer')
     compile project(':react-native-image-crop-picker')
