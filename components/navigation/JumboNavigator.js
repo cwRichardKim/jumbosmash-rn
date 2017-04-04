@@ -231,6 +231,7 @@ class JumboNavigator extends Component {
     } else if (route.name == PageNames.conversation) {
       return(
         <ConversationPage
+          ref={(elem) => {this.conversationPage = elem}}
           navigator={navigator}
           chatroomId={route.chatroomId}
           participants={route.participants}
@@ -248,7 +249,12 @@ class JumboNavigator extends Component {
     if (route.name == PageNames.conversation) {
       return (
         <TouchableOpacity onPress={() => {navigator.pop();}}>
-          <Text>Back</Text>
+          <View style={styles.convoNavBarContainer}>
+            <Image
+              source={require("./images/back-icon.png")}
+              style={styles.convoNavBarIcon}
+            />
+          </View>
         </TouchableOpacity>
       );
     } else {
@@ -276,7 +282,12 @@ class JumboNavigator extends Component {
       this.conversationId = route.chatroomId;
       return (
         <TouchableOpacity onPress={() => {this.ActionSheet.show()}}>
-          <Text>options</Text>
+          <View style={styles.convoNavBarContainer}>
+            <Image
+              source={require("./images/options-icon.png")}
+              style={styles.convoNavBarIcon}
+            />
+          </View>
         </TouchableOpacity>
       );
     } else {
@@ -300,12 +311,14 @@ class JumboNavigator extends Component {
     if (route.name == PageNames.conversation) {
       let participants = global.otherParticipants(route.participants, this.props.myProfile.id);
       return (
-        <View style={styles.navigationBarTitleContainer}>
-          <Image style={styles.avatarPhoto} source={participants ? {uri: participants[0].photo} : null}/>
-          <Text style={styles.navigationBarTitleText}>
-            {participants? participants[0].firstName : null}
-          </Text>
-        </View>
+        <TouchableOpacity onPress={() => {this._showConversationProfile()}}>
+          <View style={styles.navigationBarTitleContainer}>
+            <Image style={styles.avatarPhoto} source={participants ? {uri: participants[0].photo} : null}/>
+            <Text style={styles.navigationBarTitleText}>
+              {participants? participants[0].firstName : null}
+            </Text>
+          </View>
+        </TouchableOpacity>
       );
     } else {
       return (
@@ -362,17 +375,12 @@ class JumboNavigator extends Component {
     }
 
     if (actionSheetButtons[index] == SHOW_PROFILE_AS) {
-      if (this.conversationParticipant == null) {
-        this.conversationParticipant = await this.fetchProfile(this.conversationParticipantBasic.profileId);
-      } else if (this.conversationParticipantBasic.profileId != this.conversationParticipant.id) {
-        this.conversationParticipant = await this.fetchProfile(this.conversationParticipantBasic.profileId);
-      }
-      this._showProfileCardForProfile(this.conversationParticipant);
+      this._showConversationProfile();
     } else if (actionSheetButtons[index] == UNMATCH_AS) {
-      //TODO: @jared also delete conversation on firebase
       await this.unmatchProfile(this.conversationParticipantBasic.profileId);
+      await this.conversationPage ? this.conversationPage.onUnmatch() : () => {}; // remove from firebase
       this.navigator.pop();
-      this.chatPage.refresh();
+      this.chatPage.refresh(); //BUG: @jared if last conversation unmatching then won't reload table automatically
     }
   }
 
@@ -382,7 +390,7 @@ class JumboNavigator extends Component {
       Mailer.mail({
         subject: 'Report',
         recipients: ['team@jumbosmash.com'],
-        body: '',
+        body: this.conversationParticipantBasic ? "Report ".concat(his.conversationParticipantBasic.firstName) : '',
       }, (error, event) => {
         if(error) {
           Alert.alert('Error', 'Could not send mail. Try sending an email to team@jumbosmash.com through your mail client');
@@ -395,6 +403,15 @@ class JumboNavigator extends Component {
         [{text:"OK", onPress:()=>{}}]
       )
     }
+  }
+
+  async _showConversationProfile() {
+      if (this.conversationParticipant == null) {
+        this.conversationParticipant = await this.fetchProfile(this.conversationParticipantBasic.profileId);
+      } else if (this.conversationParticipantBasic.profileId != this.conversationParticipant.id) {
+        this.conversationParticipant = await this.fetchProfile(this.conversationParticipantBasic.profileId);
+      }
+      this._showProfileCardForProfile(this.conversationParticipant);
   }
 
   fetchProfile(profileId) {
@@ -524,15 +541,14 @@ class JumboNavigator extends Component {
 
 const styles = StyleSheet.create({
   avatarPhoto: {
-    height: 40,
-    width: 40,
-    borderRadius: 20,
+    height: 38,
+    width: 38,
+    borderRadius: 19,
   },
   navigationBarContainer: {
     backgroundColor: 'white',
   },
   navigationBarTitleContainer: {
-    padding: 12,
     flexDirection: 'row',
     alignItems: 'center',
   },
@@ -553,6 +569,14 @@ const styles = StyleSheet.create({
   },
   navBarIcon: {
     height: 20,
+    resizeMode: 'contain',
+  },
+  convoNavBarContainer: {
+    alignItems: 'center',
+    padding: 13,
+  },
+  convoNavBarIcon: {
+    height: 18,
     resizeMode: 'contain',
   },
   navBarSelector: {

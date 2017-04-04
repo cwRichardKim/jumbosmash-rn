@@ -48,8 +48,9 @@ class ConversationPage extends Component {
         user: child.val().user,
         position: pos,
         date: new Date(child.val().date),
+        createdAt: new Date(child.val().createdAt),
       });
-      this.state.conversation.lastSent = {'profileId': child.val().user._id, 'message': child.val().text}
+      this.state.conversation.lastSent = {'profileId': child.val().user._id, 'message': child.val().text, 'date': child.val().createdAt}
       let len = this.state.conversation.participants.length;
       for(var i = 0; i < len; i++) {
         if (this.state.conversation.participants[i].profileId == this.props.myProfile.id) {
@@ -108,6 +109,7 @@ class ConversationPage extends Component {
           avatar: this.props.myProfile.photos[0].small,
         },
         date: new Date().getTime(),
+        createdAt: new Date().getTime(),
       });
     }
     this._notifyParticipants()
@@ -119,6 +121,11 @@ class ConversationPage extends Component {
         messages: GiftedChat.append(previousState.messages, message),
       };
     });
+  }
+
+  // removes a conversation from firebase
+  onUnmatch() {
+    this._messagesRef.remove()
   }
 
   render() {
