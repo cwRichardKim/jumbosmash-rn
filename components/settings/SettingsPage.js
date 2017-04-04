@@ -51,10 +51,7 @@ class SettingsPage extends Component {
   }
 
   componentDidMount () {
-    Analytics.logEvent('open_page', {
-      'type': 'app_home_subpage',
-      'name': 'settings'
-    });
+    Analytics.logEvent('open_settings_page', {});
   }
 
   componentWillUnmount () {
@@ -131,10 +128,7 @@ class SettingsPage extends Component {
   // This function updates the current information to the server
   // public: can be called by JumboNavigator
   saveButtonPressed() {
-    Analytics.logEvent('button_hit', {
-      'name': 'save_settings_changes',
-      'page': 'settings'
-    });
+    Analytics.logEvent('save_settings_button', {});
     this._asyncUpdatePropertiesRequest();
   }
 
@@ -185,8 +179,7 @@ class SettingsPage extends Component {
   }
 
   _sendMail() {
-    Analytics.logEvent('button_hit', {
-      'name': 'feedback_email',
+    Analytics.logEvent('feedback_button', {
       'page': 'settings'
     });
     if (Mailer && Mailer.mail) {
@@ -209,10 +202,7 @@ class SettingsPage extends Component {
   }
 
   _logout() {
-    Analytics.logEvent('button_hit', {
-      'name': 'logout',
-      'page': 'settings'
-    });
+    Analytics.logEvent('logout_button', {});
     this.props.firebase.auth().signOut()
       .then(() => {
         try {
@@ -230,10 +220,7 @@ class SettingsPage extends Component {
   }
 
   _viewProfile() {
-    Analytics.logEvent('button_hit', {
-      'name': 'view_profile',
-      'page': 'settings'
-    });
+    Analytics.logEvent('view_profile_button', {});
     this.props.showProfileCardForProfile(this.props.myProfile);
   }
 

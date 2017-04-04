@@ -185,8 +185,7 @@ class ProfilePhotoPicker extends Component {
         let userCancelled = error["code"].includes("CANCELLED");
         if (userCancelled) {
           // potentially handle cancelled condition
-          Analytics.logEvent('error', {
-            'name': 'photo_upload_cancelled',
+          Analytics.logEvent('photo_upload_cancelled', {
             'page': 'settings',
           });
         } else {
@@ -199,10 +198,8 @@ class ProfilePhotoPicker extends Component {
         }
       });
     }
-    Analytics.logEvent('button_hit', {
-      'name': 'change_photo',
-      'page': 'settings',
-      'status': actionName,
+    Analytics.logEvent('change_photo_button', {
+      'action': actionName,
     });
   }
 

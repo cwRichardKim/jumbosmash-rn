@@ -49,10 +49,7 @@ class SwipingPage extends Component {
 
   componentDidMount() {
     this._shouldRetrieveLikePoints(true);
-    Analytics.logEvent('open_page', {
-      'type': 'app_home_subpage',
-      'name': 'swiping'
-    });
+    Analytics.logEvent('open_swipe_page', {});
   }
 
   componentWillUnmount() {
@@ -215,7 +212,7 @@ class SwipingPage extends Component {
     this._swipeErrorCheck(cardIndex, profile);
     this.setState({canUndoCount: 0});
     this._incrementSwipeCount(true);
-    Analytics.logEvent('swipe-right', {});
+    Analytics.logEvent('swipe_right', {});
   }
 
   _handleLeftSwipeForIndex(cardIndex) {
@@ -223,7 +220,7 @@ class SwipingPage extends Component {
     this._swipeErrorCheck(cardIndex, card);
     this.setState({canUndoCount: this.state.canUndoCount + 1});
     this._incrementSwipeCount(false);
-    Analytics.logEvent('swipe-left', {});
+    Analytics.logEvent('swipe_left', {});
   }
 
   _undo() {
@@ -232,10 +229,7 @@ class SwipingPage extends Component {
         cardIndex: this.state.cardIndex - 1,
         canUndoCount: this.state.canUndoCount - 1,
       });
-      Analytics.logEvent('button_hit', {
-        'name': 'undo',
-        'page': 'swiping'
-      });
+      Analytics.logEvent('undo_button', {});
     }
   }
 
@@ -249,20 +243,14 @@ class SwipingPage extends Component {
   _swipeRightButtonPressed() {
     if (this._cardsExist()) {
       this.cards[this.state.cardIndex % DECK_SIZE].programmaticSwipeRight();
-      Analytics.logEvent('button_hit', {
-        'name': 'right_button',
-        'page': 'swiping'
-      });
+      Analytics.logEvent('right_button', {});
     }
   }
 
   _swipeLeftButtonPressed() {
     if (this._cardsExist()  ) {
       this.cards[this.state.cardIndex % DECK_SIZE].programmaticSwipeLeft();
-      Analytics.logEvent('button_hit', {
-        'name': 'left_button',
-        'page': 'swiping'
-      });
+      Analytics.logEvent('left_button', {});
     }
   }
 

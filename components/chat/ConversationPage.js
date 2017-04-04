@@ -58,10 +58,7 @@ class ConversationPage extends Component {
         }
       }
     });
-    Analytics.logEvent('open_page', {
-      'type': 'app_home_subpage',
-      'name': 'conversation'
-    });
+    Analytics.logEvent('open_conversation_page', {});
   }
 
   componentWillUnmount() {

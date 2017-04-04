@@ -33,10 +33,7 @@ class CheaterPage extends Component {
   }
 
   componentDidMount () {
-    Analytics.logEvent('open_page', {
-      'type': 'navigation',
-      'name': 'cheater'
-    });
+    Analytics.logEvent('open_cheater_page', {});
   }
 
   render() {

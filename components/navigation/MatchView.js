@@ -129,9 +129,8 @@ class MatchView extends Component {
         this.props.onClose();
       }
     });
-    Analytics.logEvent('button_hit', {
+    Analytics.logEvent('match_button_hit', {
       'name': isSuccess ? 'smash_now' : 'smash_later',
-      'page': 'match_page'
     });
   }
 
