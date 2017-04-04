@@ -3,6 +3,7 @@ package com.jumbosmash;
 import android.app.Application;
 
 import com.facebook.react.ReactApplication;
+import com.evollu.react.fa.FIRAnalyticsPackage;
 import com.dieam.reactnativepushnotification.ReactNativePushNotificationPackage;
 import fr.bamlab.rnimageresizer.ImageResizerPackage;
 import com.reactnative.ivpusic.imagepicker.PickerPackage;
@@ -28,6 +29,7 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
+            new FIRAnalyticsPackage(),
             new RNMail(),
             new ReactNativePushNotificationPackage(),
             new ImageResizerPackage(),
