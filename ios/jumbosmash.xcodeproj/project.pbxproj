@@ -37,12 +37,18 @@
 		2DCD954D1E0B4F2C00145EB5 /* jumbosmashTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E356F21AD99517003FC87E /* jumbosmashTests.m */; };
 		5E9157361DD0AC6A00FF2AA8 /* libRCTAnimation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5E9157331DD0AC6500FF2AA8 /* libRCTAnimation.a */; };
 		64C58C6013B333BD7D0C4DC7 /* libPods-jumbosmash.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 46881888A330AF60F1D7D72E /* libPods-jumbosmash.a */; };
+		792098F61E93EB92006A410D /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 792098F51E93EB92006A410D /* GoogleService-Info.plist */; };
+		792098F71E93EB92006A410D /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 792098F51E93EB92006A410D /* GoogleService-Info.plist */; };
+		792098F81E93EB92006A410D /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 792098F51E93EB92006A410D /* GoogleService-Info.plist */; };
+		792098F91E93EB92006A410D /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 792098F51E93EB92006A410D /* GoogleService-Info.plist */; };
+		792099391E946E1A006A410D /* Satisfy-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 792099381E946E1A006A410D /* Satisfy-Regular.ttf */; };
 		799C00241E8CE99000CB20FE /* libRCTPushNotification.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 799C00211E8CE96300CB20FE /* libRCTPushNotification.a */; };
 		799C00251E8CEA1300CB20FE /* libRCTPushNotification.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 799C00211E8CE96300CB20FE /* libRCTPushNotification.a */; };
 		799CFF261E8CDEA400CB20FE /* libRSKImageCropper.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 799CFF251E8CDEA400CB20FE /* libRSKImageCropper.a */; };
 		799CFF411E8CDEAF00CB20FE /* libQBImagePickerController.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 799CFF401E8CDEAF00CB20FE /* libQBImagePickerController.a */; };
 		799CFF8A1E8CE0FE00CB20FE /* libRNMail.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 799CFF871E8CDF0100CB20FE /* libRNMail.a */; };
 		832341BD1AAA6AB300B99B32 /* libRCTText.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 832341B51AAA6A8300B99B32 /* libRCTText.a */; };
+		98219AC5E8F249B5A9A30446 /* libRNFIRAnalytics.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 4D665EA646214FC99E4F9B84 /* libRNFIRAnalytics.a */; };
 		A2759D5C874541DE9DA8C278 /* libRNMail.a in Frameworks */ = {isa = PBXBuildFile; fileRef = AD01770C3BA845BAB95EC3E6 /* libRNMail.a */; };
 		B437AF66F12A49FF918A566C /* libRNFetchBlob.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F4E15E91426E48328F655CAE /* libRNFetchBlob.a */; };
 		C1EDCCB874BA490CA3EA362A /* libRCTImageResizer.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9C411A6BE5DC48138371E3B0 /* libRCTImageResizer.a */; };
@@ -231,6 +237,13 @@
 			remoteGlobalIDString = 134814201AA4EA6300B7C361;
 			remoteInfo = RCTLinking;
 		};
+		792098F11E93E93D006A410D /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = D16989AAA8EE43B9BFF50EED /* RNFIRAnalytics.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 134814201AA4EA6300B7C361;
+			remoteInfo = RNFIRAnalytics;
+		};
 		799C00201E8CE96300CB20FE /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 799C001B1E8CE96300CB20FE /* RCTPushNotification.xcodeproj */;
@@ -323,10 +336,13 @@
 		33B2DDEF6E3A33F5800B971F /* Pods-jumbosmash.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-jumbosmash.release.xcconfig"; path = "Pods/Target Support Files/Pods-jumbosmash/Pods-jumbosmash.release.xcconfig"; sourceTree = "<group>"; };
 		399B0164B1A84329870A323B /* imageCropPicker.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = imageCropPicker.xcodeproj; path = "../node_modules/react-native-image-crop-picker/ios/imageCropPicker.xcodeproj"; sourceTree = "<group>"; };
 		46881888A330AF60F1D7D72E /* libPods-jumbosmash.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-jumbosmash.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		4D665EA646214FC99E4F9B84 /* libRNFIRAnalytics.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libRNFIRAnalytics.a; sourceTree = "<group>"; };
 		4EE91AEDBF9E4B0DA8A6A3A4 /* RCTImageResizer.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = RCTImageResizer.xcodeproj; path = "../node_modules/react-native-image-resizer/ios/RCTImageResizer.xcodeproj"; sourceTree = "<group>"; };
 		5E91572D1DD0AC6500FF2AA8 /* RCTAnimation.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTAnimation.xcodeproj; path = "../node_modules/react-native/Libraries/NativeAnimation/RCTAnimation.xcodeproj"; sourceTree = "<group>"; };
 		694747ACD1474D4FBB3E8E10 /* libimageCropPicker.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libimageCropPicker.a; sourceTree = "<group>"; };
 		78C398B01ACF4ADC00677621 /* RCTLinking.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTLinking.xcodeproj; path = "../node_modules/react-native/Libraries/LinkingIOS/RCTLinking.xcodeproj"; sourceTree = "<group>"; };
+		792098F51E93EB92006A410D /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		792099381E946E1A006A410D /* Satisfy-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Satisfy-Regular.ttf"; sourceTree = "<group>"; };
 		799C001B1E8CE96300CB20FE /* RCTPushNotification.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTPushNotification.xcodeproj; path = "../node_modules/react-native/Libraries/PushNotificationIOS/RCTPushNotification.xcodeproj"; sourceTree = "<group>"; };
 		799CFF251E8CDEA400CB20FE /* libRSKImageCropper.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libRSKImageCropper.a; path = "../../../Library/Developer/Xcode/DerivedData/jumbosmash-bsdyohbxbvmwmlbijqcmowvoewls/Build/Products/Debug-iphonesimulator/RSKImageCropper/libRSKImageCropper.a"; sourceTree = "<group>"; };
 		799CFF401E8CDEAF00CB20FE /* libQBImagePickerController.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libQBImagePickerController.a; path = "../../../Library/Developer/Xcode/DerivedData/jumbosmash-bsdyohbxbvmwmlbijqcmowvoewls/Build/Products/Debug-iphonesimulator/QBImagePickerController/libQBImagePickerController.a"; sourceTree = "<group>"; };
@@ -334,6 +350,7 @@
 		8CA5853380D84D1BA27E3D14 /* ImageCropPicker.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = ImageCropPicker.xcodeproj; path = "../node_modules/react-native-image-crop-picker/ios/ImageCropPicker.xcodeproj"; sourceTree = "<group>"; };
 		9C411A6BE5DC48138371E3B0 /* libRCTImageResizer.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libRCTImageResizer.a; sourceTree = "<group>"; };
 		AD01770C3BA845BAB95EC3E6 /* libRNMail.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libRNMail.a; sourceTree = "<group>"; };
+		D16989AAA8EE43B9BFF50EED /* RNFIRAnalytics.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = RNFIRAnalytics.xcodeproj; path = "../node_modules/react-native-firebase-analytics/ios/RNFIRAnalytics.xcodeproj"; sourceTree = "<group>"; };
 		F4E15E91426E48328F655CAE /* libRNFetchBlob.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libRNFetchBlob.a; sourceTree = "<group>"; };
 		FC1618662E8B4112B079A230 /* RNMail.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = RNMail.xcodeproj; path = "../node_modules/react-native-mail/RNMail.xcodeproj"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -372,6 +389,7 @@
 				115ED49BAFBC46C2A25CDB9F /* libimageCropPicker.a in Frameworks */,
 				C1EDCCB874BA490CA3EA362A /* libRCTImageResizer.a in Frameworks */,
 				A2759D5C874541DE9DA8C278 /* libRNMail.a in Frameworks */,
+				98219AC5E8F249B5A9A30446 /* libRNFIRAnalytics.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -480,6 +498,7 @@
 		13B07FAE1A68108700A75B9A /* jumbosmash */ = {
 			isa = PBXGroup;
 			children = (
+				792098F51E93EB92006A410D /* GoogleService-Info.plist */,
 				008F07F21AC5B25A0029DE68 /* main.jsbundle */,
 				13B07FAF1A68108700A75B9A /* AppDelegate.h */,
 				13B07FB01A68108700A75B9A /* AppDelegate.m */,
@@ -530,6 +549,14 @@
 			children = (
 				78C398B91ACF4ADC00677621 /* libRCTLinking.a */,
 				3DAD3E881DF850E9000B6D8A /* libRCTLinking-tvOS.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		792098CF1E93E93D006A410D /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				792098F21E93E93D006A410D /* libRNFIRAnalytics.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -604,6 +631,7 @@
 				4EE91AEDBF9E4B0DA8A6A3A4 /* RCTImageResizer.xcodeproj */,
 				FC1618662E8B4112B079A230 /* RNMail.xcodeproj */,
 				399B0164B1A84329870A323B /* imageCropPicker.xcodeproj */,
+				D16989AAA8EE43B9BFF50EED /* RNFIRAnalytics.xcodeproj */,
 			);
 			name = Libraries;
 			sourceTree = "<group>";
@@ -620,6 +648,7 @@
 		83CBB9F61A601CBA00E9B192 = {
 			isa = PBXGroup;
 			children = (
+				792099381E946E1A006A410D /* Satisfy-Regular.ttf */,
 				13B07FAE1A68108700A75B9A /* jumbosmash */,
 				832341AE1AAA6A7D00B99B32 /* Libraries */,
 				00E356EF1AD99517003FC87E /* jumbosmashTests */,
@@ -833,6 +862,10 @@
 					ProjectRef = 10CCD418872F4D8B9E55E544 /* RNFetchBlob.xcodeproj */;
 				},
 				{
+					ProductGroup = 792098CF1E93E93D006A410D /* Products */;
+					ProjectRef = D16989AAA8EE43B9BFF50EED /* RNFIRAnalytics.xcodeproj */;
+				},
+				{
 					ProductGroup = 799CFF821E8CDF0100CB20FE /* Products */;
 					ProjectRef = FC1618662E8B4112B079A230 /* RNMail.xcodeproj */;
 				},
@@ -1016,6 +1049,13 @@
 			remoteRef = 78C398B81ACF4ADC00677621 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
+		792098F21E93E93D006A410D /* libRNFIRAnalytics.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libRNFIRAnalytics.a;
+			remoteRef = 792098F11E93E93D006A410D /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
 		799C00211E8CE96300CB20FE /* libRCTPushNotification.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
@@ -1086,6 +1126,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				792098F71E93EB92006A410D /* GoogleService-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1094,7 +1135,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
+				792099391E946E1A006A410D /* Satisfy-Regular.ttf in Resources */,
 				13B07FBD1A68108700A75B9A /* LaunchScreen.xib in Resources */,
+				792098F61E93EB92006A410D /* GoogleService-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1103,6 +1146,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				2D02E4BD1E0B4A84006451C7 /* Images.xcassets in Resources */,
+				792098F81E93EB92006A410D /* GoogleService-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1110,6 +1154,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				792098F91E93EB92006A410D /* GoogleService-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1270,12 +1315,14 @@
 					"$(SRCROOT)/../node_modules/react-native-mail/RNMail",
 					"$(SRCROOT)/../node_modules/react-native-image-crop-picker/ios/**",
 					"$(SRCROOT)/../node_modules/react-native/Libraries/PushNotificationIOS",
+					"$(SRCROOT)/../node_modules/react-native-firebase-analytics/ios",
 				);
 				INFOPLIST_FILE = jumbosmashTests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
@@ -1303,12 +1350,14 @@
 					"$(SRCROOT)/../node_modules/react-native-mail/RNMail",
 					"$(SRCROOT)/../node_modules/react-native-image-crop-picker/ios/**",
 					"$(SRCROOT)/../node_modules/react-native/Libraries/PushNotificationIOS",
+					"$(SRCROOT)/../node_modules/react-native-firebase-analytics/ios",
 				);
 				INFOPLIST_FILE = jumbosmashTests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
@@ -1339,6 +1388,7 @@
 					"$(SRCROOT)/../node_modules/react-native-mail/RNMail",
 					"$(SRCROOT)/../node_modules/react-native-image-crop-picker/ios/**",
 					"$(SRCROOT)/../node_modules/react-native/Libraries/PushNotificationIOS",
+					"$(SRCROOT)/../node_modules/react-native-firebase-analytics/ios",
 				);
 				INFOPLIST_FILE = jumbosmash/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -1368,6 +1418,7 @@
 					"$(SRCROOT)/../node_modules/react-native-mail/RNMail",
 					"$(SRCROOT)/../node_modules/react-native-image-crop-picker/ios/**",
 					"$(SRCROOT)/../node_modules/react-native/Libraries/PushNotificationIOS",
+					"$(SRCROOT)/../node_modules/react-native-firebase-analytics/ios",
 				);
 				INFOPLIST_FILE = jumbosmash/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -1401,11 +1452,13 @@
 					"$(SRCROOT)/../node_modules/react-native-image-resizer/ios/RCTImageResizer",
 					"$(SRCROOT)/../node_modules/react-native-mail/RNMail",
 					"$(SRCROOT)/../node_modules/react-native-image-crop-picker/ios/**",
+					"$(SRCROOT)/../node_modules/react-native-firebase-analytics/ios",
 				);
 				INFOPLIST_FILE = "jumbosmash-tvOS/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
@@ -1442,11 +1495,13 @@
 					"$(SRCROOT)/../node_modules/react-native-image-resizer/ios/RCTImageResizer",
 					"$(SRCROOT)/../node_modules/react-native-mail/RNMail",
 					"$(SRCROOT)/../node_modules/react-native-image-crop-picker/ios/**",
+					"$(SRCROOT)/../node_modules/react-native-firebase-analytics/ios",
 				);
 				INFOPLIST_FILE = "jumbosmash-tvOS/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
@@ -1483,6 +1538,7 @@
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "com.facebook.REACT.jumbosmash-tvOSTests";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -1507,6 +1563,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",

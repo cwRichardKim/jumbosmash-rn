@@ -21,8 +21,9 @@ import { View,
          RefreshControl,} from 'react-native';
 let global = require('../global/GlobalFunctions.js');
 
-//TODO: check for servuce being down
+//TODO: check for service being down
 let _listView: ListView;
+const Analytics = require('react-native-firebase-analytics');
 const SCROLL_TO_Y = 0;
 
 class ChatPage extends React.Component {
@@ -34,6 +35,8 @@ class ChatPage extends React.Component {
       navigator: props.navigator,
       refreshing: false,
       rawData: [],
+      filteredData: [],
+      searchText: '',
     };
   }
 
@@ -41,6 +44,7 @@ class ChatPage extends React.Component {
     if (_listView) {
       _listView.scrollTo({x: 0, y: SCROLL_TO_Y, animated: true});
     }
+    Analytics.logEvent('open_chat_page', {});
   }
 
   _fetchConversationsAsync () {
@@ -54,9 +58,15 @@ class ChatPage extends React.Component {
         }
       })
       .then((data) => {
+        // sort rows from newest to oldest sent message
+        data.sort(function(a,b){
+          return (b.lastSent && a.lastSent) ? new Date(b.lastSent.date) - new Date(a.lastSent.date) : 0;
+        });
+
         this.setState({
           dataSource: this.state.dataSource.cloneWithRows(data),
           rawData: data,
+          filteredData: [],
           searchText: '',
         });
       })
@@ -82,7 +92,8 @@ class ChatPage extends React.Component {
 
    let filteredData = this.filterConversations(searchText, this.state.rawData);
    this.setState({
-      dataSource: this.state.dataSource.cloneWithRows(filteredData),
+    filteredData: filteredData,
+    dataSource: this.state.dataSource.cloneWithRows(filteredData),
    });
   }
 
@@ -90,7 +101,7 @@ class ChatPage extends React.Component {
     let text = searchText.toLowerCase();
     return conversations.filter((c) => {
       let otherParticipants = global.otherParticipants(c.participants, this.props.myProfile.profileId);
-      let convo = otherParticipants[0].firstName.toLowerCase();
+      let convo = otherParticipants.length > 0 ? otherParticipants[1].firstName.toLowerCase() : "";
       return convo.search(text) !== -1;
     });
   }
@@ -111,12 +122,23 @@ class ChatPage extends React.Component {
   _renderNoMatches() {
     if (this.state.rawData == null || this.state.rawData.length <= 0) {
       return (
-        <TouchableHighlight onPress={() => {/* TODO: take to edit prof page*/}}
-            underlayColor='#dddddd'>
+        <View underlayColor='#dddddd'>
             <View style={styles.rowContainer}>
-            <Text style={styles.rowText}>You have no matches (you can upload different photos in the profile section)</Text>
+              <Text style={styles.rowText}>
+                You have no matches (you can upload different photos in the profile section)
+              </Text>
             </View>
-        </TouchableHighlight>
+        </View>
+      );
+    } else if ((this.state.filteredData != null && this.state.filteredData.length <= 0) && this.state.searchText != '') {
+      return (
+        <View underlayColor='#dddddd'>
+          <View style={styles.rowContainer}>
+            <Text style={styles.rowText}>
+              No results
+            </Text>
+          </View>
+        </View>
       );
     }
     return null;
@@ -153,6 +175,8 @@ class ChatPage extends React.Component {
       return null;
     }
 
+    console.log("CONVO " + JSON.stringify(conversation) + "\n\n\n\n");
+
     // figure out other person(s) in conversation and get name
     let otherParticipants = global.otherParticipants(conversation.participants, this.props.myProfile.id);
     let len = otherParticipants.length;
@@ -168,7 +192,7 @@ class ChatPage extends React.Component {
       width: 60,
       borderRadius: 30,
       borderColor: '#6A6ACB',
-      borderWidth: (read == undefined || read) ? 0 : 3,
+      borderWidth: read ? 0 : 3,
     });};
     let messageTextStyle = function (read) {return ({
       fontSize: 13,
@@ -176,35 +200,38 @@ class ChatPage extends React.Component {
       flex: 3,
       textAlign: 'center',
       paddingBottom: 16,
-      color: '#CAC4C4',
-      fontWeight: (read == undefined || read) ? 'normal' : '500',
+      color: read? '#CAC4C4' : 'black',
+      fontWeight: read ? 'normal' : '500',
     });};
     let nameTextStyle = function (read) {
       return({fontSize: 13,
       fontFamily: 'Avenir Next',
       textAlign: 'center',
-      fontWeight: (read == undefined || read) ? 'normal' : '500',});
+      fontWeight: read ? 'normal' : '500',});
     };
 
-    let read = false;
+    let hasRead = false;
     for(var i = 0; i < len; i++) {
       if (conversation.participants[i].profileId == this.props.myProfile.id) {
-        read = conversation.participants[i].read;
+        hasRead = conversation.participants[i].read;
       }
     }
 
+    //TODO: BUG sometimes looks like unread when it's your own sent message
+    //      also no messages but bot->click into convo->click out new message
+    //      shown from bot (good) but when reloading this dissapears
     return (
       <TouchableHighlight onPress={() => this.rowPressed(conversation)}
           underlayColor='#dddddd'>
           <View style={styles.rowContainer}>
-          <Text style={messageTextStyle(read)} ellipsizeMode={'tail'} numberOfLines={1}>{!setShowRight? conversation.lastSent.message : ""}</Text>
-            <View style={styles.rowPhotoAndName}>
-              <Image style={photoStyle(read)} source={otherParticipants ? {uri: otherParticipants[0].photo} : null}/>
-              <Text style={nameTextStyle(read)}>
-                {`${name}`}
-              </Text>
-            </View>
-            <Text style={styles.rowText} ellipsizeMode={'tail'} numberOfLines={1}>{setShowRight? conversation.lastSent.message : ""}</Text>
+            <Text style={messageTextStyle(hasRead)} ellipsizeMode={'tail'} numberOfLines={1}>{!setShowRight? conversation.lastSent.message : ""}</Text>
+              <View style={styles.rowPhotoAndName}>
+                <Image style={photoStyle(hasRead)} source={otherParticipants ? {uri: otherParticipants[0].photo} : null}/>
+                <Text style={nameTextStyle(hasRead)}>
+                  {`${name}`}
+                </Text>
+              </View>
+            <Text style={messageTextStyle(hasRead)} ellipsizeMode={'tail'} numberOfLines={1}>{setShowRight? conversation.lastSent.message : ""}</Text>
           </View>
       </TouchableHighlight>
     );
@@ -238,7 +265,6 @@ const styles = StyleSheet.create({
   separator: {
   flex: 1,
   height: StyleSheet.hairlineWidth,
-  // backgroundColor: '#8E8E8E',
   },
   rowContainer: {
     flex: 1,
@@ -271,29 +297,20 @@ const styles = StyleSheet.create({
     borderColor: '#6A6ACB',
     borderWidth: 3,
   },
-  headerContainer: {
-    height: 40,
-    flex: 1,
-  },
-  headerText: {
-    fontSize: 20,
-    fontFamily: 'Avenir Next',
-    color: '#F3A9BF',
-  },
   searchInput: {
-    height: 30,
+    height: 36,
     flex: 1,
     paddingHorizontal: 8,
     fontSize: 15,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: '#F0F0F0',
     borderRadius: 2,
   },
   searchContainer: {
     flex: 1,
-    padding: 5,
+    padding: 13,
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#C1C1C1',
+    backgroundColor: 'white',
   },
 });
 

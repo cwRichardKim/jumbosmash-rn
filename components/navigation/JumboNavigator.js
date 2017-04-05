@@ -37,6 +37,7 @@ const UNMATCH_AS = 'Unsmatch';
 const actionSheetButtons = ['Cancel', SHOW_PROFILE_AS, UNMATCH_AS, REPORT_AS];
 const CANCEL_INDEX = 0;
 
+const Analytics = require('react-native-firebase-analytics');
 const global = require('../global/GlobalFunctions.js');
 const pushNotifications = require('../global/PushNotifications.js');
 const PageNames = require("../global/GlobalFunctions").pageNames();
@@ -45,6 +46,7 @@ const NAVBAR_HEIGHT = (Platform.OS === 'ios') ? 64 : 54; // TODO: check the andr
 const PAGE_HEIGHT = Dimensions.get('window').height - NAVBAR_HEIGHT;
 const PAGE_WIDTH = Dimensions.get('window').width;
 const NAVBAR_SELECTOR_WIDTH = PAGE_WIDTH * 0.2;
+const headerTitleLeftMargin = (Platform.OS === 'ios') ? 0 : (Navigator.NavigationBar.Styles.Stages.Left.Title.marginLeft || 0);
 
 class JumboNavigator extends Component {
   constructor(props) {
@@ -231,6 +233,7 @@ class JumboNavigator extends Component {
     } else if (route.name == PageNames.conversation) {
       return(
         <ConversationPage
+          ref={(elem) => {this.conversationPage = elem}}
           navigator={navigator}
           chatroomId={route.chatroomId}
           participants={route.participants}
@@ -248,7 +251,12 @@ class JumboNavigator extends Component {
     if (route.name == PageNames.conversation) {
       return (
         <TouchableOpacity onPress={() => {navigator.pop();}}>
-          <Text>Back</Text>
+          <View style={styles.convoNavBarContainer}>
+            <Image
+              source={require("./images/back-icon.png")}
+              style={styles.convoNavBarIcon}
+            />
+          </View>
         </TouchableOpacity>
       );
     } else {
@@ -276,7 +284,12 @@ class JumboNavigator extends Component {
       this.conversationId = route.chatroomId;
       return (
         <TouchableOpacity onPress={() => {this.ActionSheet.show()}}>
-          <Text>options</Text>
+          <View style={styles.convoNavBarContainer}>
+            <Image
+              source={require("./images/options-icon.png")}
+              style={styles.convoNavBarIcon}
+            />
+          </View>
         </TouchableOpacity>
       );
     } else {
@@ -300,16 +313,21 @@ class JumboNavigator extends Component {
     if (route.name == PageNames.conversation) {
       let participants = global.otherParticipants(route.participants, this.props.myProfile.id);
       return (
-        <View style={styles.navigationBarTitleContainer}>
-          <Image style={styles.avatarPhoto} source={participants ? {uri: participants[0].photo} : null}/>
-          <Text style={styles.navigationBarTitleText}>
-            {participants? participants[0].firstName : null}
-          </Text>
+        <View style={(Platform.OS === 'ios') ? null : styles.androidCenterButton}>
+          <TouchableOpacity
+            onPress={() => {this._showConversationProfile()}}>
+            <View style={styles.navigationBarTitleContainer}>
+              <Image style={styles.avatarPhoto} source={participants ? {uri: participants[0].photo} : null}/>
+              <Text style={styles.navigationBarTitleText}>
+                {participants? participants[0].firstName : null}
+              </Text>
+            </View>
+          </TouchableOpacity>
         </View>
       );
     } else {
       return (
-        <View style={styles.buttonArea}>
+        <View style={[styles.buttonArea, (Platform.OS === 'ios') ? null : styles.androidCenterButton]}>
           <TouchableOpacity onPress={() => {
             this.changePage(PageNames.cardsPage);
           }}>
@@ -332,9 +350,9 @@ class JumboNavigator extends Component {
     return (
       <Navigator.NavigationBar style={[GlobalStyles.weakShadow, styles.navigationBarContainer]}
         routeMapper={{
+          Title: this._renderNavBarCenter.bind(this),
           LeftButton: this._renderNavBarLeftButton.bind(this),
           RightButton: this._renderNavBarRightButton.bind(this),
-          Title: this._renderNavBarCenter.bind(this),
         }}>
       </Navigator.NavigationBar>
     );
@@ -362,17 +380,12 @@ class JumboNavigator extends Component {
     }
 
     if (actionSheetButtons[index] == SHOW_PROFILE_AS) {
-      if (this.conversationParticipant == null) {
-        this.conversationParticipant = await this.fetchProfile(this.conversationParticipantBasic.profileId);
-      } else if (this.conversationParticipantBasic.profileId != this.conversationParticipant.id) {
-        this.conversationParticipant = await this.fetchProfile(this.conversationParticipantBasic.profileId);
-      }
-      this._showProfileCardForProfile(this.conversationParticipant);
+      this._showConversationProfile();
     } else if (actionSheetButtons[index] == UNMATCH_AS) {
-      //TODO: @jared also delete conversation on firebase
       await this.unmatchProfile(this.conversationParticipantBasic.profileId);
+      await this.conversationPage ? this.conversationPage.onUnmatch() : () => {}; // remove from firebase
       this.navigator.pop();
-      this.chatPage.refresh();
+      this.chatPage.refresh(); //BUG: @jared if last conversation unmatching then won't reload table automatically
     }
   }
 
@@ -382,7 +395,7 @@ class JumboNavigator extends Component {
       Mailer.mail({
         subject: 'Report',
         recipients: ['team@jumbosmash.com'],
-        body: '',
+        body: this.conversationParticipantBasic ? "Report ".concat(his.conversationParticipantBasic.firstName) : '',
       }, (error, event) => {
         if(error) {
           Alert.alert('Error', 'Could not send mail. Try sending an email to team@jumbosmash.com through your mail client');
@@ -395,6 +408,15 @@ class JumboNavigator extends Component {
         [{text:"OK", onPress:()=>{}}]
       )
     }
+  }
+
+  async _showConversationProfile() {
+      if (this.conversationParticipant == null) {
+        this.conversationParticipant = await this.fetchProfile(this.conversationParticipantBasic.profileId);
+      } else if (this.conversationParticipantBasic.profileId != this.conversationParticipant.id) {
+        this.conversationParticipant = await this.fetchProfile(this.conversationParticipantBasic.profileId);
+      }
+      this._showProfileCardForProfile(this.conversationParticipant);
   }
 
   fetchProfile(profileId) {
@@ -489,11 +511,13 @@ class JumboNavigator extends Component {
   // shows the correct notification for matching
   // if on the swiping page, then shows full match view, else shows a banner notif
   _notifyUserOfMatchWith(profile) {
+    let notificationType = "";
     if (profile != null && this.currentPage == PageNames.cardsPage) {
       this.setState({
         matchProfile: profile,
         showMatchView: true,
       });
+      notificationType = "match-page";
     } else if (profile != null) {
       this.setState({
         matchProfile: profile,
@@ -501,7 +525,11 @@ class JumboNavigator extends Component {
       this.notificationBanner.showWithMessage("New Match! Say Hello to " + profile.firstName, ()=>{
         this.changePage(PageNames.chatPage);
       });
+      notificationType = "banner"
     }
+    Analytics.logEvent('show_match', {
+      'type': notificationType
+    });
   }
 
   render() {
@@ -524,17 +552,17 @@ class JumboNavigator extends Component {
 
 const styles = StyleSheet.create({
   avatarPhoto: {
-    height: 40,
-    width: 40,
-    borderRadius: 20,
+    height: 38,
+    width: 38,
+    borderRadius: 19,
   },
   navigationBarContainer: {
     backgroundColor: 'white',
   },
   navigationBarTitleContainer: {
-    padding: 12,
     flexDirection: 'row',
     alignItems: 'center',
+    backgroundColor: 'red',
   },
   navigationBarTitleText: {
     marginLeft: 12,
@@ -551,8 +579,20 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     width: NAVBAR_SELECTOR_WIDTH,
   },
+  androidCenterButton: {
+    alignSelf: 'center',
+    marginRight: headerTitleLeftMargin,
+  },
   navBarIcon: {
     height: 20,
+    resizeMode: 'contain',
+  },
+  convoNavBarContainer: {
+    alignItems: 'center',
+    padding: 13,
+  },
+  convoNavBarIcon: {
+    height: 18,
     resizeMode: 'contain',
   },
   navBarSelector: {
@@ -561,7 +601,8 @@ const styles = StyleSheet.create({
     width: NAVBAR_SELECTOR_WIDTH,
     backgroundColor: 'black',
     height: 2,
-    resizeMode: 'contain',
+    resizeMode: 'cover',
+    zIndex: 100,
   }
 });
 

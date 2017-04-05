@@ -66,7 +66,7 @@ module.exports = StyleSheet.create({
     color: 'white',
     fontWeight: '400',
     opacity: 0.75,
-    // fontStyle: 'italic',
+    fontStyle: 'italic',
   },
   solidButton: {
     height: 40,

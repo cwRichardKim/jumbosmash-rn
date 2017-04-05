@@ -29,6 +29,7 @@ import RectButton     from '../global/RectButton.js';
 import GlobalStyles   from "../global/GlobalStyles.js";
 
 const BORDER_RADIUS = 10;
+const Analytics = require('react-native-firebase-analytics');
 const WIDTH = Dimensions.get('window').width;
 
 class MatchView extends Component {
@@ -128,6 +129,9 @@ class MatchView extends Component {
         this.props.onClose();
       }
     });
+    Analytics.logEvent('match_button_hit', {
+      'name': isSuccess ? 'smash_now' : 'smash_later',
+    });
   }
 
   render() {
@@ -135,8 +139,10 @@ class MatchView extends Component {
       <View style={styles.container}>
         <Animated.View style={[GlobalStyles.absoluteCover, styles.background, {opacity: this.state.backgroundOpacity}]}/>
         <Animated.View style={[styles.foreground, {opacity: this.state.foregroundOpacity}]}>
+          <View style={styles.topSpace}/>
           <Animated.View style={[styles.textContainer, {transform: [{scale: this.state.foregroundScale}]}]}>
             <Text style={[GlobalStyles.text, styles.matchText]}>It's a Smatch!</Text>
+            <Text style={[GlobalStyles.text, {textAlign: 'center', color: 'white'}]}>Say hello to {this.props.matchProfile.firstName}</Text>
           </Animated.View>
           <View style={styles.matchContainer}>
             <Animated.View style={[styles.profile, styles.leftProfile, {transform: [{scale: this.state.foregroundScale}]}]}>
@@ -158,17 +164,17 @@ class MatchView extends Component {
             <Animated.View style={[styles.rectButton, {transform: [{scale: this.state.foregroundScale}]}]}>
               <RectButton
                 style={[styles.matchButton]}
-                text="smash now"
+                text="Smash Now"
+                textStyle={styles.buttonText}
                 onPress={() => this._close(true)}
-                textStyle={{fontWeight:"600"}}
               />
             </Animated.View>
             <Animated.View style={[styles.rectButton, {transform: [{scale: this.state.foregroundScale}]}]}>
               <RectButton
                 style={[styles.closeButton]}
-                text="smash later"
+                text="Smash Later"
+                textStyle={styles.buttonText}
                 onPress={() => this._close(false)}
-                textStyle={{fontWeight:"600"}}
               />
             </Animated.View>
           </View>
@@ -186,21 +192,25 @@ const styles = StyleSheet.create({
   background: {
     backgroundColor: 'black',
   },
+  topSpace: {
+    flex: 1,
+  },
   foreground: {
     flex: 1,
   },
   textContainer: {
-    flex: 1,
+    flex: 3,
     justifyContent: 'center',
     backgroundColor: 'transparent',
   },
   matchText: {
     textAlign: 'center',
     color: 'white',
-    fontSize: 40,
+    fontSize: 60,
+    fontFamily: 'Satisfy',
   },
   matchContainer: {
-    flex: 1,
+    flex: 3,
     justifyContent: 'center',
     alignItems: 'center',
     flexDirection: 'row',
@@ -211,7 +221,7 @@ const styles = StyleSheet.create({
     borderRadius: WIDTH * 0.35 / 2,
     overflow: 'hidden',
     borderWidth: 4,
-    borderColor: 'purple',
+    borderColor: '#715BB9',
   },
   leftProfile: {
     marginRight: -10,
@@ -223,7 +233,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   buttonContainer: {
-    flex: 2,
+    flex: 5,
     justifyContent: 'center'
   },
   rectButton: {
@@ -232,12 +242,16 @@ const styles = StyleSheet.create({
     marginLeft: 16,
     marginRight: 16,
   },
+  buttonText: {
+    color: "white",
+    fontWeight:"600",
+  },
   matchButton: {
-    backgroundColor: '#F2585A',
+    backgroundColor: '#715BB9',
     flex: 1,
   },
   closeButton: {
-    backgroundColor: '#555555',
+    backgroundColor: '#715BB9',
     flex: 1,
   },
   bottomBuffer: {

@@ -104,7 +104,7 @@ class AuthNavigator extends Component {
   }
 
   render(){
-    let initialAuthPage = LoginPage;
+    let initialAuthPage = "LoginPage";
 
     return (
       <Navigator
