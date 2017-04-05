@@ -26,7 +26,6 @@ import {
 
 import LoginPage              from "./LoginPage.js";
 import CreateProfilePage      from "./CreateProfilePage.js";
-import SignupPage             from "./SignupPage.js";
 import ForgotPasswordPage     from './ForgotPasswordPage.js';
 
 const StorageKeys = require("../global/GlobalFunctions").storageKeys();
