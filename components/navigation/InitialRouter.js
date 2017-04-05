@@ -14,7 +14,7 @@ import {
 } from 'react-native';
 
 import NavigationContainer        from "./NavigationContainer.js";
-import AuthContainer              from "../login/AuthContainer.js";
+import AuthNavigator              from "../login/AuthNavigator.js";
 import DummyData                  from "../misc/DummyData.js";
 import ThankYouPage               from "../misc/ThankYouPage.js";
 import PreReleasePage             from "../misc/PreReleasePage.js";
@@ -114,7 +114,10 @@ class InitialRouter extends Component {
       firebase.auth().onAuthStateChanged(async function(user) {
         if (!this.didGetUserAndProfile) {
           this.didGetUserAndProfile = true;
+
+          // First checks local storage for profile
           let myProfile = await this._shouldFetchMyProfileFromStorage();
+
           if (user && user.emailVerified && myProfile) {
             this.setState({myProfile});
             this._initializeFirebaseAnalytics(user, true);
@@ -225,7 +228,7 @@ class InitialRouter extends Component {
       );
     } else {
       return (
-        <AuthContainer
+        <AuthNavigator
           firebase={firebase}
           routeNavigator={navigator}
           setMyProfile={this._setMyProfile.bind(this)}
