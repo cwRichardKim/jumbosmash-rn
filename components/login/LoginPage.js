@@ -46,7 +46,9 @@ class LoginPage extends Component {
     }
   }
 
-  /* Before any button is pressed, the current text input is saved */
+  /* Before any button is pressed, the current text input is saved 
+     Called before Login and Signup
+  */
   _beforeButtonPress() {
     if (!this.state.email_input) {
       Alert.alert("Please type in your email address");
@@ -131,7 +133,7 @@ class LoginPage extends Component {
   /*************************** Forgot Password ***************************/
 
   _forgotPassword() {
-    this._beforeButtonPress();
+    this.props.setEmailInput(this.state.email_input);
     this._goToForgotPassword();
   }
 
@@ -162,7 +164,6 @@ class LoginPage extends Component {
               style={AuthStyle.emailInput}
               onChangeText={(text) => this.setState({email_input: text})}
               value={this.state.email_input}
-              placeholder={this.props.emailInput}
             />
             <Text style={AuthStyle.emailExt}> {this.props.email_ext} </Text>
           </View>
