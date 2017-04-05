@@ -1,8 +1,9 @@
 'use strict';
 
 /*
-This page handles account creation, 
-mainly responsible for retreiving email and password 
+
+This page handles the creation of an user.
+It is mainly responsible for retreiving email and password 
 from UI textinput boxes, and passing to firebase authentication.
 */
 
@@ -14,14 +15,17 @@ import {
   View,
   Alert,
   Button,
-  Navigator
+  Navigator,
+  Image,
 } from 'react-native';
 
 import LoginPage              from './LoginPage.js';
 import AuthErrors             from './AuthErrors.js';
-import VerifyDatabase         from './VerifyDatabase.js';
-import VerifyEmailActivation  from './VerifyEmailActivation.js'
+import Verification           from './Verification.js';
 import FormatInput            from './FormatInput.js';
+import RectButton             from "../global/RectButton.js";
+
+const AuthStyle = require('./AuthStylesheet');
 
 class SignupPage extends Component {
 
@@ -34,28 +38,30 @@ class SignupPage extends Component {
     }
   }
 
-  async signup() {
-
-    let email = FormatInput.email(this.state.email_input, this.props.email_ext);
-    let password = this.state.password;
-
-    let studentProfile = await VerifyDatabase.doesStudentExist(email);
-    if (studentProfile){
-      this.createAccount(email, password);
-      this.props.setStudentProfile(studentProfile);
+  async _signup() {
+    if (!this.state.email_input) {
+      Alert.alert("Please type in your email address");
     } else {
-      VerifyDatabase.doesNotExist();
-    }
+      this.props.setEmailInput(this.state.email_input);
+      let email = FormatInput.email(this.state.email_input, this.props.email_ext);
+      let password = this.state.password;
 
+      let studentProfile = await Verification.getStudent(email);
+      if (studentProfile){
+        this._createAccount(email, password);
+      } else {
+        Verification.doesNotExist();
+      }
+    }
   }
 
-  createAccount(email, password) {
+  _createAccount(email, password) {
     /* Passing to firebase authentication function here */
     this.props.firebase.auth().createUserWithEmailAndPassword(email, password)
       // Success case
       .then((user) => {
-        VerifyEmailActivation.sendEmail(user);
-        this.goToLoginPage();
+        Verification.sendEmail(user);
+        this._goToLoginPage();
       })
       // Failure case: Signup Error
       .catch((error) => {
@@ -63,79 +69,66 @@ class SignupPage extends Component {
       })
   }
 
-  goToLoginPage() {
-    this.props.navigator.push({
-      component: LoginPage,
+  _goToLoginPage() {
+    this.props.navigator.replace({
+      name: LoginPage
     });
   }
 
   render() {
     return (
-      <View style={styles.container}>
-        <View style={styles.body}>
-          <View style={styles.textinput}>
+      <Image source={require("./img/bg.png")} style={AuthStyle.container}>
+        <View style={AuthStyle.logoContainer}>
+            <Image source={require('./img/logo.png')} style={AuthStyle.logo}/>
+        </View>
+        <View style={AuthStyle.body}>  
+          <Text style={AuthStyle.textTitles}> Tufts Email: </Text>
+          <View style={AuthStyle.emailInputBorder}>
             <TextInput
-              style={styles.first}
+              style={AuthStyle.emailInput}
               onChangeText={(text) => this.setState({email_input: text})}
               value={this.state.email_input}
-              placeholder={this.props.email || "Enter your tufts email"}
+              placeholder={this.props.emailInput}
             />
-            <Text style={styles.last}> {this.props.email_ext} </Text>
+            <Text style={AuthStyle.emailExt}> {this.props.email_ext} </Text>
           </View>
 
+          <Text style={AuthStyle.textTitles}> Password: </Text>
+          <View style={AuthStyle.passwordInputBorder}>
           <TextInput
-            style={styles.textinput}
+            style={AuthStyle.passwordInput}
             onChangeText={(text) => this.setState({password: text})}
             value={this.state.password}
             secureTextEntry={true}
-            placeholder={"Choose a password"}
           />
+          </View>
 
-          <Button
-            style={styles.button}
-            onPress={this.signup.bind(this)}
-            title="Signup"
-            accessibilityLabel="Signup, creating an account"
-          />
+          <View style={styles.buttonContainer}>
+            <RectButton 
+              style={[AuthStyle.solidButton, AuthStyle.buttonBlue]}
+              textStyle={[AuthStyle.solidButtonText, AuthStyle.bold]}
+              onPress={this._signup.bind(this)}
+              text="SIGNUP!"
+            />
 
-          <Button
-            style={styles.button}
-            onPress={this.goToLoginPage.bind(this)}
-            title="Got an account, go to Login"
-            accessibilityLabel="Already got an account, go to login"
-          />
+            <RectButton 
+              style={[AuthStyle.noBackgroundButton]}
+              textStyle={AuthStyle.noBackgroundButtonText}  
+              onPress={this._goToLoginPage.bind(this)}
+              text="Already have an account?"
+            />
+
+          </View>
         </View>
-      </View>
+      </Image>
     );
   }
 }
 
 var styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    flexDirection: 'row',
-    alignItems:'center'
+  buttonContainer: {
+    marginTop: 70,
   },
-  body: {
-    flex: 9,
-    alignItems: 'center',
-  },
-  first: {
-    flex: 3/4,
-  },
-  last: {
-    flex: 1/4,
-    alignSelf: 'center',
-  },
-  textinput: {
-    height: 40,
-    borderColor: 'gray',
-    borderWidth: 1,
-    margin: 10,
-    flexDirection: 'row',
-  },
-  button: {
-  }
 })
 
 export default SignupPage;
