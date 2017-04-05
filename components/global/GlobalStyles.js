@@ -87,5 +87,5 @@ module.exports = StyleSheet.create({
     fontSize: 20,
     fontFamily: 'Avenir Next',
     fontWeight: "bold",
-  }
+  },
 });
