@@ -29,7 +29,7 @@ class ForgotPasswordPage extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      email_input: null,
+      email_input: this.props.emailInput || null
     }
   }
 
