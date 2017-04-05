@@ -41,6 +41,7 @@
 		792098F71E93EB92006A410D /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 792098F51E93EB92006A410D /* GoogleService-Info.plist */; };
 		792098F81E93EB92006A410D /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 792098F51E93EB92006A410D /* GoogleService-Info.plist */; };
 		792098F91E93EB92006A410D /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 792098F51E93EB92006A410D /* GoogleService-Info.plist */; };
+		792099391E946E1A006A410D /* Satisfy-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 792099381E946E1A006A410D /* Satisfy-Regular.ttf */; };
 		799C00241E8CE99000CB20FE /* libRCTPushNotification.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 799C00211E8CE96300CB20FE /* libRCTPushNotification.a */; };
 		799C00251E8CEA1300CB20FE /* libRCTPushNotification.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 799C00211E8CE96300CB20FE /* libRCTPushNotification.a */; };
 		799CFF261E8CDEA400CB20FE /* libRSKImageCropper.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 799CFF251E8CDEA400CB20FE /* libRSKImageCropper.a */; };
@@ -341,6 +342,7 @@
 		694747ACD1474D4FBB3E8E10 /* libimageCropPicker.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libimageCropPicker.a; sourceTree = "<group>"; };
 		78C398B01ACF4ADC00677621 /* RCTLinking.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTLinking.xcodeproj; path = "../node_modules/react-native/Libraries/LinkingIOS/RCTLinking.xcodeproj"; sourceTree = "<group>"; };
 		792098F51E93EB92006A410D /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		792099381E946E1A006A410D /* Satisfy-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Satisfy-Regular.ttf"; sourceTree = "<group>"; };
 		799C001B1E8CE96300CB20FE /* RCTPushNotification.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTPushNotification.xcodeproj; path = "../node_modules/react-native/Libraries/PushNotificationIOS/RCTPushNotification.xcodeproj"; sourceTree = "<group>"; };
 		799CFF251E8CDEA400CB20FE /* libRSKImageCropper.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libRSKImageCropper.a; path = "../../../Library/Developer/Xcode/DerivedData/jumbosmash-bsdyohbxbvmwmlbijqcmowvoewls/Build/Products/Debug-iphonesimulator/RSKImageCropper/libRSKImageCropper.a"; sourceTree = "<group>"; };
 		799CFF401E8CDEAF00CB20FE /* libQBImagePickerController.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libQBImagePickerController.a; path = "../../../Library/Developer/Xcode/DerivedData/jumbosmash-bsdyohbxbvmwmlbijqcmowvoewls/Build/Products/Debug-iphonesimulator/QBImagePickerController/libQBImagePickerController.a"; sourceTree = "<group>"; };
@@ -646,6 +648,7 @@
 		83CBB9F61A601CBA00E9B192 = {
 			isa = PBXGroup;
 			children = (
+				792099381E946E1A006A410D /* Satisfy-Regular.ttf */,
 				13B07FAE1A68108700A75B9A /* jumbosmash */,
 				832341AE1AAA6A7D00B99B32 /* Libraries */,
 				00E356EF1AD99517003FC87E /* jumbosmashTests */,
@@ -1132,6 +1135,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
+				792099391E946E1A006A410D /* Satisfy-Regular.ttf in Resources */,
 				13B07FBD1A68108700A75B9A /* LaunchScreen.xib in Resources */,
 				792098F61E93EB92006A410D /* GoogleService-Info.plist in Resources */,
 			);
