@@ -60,7 +60,7 @@ class ChatPage extends React.Component {
         data.sort(function(a,b){
           return (b.lastSent && a.lastSent) ? new Date(b.lastSent.date) - new Date(a.lastSent.date) : 0;
         });
-        
+
         this.setState({
           dataSource: this.state.dataSource.cloneWithRows(data),
           rawData: data,
@@ -172,8 +172,6 @@ class ChatPage extends React.Component {
     if((conversation == null || conversation == 0) || conversation.participants == null) {
       return null;
     }
-
-    console.log("CONVO " + JSON.stringify(conversation) + "\n\n\n\n");
 
     // figure out other person(s) in conversation and get name
     let otherParticipants = global.otherParticipants(conversation.participants, this.props.myProfile.id);

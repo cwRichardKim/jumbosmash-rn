@@ -203,10 +203,11 @@ class SwipingPage extends Component {
   }
 
   async _handleRightSwipeForIndex(cardIndex) {
-    //TODO: have first pop-up and also check to see if asked before
+    //TODO: @jared have first pop-up and also check to see if asked before notifications
 
     let profile = this.props.profiles[cardIndex];
-    await this._asyncUpdateLikeList(profile.id, this.props.myProfile.id);
+    // await this._asyncUpdateLikeList("586edd82837823188a2976e7", profile.id);
+    // this._asyncUpdateLikeList(profile.id, "586edd82837823188a2976e7");
     this._asyncUpdateLikeList(this.props.myProfile.id, profile.id);
     this._swipeErrorCheck(cardIndex, profile);
     this.setState({canUndoCount: 0});

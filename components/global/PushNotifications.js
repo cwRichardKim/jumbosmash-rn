@@ -23,13 +23,15 @@ module.exports = {
     }
   },
   onRegister: async function (token, params) {
-    let url = "https://jumbosmash2017.herokuapp.com/profile/device/".concat(params.profile.id).concat("/").concat(token.token).concat("/").concat(params.authToken.val);
+    params.profile.deviceId = token.token;
+    let url = "https://jumbosmash2017.herokuapp.com/profile/update/".concat(params.profile.id).concat("/").concat(params.authToken.val);
     console.log("URL " + url);
     fetch(url, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
+      body: JSON.stringify(params.profile)
     }).then((response) => {
       console.log("Successfully added device");
     }).catch((error) => {
