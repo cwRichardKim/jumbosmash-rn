@@ -46,6 +46,7 @@ const NAVBAR_HEIGHT = (Platform.OS === 'ios') ? 64 : 54; // TODO: check the andr
 const PAGE_HEIGHT = Dimensions.get('window').height - NAVBAR_HEIGHT;
 const PAGE_WIDTH = Dimensions.get('window').width;
 const NAVBAR_SELECTOR_WIDTH = PAGE_WIDTH * 0.2;
+const headerTitleLeftMargin = (Platform.OS === 'ios') ? 0 : (Navigator.NavigationBar.Styles.Stages.Left.Title.marginLeft || 0);
 
 class JumboNavigator extends Component {
   constructor(props) {
@@ -312,18 +313,21 @@ class JumboNavigator extends Component {
     if (route.name == PageNames.conversation) {
       let participants = global.otherParticipants(route.participants, this.props.myProfile.id);
       return (
-        <TouchableOpacity onPress={() => {this._showConversationProfile()}}>
-          <View style={styles.navigationBarTitleContainer}>
-            <Image style={styles.avatarPhoto} source={participants ? {uri: participants[0].photo} : null}/>
-            <Text style={styles.navigationBarTitleText}>
-              {participants? participants[0].firstName : null}
-            </Text>
-          </View>
-        </TouchableOpacity>
+        <View style={(Platform.OS === 'ios') ? null : styles.androidCenterButton}>
+          <TouchableOpacity
+            onPress={() => {this._showConversationProfile()}}>
+            <View style={styles.navigationBarTitleContainer}>
+              <Image style={styles.avatarPhoto} source={participants ? {uri: participants[0].photo} : null}/>
+              <Text style={styles.navigationBarTitleText}>
+                {participants? participants[0].firstName : null}
+              </Text>
+            </View>
+          </TouchableOpacity>
+        </View>
       );
     } else {
       return (
-        <View style={styles.buttonArea}>
+        <View style={[styles.buttonArea, (Platform.OS === 'ios') ? null : styles.androidCenterButton]}>
           <TouchableOpacity onPress={() => {
             this.changePage(PageNames.cardsPage);
           }}>
@@ -346,9 +350,9 @@ class JumboNavigator extends Component {
     return (
       <Navigator.NavigationBar style={[GlobalStyles.weakShadow, styles.navigationBarContainer]}
         routeMapper={{
+          Title: this._renderNavBarCenter.bind(this),
           LeftButton: this._renderNavBarLeftButton.bind(this),
           RightButton: this._renderNavBarRightButton.bind(this),
-          Title: this._renderNavBarCenter.bind(this),
         }}>
       </Navigator.NavigationBar>
     );
@@ -575,6 +579,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     width: NAVBAR_SELECTOR_WIDTH,
   },
+  androidCenterButton: {
+    alignSelf: 'center',
+    marginRight: headerTitleLeftMargin,
+  },
   navBarIcon: {
     height: 20,
     resizeMode: 'contain',
@@ -593,7 +601,8 @@ const styles = StyleSheet.create({
     width: NAVBAR_SELECTOR_WIDTH,
     backgroundColor: 'black',
     height: 2,
-    resizeMode: 'contain',
+    resizeMode: 'cover',
+    zIndex: 100,
   }
 });
 
