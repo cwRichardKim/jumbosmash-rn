@@ -32,13 +32,14 @@ module.exports = StyleSheet.create({
     width: 300,
   },
   emailInput: {
-    flex: 3/4,
+    flex: 2/3,
     color: 'white',
   },
   emailExt: {
-    flex: 1/4,
+    flex: 1/3,
     alignSelf: 'center',
     color: 'white',
+    letterSpacing: 2,
   },
   passwordInputBorder: {
     height: 40,
@@ -63,7 +64,9 @@ module.exports = StyleSheet.create({
   },
   forgotPasswordButtonText: {
     color: 'white',
-    fontWeight: '400'
+    fontWeight: '400',
+    opacity: 0.75,
+    // fontStyle: 'italic',
   },
   solidButton: {
     height: 40,

@@ -41,6 +41,10 @@ class Verification extends Component {
       .then(() => {
         Alert.alert("We've sent you an email, please verify your email account.");
       })
+      .catch((error) => {
+        console.log("error: ", error);
+        Alert.alert("There's an error with verifying your email. Please email us at team@jumbosmash.com");
+      })
   }
 
 }
