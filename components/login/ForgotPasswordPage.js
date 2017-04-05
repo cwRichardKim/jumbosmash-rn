@@ -42,7 +42,7 @@ class ForgotPasswordPage extends Component {
 
       this.props.firebase.auth().sendPasswordResetEmail(email)
         .then(() => {
-          Alert.alert("We've sent you an email to change your password. If you run into any additional issues, contact us team@jumbosmash.com");
+          Alert.alert("We've sent you an email to reset your password. If you run into any additional issues, contact us team@jumbosmash.com");
           // this._goToLoginPage(); // TODO: why doesn't this function call work!
           this.props.navigator.replace({
             name: LoginPage
