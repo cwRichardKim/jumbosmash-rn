@@ -194,6 +194,8 @@ class NavigationContainer extends Component {
       if (this.isFetchInProgress) {
         return;
       }
+      console.log("ALSLAKSJDFLKASJDF TOKEN");
+      console.log(this.token);
       this.isFetchInProgress = true;
 
       let index = await this._getLastIndex();
