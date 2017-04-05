@@ -56,18 +56,6 @@ class AuthNavigator extends Component {
           email_ext = "@tufts.edu"
         />
       )
-    } else if (route.name == SignupPage) {
-      return(
-        <SignupPage
-          navigator = {navigator} 
-          routeNavigator = {this.props.routeNavigator}
-          firebase = {this.props.firebase}
-
-          setEmailInput =  {(emailInput) => {this.emailInput = emailInput}}
-          emailInput = {this.emailInput}
-          email_ext = "@tufts.edu"
-        />
-      )
     } else if (route.name == CreateProfilePage) {
       return(
         <CreateProfilePage

@@ -30,7 +30,6 @@ import GlobalFunctions        from "../global/GlobalFunctions.js";
 import RectButton             from "../global/RectButton.js";
 
 import ForgotPasswordPage     from './ForgotPasswordPage.js';
-import SignupPage             from './SignupPage.js';
 import CreateProfilePage      from './CreateProfilePage.js'
 
 const PageNames = require("../global/GlobalFunctions.js").pageNames();
@@ -47,6 +46,7 @@ class LoginPage extends Component {
     }
   }
 
+  /* Function for Login */
   async _login(){
 
     if (!this.state.email_input) {
@@ -92,16 +92,42 @@ class LoginPage extends Component {
     }
   }
 
+  /* Function for Signup */
+  async _signup() {
+    if (!this.state.email_input) {
+      Alert.alert("Please type in your email address");
+    } else {
+      this.props.setEmailInput(this.state.email_input);
+      let email = FormatInput.email(this.state.email_input, this.props.email_ext);
+      let password = this.state.password;
+
+      let studentProfile = await Verification.getStudent(email);
+      if (studentProfile){
+        this._createAccount(email, password);
+      } else {
+        Verification.doesNotExist();
+      }
+    }
+  }
+
+  _createAccount(email, password) {
+    /* Passing to firebase authentication function here */
+    this.props.firebase.auth().createUserWithEmailAndPassword(email, password)
+      // Success case
+      .then((user) => {
+        Verification.sendEmail(user);
+      })
+      // Failure case: Signup Error
+      .catch((error) => {
+        AuthErrors.handleSignupError(error);
+      })
+  }
+
+  /* Navigator Function */
   _goToForgotPassword() {
     this.props.navigator.replace({
       name: ForgotPasswordPage
     })
-  }
-
-  _goToSignupPage() {
-    this.props.navigator.replace({
-      name: SignupPage
-    });
   }
 
   _goToCreateProfilePage() {
@@ -155,7 +181,7 @@ class LoginPage extends Component {
             <RectButton
               style={[AuthStyle.solidButton, AuthStyle.buttonPink]}
               textStyle={AuthStyle.solidButtonText}
-              onPress={this._goToSignupPage.bind(this)}
+              onPress={this._signup.bind(this)}
               text="SIGNUP!"
             />
           </View>
