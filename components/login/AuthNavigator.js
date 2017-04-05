@@ -5,12 +5,7 @@
   Communicating between:
     - LoginPage
     - ForgotPasswordPage
-    - SignupPage
     - CreateProfilepage
-
-  It passes:
-    - emailInput (ForgotPasswordPage => LoginPagebetween, SignupPage => LoginPage)
-    - Student Object (between Login & CreateProfile) // NOT YET
 */
 
 import React, {Component} from 'react';
