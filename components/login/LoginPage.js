@@ -39,74 +39,79 @@ class LoginPage extends Component {
   
   constructor(props) {
     super(props);
-
+    this.email = "";
     this.state = {
       email_input: this.props.emailInput || null,
       password:'',
     }
   }
 
-  /* Function for Login */
-  async _login(){
-
-    if (!this.state.email_input) {
-      Alert.alert("Please type in your email address");
-    } else {
-      var email = FormatInput.email(this.state.email_input, this.props.email_ext);
-      var password = this.state.password;
-
-      this.props.firebase.auth().signInWithEmailAndPassword(email, password)
-        .then((user) => {
-          if (user && !user.emailVerified) {
-            Alert.alert("Please check your email, and verify your account before logging in. If you're experiencing issues, contact us at team@jumbosmash.com");
-          } else if (user && user.emailVerified) {
-            this.props.firebase.auth().currentUser
-              .getToken(true)
-              .then(async (token) => {
-                let studentProfile = await Verification.getStudent(email);
-                this.props.setStudentProfile(studentProfile);
-                this.props.setToken(token);
-
-                let url = "https://jumbosmash2017.herokuapp.com/profile/id/".concat(studentProfile._id).concat("/").concat(token);
-                try {
-                  let response = await fetch(url);
-                  let responseJson = await response.json();
-
-                  if (responseJson) {
-                    // Authentication Process complete!
-                    this.props.setMyProfile(responseJson);
-                    this.props.loadPage(PageNames.appHome);
-                  } else {
-                    this._goToCreateProfilePage();
-                  }
-                } catch(error) {
-                  Alert.alert("there's been an error");
-                  throw error;
-                }
-              })
-            }
-          })
-        .catch((error) => {
-          AuthErrors.handleLoginError(error);
-        })
-    }
-  }
-
-  /* Function for Signup */
-  async _signup() {
+  /* Before any button is pressed, the current text input is saved */
+  _beforeButtonPress() {
     if (!this.state.email_input) {
       Alert.alert("Please type in your email address");
     } else {
       this.props.setEmailInput(this.state.email_input);
-      let email = FormatInput.email(this.state.email_input, this.props.email_ext);
-      let password = this.state.password;
+      var email = FormatInput.email(this.state.email_input, this.props.email_ext);
+      this.email = email;
 
-      let studentProfile = await Verification.getStudent(email);
-      if (studentProfile){
-        this._createAccount(email, password);
-      } else {
-        Verification.doesNotExist();
-      }
+      var password = this.state.password;
+    }
+  }
+
+  /*************************** Login ***************************/
+  async _login() {
+    await this._beforeButtonPress();
+    let email = this.email;
+    let password = this.state.password;
+
+    this.props.firebase.auth().signInWithEmailAndPassword(email, password)
+      .then((user) => {
+        if (user && !user.emailVerified) {
+          Alert.alert("Please check your email, and verify your account before logging in. If you're experiencing issues, contact us at team@jumbosmash.com");
+        } else if (user && user.emailVerified) {
+          this.props.firebase.auth().currentUser
+            .getToken(true)
+            .then(async (token) => {
+              let studentProfile = await Verification.getStudent(email);
+              this.props.setStudentProfile(studentProfile);
+              this.props.setToken(token);
+
+              let url = "https://jumbosmash2017.herokuapp.com/profile/id/".concat(studentProfile._id).concat("/").concat(token);
+              try {
+                let response = await fetch(url);
+                let responseJson = await response.json();
+
+                if (responseJson) {
+                  // Authentication Process complete!
+                  this.props.setMyProfile(responseJson);
+                  this.props.loadPage(PageNames.appHome);
+                } else {
+                  this._goToCreateProfilePage();
+                }
+              } catch(error) {
+                Alert.alert("there's been an error");
+                throw error;
+              }
+            })
+          }
+        })
+      .catch((error) => {
+        AuthErrors.handleLoginError(error);
+      })
+  }
+
+  /*************************** Signup ***************************/
+  async _signup() {
+    await this._beforeButtonPress();
+    let email = this.email;
+    let password = this.state.password;
+    
+    let studentProfile = await Verification.getStudent(email);
+    if (studentProfile){
+      this._createAccount(email, password);
+    } else {
+      Verification.doesNotExist();
     }
   }
 
@@ -123,7 +128,15 @@ class LoginPage extends Component {
       })
   }
 
-  /* Navigator Function */
+  /*************************** Forgot Password ***************************/
+
+  _forgotPassword() {
+    this._beforeButtonPress();
+    this._goToForgotPassword();
+  }
+
+  /*************************** Navigation ***************************/
+
   _goToForgotPassword() {
     this.props.navigator.replace({
       name: ForgotPasswordPage
@@ -166,7 +179,7 @@ class LoginPage extends Component {
           <RectButton
               style={[AuthStyle.forgotPasswordButton]}
               textStyle={AuthStyle.forgotPasswordButtonText}  
-              onPress={this._goToForgotPassword.bind(this)}
+              onPress={this._forgotPassword.bind(this)}
               text="Forgot Password?"
           />
 

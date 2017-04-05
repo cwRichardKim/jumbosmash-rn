@@ -5,7 +5,6 @@ This page handles the firebase authentication errors that might be thrown.
 It is used by:
 	- LoginPage.js
 	- AccountPage.js
-	- SignupPage.js
 */
 
 import React, {Component} from 'react';
