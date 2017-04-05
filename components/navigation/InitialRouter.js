@@ -117,7 +117,6 @@ class InitialRouter extends Component {
 
           // First checks local storage for profile
           let myProfile = await this._shouldFetchMyProfileFromStorage();
-
           if (user && user.emailVerified && myProfile) {
             this.setState({myProfile});
             this._initializeFirebaseAnalytics(user, true);
