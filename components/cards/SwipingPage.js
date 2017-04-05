@@ -26,7 +26,7 @@ import DummyData        from '../misc/DummyData.js'
 const global = require('../global/GlobalFunctions.js');
 const Analytics = require('react-native-firebase-analytics');
 
-const CARD_REFRESH_BUFFER = 30; // There should always be at least this many cards left, else fetch more
+const CARD_REFRESH_BUFFER = 10; // There should always be at least this many cards left, else fetch more
 const CARD_WIDTH = Dimensions.get('window').width - 40;
 const DECK_SIZE = 3; // number of cards rendered at a time
 const StorageKeys = global.storageKeys();
