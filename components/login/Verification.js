@@ -39,7 +39,7 @@ class Verification extends Component {
   static sendEmail(user) {
     user.sendEmailVerification()
       .then(() => {
-        Alert.alert("We've sent you an email, please verify your email account.");
+        Alert.alert("We've sent you a verification email. Please login after verifying your account.");
       })
       .catch((error) => {
         console.log("error: ", error);
