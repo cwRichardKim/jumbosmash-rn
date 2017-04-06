@@ -8,20 +8,13 @@ import React, {Component} from 'react';
 import {
   StyleSheet,
   View,
-  Navigator,
-  Platform,
   Text,
   Clipboard,
   Alert,
-  Dimensions,
 } from 'react-native';
 
 import GlobalStyles           from "../global/GlobalStyles.js";
 import RectButton             from "../global/RectButton.js";
-
-const NAVBAR_HEIGHT = (Platform.OS === 'ios') ? 64 : 54; // TODO: check the android tabbar height
-const PAGE_HEIGHT = Dimensions.get('window').height - NAVBAR_HEIGHT;
-const PAGE_WIDTH = Dimensions.get('window').width;
 
 class NoMoreCards extends Component {
   constructor(props) {
@@ -75,4 +68,4 @@ const styles = StyleSheet.create({
   },
 });
 
-  export default NoMoreCards;
+export default NoMoreCards;
