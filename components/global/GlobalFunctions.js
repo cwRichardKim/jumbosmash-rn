@@ -81,6 +81,20 @@ module.exports = {
       endDate: new Date(2017,4,22), // may 22nd, midnight
     })
   },
+  formatDate: function(date) {
+    var monthNames = [
+      "January", "February", "March",
+      "April", "May", "June", "July",
+      "August", "September", "October",
+      "November", "December"
+    ];
+
+    var day = date.getDate();
+    var monthIndex = date.getMonth();
+    var year = date.getFullYear();
+
+    return monthNames[monthIndex] + ' ' + day + ', ' + year;
+  },
   // if the server date exists and is not during the active time, but the
   // user's date does say it is active time, then the user is time-cheating
   isUserCheatingWithServerDate: function (serverDate) {
@@ -110,7 +124,7 @@ module.exports = {
       return this.appExpirationStates().active; //TODO @richard remove this
     }
 
-    if (today > startDate && today < startDate) {
+    if (today > startDate && today < endDate) {
       return (this.appExpirationStates().active);
     } else if (today < startDate) {
       return (this.appExpirationStates().preRelease);

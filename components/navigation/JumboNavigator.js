@@ -46,6 +46,7 @@ const NAVBAR_HEIGHT = (Platform.OS === 'ios') ? 64 : 54; // TODO: check the andr
 const PAGE_HEIGHT = Dimensions.get('window').height - NAVBAR_HEIGHT;
 const PAGE_WIDTH = Dimensions.get('window').width;
 const NAVBAR_SELECTOR_WIDTH = PAGE_WIDTH * 0.2;
+const NAVBAR_SELECTOR_HEIGHT = 2;
 const headerTitleLeftMargin = (Platform.OS === 'ios') ? 0 : (Navigator.NavigationBar.Styles.Stages.Left.Title.marginLeft || 0);
 
 class JumboNavigator extends Component {
@@ -214,7 +215,8 @@ class JumboNavigator extends Component {
           notifyUserOfMatchWith={this._notifyUserOfMatchWith.bind(this)}
           openProfileCard={()=>{this._showProfileCardForProfile(null)}}
           shouldUseDummyData={this.props.shouldUseDummyData}
-
+          noMoreCards={this.props.noMoreCards}
+          removeDuplicateProfiles={this.props.removeDuplicateProfiles}
         />
       );
     } else if (route.name == PageNames.chatPage) {
@@ -395,7 +397,7 @@ class JumboNavigator extends Component {
       Mailer.mail({
         subject: 'Report',
         recipients: ['team@jumbosmash.com'],
-        body: this.conversationParticipantBasic ? "Report ".concat(his.conversationParticipantBasic.firstName) : '',
+        body: this.conversationParticipantBasic ? "Report ".concat(this.conversationParticipantBasic.firstName) : '',
       }, (error, event) => {
         if(error) {
           Alert.alert('Error', 'Could not send mail. Try sending an email to team@jumbosmash.com through your mail client');
@@ -562,7 +564,6 @@ const styles = StyleSheet.create({
   navigationBarTitleContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: 'red',
   },
   navigationBarTitleText: {
     marginLeft: 12,
@@ -600,7 +601,7 @@ const styles = StyleSheet.create({
     bottom: 0,
     width: NAVBAR_SELECTOR_WIDTH,
     backgroundColor: 'black',
-    height: 2,
+    height: NAVBAR_SELECTOR_HEIGHT,
     resizeMode: 'cover',
     zIndex: 100,
   }

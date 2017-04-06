@@ -11,6 +11,7 @@ import {
   View,
   Navigator,
   AsyncStorage,
+  NetInfo,
 } from 'react-native';
 
 import NavigationContainer        from "./NavigationContainer.js";
@@ -60,12 +61,24 @@ class InitialRouter extends Component {
 
     this.state = {
       myProfile: null,
+      isConnected: null,
     }
   }
 
   componentDidMount() {
+    NetInfo.isConnected.addEventListener(
+      'change', 
+      this._handleConnectivityChange
+    );
+
     this._shouldFetchUserAndProfile();
   }
+
+  _handleConnectivityChange = (isConnected) => {
+    this.setState({
+      isConnected,
+    });
+  };
 
   _initializeFirebaseAnalytics(user, hasAllParams) {
     let userId = (user && user.uid) ? user.uid : "unknown";
@@ -117,7 +130,6 @@ class InitialRouter extends Component {
 
           // First checks local storage for profile
           let myProfile = await this._shouldFetchMyProfileFromStorage();
-
           if (user && user.emailVerified && myProfile) {
             this.setState({myProfile});
             this._initializeFirebaseAnalytics(user, true);
@@ -233,6 +245,7 @@ class InitialRouter extends Component {
           routeNavigator={navigator}
           setMyProfile={this._setMyProfile.bind(this)}
           loadPage={this._loadPage.bind(this)}
+          isConnected={this.state.isConnected}
         />
       )
     }
