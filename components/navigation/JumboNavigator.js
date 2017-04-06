@@ -215,7 +215,8 @@ class JumboNavigator extends Component {
           notifyUserOfMatchWith={this._notifyUserOfMatchWith.bind(this)}
           openProfileCard={()=>{this._showProfileCardForProfile(null)}}
           shouldUseDummyData={this.props.shouldUseDummyData}
-
+          noMoreCards={this.props.noMoreCards}
+          removeDuplicateProfiles={this.props.removeDuplicateProfiles}
         />
       );
     } else if (route.name == PageNames.chatPage) {

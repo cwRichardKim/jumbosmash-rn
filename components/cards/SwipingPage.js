@@ -17,10 +17,9 @@ import {
   AsyncStorage,
 } from 'react-native';
 
-import YesView          from './YesView.js'
-import NoView           from './NoView.js'
 import SwipeButtonsView from './SwipeButtonsView.js'
 import Card             from './Card.js';
+import LoadingCards     from './LoadingCards.js';
 import NoMoreCards      from './NoMoreCards.js';
 import DummyData        from '../misc/DummyData.js'
 const global = require('../global/GlobalFunctions.js');
@@ -211,6 +210,7 @@ class SwipingPage extends Component {
     this._asyncUpdateLikeList(this.props.myProfile.id, profile.id);
     this._swipeErrorCheck(cardIndex, profile);
     this.setState({canUndoCount: 0});
+    this.props.removeDuplicateProfiles(cardIndex);
     this._incrementSwipeCount(true);
     Analytics.logEvent('swipe_right', {});
   }
@@ -287,21 +287,14 @@ class SwipingPage extends Component {
           {this._renderCard(2)}
         </View>
       );
-    } else {
+    } else if (this.props.noMoreCards) {
       return (<NoMoreCards/>);
+    } else {
+      return (<LoadingCards/>);
     }
   }
 
   render() {
-    // temporarily removing the yes / no views until design calls for them
-    // let yesOpacity = pan.x.interpolate({inputRange: [0, 150], outputRange: [0, 1]});
-    // let yesScale = pan.x.interpolate({inputRange: [0, 150], outputRange: [0.5, 1], extrapolate: 'clamp'});
-    // let animatedYesStyles = {transform: [{scale: yesScale}], opacity: yesOpacity}
-    //
-    // let nopeOpacity = pan.x.interpolate({inputRange: [-150, 0], outputRange: [1, 0]});
-    // let nopeScale = pan.x.interpolate({inputRange: [-150, 0], outputRange: [1, 0.5], extrapolate: 'clamp'});
-    // let animatedNopeStyles = {transform: [{scale: nopeScale}], opacity: nopeOpacity}
-
     return (
       <View style={{marginTop: this.props.navBarHeight, height:this.props.pageHeight}}>
         <View style={[styles.container]}>
@@ -321,15 +314,6 @@ class SwipingPage extends Component {
               maxSwipesRemembered={MAX_SWIPES_REMEMBERED}
             />
           </View>
-          {/* // temporarily removing the yes / no views
-          <Animated.View style={[animatedNopeStyles, styles.noView]}>
-            <NoView/>
-          </Animated.View>
-
-          <Animated.View style={[animatedYesStyles, styles.yesView]}>
-            <YesView/>
-          </Animated.View>
-          */}
         </View>
       </View>
     );
@@ -346,18 +330,6 @@ const styles = StyleSheet.create({
   topPadding: {
     height: 20,
   },
-  // yesView: {
-  //   position: 'absolute',
-  //   bottom: 20,
-  //   right: 20,
-  //   zIndex: 11,
-  // },
-  // noView: {
-  //   position: 'absolute',
-  //   bottom: 20,
-  //   left: 20,
-  //   zIndex: 11,
-  // },
   cardContainer: { // the area the card will occupy
     flex: 1,
     width: CARD_WIDTH,
