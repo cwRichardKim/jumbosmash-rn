@@ -79,7 +79,7 @@ class SwipingPage extends Component {
     let cardsArrayUpdated = this.cards[cardIndex %3] != null; // expecting true
     let cardArrayBroke = cardsArrayUpdated && card.firstName != this.cards[cardIndex % 3].props.firstName; // expecting false
     if (indexBroke || !cardsArrayUpdated || cardArrayBroke) {
-      Alert.alert("SwipingPage.js broke","screenshot this and send it to Richard (" + indexBroke.toString() + " " + cardsArrayUpdated.toString() + " " + cardArrayBroke.toString() + ")",[{text:"OK", onPress:()=>{}}])
+      Alert.alert("App in unstable state","Not sure what happened, screenshot this and send it to Richard@jumbosmash.com. Also highly recommend quitting the app and starting again (" + indexBroke.toString() + " " + cardsArrayUpdated.toString() + " " + cardArrayBroke.toString() + ", "+this.state.cardIndex.toString() + " "+cardIndex.toString()+")",[{text:"OK", onPress:()=>{}}])
     }
   }
 
@@ -208,7 +208,6 @@ class SwipingPage extends Component {
     //TODO: have first pop-up and also check to see if asked before
 
     let profile = this.props.profiles[cardIndex];
-    await this._asyncUpdateLikeList(profile.id, this.props.myProfile.id);
     this._asyncUpdateLikeList(this.props.myProfile.id, profile.id);
     this._swipeErrorCheck(cardIndex, profile);
     this.setState({canUndoCount: 0});

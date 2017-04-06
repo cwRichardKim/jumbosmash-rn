@@ -210,6 +210,11 @@ class SettingsPage extends Component {
         } catch (error) {
           throw "Error: Remove from storage: " + error;
         }
+        try {
+          AsyncStorage.removeItem(StorageKeys.profiles);
+        } catch (error) {
+          throw "Error: Remove from storage: " + error;
+        }
         this.props.routeNavigator.replace({name: PageNames.auth});
       })
       .catch((error) => {
