@@ -39,6 +39,7 @@ class LoginPage extends Component {
   
   constructor(props) {
     super(props);
+    this.studentProfile = null;
     this.email = "";
     this.state = {
       email_input: this.props.emailInput || null,
@@ -46,7 +47,7 @@ class LoginPage extends Component {
     }
   }
 
-  /* Before any button is pressed, the current text input is saved 
+  /* Handles current text input 
      Called before Login and Signup
   */
   _beforeButtonPress() {
@@ -75,7 +76,16 @@ class LoginPage extends Component {
           this.props.firebase.auth().currentUser
             .getToken(true)
             .then(async (token) => {
-              let studentProfile = await Verification.getStudent(email);
+
+              // First checks if taken from signup
+              let studentProfile = this.studentProfile;
+              if (!studentProfile) {
+                studentProfile = await Verification.getStudent(email);
+                console.log("inside if block");
+              }
+
+              console.log("outside");
+
               this.props.setStudentProfile(studentProfile);
               this.props.setToken(token);
 
@@ -111,6 +121,8 @@ class LoginPage extends Component {
     
     let studentProfile = await Verification.getStudent(email);
     if (studentProfile){
+      this.studentProfile = studentProfile;
+      console.log("assignging in signup");
       this._createAccount(email, password);
     } else {
       Verification.doesNotExist();
