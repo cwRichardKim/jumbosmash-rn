@@ -44,6 +44,7 @@ class AuthNavigator extends Component {
           navigator = {navigator} 
           routeNavigator = {this.props.routeNavigator}
           firebase = {this.props.firebase}
+          isConnected = {this.props.isConnected}
           
           setEmailInput =  {(emailInput) => {this.emailInput = emailInput}}
           emailInput = {this.emailInput}

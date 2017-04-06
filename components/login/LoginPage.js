@@ -50,8 +50,8 @@ class LoginPage extends Component {
   /* Handles current text input 
      Called before Login and Signup
   */
+
   _beforeButtonPress() {
-    console.log("isConnected: ", this.props.isConnected);
     if (!this.props.isConnected) {
       Alert.alert("Sorry, no connection :(");
     } else {

@@ -12,6 +12,7 @@ import {
   Navigator,
   AsyncStorage,
   NetInfo,
+  Alert,
 } from 'react-native';
 
 import NavigationContainer        from "./NavigationContainer.js";
@@ -75,6 +76,10 @@ class InitialRouter extends Component {
   }
 
   _handleConnectivityChange = (isConnected) => {
+    if (!isConnected) {
+      Alert.alert("We can't detect a connection, expect limited functionality :(")
+    }
+
     this.setState({
       isConnected,
     });
