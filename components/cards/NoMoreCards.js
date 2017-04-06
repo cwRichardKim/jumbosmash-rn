@@ -11,10 +11,12 @@ import {
   Text,
   Clipboard,
   Alert,
+  Dimensions,
 } from 'react-native';
 
 import GlobalStyles           from "../global/GlobalStyles.js";
 import RectButton             from "../global/RectButton.js";
+const PAGE_WIDTH = Dimensions.get('window').width;
 
 class NoMoreCards extends Component {
   constructor(props) {
