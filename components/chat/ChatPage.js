@@ -175,8 +175,6 @@ class ChatPage extends React.Component {
       return null;
     }
 
-    console.log("CONVO " + JSON.stringify(conversation) + "\n\n\n\n");
-
     // figure out other person(s) in conversation and get name
     let otherParticipants = global.otherParticipants(conversation.participants, this.props.myProfile.id);
     let len = otherParticipants.length;
@@ -211,7 +209,8 @@ class ChatPage extends React.Component {
     };
 
     let hasRead = false;
-    for(var i = 0; i < len; i++) {
+    let length = conversation.participants.length;
+    for(var i = 0; i < length; i++) {
       if (conversation.participants[i].profileId == this.props.myProfile.id) {
         hasRead = conversation.participants[i].read;
       }

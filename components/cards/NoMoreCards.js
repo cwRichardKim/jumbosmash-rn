@@ -18,6 +18,8 @@ import GlobalStyles           from "../global/GlobalStyles.js";
 import RectButton             from "../global/RectButton.js";
 const PAGE_WIDTH = Dimensions.get('window').width;
 
+const PAGE_WIDTH = Dimensions.get('window').width;
+
 class NoMoreCards extends Component {
   constructor(props) {
     super(props);
