@@ -46,6 +46,7 @@ const NAVBAR_HEIGHT = (Platform.OS === 'ios') ? 64 : 54; // TODO: check the andr
 const PAGE_HEIGHT = Dimensions.get('window').height - NAVBAR_HEIGHT;
 const PAGE_WIDTH = Dimensions.get('window').width;
 const NAVBAR_SELECTOR_WIDTH = PAGE_WIDTH * 0.2;
+const NAVBAR_SELECTOR_HEIGHT = 2;
 const headerTitleLeftMargin = (Platform.OS === 'ios') ? 0 : (Navigator.NavigationBar.Styles.Stages.Left.Title.marginLeft || 0);
 
 class JumboNavigator extends Component {
@@ -562,7 +563,6 @@ const styles = StyleSheet.create({
   navigationBarTitleContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: 'red',
   },
   navigationBarTitleText: {
     marginLeft: 12,
@@ -600,7 +600,7 @@ const styles = StyleSheet.create({
     bottom: 0,
     width: NAVBAR_SELECTOR_WIDTH,
     backgroundColor: 'black',
-    height: 2,
+    height: NAVBAR_SELECTOR_HEIGHT,
     resizeMode: 'cover',
     zIndex: 100,
   }

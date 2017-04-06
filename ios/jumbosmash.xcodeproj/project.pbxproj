@@ -343,6 +343,7 @@
 		78C398B01ACF4ADC00677621 /* RCTLinking.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTLinking.xcodeproj; path = "../node_modules/react-native/Libraries/LinkingIOS/RCTLinking.xcodeproj"; sourceTree = "<group>"; };
 		792098F51E93EB92006A410D /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		792099381E946E1A006A410D /* Satisfy-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Satisfy-Regular.ttf"; sourceTree = "<group>"; };
+		797DE94D1E968592000A8D60 /* jumbosmash.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = jumbosmash.entitlements; path = jumbosmash/jumbosmash.entitlements; sourceTree = "<group>"; };
 		799C001B1E8CE96300CB20FE /* RCTPushNotification.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTPushNotification.xcodeproj; path = "../node_modules/react-native/Libraries/PushNotificationIOS/RCTPushNotification.xcodeproj"; sourceTree = "<group>"; };
 		799CFF251E8CDEA400CB20FE /* libRSKImageCropper.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libRSKImageCropper.a; path = "../../../Library/Developer/Xcode/DerivedData/jumbosmash-bsdyohbxbvmwmlbijqcmowvoewls/Build/Products/Debug-iphonesimulator/RSKImageCropper/libRSKImageCropper.a"; sourceTree = "<group>"; };
 		799CFF401E8CDEAF00CB20FE /* libQBImagePickerController.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libQBImagePickerController.a; path = "../../../Library/Developer/Xcode/DerivedData/jumbosmash-bsdyohbxbvmwmlbijqcmowvoewls/Build/Products/Debug-iphonesimulator/QBImagePickerController/libQBImagePickerController.a"; sourceTree = "<group>"; };
@@ -498,6 +499,7 @@
 		13B07FAE1A68108700A75B9A /* jumbosmash */ = {
 			isa = PBXGroup;
 			children = (
+				797DE94D1E968592000A8D60 /* jumbosmash.entitlements */,
 				792098F51E93EB92006A410D /* GoogleService-Info.plist */,
 				008F07F21AC5B25A0029DE68 /* main.jsbundle */,
 				13B07FAF1A68108700A75B9A /* AppDelegate.h */,
@@ -773,6 +775,11 @@
 					};
 					13B07F861A680F5B00A75B9A = {
 						DevelopmentTeam = CBME5RD7L2;
+						SystemCapabilities = {
+							com.apple.Push = {
+								enabled = 1;
+							};
+						};
 					};
 					2D02E47A1E0B4A5D006451C7 = {
 						CreatedOnToolsVersion = 8.2.1;
@@ -1377,6 +1384,7 @@
 			baseConfigurationReference = 15ACA8908CA019F2411A0B92 /* Pods-jumbosmash.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = jumbosmash/jumbosmash.entitlements;
 				CURRENT_PROJECT_VERSION = 1;
 				DEAD_CODE_STRIPPING = NO;
 				DEVELOPMENT_TEAM = CBME5RD7L2;
@@ -1408,6 +1416,7 @@
 			baseConfigurationReference = 33B2DDEF6E3A33F5800B971F /* Pods-jumbosmash.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = jumbosmash/jumbosmash.entitlements;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = CBME5RD7L2;
 				HEADER_SEARCH_PATHS = (
