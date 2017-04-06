@@ -34,8 +34,10 @@ class ForgotPasswordPage extends Component {
   }
 
   _forgotPassword() {
-    if (!this.state.email_input) {
-      Alert.alert("Please type in your email address");
+    if (!this.props.isConnected) {
+      Alert.alert("Sorry, no connection :(");
+    } else if (!this.state.email_input) {
+        Alert.alert("Please type in your email address");
     } else {
       this.props.setEmailInput(this.state.email_input);
       let email = FormatInput.email(this.state.email_input, this.props.email_ext);
@@ -54,6 +56,7 @@ class ForgotPasswordPage extends Component {
         })
     }
   }
+  
 
   _goToLoginPage() {
     this.props.navigator.replace({
