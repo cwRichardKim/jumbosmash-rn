@@ -50,15 +50,19 @@ class LoginPage extends Component {
   /* Handles current text input 
      Called before Login and Signup
   */
-  _beforeButtonPress() {
-    if (!this.state.email_input) {
-      Alert.alert("Please type in your email address");
-    } else {
-      this.props.setEmailInput(this.state.email_input);
-      var email = FormatInput.email(this.state.email_input, this.props.email_ext);
-      this.email = email;
 
-      var password = this.state.password;
+  _beforeButtonPress() {
+    if (!this.props.isConnected) {
+      Alert.alert("Sorry, no connection :(");
+    } else {
+      if (!this.state.email_input) {
+        Alert.alert("Please type in your email address");
+      } else {
+        this.props.setEmailInput(this.state.email_input);
+        var email = FormatInput.email(this.state.email_input, this.props.email_ext);
+        this.email = email;
+        var password = this.state.password;
+      }
     }
   }
 
@@ -81,10 +85,7 @@ class LoginPage extends Component {
               let studentProfile = this.studentProfile;
               if (!studentProfile) {
                 studentProfile = await Verification.getStudent(email);
-                console.log("inside if block");
               }
-
-              console.log("outside");
 
               this.props.setStudentProfile(studentProfile);
               this.props.setToken(token);
@@ -122,7 +123,6 @@ class LoginPage extends Component {
     let studentProfile = await Verification.getStudent(email);
     if (studentProfile){
       this.studentProfile = studentProfile;
-      console.log("assignging in signup");
       this._createAccount(email, password);
     } else {
       Verification.doesNotExist();

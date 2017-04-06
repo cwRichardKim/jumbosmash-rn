@@ -11,6 +11,8 @@ import {
   View,
   Navigator,
   AsyncStorage,
+  NetInfo,
+  Alert,
 } from 'react-native';
 
 import NavigationContainer        from "./NavigationContainer.js";
@@ -60,12 +62,28 @@ class InitialRouter extends Component {
 
     this.state = {
       myProfile: null,
+      isConnected: null,
     }
   }
 
   componentDidMount() {
+    NetInfo.isConnected.addEventListener(
+      'change', 
+      this._handleConnectivityChange
+    );
+
     this._shouldFetchUserAndProfile();
   }
+
+  _handleConnectivityChange = (isConnected) => {
+    if (!isConnected) {
+      Alert.alert("We can't detect a connection, expect limited functionality :(")
+    }
+
+    this.setState({
+      isConnected,
+    });
+  };
 
   _initializeFirebaseAnalytics(user, hasAllParams) {
     let userId = (user && user.uid) ? user.uid : "unknown";
@@ -232,6 +250,7 @@ class InitialRouter extends Component {
           routeNavigator={navigator}
           setMyProfile={this._setMyProfile.bind(this)}
           loadPage={this._loadPage.bind(this)}
+          isConnected={this.state.isConnected}
         />
       )
     }
