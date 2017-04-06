@@ -146,7 +146,7 @@ class PreReleasePage extends Component {
             <RectButton
               style={[styles.button, styles.smashButton]}
               textStyle={styles.buttonText}
-              text="Copy Share Link"
+              text="Share Download Link"
               onPress={this._copyShareLink.bind(this)}
             />
             <RectButton
