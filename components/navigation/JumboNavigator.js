@@ -397,7 +397,7 @@ class JumboNavigator extends Component {
       Mailer.mail({
         subject: 'Report',
         recipients: ['team@jumbosmash.com'],
-        body: this.conversationParticipantBasic ? "Report ".concat(his.conversationParticipantBasic.firstName) : '',
+        body: this.conversationParticipantBasic ? "Report ".concat(this.conversationParticipantBasic.firstName) : '',
       }, (error, event) => {
         if(error) {
           Alert.alert('Error', 'Could not send mail. Try sending an email to team@jumbosmash.com through your mail client');
