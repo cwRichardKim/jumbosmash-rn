@@ -54,15 +54,13 @@ class LoginPage extends Component {
   _beforeButtonPress() {
     if (!this.props.isConnected) {
       Alert.alert("Sorry, no connection :(");
-    } else {
-      if (!this.state.email_input) {
+    } else if (!this.state.email_input) {
         Alert.alert("Please type in your email address");
-      } else {
-        this.props.setEmailInput(this.state.email_input);
-        var email = FormatInput.email(this.state.email_input, this.props.email_ext);
-        this.email = email;
-        var password = this.state.password;
-      }
+    } else {
+      this.props.setEmailInput(this.state.email_input);
+      var email = FormatInput.email(this.state.email_input, this.props.email_ext);
+      this.email = email;
+      var password = this.state.password;
     }
   }
 
