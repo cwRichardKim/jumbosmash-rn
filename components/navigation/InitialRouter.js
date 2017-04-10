@@ -23,6 +23,7 @@ import PreReleasePage             from "../misc/PreReleasePage.js";
 import LoadingPage                from "../misc/LoadingPage.js";
 import GlobalFunctions            from "../global/GlobalFunctions.js";
 import CheaterPage                from "../misc/CheaterPage.js";
+import TagPage                    from "../settings/TagPage.js";
 
 const PageNames = require("../global/GlobalFunctions.js").pageNames();
 const StorageKeys = require("../global/GlobalFunctions.js").storageKeys();
@@ -68,7 +69,7 @@ class InitialRouter extends Component {
 
   componentDidMount() {
     NetInfo.isConnected.addEventListener(
-      'change', 
+      'change',
       this._handleConnectivityChange
     );
 
@@ -160,7 +161,7 @@ class InitialRouter extends Component {
         }
       }
     } catch (error) {
-      throw error; //TODO @richard notify user
+      throw error;
       return null;
     }
     return null;
@@ -209,6 +210,7 @@ class InitialRouter extends Component {
   }
 
   _renderNavigatorScene (route, navigator) {
+    return(<TagPage/>);
     if (route.name == PageNames.expiredPage) {
       return (
         <ThankYouPage
