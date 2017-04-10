@@ -94,7 +94,7 @@ class JumboNavigator extends Component {
         // (optional) Called when Token is generated (iOS and Android)
         onRegister: function(token) {
             pushNotifications.onRegister(token,
-              {authToken: this.props.token,
+              {authToken: this.props.token.val,
                profile: this.props.myProfile});
         }.bind(this),
 
@@ -106,8 +106,8 @@ class JumboNavigator extends Component {
                firebase: this.props.firebase});
         }.bind(this),
 
-        // ANDROID ONLY: GCM Sender ID (optional - not required for local notifications, but is need to receive remote push notifications)
-        senderID: "YOUR GCM SENDER ID",
+        // ANDROID ONLY: GCM Sender ID (optional - not required for local notifications, but is needed to receive remote push notifications)
+        senderID: "559975994653",
 
         // IOS ONLY (optional): default: all - Permissions to register.
         permissions: {
@@ -121,6 +121,7 @@ class JumboNavigator extends Component {
         popInitialNotification: true,
 
         requestPermissions: false,
+        //TODO: @jared makes sure this isn't popping every time
     });
   }
 

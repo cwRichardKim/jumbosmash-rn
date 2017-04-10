@@ -48,6 +48,7 @@ class ChatPage extends React.Component {
   }
 
   _fetchConversationsAsync () {
+    console.log("BLAH BLAH BLAH " + JSON.stringify(this.props.token));
     let url = 'https://jumbosmash2017.herokuapp.com/chat/id/'.concat(this.props.myProfile.id).concat("/").concat(this.props.token.val);
     return fetch(url)
       .then((response) => {
