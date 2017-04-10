@@ -43,6 +43,12 @@ class NoMoreCards extends Component {
           text="Share Download Link"
           onPress={this._copyShareLink.bind(this)}
         />
+        <RectButton
+          style={[styles.button, styles.button]}
+          textStyle={styles.buttonText}
+          text="Reload"
+          onPress={this.props.reload}
+        />
       </View>
     )
   }

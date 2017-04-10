@@ -346,7 +346,7 @@ const styles = StyleSheet.create({
   },
   textInput: {
     height: 42,
-    color: "#C3C1C1",
+    color: "#919191",
   },
   line: {
     height: 1,

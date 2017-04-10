@@ -46,6 +46,7 @@ class ProfileCardView extends Component {
         <View style={[styles.imageView, {height: imageContainerHeight}]}>
           <LoadableImage
             style={[styles.image, {height: imageContainerHeight}]}
+            imageStyle={{width: WIDTH, height: imageContainerHeight}}
             source={{uri: source}}
             _key={(index == 0) ? this.props.id : ""}
           />
