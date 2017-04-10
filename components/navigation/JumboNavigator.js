@@ -37,6 +37,7 @@ const UNMATCH_AS = 'Unsmatch';
 const actionSheetButtons = ['Cancel', SHOW_PROFILE_AS, UNMATCH_AS, REPORT_AS];
 const CANCEL_INDEX = 0;
 
+const Analytics = require('react-native-firebase-analytics');
 const global = require('../global/GlobalFunctions.js');
 const pushNotifications = require('../global/PushNotifications.js');
 const PageNames = require("../global/GlobalFunctions").pageNames();
@@ -45,6 +46,8 @@ const NAVBAR_HEIGHT = (Platform.OS === 'ios') ? 64 : 54; // TODO: check the andr
 const PAGE_HEIGHT = Dimensions.get('window').height - NAVBAR_HEIGHT;
 const PAGE_WIDTH = Dimensions.get('window').width;
 const NAVBAR_SELECTOR_WIDTH = PAGE_WIDTH * 0.2;
+const NAVBAR_SELECTOR_HEIGHT = 2;
+const headerTitleLeftMargin = (Platform.OS === 'ios') ? 0 : (Navigator.NavigationBar.Styles.Stages.Left.Title.marginLeft || 0);
 
 class JumboNavigator extends Component {
   constructor(props) {
@@ -83,8 +86,6 @@ class JumboNavigator extends Component {
 
     // this._notifyUserOfMatchWith(this.props.myProfile)
     this._configureNotifications();
-
-    console.log("profile " + JSON.stringify(this.props.myProfile));
   }
 
   _configureNotifications () {
@@ -92,9 +93,8 @@ class JumboNavigator extends Component {
 
         // (optional) Called when Token is generated (iOS and Android)
         onRegister: function(token) {
-          console.log("TOKEN: " + JSON.stringify(token.token));
             pushNotifications.onRegister(token,
-              {authToken: this.props.token,
+              {authToken: this.props.token.val,
                profile: this.props.myProfile});
         }.bind(this),
 
@@ -120,7 +120,8 @@ class JumboNavigator extends Component {
         // default: true
         popInitialNotification: true,
 
-        requestPermissions: true,
+        requestPermissions: false,
+        //TODO: @jared makes sure this isn't popping every time
     });
   }
 
@@ -215,7 +216,8 @@ class JumboNavigator extends Component {
           notifyUserOfMatchWith={this._notifyUserOfMatchWith.bind(this)}
           openProfileCard={()=>{this._showProfileCardForProfile(null)}}
           shouldUseDummyData={this.props.shouldUseDummyData}
-
+          noMoreCards={this.props.noMoreCards}
+          removeDuplicateProfiles={this.props.removeDuplicateProfiles}
         />
       );
     } else if (route.name == PageNames.chatPage) {
@@ -314,18 +316,21 @@ class JumboNavigator extends Component {
     if (route.name == PageNames.conversation) {
       let participants = global.otherParticipants(route.participants, this.props.myProfile.id);
       return (
-        <TouchableOpacity onPress={() => {this._showConversationProfile()}}>
-          <View style={styles.navigationBarTitleContainer}>
-            <Image style={styles.avatarPhoto} source={participants ? {uri: participants[0].photo} : null}/>
-            <Text style={styles.navigationBarTitleText}>
-              {participants? participants[0].firstName : null}
-            </Text>
-          </View>
-        </TouchableOpacity>
+        <View style={(Platform.OS === 'ios') ? null : styles.androidCenterButton}>
+          <TouchableOpacity
+            onPress={() => {this._showConversationProfile()}}>
+            <View style={styles.navigationBarTitleContainer}>
+              <Image style={styles.avatarPhoto} source={participants ? {uri: participants[0].photo} : null}/>
+              <Text style={styles.navigationBarTitleText}>
+                {participants? participants[0].firstName : null}
+              </Text>
+            </View>
+          </TouchableOpacity>
+        </View>
       );
     } else {
       return (
-        <View style={styles.buttonArea}>
+        <View style={[styles.buttonArea, (Platform.OS === 'ios') ? null : styles.androidCenterButton]}>
           <TouchableOpacity onPress={() => {
             this.changePage(PageNames.cardsPage);
           }}>
@@ -348,9 +353,9 @@ class JumboNavigator extends Component {
     return (
       <Navigator.NavigationBar style={[GlobalStyles.weakShadow, styles.navigationBarContainer]}
         routeMapper={{
+          Title: this._renderNavBarCenter.bind(this),
           LeftButton: this._renderNavBarLeftButton.bind(this),
           RightButton: this._renderNavBarRightButton.bind(this),
-          Title: this._renderNavBarCenter.bind(this),
         }}>
       </Navigator.NavigationBar>
     );
@@ -393,7 +398,7 @@ class JumboNavigator extends Component {
       Mailer.mail({
         subject: 'Report',
         recipients: ['team@jumbosmash.com'],
-        body: this.conversationParticipantBasic ? "Report ".concat(his.conversationParticipantBasic.firstName) : '',
+        body: this.conversationParticipantBasic ? "Report ".concat(this.conversationParticipantBasic.firstName) : '',
       }, (error, event) => {
         if(error) {
           Alert.alert('Error', 'Could not send mail. Try sending an email to team@jumbosmash.com through your mail client');
@@ -509,11 +514,13 @@ class JumboNavigator extends Component {
   // shows the correct notification for matching
   // if on the swiping page, then shows full match view, else shows a banner notif
   _notifyUserOfMatchWith(profile) {
+    let notificationType = "";
     if (profile != null && this.currentPage == PageNames.cardsPage) {
       this.setState({
         matchProfile: profile,
         showMatchView: true,
       });
+      notificationType = "match-page";
     } else if (profile != null) {
       this.setState({
         matchProfile: profile,
@@ -521,7 +528,11 @@ class JumboNavigator extends Component {
       this.notificationBanner.showWithMessage("New Match! Say Hello to " + profile.firstName, ()=>{
         this.changePage(PageNames.chatPage);
       });
+      notificationType = "banner"
     }
+    Analytics.logEvent('show_match', {
+      'type': notificationType
+    });
   }
 
   render() {
@@ -570,6 +581,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     width: NAVBAR_SELECTOR_WIDTH,
   },
+  androidCenterButton: {
+    alignSelf: 'center',
+    marginRight: headerTitleLeftMargin,
+  },
   navBarIcon: {
     height: 20,
     resizeMode: 'contain',
@@ -587,8 +602,9 @@ const styles = StyleSheet.create({
     bottom: 0,
     width: NAVBAR_SELECTOR_WIDTH,
     backgroundColor: 'black',
-    height: 2,
-    resizeMode: 'contain',
+    height: NAVBAR_SELECTOR_HEIGHT,
+    resizeMode: 'cover',
+    zIndex: 100,
   }
 });
 

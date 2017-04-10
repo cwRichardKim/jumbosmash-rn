@@ -11,10 +11,12 @@ import {
   View,
   Navigator,
   AsyncStorage,
+  NetInfo,
+  Alert,
 } from 'react-native';
 
 import NavigationContainer        from "./NavigationContainer.js";
-import AuthContainer              from "../login/AuthContainer.js";
+import AuthNavigator              from "../login/AuthNavigator.js";
 import DummyData                  from "../misc/DummyData.js";
 import ThankYouPage               from "../misc/ThankYouPage.js";
 import PreReleasePage             from "../misc/PreReleasePage.js";
@@ -28,6 +30,7 @@ const StorageKeys = require("../global/GlobalFunctions.js").storageKeys();
 const AppExpirationStates = GlobalFunctions.appExpirationStates();
 const APP_STATE = GlobalFunctions.calculateAppExpirationState();
 
+const Analytics = require('react-native-firebase-analytics');
 const firebase = require('firebase');
 const firebaseConfig = {
   apiKey: "AIzaSyCqxU8ZGcg7Tx-iJoB_IROCG_yj41kWA6A",
@@ -59,11 +62,37 @@ class InitialRouter extends Component {
 
     this.state = {
       myProfile: null,
+      isConnected: null,
     }
   }
 
   componentDidMount() {
+    NetInfo.isConnected.addEventListener(
+      'change', 
+      this._handleConnectivityChange
+    );
+
     this._shouldFetchUserAndProfile();
+  }
+
+  _handleConnectivityChange = (isConnected) => {
+    if (!isConnected) {
+      Alert.alert("We can't detect a connection, expect limited functionality :(")
+    }
+
+    this.setState({
+      isConnected,
+    });
+  };
+
+  _initializeFirebaseAnalytics(user, hasAllParams) {
+    let userId = (user && user.uid) ? user.uid : "unknown";
+    Analytics.setUserId(userId);
+    // Analytics.setUserProperty('propertyName', 'propertyValue');
+
+    Analytics.logEvent('app_open', {
+      'has_all_params': hasAllParams
+    });
   }
 
   // This function allows any child page to set the myProfile for the entire app
@@ -103,11 +132,15 @@ class InitialRouter extends Component {
       firebase.auth().onAuthStateChanged(async function(user) {
         if (!this.didGetUserAndProfile) {
           this.didGetUserAndProfile = true;
+
+          // First checks local storage for profile
           let myProfile = await this._shouldFetchMyProfileFromStorage();
           if (user && user.emailVerified && myProfile) {
             this.setState({myProfile});
+            this._initializeFirebaseAnalytics(user, true);
             this._loadPage(PageNames.appHome);
           } else {
+            this._initializeFirebaseAnalytics(user, false);
             this._loadPage(PageNames.auth);
           }
         }
@@ -142,6 +175,9 @@ class InitialRouter extends Component {
     if (this.userIsCheating) {
       this._showCheaterPage();
     } else if (this.shouldOverridePageLoads === true || appState === AppExpirationStates.active) {
+      Analytics.logEvent('override_open_app_home', {
+        'destination': page || "unkown"
+      });
       this.navigator.replace({name: page});
     } else if (appState === AppExpirationStates.preRelease) {
       if (page === PageNames.auth) {
@@ -209,11 +245,12 @@ class InitialRouter extends Component {
       );
     } else {
       return (
-        <AuthContainer
+        <AuthNavigator
           firebase={firebase}
           routeNavigator={navigator}
           setMyProfile={this._setMyProfile.bind(this)}
           loadPage={this._loadPage.bind(this)}
+          isConnected={this.state.isConnected}
         />
       )
     }

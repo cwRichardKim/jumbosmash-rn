@@ -20,6 +20,7 @@ import {
 import JumboNavigator         from "./JumboNavigator.js"
 import DummyData              from "../misc/DummyData.js";
 
+const Analytics = require('react-native-firebase-analytics');
 const global = require('../global/GlobalFunctions.js');
 const PageNames = global.pageNames();
 const StorageKeys = global.storageKeys();
@@ -33,8 +34,10 @@ class NavigationContainer extends Component {
     // don't change the structure of how this is stored. Could
     // make a lot of things break whether you realize it or not
     this.token = {val: null};
+    this.isFetchInProgress = false; //flag to make sure only one fetch call is called at a time
     this.state = {
       profiles: [],
+      noMoreCards: false,
     };
   }
 
@@ -52,6 +55,7 @@ class NavigationContainer extends Component {
           console.log(error);
         });
     }
+    Analytics.logEvent('open_app_home', {});
     AppState.addEventListener('change', this._handleAppStateChange.bind(this));
   }
 
@@ -91,6 +95,17 @@ class NavigationContainer extends Component {
       this.navigator.swipingPage.setState({
         cardIndex: 0,
       });
+    }
+  }
+
+  // When you right swipe on someone, removes later duplicates of that person
+  _removeDuplicateProfiles(cardIndex) {
+    let profile = this.state.profiles[cardIndex];
+    for (var i = cardIndex + 1; i < this.state.profiles.length; i++) {
+      if (this.state.profiles[i].id == profile.id) {
+        this.state.profiles.splice(i, 1);
+        i --;
+      }
     }
   }
 
@@ -164,6 +179,7 @@ class NavigationContainer extends Component {
     } catch (error) {
       throw error;
     }
+    return 0;
   }
 
   async _setLastIndex(lastIndex) {
@@ -188,13 +204,19 @@ class NavigationContainer extends Component {
     } else if (!this.props.myProfile) {
       setTimeout(this._fetchProfiles.bind(this), 200);
     } else {
-      let index = await this._getLastIndex();
+      if (this.isFetchInProgress) {
+        return;
+      }
+      this.isFetchInProgress = true;
+
+      let lastIndex = await this._getLastIndex();
       let id = this.props.myProfile.id.toString();
       let batch = count ? count.toString() : FETCH_BATCH_SIZE.toString();
-      let url = "https://jumbosmash2017.herokuapp.com/profile/batch/"+id+"/"+index+"/"+batch+"/"+this.token.val;
-      console.log("Fetching profiles for "+id+" batch size: " + batch + " index: " + index);
+      let url = "https://jumbosmash2017.herokuapp.com/profile/batch/"+id+"/"+lastIndex+"/"+batch+"/"+this.token.val;
+      console.log("Fetching profiles for "+id+" batch size: " + batch + " lastIndex: " + lastIndex);
       return fetch(url)
       .then((response) => {
+        this.isFetchInProgress = false;
         if (global.isUserCheatingWithResponse(response)) {
           this.props.showCheaterPage();
           throw "Time settings are off";
@@ -207,7 +229,7 @@ class NavigationContainer extends Component {
       }).then((responseJson) => {
         if (responseJson.length > 0) {
           if (__DEV__) { //TODO @richard remove. for debugging purposes
-            this.navigator.notificationBanner.showWithMessage("Retrieved " + responseJson.length + " profiles. prev index: "+index+", indexes: " + responseJson[0].index.toString() + " - " + responseJson[responseJson.length-1].index.toString())
+            this.navigator.notificationBanner.showWithMessage("Retrieved " + responseJson.length + " profiles. prev index: "+lastIndex+", indexes: " + responseJson[0].index.toString() + " - " + responseJson[responseJson.length-1].index.toString())
           }
           this._setLastIndex(responseJson[responseJson.length - 1].index);
           // for (var i = 0; i < responseJson.length; i++) { //TODO @richard testing code remove
@@ -216,11 +238,11 @@ class NavigationContainer extends Component {
           global.shuffle(responseJson);
           this.setState({
             profiles: this.state.profiles.concat(responseJson),
+            noMoreCards: false,
           })
         } else {
-          if (this._getLastIndex() === 0) {
-            // we're in a special case where the user has swiped right on everyone or
-            //TODO @richard notify the user
+          if (lastIndex === 0) {
+            this.setState({noMoreCards: true});
           } else {
             this._setLastIndex(0);
             this._fetchProfiles(FETCH_BATCH_SIZE);
@@ -228,6 +250,7 @@ class NavigationContainer extends Component {
         }
       })
       .catch((error) => {
+        this.isFetchInProgress = false;
         //TODO: @richard replace with real catch case
         Alert.alert(
           "Something Went Wrong :(",
@@ -298,6 +321,7 @@ class NavigationContainer extends Component {
           initialRoute={{ name: PageNames.cardsPage }}
           fetchProfiles={this._fetchProfiles.bind(this)}
           profiles={this.state.profiles}
+          removeDuplicateProfiles={this._removeDuplicateProfiles.bind(this)}
           myProfile={this.props.myProfile}
           updateProfileToServer={this._updateProfileToServer.bind(this)}
           firebase={this.props.firebase}
@@ -306,6 +330,7 @@ class NavigationContainer extends Component {
           routeNavigator={this.props.routeNavigator}
           shouldUseDummyData={this.props.shouldUseDummyData}
           updateMyProfile={this.props.updateMyProfile}
+          noMoreCards={this.state.noMoreCards}
         />
       </View>
     );

@@ -1,7 +1,9 @@
 'use strict';
 
 /*
-This page handles all communication with the firebase database: STUDENT
+This page is responsible for verifying:
+  - user has verified email 
+  - user exists in student database
 */
 
 import React, {Component} from 'react';
@@ -9,7 +11,7 @@ import {
   Alert,
 } from 'react-native';
 
-class VerifyDatabase extends Component {
+class Verification extends Component {
 
   constructor(props) {
     super(props);
@@ -17,7 +19,7 @@ class VerifyDatabase extends Component {
     }
   }
 
-  static async doesStudentExist(email) {
+  static async getStudent(email) {
     let url = "https://jumbosmash2017.herokuapp.com/student/email/" + email;
   
     try {
@@ -28,13 +30,23 @@ class VerifyDatabase extends Component {
       throw error;
       Alert.alert("there's been an error!");
     }
-
   }
 
   static doesNotExist(email) {
     Alert.alert("I'm sorry, you're not in our database as a Tufts Senior. Contact _______________ if you think this is a mistake");
   }
 
+  static sendEmail(user) {
+    user.sendEmailVerification()
+      .then(() => {
+        Alert.alert("We've sent you a verification email. Please login after verifying your account.");
+      })
+      .catch((error) => {
+        console.log("error: ", error);
+        Alert.alert("There's an error with verifying your email. Please email us at team@jumbosmash.com");
+      })
+  }
+
 }
 
-export default VerifyDatabase;
+export default Verification;

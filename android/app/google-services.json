@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "559975994653",
+    "firebase_url": "https://jumbosmash-ddb99.firebaseio.com",
+    "project_id": "jumbosmash-ddb99",
+    "storage_bucket": "jumbosmash-ddb99.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:559975994653:android:6c52db7077071a73",
+        "android_client_info": {
+          "package_name": "com.jumbosmash"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "559975994653-p6m5m4cs4i9ui3hu7d24ommjuuihkv65.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB2sCaOYEJiwaWHvcjFwJohZx-tI5G7s1M"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

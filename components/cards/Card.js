@@ -14,6 +14,7 @@ import {
   PanResponder,
   Image,
   TouchableWithoutFeedback,
+  Platform,
 } from 'react-native';
 
 import clamp          from 'clamp';
@@ -156,10 +157,10 @@ class Card extends Component {
 
   //TODO @richard remove later, for debugging purposes
   _renderIndexView() {
-    if (__DEV__ && this.props.index) {
+    if (__DEV__ && this.props.index && this.props.numCards) {
       return (
         <View style={styles.indexView}>
-          <Text>{"[i: " +this.props.cardIndex.toString()+ ", card: "+this.props.index.toString() +"]"}</Text>
+          <Text>{"[i: " +this.props.cardIndex.toString()+ ", card: "+this.props.index.toString() +" of: " + this.props.numCards.toString()+" cards]"}</Text>
         </View>
       )
     } else {
@@ -197,11 +198,12 @@ class Card extends Component {
       <Animated.View style={[globalStyles.absoluteCover, styles.cardView, animatedCardstyles, {zIndex: 10 - this.props.positionInDeck}]} {...this._panResponder.panHandlers}>
         <TouchableWithoutFeedback style={styles.touchArea}
           onPress={this.props.onPress}>
-          <View style={[cardShadow, styles.shadowView]}>
+          <View style={[cardShadow, styles.backgroundView]}>
             <View style={styles.card}>
               <LoadableImage
                 source={{uri: (this.props.photos && this.props.photos.length >= 1) ? this.props.photos[0].large : ""}}
                 style={styles.image}
+                imageStyle={(Platform.OS === 'ios') ? null : styles.androidImageAdditional}
                 _key={this.props.id}
                 thumbnail={{uri: (this.props.photos && this.props.photos.length >=1) ? this.props.photos[0].small : ""}}
               />
@@ -228,7 +230,7 @@ const styles = StyleSheet.create({
   touchArea: {
     flex: 1,
   },
-  shadowView: {
+  backgroundView: {
     flex: 1,
     borderRadius: borderRadius,
     backgroundColor: "white",
@@ -241,6 +243,10 @@ const styles = StyleSheet.create({
   },
   image: {
     flex: 1,
+  },
+  androidImageAdditional: {
+    borderTopLeftRadius: borderRadius,
+    borderTopRightRadius: borderRadius,
   },
   textContainer: {
     justifyContent: "flex-start",

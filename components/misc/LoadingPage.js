@@ -15,7 +15,6 @@ import {
 } from 'react-native';
 
 import GlobalStyles           from "../global/GlobalStyles.js";
-import RectButton             from "../global/RectButton.js";
 
 const NAVBAR_HEIGHT = (Platform.OS === 'ios') ? 64 : 54; // TODO: check the android tabbar height
 const PAGE_HEIGHT = Dimensions.get('window').height - NAVBAR_HEIGHT;

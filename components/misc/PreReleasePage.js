@@ -13,6 +13,7 @@ import {
   Dimensions,
   AsyncStorage,
   Alert,
+  Clipboard,
 } from 'react-native';
 
 import GlobalStyles           from "../global/GlobalStyles.js";
@@ -22,6 +23,7 @@ import AuthErrors             from "../login/AuthErrors.js";
 let Mailer = require('NativeModules').RNMail;
 const StorageKeys = GlobalFunctions.storageKeys();
 const OverrideActions = GlobalFunctions.overrideActions();
+const Analytics = require('react-native-firebase-analytics');
 const HEIGHT = Dimensions.get('window').height;
 const WIDTH = Dimensions.get('window').width;
 const PADDING = 20;
@@ -33,10 +35,14 @@ class PreReleasePage extends Component {
     };
   }
 
+  componentDidMount () {
+    Analytics.logEvent('open_pre_release_page', {});
+  }
+
   _loadPreReleaseApp() {
     Alert.alert(
       "You're here early",
-      "Official release: May 12th, 2017.\n\nThe 'pre-release state' is fully functional, but chats and matches might be scarce due to the limited number of early-access users.\n\nteam@jumbosmash.com for questions!",
+      "Official release: "+GlobalFunctions.formatDate(GlobalFunctions.dates().startDate)+"\n\nThe 'pre-release state' is fully functional, but since we only have a handful of beta testers, we've included a few extra temporary fake users.\n\nteam@jumbosmash.com for questions!",
       [
         {text:"Open in Pre-release State", onPress:()=>{this.props.changePage(OverrideActions.openApp)}},
       ]
@@ -45,10 +51,11 @@ class PreReleasePage extends Component {
 
   _sendMail() {
     if (Mailer && Mailer.mail) {
+      let accountEmail = (this.props.myProfile && this.props.myProfile.email) ? this.props.myProfile.email : "your tufts email";
       Mailer.mail({
         subject: 'Requesting Early Access',
         recipients: ['team@jumbosmash.com'],
-        body: '[account email: ]',
+        body: '[account email: '+ accountEmail +']\n\nReason: (eg: registered beta tester, Tufts Daily / Observer, way too goddamn thirsty to deal with your release date bs)',
       }, (error, event) => {
         if(error) {
           Alert.alert('Error', 'Could not send mail. Try sending an email to team@jumbosmash.com through your mail client');
@@ -102,6 +109,27 @@ class PreReleasePage extends Component {
     );
   }
 
+  _renderTitleString() {
+    let today = new Date();
+    let timeDiff = Math.abs(GlobalFunctions.dates().startDate.getTime() - today.getTime());
+    let diffDays = Math.floor(timeDiff / (1000 * 3600 * 24));
+    if (diffDays > 0) {
+      return ("Only "+diffDays.toString()+" more days until release");
+    } else {
+      let diffHours = Math.floor(timeDiff / (1000 * 3600));
+      return ("Only "+diffHours.toString()+" more hours until release");
+    }
+  }
+
+  _copyShareLink() {
+    Clipboard.setString('jumbosmash.com/share');
+    Alert.alert(
+      "Copied!",
+      "Jumbosmash URL copied to your clipboard",
+      [{text:"OK",onPress:()=>{}}]
+    )
+  }
+
   render() {
     return (
       <View style={{flex: 1}}>
@@ -110,11 +138,17 @@ class PreReleasePage extends Component {
             <Text style={[GlobalStyles.boldText, styles.title]}>Welcome to Jumbosmash ;)</Text>
           </View>
           <View style={styles.textContainer}>
-            <Text style={[GlobalStyles.boldText, {marginBottom: 10}]}>Only X more days until release</Text>
-            <Text style={GlobalStyles.text}>text etc etc</Text>
+            <Text style={[GlobalStyles.boldText, {marginBottom: 10}]}>{this._renderTitleString()}</Text>
+            <Text style={GlobalStyles.text}>Come back at midnight on {GlobalFunctions.formatDate(GlobalFunctions.dates().startDate)} for some smashy goodness. If you are a beta tester or someone who requires early access, tap the button below</Text>
           </View>
           <View style={styles.buttonContainer}>
             {this._shouldLoadPreReleaseButton()}
+            <RectButton
+              style={[styles.button, styles.smashButton]}
+              textStyle={styles.buttonText}
+              text="Share Download Link"
+              onPress={this._copyShareLink.bind(this)}
+            />
             <RectButton
               style={[styles.button, styles.smashButton]}
               textStyle={styles.buttonText}
