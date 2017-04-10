@@ -111,6 +111,7 @@ class SaveButton extends Component {
             animateInFrom={showButton ? {x: 0, y: 100} : null}
             isLoading={this.props.saveButtonState == SaveButtonState.saving}
             hasShadow={true}
+            hasStrongShadow={true}
           />
         </Animated.View>
       );
