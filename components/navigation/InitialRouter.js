@@ -68,7 +68,7 @@ class InitialRouter extends Component {
 
   componentDidMount() {
     NetInfo.isConnected.addEventListener(
-      'change', 
+      'change',
       this._handleConnectivityChange
     );
 
@@ -160,7 +160,7 @@ class InitialRouter extends Component {
         }
       }
     } catch (error) {
-      throw error; //TODO @richard notify user
+      throw error;
       return null;
     }
     return null;

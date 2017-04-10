@@ -123,8 +123,8 @@ class ProfilePhotoPicker extends Component {
   }
 
   _uploadingPhotoError(error) {
-    //TODO: @richard actually deal with error cases
     console.log(error);
+    throw error;
   }
 
   _uploadPhotoToFirebase(image, index, isLarge) {
@@ -165,7 +165,7 @@ class ProfilePhotoPicker extends Component {
         "One Sec",
         "Still working on your last photo! Should only take a few more seconds",
         [{text: "OK", onPress:()=>{}}]
-      ); //TODO @richard: do a real error thing here, test this more thoroughly
+      );
     } else if (this._photoExists(index)) { // Deleting a photo
       actionName = "deleting"
       this._changePhotoWithIndex(index, null, true);
