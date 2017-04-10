@@ -6,6 +6,7 @@ page for selecting tags
 prop:
 setTags: function that gives an array of tags that the user selected
 dismissTagPage: function that closes the TagPage
+existingTags: (optional), already highlights tags that have been selected before
 */
 
 import React, {Component} from 'react';
@@ -126,6 +127,9 @@ class TagPage extends Component {
           myTags.push(key);
         }
       }
+      Analytics.logEvent('tags_selected', {
+        'num_tags': myTags.length,
+      });
       this.props.setTags(myTags);
     }
     if (this.props.dismissTagPage) {
