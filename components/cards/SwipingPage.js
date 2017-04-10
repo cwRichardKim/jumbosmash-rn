@@ -49,6 +49,7 @@ class SwipingPage extends Component {
   componentDidMount() {
     this._shouldRetrieveLikePoints(true);
     Analytics.logEvent('open_swipe_page', {});
+    this.props.pushNotificationsHandler.requestPermissions();
   }
 
   componentWillUnmount() {
@@ -204,7 +205,7 @@ class SwipingPage extends Component {
   }
 
   async _handleRightSwipeForIndex(cardIndex) {
-    //TODO: have first pop-up and also check to see if asked before
+    //TODO: @jared have first pop-up and also check to see if asked before notifications
 
     let profile = this.props.profiles[cardIndex];
     this._asyncUpdateLikeList(this.props.myProfile.id, profile.id);
