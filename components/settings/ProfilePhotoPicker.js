@@ -85,6 +85,7 @@ class ProfilePhotoPicker extends Component {
       return (
         <LoadableImage
           style={styles}
+          imageStyle={styles}
           source={isUploading ? null : {uri: this.props.photos[index].large}}
           isImageLoading={this.state.uploadingImageWithIndex == index}
         />

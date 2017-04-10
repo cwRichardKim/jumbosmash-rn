@@ -289,7 +289,11 @@ class SwipingPage extends Component {
         </View>
       );
     } else if (this.props.noMoreCards) {
-      return (<NoMoreCards/>);
+      return (
+        <NoMoreCards
+          reload={this.props.fetchProfiles}
+        />
+      );
     } else {
       return (<LoadingCards/>);
     }

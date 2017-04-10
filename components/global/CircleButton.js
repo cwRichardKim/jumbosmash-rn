@@ -15,6 +15,7 @@ animateInFrom: dictionary {x, y} with number of pixels in the x / y axis to star
 isLoading: true / false, shows loading indicator. will not run onPress if true
 disabled: should not animate and does not call onPress
 hasShadow: shows shadow, reduces when disabled
+hasStrongShadow: shows strong shadow
 disabledOpacity: opacity the button animates to when it is disabled
 disabledOnPress: function called when button is disabled
 */
@@ -146,7 +147,11 @@ class CircleButton extends Component {
     let translate = this.state.pan.getTranslateTransform();
     let shadow = {};
     if (this.props.hasShadow && !this.props.disabled && this.props.hasLowShadow !== true) {
-      shadow = GlobalStyles.buttonShadow;
+      if (this.props.hasStrongShadow) {
+        shadow = GlobalStyles.strongShadow;
+      } else {
+        shadow = GlobalStyles.buttonShadow;
+      }
     } else if (this.props.hasShadow || this.props.hasLowShadow) {
       shadow = GlobalStyles.weakShadow;
     }

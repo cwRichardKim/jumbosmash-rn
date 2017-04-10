@@ -102,7 +102,7 @@ class LoadableImage extends Component {
         <Image
           style={[styles.image, {opacity: hideImage ? 0.0 : 1.0}, this.props.imageStyle]}
           source={this.props.source}
-          defaultSource={require("./images/turtle.jpg")}
+          defaultSource={require("./images/error.png")}
           onLoadStart={()=>{this.setState({isImageLoading: true})}}
           onLoadEnd={this._imageLoadEnd.bind(this)}
           onError={this._photoFetchError.bind(this)}

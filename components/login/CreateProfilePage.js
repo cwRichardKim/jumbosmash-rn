@@ -2,7 +2,7 @@
 
 /*
 
-This page is for a user who has not yet created a profile object. 
+This page is for a user who has not yet created a profile object.
 */
 
 import React, {Component} from 'react';
@@ -158,7 +158,7 @@ class CreateProfilePage extends Component {
         }
       }).then((responseJson) => {
         // Authentication Process complete!
-        this.props.setMyProfile(body); 
+        this.props.setMyProfile(body);
         this.props.loadPage(PageNames.appHome);
       }).catch((error) => {
         throw error; //TODO @richard show error thing
@@ -271,7 +271,7 @@ const styles = StyleSheet.create({
   },
   textInput: {
     height: 42,
-    color: "#C3C1C1",
+    color: "#919191",
   },
   line: {
     height: 1,
