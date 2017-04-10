@@ -1,10 +1,14 @@
 'use strict';
 
 /*
-This file handles if you already have an account, and want to login.
-This is also the first page that AuthContainer pushes to. It has
-the authlistener attached, and checks if user should be seeing
-AccountPage or LoginPage.
+
+This page handles after a user has been created.
+It ensures:
+  - a user has signed up
+  - user email is verified
+  - account is created
+
+Directes to appropriate page if not. 
 */
 
 import React, {Component} from 'react';
@@ -16,137 +20,208 @@ import {
   Alert,
   AsyncStorage,
   Button,
+  Image,
 } from 'react-native';
 
-import SignupPage             from './SignupPage.js';
-import AccountPage            from './AccountPage.js';
 import AuthErrors             from './AuthErrors.js';
-import ForgotPasswordPage     from './ForgotPasswordPage.js';
 import FormatInput            from './FormatInput.js';
-import VerifyDatabase     from "./VerifyDatabase.js";
+import Verification           from "./Verification.js";
+import GlobalFunctions        from "../global/GlobalFunctions.js";
+import RectButton             from "../global/RectButton.js";
+
+import ForgotPasswordPage     from './ForgotPasswordPage.js';
+import CreateProfilePage      from './CreateProfilePage.js'
+
+const PageNames = require("../global/GlobalFunctions.js").pageNames();
+const AuthStyle = require('./AuthStylesheet');
 
 class LoginPage extends Component {
   
   constructor(props) {
     super(props);
-
-    // this.myProfile = props.studentProfile || null;
-
+    this.studentProfile = null;
+    this.email = "";
     this.state = {
-      email_input: '',
+      email_input: this.props.emailInput || null,
       password:'',
     }
   }
 
-  async login(){
+  /* Handles current text input 
+     Called before Login and Signup
+  */
 
-    var email = FormatInput.email(this.state.email_input, this.props.email_ext);
-    var password = this.state.password;
-    this.props.setEmail(email);
-
-    if (!this.props.studentProfile) {
-      let studentProfile = await VerifyDatabase.doesStudentExist(email);
-      this.props.setStudentProfile(studentProfile);
+  _beforeButtonPress() {
+    if (!this.props.isConnected) {
+      Alert.alert("Sorry, no connection :(");
+    } else {
+      if (!this.state.email_input) {
+        Alert.alert("Please type in your email address");
+      } else {
+        this.props.setEmailInput(this.state.email_input);
+        var email = FormatInput.email(this.state.email_input, this.props.email_ext);
+        this.email = email;
+        var password = this.state.password;
+      }
     }
+  }
+
+  /*************************** Login ***************************/
+  async _login() {
+    await this._beforeButtonPress();
+    let email = this.email;
+    let password = this.state.password;
 
     this.props.firebase.auth().signInWithEmailAndPassword(email, password)
       .then((user) => {
-        if (user && user.emailVerified) {
-          this.props.navigator.push({
-            component: AccountPage
-          });
-        } else if (user && !user.emailVerified) {
-          Alert.alert("please check your email, and verify your account before logging in.");
-        }
-      })
+        if (user && !user.emailVerified) {
+          Alert.alert("Please check your email, and verify your account before logging in. If you're experiencing issues, contact us at team@jumbosmash.com");
+        } else if (user && user.emailVerified) {
+          this.props.firebase.auth().currentUser
+            .getToken(true)
+            .then(async (token) => {
+
+              // First checks if taken from signup
+              let studentProfile = this.studentProfile;
+              if (!studentProfile) {
+                studentProfile = await Verification.getStudent(email);
+              }
+
+              this.props.setStudentProfile(studentProfile);
+              this.props.setToken(token);
+
+              let url = "https://jumbosmash2017.herokuapp.com/profile/id/".concat(studentProfile._id).concat("/").concat(token);
+              try {
+                let response = await fetch(url);
+                let responseJson = await response.json();
+
+                if (responseJson) {
+                  // Authentication Process complete!
+                  this.props.setMyProfile(responseJson);
+                  this.props.loadPage(PageNames.appHome);
+                } else {
+                  this._goToCreateProfilePage();
+                }
+              } catch(error) {
+                Alert.alert("there's been an error");
+                throw error;
+              }
+            })
+          }
+        })
       .catch((error) => {
         AuthErrors.handleLoginError(error);
       })
   }
 
-  goToForgotPassword() {
-    this.props.navigator.push({
-      component: ForgotPasswordPage
-    });
+  /*************************** Signup ***************************/
+  async _signup() {
+    await this._beforeButtonPress();
+    let email = this.email;
+    let password = this.state.password;
+    
+    let studentProfile = await Verification.getStudent(email);
+    if (studentProfile){
+      this.studentProfile = studentProfile;
+      this._createAccount(email, password);
+    } else {
+      Verification.doesNotExist();
+    }
   }
 
-  goToSignupPage() {
-    this.props.navigator.push({
-      component: SignupPage
+  _createAccount(email, password) {
+    /* Passing to firebase authentication function here */
+    this.props.firebase.auth().createUserWithEmailAndPassword(email, password)
+      // Success case
+      .then((user) => {
+        Verification.sendEmail(user);
+      })
+      // Failure case: Signup Error
+      .catch((error) => {
+        AuthErrors.handleSignupError(error);
+      })
+  }
+
+  /*************************** Forgot Password ***************************/
+
+  _forgotPassword() {
+    this.props.setEmailInput(this.state.email_input);
+    this._goToForgotPassword();
+  }
+
+  /*************************** Navigation ***************************/
+
+  _goToForgotPassword() {
+    this.props.navigator.replace({
+      name: ForgotPasswordPage
+    })
+  }
+
+  _goToCreateProfilePage() {
+    this.props.navigator.replace({
+      name: CreateProfilePage
     });
   }
 
   render() {
     return (
-      <View style={styles.container}>
-        <View style={styles.body}>
-          <View style={styles.textinput}>
+      <Image source={require("./img/bg.png")} style={AuthStyle.container}>
+        <View style={AuthStyle.logoContainer}>
+          <Image source={require('./img/logo.png')} style={AuthStyle.logo}/>
+        </View>
+        <View style={AuthStyle.body}>
+          <Text style={AuthStyle.textTitles}> Tufts Email: </Text>
+          <View style={AuthStyle.emailInputBorder}>
             <TextInput
-              style={styles.first}
+              style={AuthStyle.emailInput}
               onChangeText={(text) => this.setState({email_input: text})}
               value={this.state.email_input}
-              placeholder={"Enter your tufts email"}
             />
-            <Text style={styles.last}> {this.props.email_ext} </Text>
+            <Text style={AuthStyle.emailExt}> {this.props.email_ext} </Text>
           </View>
 
+          <Text style={AuthStyle.textTitles}> Password: </Text>
+          <View style={AuthStyle.passwordInputBorder}>
           <TextInput
-            style={styles.textinput}
+            style={AuthStyle.passwordInput}
             onChangeText={(text) => this.setState({password: text})}
             value={this.state.password}
             secureTextEntry={true}
-            placeholder={"Password"}
+          />
+          </View>
+          <RectButton
+              style={[AuthStyle.forgotPasswordButton]}
+              textStyle={AuthStyle.forgotPasswordButtonText}  
+              onPress={this._forgotPassword.bind(this)}
+              text="Forgot Password?"
           />
 
-          <Button
-            onPress={this.login.bind(this)}
-            title="Login"
-            accessibilityLabel="Login"
-          />
+          <View style={styles.buttonContainer}>
+            <RectButton
+              style={[AuthStyle.solidButton, AuthStyle.buttonBlue]}
+              textStyle={[AuthStyle.solidButtonText, AuthStyle.bold]}
+              onPress={this._login.bind(this)}
+              text="LOGIN"
+            />
 
-          <Button
-            onPress={this.goToSignupPage.bind(this)}
-            title="New here? Go to Signup"
-            accessibilityLabel="Go to signup page"
-          />
-
-          <Button
-            onPress={this.goToForgotPassword.bind(this)}
-            title="Forgot password?"
-            accessibilityLabel="Forgot password?"
-          />
+            <RectButton
+              style={[AuthStyle.solidButton, AuthStyle.buttonPink]}
+              textStyle={AuthStyle.solidButtonText}
+              onPress={this._signup.bind(this)}
+              text="SIGNUP!"
+            />
+          </View>
+        <Image/>
         </View>
-      </View>
+      </Image>
     );
   }
 }
 
 var styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    flexDirection: 'row',
-    alignItems:'center'
+  buttonContainer: {
+    marginTop: 30,
   },
-  body: {
-    flex: 9,
-    alignItems: 'center',
-  },
-  first: {
-    flex: 3/4,
-  },
-  last: {
-    flex: 1/4,
-    alignSelf: 'center',
-  },
-  textinput: {
-    height: 40,
-    borderColor: 'gray',
-    borderWidth: 1,
-    margin: 10,
-    flexDirection: 'row',
-  },
-  button: {
-  }
 })
 
 export default LoginPage;

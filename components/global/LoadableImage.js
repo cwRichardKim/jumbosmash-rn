@@ -100,7 +100,7 @@ class LoadableImage extends Component {
           <ActivityIndicator animating={shouldAnimate}/>
         </View>
         <Image
-          style={[styles.image, {opacity: hideImage ? 0.0 : 1.0}]}
+          style={[styles.image, {opacity: hideImage ? 0.0 : 1.0}, this.props.imageStyle]}
           source={this.props.source}
           defaultSource={require("./images/turtle.jpg")}
           onLoadStart={()=>{this.setState({isImageLoading: true})}}

@@ -27,6 +27,7 @@ import RectButton         from "../global/RectButton.js";
 import GlobalStyles       from "../global/GlobalStyles.js";
 import AuthErrors         from "../login/AuthErrors.js"
 
+const Analytics = require('react-native-firebase-analytics');
 const GlobalFunctions = require('../global/GlobalFunctions.js');
 const StorageKeys = GlobalFunctions.storageKeys();
 const PageNames = GlobalFunctions.pageNames();
@@ -47,6 +48,10 @@ class SettingsPage extends Component {
 
   componentWillMount () {
     this.keyboardFrameWillChangeListener = Keyboard.addListener('keyboardWillChangeFrame', this._keyboardWillChangeFrame.bind(this));
+  }
+
+  componentDidMount () {
+    Analytics.logEvent('open_settings_page', {});
   }
 
   componentWillUnmount () {
@@ -123,6 +128,7 @@ class SettingsPage extends Component {
   // This function updates the current information to the server
   // public: can be called by JumboNavigator
   saveButtonPressed() {
+    Analytics.logEvent('save_settings_button', {});
     this._asyncUpdatePropertiesRequest();
   }
 
@@ -173,6 +179,9 @@ class SettingsPage extends Component {
   }
 
   _sendMail() {
+    Analytics.logEvent('feedback_button', {
+      'page': 'settings'
+    });
     if (Mailer && Mailer.mail) {
       Mailer.mail({
         subject: 'Help / Feedback',
@@ -193,10 +202,16 @@ class SettingsPage extends Component {
   }
 
   _logout() {
+    Analytics.logEvent('logout_button', {});
     this.props.firebase.auth().signOut()
       .then(() => {
         try {
           AsyncStorage.removeItem(StorageKeys.myProfile);
+        } catch (error) {
+          throw "Error: Remove from storage: " + error;
+        }
+        try {
+          AsyncStorage.removeItem(StorageKeys.profiles);
         } catch (error) {
           throw "Error: Remove from storage: " + error;
         }
@@ -210,6 +225,7 @@ class SettingsPage extends Component {
   }
 
   _viewProfile() {
+    Analytics.logEvent('view_profile_button', {});
     this.props.showProfileCardForProfile(this.props.myProfile);
   }
 

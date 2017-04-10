@@ -23,6 +23,7 @@ let global = require('../global/GlobalFunctions.js');
 
 //TODO: check for service being down
 let _listView: ListView;
+const Analytics = require('react-native-firebase-analytics');
 const SCROLL_TO_Y = 0;
 
 class ChatPage extends React.Component {
@@ -43,9 +44,11 @@ class ChatPage extends React.Component {
     if (_listView) {
       _listView.scrollTo({x: 0, y: SCROLL_TO_Y, animated: true});
     }
+    Analytics.logEvent('open_chat_page', {});
   }
 
   _fetchConversationsAsync () {
+    console.log("BLAH BLAH BLAH " + JSON.stringify(this.props.token));
     let url = 'https://jumbosmash2017.herokuapp.com/chat/id/'.concat(this.props.myProfile.id).concat("/").concat(this.props.token.val);
     return fetch(url)
       .then((response) => {
@@ -207,7 +210,8 @@ class ChatPage extends React.Component {
     };
 
     let hasRead = false;
-    for(var i = 0; i < len; i++) {
+    let length = conversation.participants.length;
+    for(var i = 0; i < length; i++) {
       if (conversation.participants[i].profileId == this.props.myProfile.id) {
         hasRead = conversation.participants[i].read;
       }
@@ -293,12 +297,8 @@ const styles = StyleSheet.create({
     borderColor: '#6A6ACB',
     borderWidth: 3,
   },
-  headerContainer: {
-    height: 40,
-    flex: 1,
-  },
   searchInput: {
-    height: 30,
+    height: 36,
     flex: 1,
     paddingHorizontal: 8,
     fontSize: 15,

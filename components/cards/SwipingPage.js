@@ -17,15 +17,15 @@ import {
   AsyncStorage,
 } from 'react-native';
 
-import YesView          from './YesView.js'
-import NoView           from './NoView.js'
 import SwipeButtonsView from './SwipeButtonsView.js'
 import Card             from './Card.js';
+import LoadingCards     from './LoadingCards.js';
 import NoMoreCards      from './NoMoreCards.js';
 import DummyData        from '../misc/DummyData.js'
 const global = require('../global/GlobalFunctions.js');
+const Analytics = require('react-native-firebase-analytics');
 
-const CARD_REFRESH_BUFFER = 30; // There should always be at least this many cards left, else fetch more
+const CARD_REFRESH_BUFFER = 10; // There should always be at least this many cards left, else fetch more
 const CARD_WIDTH = Dimensions.get('window').width - 40;
 const DECK_SIZE = 3; // number of cards rendered at a time
 const StorageKeys = global.storageKeys();
@@ -48,6 +48,8 @@ class SwipingPage extends Component {
 
   componentDidMount() {
     this._shouldRetrieveLikePoints(true);
+    Analytics.logEvent('open_swipe_page', {});
+    this.props.pushNotificationsHandler.requestPermissions();
   }
 
   componentWillUnmount() {
@@ -77,7 +79,7 @@ class SwipingPage extends Component {
     let cardsArrayUpdated = this.cards[cardIndex %3] != null; // expecting true
     let cardArrayBroke = cardsArrayUpdated && card.firstName != this.cards[cardIndex % 3].props.firstName; // expecting false
     if (indexBroke || !cardsArrayUpdated || cardArrayBroke) {
-      Alert.alert("SwipingPage.js broke","screenshot this and send it to Richard (" + indexBroke.toString() + " " + cardsArrayUpdated.toString() + " " + cardArrayBroke.toString() + ")",[{text:"OK", onPress:()=>{}}])
+      Alert.alert("App in unstable state","Not sure what happened, screenshot this and send it to Richard@jumbosmash.com. Also highly recommend quitting the app and starting again (" + indexBroke.toString() + " " + cardsArrayUpdated.toString() + " " + cardArrayBroke.toString() + ", "+this.state.cardIndex.toString() + " "+cardIndex.toString()+")",[{text:"OK", onPress:()=>{}}])
     }
   }
 
@@ -206,12 +208,12 @@ class SwipingPage extends Component {
     //TODO: @jared have first pop-up and also check to see if asked before notifications
 
     let profile = this.props.profiles[cardIndex];
-    // await this._asyncUpdateLikeList("586edd82837823188a2976e7", profile.id);
-    // this._asyncUpdateLikeList(profile.id, "586edd82837823188a2976e7");
     this._asyncUpdateLikeList(this.props.myProfile.id, profile.id);
     this._swipeErrorCheck(cardIndex, profile);
     this.setState({canUndoCount: 0});
+    this.props.removeDuplicateProfiles(cardIndex);
     this._incrementSwipeCount(true);
+    Analytics.logEvent('swipe_right', {});
   }
 
   _handleLeftSwipeForIndex(cardIndex) {
@@ -219,6 +221,7 @@ class SwipingPage extends Component {
     this._swipeErrorCheck(cardIndex, card);
     this.setState({canUndoCount: this.state.canUndoCount + 1});
     this._incrementSwipeCount(false);
+    Analytics.logEvent('swipe_left', {});
   }
 
   _undo() {
@@ -227,6 +230,7 @@ class SwipingPage extends Component {
         cardIndex: this.state.cardIndex - 1,
         canUndoCount: this.state.canUndoCount - 1,
       });
+      Analytics.logEvent('undo_button', {});
     }
   }
 
@@ -240,12 +244,14 @@ class SwipingPage extends Component {
   _swipeRightButtonPressed() {
     if (this._cardsExist()) {
       this.cards[this.state.cardIndex % DECK_SIZE].programmaticSwipeRight();
+      Analytics.logEvent('right_button', {});
     }
   }
 
   _swipeLeftButtonPressed() {
     if (this._cardsExist()  ) {
       this.cards[this.state.cardIndex % DECK_SIZE].programmaticSwipeLeft();
+      Analytics.logEvent('left_button', {});
     }
   }
 
@@ -264,6 +270,7 @@ class SwipingPage extends Component {
         cardIndex={index}
         positionInDeck={positionInDeck}
         cardWidth={CARD_WIDTH}
+        numCards={this.props.profiles.length}
         />
       );
     } else {
@@ -281,21 +288,14 @@ class SwipingPage extends Component {
           {this._renderCard(2)}
         </View>
       );
-    } else {
+    } else if (this.props.noMoreCards) {
       return (<NoMoreCards/>);
+    } else {
+      return (<LoadingCards/>);
     }
   }
 
   render() {
-    // temporarily removing the yes / no views until design calls for them
-    // let yesOpacity = pan.x.interpolate({inputRange: [0, 150], outputRange: [0, 1]});
-    // let yesScale = pan.x.interpolate({inputRange: [0, 150], outputRange: [0.5, 1], extrapolate: 'clamp'});
-    // let animatedYesStyles = {transform: [{scale: yesScale}], opacity: yesOpacity}
-    //
-    // let nopeOpacity = pan.x.interpolate({inputRange: [-150, 0], outputRange: [1, 0]});
-    // let nopeScale = pan.x.interpolate({inputRange: [-150, 0], outputRange: [1, 0.5], extrapolate: 'clamp'});
-    // let animatedNopeStyles = {transform: [{scale: nopeScale}], opacity: nopeOpacity}
-
     return (
       <View style={{marginTop: this.props.navBarHeight, height:this.props.pageHeight}}>
         <View style={[styles.container]}>
@@ -315,15 +315,6 @@ class SwipingPage extends Component {
               maxSwipesRemembered={MAX_SWIPES_REMEMBERED}
             />
           </View>
-          {/* // temporarily removing the yes / no views
-          <Animated.View style={[animatedNopeStyles, styles.noView]}>
-            <NoView/>
-          </Animated.View>
-
-          <Animated.View style={[animatedYesStyles, styles.yesView]}>
-            <YesView/>
-          </Animated.View>
-          */}
         </View>
       </View>
     );
@@ -340,18 +331,6 @@ const styles = StyleSheet.create({
   topPadding: {
     height: 20,
   },
-  // yesView: {
-  //   position: 'absolute',
-  //   bottom: 20,
-  //   right: 20,
-  //   zIndex: 11,
-  // },
-  // noView: {
-  //   position: 'absolute',
-  //   bottom: 20,
-  //   left: 20,
-  //   zIndex: 11,
-  // },
   cardContainer: { // the area the card will occupy
     flex: 1,
     width: CARD_WIDTH,
