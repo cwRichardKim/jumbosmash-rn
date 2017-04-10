@@ -232,9 +232,6 @@ class NavigationContainer extends Component {
             this.navigator.notificationBanner.showWithMessage("Retrieved " + responseJson.length + " profiles. prev index: "+lastIndex+", indexes: " + responseJson[0].index.toString() + " - " + responseJson[responseJson.length-1].index.toString())
           }
           this._setLastIndex(responseJson[responseJson.length - 1].index);
-          // for (var i = 0; i < responseJson.length; i++) { //TODO @richard testing code remove
-          //   console.log(responseJson[i].index.toString() + " " + responseJson[i].firstName);
-          // }
           global.shuffle(responseJson);
           this.setState({
             profiles: this.state.profiles.concat(responseJson),
