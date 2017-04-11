@@ -39,7 +39,7 @@ const CANCEL_INDEX = 0;
 
 const Analytics = require('react-native-firebase-analytics');
 const global = require('../global/GlobalFunctions.js');
-const pushNotifications = require('../global/PushNotifications.js');
+const PushNotifications = require('../global/PushNotifications.js');
 const PageNames = require("../global/GlobalFunctions").pageNames();
 
 const NAVBAR_HEIGHT = (Platform.OS === 'ios') ? 64 : 54; // TODO: check the android tabbar height
@@ -93,14 +93,15 @@ class JumboNavigator extends Component {
 
         // (optional) Called when Token is generated (iOS and Android)
         onRegister: function(token) {
-            pushNotifications.onRegister(token,
+            PushNotifications.onRegister(token,
               {authToken: this.props.token.val,
                profile: this.props.myProfile});
         }.bind(this),
 
         // (required) Called when a remote or local notification is opened or received
         onNotification: function(notification) {
-            pushNotifications.onNotification(notification,
+            PushNotifications.increaseBadgeNumber(this.pushNotificationsHandler);
+            PushNotifications.onNotification(notification,
               {banner: this.notificationBanner,
                onPress: () => {this.changePage(PageNames.chatPage)},
                firebase: this.props.firebase});
