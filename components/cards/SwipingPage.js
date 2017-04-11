@@ -210,6 +210,9 @@ class SwipingPage extends Component {
     let profile = this.props.profiles[cardIndex];
     this._asyncUpdateLikeList(this.props.myProfile.id, profile.id);
     this._swipeErrorCheck(cardIndex, profile);
+    if (this.props.addRecentLikes && profile.id) {
+      this.props.addRecentLikes(profile.id);
+    }
     this.setState({canUndoCount: 0});
     this.props.removeDuplicateProfiles(cardIndex);
     this._incrementSwipeCount(true);

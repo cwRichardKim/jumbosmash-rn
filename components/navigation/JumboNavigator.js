@@ -219,6 +219,7 @@ class JumboNavigator extends Component {
           shouldUseDummyData={this.props.shouldUseDummyData}
           noMoreCards={this.props.noMoreCards}
           removeDuplicateProfiles={this.props.removeDuplicateProfiles}
+          addRecentLikes={this.props.addRecentLikes}
         />
       );
     } else if (route.name == PageNames.chatPage) {
