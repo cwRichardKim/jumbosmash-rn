@@ -20,6 +20,7 @@ import { View,
          Alert,
          RefreshControl,} from 'react-native';
 let global = require('../global/GlobalFunctions.js');
+const PushNotifications = require('../global/PushNotifications.js');
 
 //TODO: check for service being down
 let _listView: ListView;
@@ -45,6 +46,7 @@ class ChatPage extends React.Component {
       _listView.scrollTo({x: 0, y: SCROLL_TO_Y, animated: true});
     }
     Analytics.logEvent('open_chat_page', {});
+    PushNotifications.clearBadgeNumber(require('react-native-push-notification'));
   }
 
   _fetchConversationsAsync () {
