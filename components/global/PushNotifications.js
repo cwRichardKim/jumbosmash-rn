@@ -38,4 +38,12 @@ module.exports = {
       console.log(error);
     });
   },
+  increaseBadgeNumber: function(pushNotificationsHandler) {
+    pushNotificationsHandler.getApplicationIconBadgeNumber(function(numBadges) {
+      pushNotificationsHandler.setApplicationIconBadgeNumber(numBadges + 1);
+    });
+  },
+  clearBadgeNumber: async function(pushNotificationsHandler) {
+    pushNotificationsHandler.setApplicationIconBadgeNumber(0);
+  },
 }
