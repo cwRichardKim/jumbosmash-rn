@@ -6,7 +6,7 @@ a person or persons (or bot ;) )
 */
 
 import React, {Component} from 'react';
-import View from 'react-native';
+import {View} from 'react-native';
 import { GiftedChat } from 'react-native-gifted-chat';
 
 let Mailer = require('NativeModules').RNMail;
@@ -132,13 +132,15 @@ class ConversationPage extends Component {
 
   render() {
     return (
-      <GiftedChat
-        messages={this.state.messages}
-        onSend={this.onSend}
-        onReceive={this.onReceive}
-        user={{
-          _id: this.props.myProfile.id
-        }}/>
+      <View style={{flex: 1, backgroundColor: 'white'}}>
+        <GiftedChat
+          messages={this.state.messages}
+          onSend={this.onSend}
+          onReceive={this.onReceive}
+          user={{
+            _id: this.props.myProfile.id
+          }}/>
+      </View>
     );
   }
 }
