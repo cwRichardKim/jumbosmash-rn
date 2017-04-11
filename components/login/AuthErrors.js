@@ -59,7 +59,7 @@ class AuthErrors extends Component {
 
   // TODO: Figure this out?
   static handleLogoutError(error) {
-    Alert.alert("there's been an error in logging you out! AHHH!");
+    Alert.alert("there's been an error in logging you out! Contact us at team@jumbosmash.com");
   }
 }
 
