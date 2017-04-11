@@ -27,13 +27,12 @@ class Verification extends Component {
       let responseJson = await response.json(); 
       return responseJson || null;
     } catch (error) {
-      throw error;
-      Alert.alert("there's been an error!");
+      Alert.alert("There's been an error. Please try again, and if it persists, please email us at team@jumbosmash.com");
     }
   }
 
   static doesNotExist(email) {
-    Alert.alert("I'm sorry, you're not in our database as a Tufts Senior. Contact _______________ if you think this is a mistake");
+    Alert.alert("I'm sorry, you're not in our database as a Tufts Senior. Contact team@jumbosmash.com if you think this is a mistake");
   }
 
   static sendEmail(user) {
@@ -42,7 +41,6 @@ class Verification extends Component {
         Alert.alert("We've sent you a verification email. Please login after verifying your account.");
       })
       .catch((error) => {
-        console.log("error: ", error);
         Alert.alert("There's an error with verifying your email. Please email us at team@jumbosmash.com");
       })
   }
