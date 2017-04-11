@@ -51,7 +51,6 @@ class ForgotPasswordPage extends Component {
           });
         })
         .catch((error) => {
-          throw error;
           Alert.alert("Sorry, an error occured. Contact us at team@jumbosmash.com with a summary of your issue.");
         })
     }
