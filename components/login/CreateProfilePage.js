@@ -161,7 +161,7 @@ class CreateProfilePage extends Component {
         this.props.setMyProfile(body); 
         this.props.loadPage(PageNames.appHome);
       }).catch((error) => {
-        throw error; //TODO @richard show error thing
+        Alert.alert("There's been an error, please quit the app and try again. If the problem persists, email us at team@jumbosmash.com");
       });
     } else {
       Alert.alert(

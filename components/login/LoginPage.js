@@ -101,8 +101,7 @@ class LoginPage extends Component {
                   this._goToCreateProfilePage();
                 }
               } catch(error) {
-                Alert.alert("there's been an error");
-                throw error;
+                Alert.alert("There's been an error. Please try again, and if it persists, please email us at team@jumbosmash.com");
               }
             })
           }
