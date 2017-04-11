@@ -35,6 +35,7 @@ class NavigationContainer extends Component {
     // make a lot of things break whether you realize it or not
     this.token = {val: null};
     this.isFetchInProgress = false; //flag to make sure only one fetch call is called at a time
+    this.recentLikes = {}; // helps with edge case where the like request took longer than the fetch request
     this.state = {
       profiles: [],
       noMoreCards: false,
@@ -190,6 +191,26 @@ class NavigationContainer extends Component {
     }
   }
 
+  _addRecentLikes(profileId) {
+    if (this.recentLikes) {
+      this.recentLikes[profileId] = true;
+    }
+  }
+
+  // solves the concurrency issue of fetching while a like is being processed
+  _removeRecentlyLiked(array) {
+    if (array && array.length > 0) {
+      for (var i = 0; i < array.length; i++) {
+        if (this.recentLikes && array[i].id in this.recentLikes) {
+          array.splice(i, 1);
+          i--;
+        }
+      }
+    }
+    this.recentLikes = {};
+    return array
+  }
+
   // fetches new profiles and adds them to the profiles array
   // lastID: the lastID we got from the previous list of profiles
   // count: how many profiles to fetch. 0 or null is all
@@ -227,6 +248,7 @@ class NavigationContainer extends Component {
           throw ("status" in response) ? response["status"] : "Unknown Error";
         }
       }).then((responseJson) => {
+        responseJson = this._removeRecentlyLiked(responseJson);
         if (responseJson.length > 0) {
           if (__DEV__) { //TODO @richard remove. for debugging purposes
             this.navigator.notificationBanner.showWithMessage("Retrieved " + responseJson.length + " profiles. prev index: "+lastIndex+", indexes: " + responseJson[0].index.toString() + " - " + responseJson[responseJson.length-1].index.toString())
@@ -328,6 +350,7 @@ class NavigationContainer extends Component {
           shouldUseDummyData={this.props.shouldUseDummyData}
           updateMyProfile={this.props.updateMyProfile}
           noMoreCards={this.state.noMoreCards}
+          addRecentLikes={this._addRecentLikes.bind(this)}
         />
       </View>
     );
