@@ -38,11 +38,6 @@ module.exports = {
       console.log(error);
     });
   },
-  // increaseBadgeNumber: function(pushNotificationsHandler) {
-  //   pushNotificationsHandler.getApplicationIconBadgeNumber(function(numBadges) {
-  //     pushNotificationsHandler.setApplicationIconBadgeNumber(numBadges + 1);
-  //   });
-  // },
   clearBadgeNumber: async function(profile, pushNotificationsHandler, authToken) {
     profile.notificationsCount = 0;
     let url = "https://jumbosmash2017.herokuapp.com/profile/update/".concat(profile.id).concat("/").concat(authToken);
