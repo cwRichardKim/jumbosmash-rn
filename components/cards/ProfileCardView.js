@@ -109,6 +109,19 @@ class ProfileCardView extends Component {
     }
   }
 
+  _shouldRenderSharedTags() {
+    if (this.props.tags && this.props.tags.length > 0) {
+      let tagsString = this.props.tags.join(", ");
+      return (
+        <Text style={[GlobalStyles.subtext, styles.subTitle,  {paddingBottom: 15}]}>Shared Tags: {tagsString}</Text>
+      )
+    } else {
+      return (
+        <View style={{paddingBottom: 5}}/>
+      );
+    }
+  }
+
   render() {
     let isTeamMember = this.props.teamMember === true;
     let pageHeight = this.props.pageHeight;
@@ -133,6 +146,7 @@ class ProfileCardView extends Component {
                     {this._shouldRenderCheck(isTeamMember)}
                   </View>
                   <Text style={[GlobalStyles.subtext, styles.subTitle]}>{this.props.major}</Text>
+                  {this._shouldRenderSharedTags()}
                   <Text style={[GlobalStyles.text, styles.text]}>{this.props.description}</Text>
                 </View>
               </TouchableWithoutFeedback>
@@ -228,7 +242,7 @@ const styles = StyleSheet.create({
   },
   subTitle: {
     paddingLeft: 20,
-    paddingBottom: 15,
+    paddingBottom: 5,
   },
   text: {
     paddingLeft: 20,

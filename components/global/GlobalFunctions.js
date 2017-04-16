@@ -42,6 +42,7 @@ module.exports = {
       appHome: "APPHOMEPAGE",
       loadingPage: "LOADINGPAGE",
       cheaterPage: "CHEATERPAGE",
+      tagPage: "TAGPAGE",
     })
   },
   storageKeys: function () {

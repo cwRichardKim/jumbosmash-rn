@@ -28,6 +28,7 @@ import ProfileCardView        from '../cards/ProfileCardView.js';
 import MatchView              from './MatchView.js';
 import NotificationBannerView from "./NotificationBannerView.js";
 import GlobalStyles           from "../global/GlobalStyles.js";
+import TagPage                from "../settings/TagPage.js";
 
 let Mailer = require('NativeModules').RNMail;
 
@@ -48,6 +49,7 @@ const PAGE_WIDTH = Dimensions.get('window').width;
 const NAVBAR_SELECTOR_WIDTH = PAGE_WIDTH * 0.2;
 const NAVBAR_SELECTOR_HEIGHT = 2;
 const headerTitleLeftMargin = (Platform.OS === 'ios') ? 0 : (Navigator.NavigationBar.Styles.Stages.Left.Title.marginLeft || 0);
+const SaveButtonState = global.saveButtonStates();
 
 class JumboNavigator extends Component {
   constructor(props) {
@@ -187,6 +189,8 @@ class JumboNavigator extends Component {
     if (route.name == PageNames.settingsPage) {
       return (
         <SettingsPage
+          navigator={navigator}
+          showNavBar={false}
           myProfile={this.props.myProfile}
           ref={(elem) => {this.settingsPage = elem}}
           pageHeight={PAGE_HEIGHT}
@@ -199,6 +203,14 @@ class JumboNavigator extends Component {
           updateMyProfile={this.props.updateMyProfile}
         />
       );
+    } else if (route.name == PageNames.tagPage) {
+      return (
+        <TagPage
+          ref={(elem)=>{this.tagPage=elem}}
+          myProfile={this.props.myProfile}
+          token={this.props.token}
+        />
+      )
     } else if (route.name == PageNames.cardsPage) {
       return (
         <SwipingPage
@@ -264,6 +276,15 @@ class JumboNavigator extends Component {
           </View>
         </TouchableOpacity>
       );
+    } else if (route.name === PageNames.tagPage) {
+      return (
+        <TouchableOpacity
+          style={{flex: 1, justifyContent: 'center', alignItems: 'center', minWidth: 80}}
+          onPress={this._tagCancelOnPress.bind(this)}
+        >
+          <Text style={{color: "#715BB9",}}>Cancel</Text>
+        </TouchableOpacity>
+      );
     } else {
       return (
         <TouchableOpacity
@@ -295,6 +316,15 @@ class JumboNavigator extends Component {
               style={styles.convoNavBarIcon}
             />
           </View>
+        </TouchableOpacity>
+      );
+    } else if (route.name === PageNames.tagPage) {
+      return (
+        <TouchableOpacity
+          style={{flex: 1, justifyContent: 'center', alignItems: 'center', minWidth: 80}}
+          onPress={this._tagDoneOnPress.bind(this)}
+        >
+          <Text style={{fontWeight: '600', color: "#715BB9",}}>Done</Text>
         </TouchableOpacity>
       );
     } else {
@@ -330,6 +360,8 @@ class JumboNavigator extends Component {
           </TouchableOpacity>
         </View>
       );
+    } else if (route.name === PageNames.tagPage) {
+      return (null);
     } else {
       return (
         <View style={[styles.buttonArea, (Platform.OS === 'ios') ? null : styles.androidCenterButton]}>
@@ -361,6 +393,25 @@ class JumboNavigator extends Component {
         }}>
       </Navigator.NavigationBar>
     );
+  }
+
+  // Tag stuff
+
+  _tagCancelOnPress() {
+    this.navigator.pop();
+  }
+
+  _tagDoneOnPress() {
+    if (this.props.updateMyProfile) {
+      let newTags = this.tagPage.extractTags();
+      console.log(newTags);
+      this.props.updateMyProfile({tags: newTags})
+    }
+    this.navigator.pop();
+    this.setState({hasUnsavedSettings: true});
+    this.settingsPage.setState({
+      saveButtonState: SaveButtonState.show,
+    })
   }
 
   // Action Sheet
