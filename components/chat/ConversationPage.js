@@ -22,17 +22,18 @@ class ConversationPage extends Component {
     //will open up and get ref to particular chat between two users
     // TODO: make so need auth to get ref
     const path = "messages/".concat(this.props.chatroomId);
-    this._messagesRef = this.props.firebase.database().ref(path).orderByChild("createdAt")
+    this._messagesRef = this.props.firebase.database().ref(path);
+
+    this._isMounted = false;
+    this.onSend = this.onSend.bind(this);
+    this.onReceive = this.onReceive.bind(this);
+
     this._messages = []
     this.state = {
       messages: this._messages,
       typingText: null,
       conversation: this.props.conversation,
     };
-
-    this._isMounted = false;
-    this.onSend = this.onSend.bind(this);
-    this.onReceive = this.onReceive.bind(this);
 
   }
 
