@@ -12,6 +12,7 @@ import { GiftedChat } from 'react-native-gifted-chat';
 let Mailer = require('NativeModules').RNMail;
 
 const Analytics = require('react-native-firebase-analytics');
+let TOP_MARGIN = 64;
 
 class ConversationPage extends Component {
   constructor(props) {
@@ -132,7 +133,7 @@ class ConversationPage extends Component {
 
   render() {
     return (
-      <View style={{flex: 1, backgroundColor: 'white'}}>
+      <View style={{marginTop: TOP_MARGIN, flex: 1, backgroundColor: 'white'}}>
         <GiftedChat
           messages={this.state.messages}
           onSend={this.onSend}
