@@ -28,7 +28,6 @@ class ConversationPage extends Component {
       messages: this._messages,
       typingText: null,
       conversation: this.props.conversation,
-      isLoading: true,
     };
 
     this._isMounted = false;
@@ -127,7 +126,6 @@ class ConversationPage extends Component {
     this.setState((previousState) => {
       return {
         messages: GiftedChat.append(previousState.messages, message),
-        isLoading: false,
       };
     });
   }
