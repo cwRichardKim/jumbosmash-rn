@@ -155,6 +155,22 @@ class Card extends Component {
     }
   }
 
+  _renderText() {
+    if (this.props.tags && this.props.tags.length > 0) {
+      return (
+        <Text style={[globalStyles.text, styles.text]}>
+          {this.props.firstName} <Text style={globalStyles.subtext}>- {this.props.tags.length} shared tags</Text>
+        </Text>
+      )
+    } else {
+      return (
+        <Text style={[globalStyles.text, styles.text]}>
+        {this.props.firstName}
+        </Text>
+      )
+    }
+  }
+
   //TODO @richard remove later, for debugging purposes
   _renderIndexView() {
     if (__DEV__ && this.props.index && this.props.numCards) {
@@ -209,9 +225,7 @@ class Card extends Component {
               />
               {this._renderIndexView()}
               <View style={styles.textContainer}>
-                <Text style={[globalStyles.text, styles.text]}>
-                  {this.props.firstName}
-                </Text>
+                {this._renderText()}
                 {this._shouldRenderCheck(isTeamMember)}
               </View>
             </View>
