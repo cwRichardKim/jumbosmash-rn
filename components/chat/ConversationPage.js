@@ -1,5 +1,6 @@
 'use strict';
 
+import LoadingCards     from '../cards/LoadingCards.js';
 /*
 This is the page that handles and displays a conversations with an
 a person or persons (or bot ;) )
@@ -21,16 +22,17 @@ class ConversationPage extends Component {
     //will open up and get ref to particular chat between two users
     // TODO: make so need auth to get ref
     const path = "messages/".concat(this.props.chatroomId);
-    this._messagesRef = this.props.firebase.database().ref(path);
-
-    this.onSend = this.onSend.bind(this);
-    this.onReceive = this.onReceive.bind(this);
+    this._messagesRef = this.props.firebase.database().ref(path).orderByChild("createdAt")
     this._messages = []
     this.state = {
       messages: this._messages,
       typingText: null,
       conversation: this.props.conversation,
     };
+
+    this._isMounted = false;
+    this.onSend = this.onSend.bind(this);
+    this.onReceive = this.onReceive.bind(this);
 
   }
 
@@ -67,6 +69,7 @@ class ConversationPage extends Component {
     //TODO: there is a bug here with unmount. sent message go back to table then come
     //back and send another message
     this._asyncUpdateConversation(this.props.chatroomId, this.state.conversation);
+    this._isMounted = false;
   }
 
   async _asyncUpdateConversation(id, chatChanges) {
@@ -118,6 +121,7 @@ class ConversationPage extends Component {
     this._notifyParticipants()
   }
 
+  //TODO: BUG updating on unmounted
   onReceive(message) {
     this.setState((previousState) => {
       return {
@@ -132,17 +136,18 @@ class ConversationPage extends Component {
   }
 
   render() {
-    return (
-      <View style={{marginTop: TOP_MARGIN, flex: 1, backgroundColor: 'white'}}>
-        <GiftedChat
-          messages={this.state.messages}
-          onSend={this.onSend}
-          onReceive={this.onReceive}
-          user={{
-            _id: this.props.myProfile.id
-          }}/>
-      </View>
-    );
+      return (
+        <View style={{marginTop: TOP_MARGIN, flex: 1, backgroundColor: 'white'}}>
+          <GiftedChat
+            messages={this.state.messages}
+            onSend={this.onSend}
+            onReceive={this.onReceive}
+            renderLoading={() => {return (<LoadingCards/>)}}
+            user={{
+              _id: this.props.myProfile.id
+            }}/>
+        </View>
+      );
   }
 }
 export default ConversationPage;
