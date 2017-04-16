@@ -46,7 +46,7 @@ class ChatPage extends React.Component {
       _listView.scrollTo({x: 0, y: SCROLL_TO_Y, animated: true});
     }
     Analytics.logEvent('open_chat_page', {});
-    PushNotifications.clearBadgeNumber(require('react-native-push-notification'));
+    PushNotifications.clearBadgeNumber(this.props.myProfile, require('react-native-push-notification'), this.props.token.val);
   }
 
   _fetchConversationsAsync () {
