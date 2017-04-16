@@ -404,7 +404,6 @@ class JumboNavigator extends Component {
   _tagDoneOnPress() {
     if (this.props.updateMyProfile) {
       let newTags = this.tagPage.extractTags();
-      console.log(newTags);
       this.props.updateMyProfile({tags: newTags})
     }
     this.navigator.pop();
