@@ -52,7 +52,6 @@ class LoadingCards extends Component {
       let index = Math.floor(Math.random() * LoadingText.length);
       index = Math.max(0, index);
       index = Math.min(index, LoadingText.length - 1);
-      console.log("CHANGING TEXT! "+index.toString());
       this.setState({
         text: LoadingText[index]
       })

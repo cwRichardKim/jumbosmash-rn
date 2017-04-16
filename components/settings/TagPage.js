@@ -89,7 +89,7 @@ class TagPage extends Component {
         throw error
         Alert.alert(
           "Something Went Wrong :(",
-          "We couldn't fetch the tags from the server. It could be a server issue or a connectivity issue. Save your changes / create your account and add tags later",
+          "We couldn't fetch the tags from the server. It could be a server issue or a connectivity issue. Cancel the tag stuff for now and add them later",
           [{text: "OK", onPress: ()=>{}}]
         );
       });
