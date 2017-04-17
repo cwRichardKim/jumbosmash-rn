@@ -25,8 +25,7 @@ const global = require('../global/GlobalFunctions.js');
 const PageNames = global.pageNames();
 const StorageKeys = global.storageKeys();
 
-const FIRST_BATCH_SIZE = 50;
-const FETCH_BATCH_SIZE = 100;
+const FETCH_BATCH_SIZE = 50;
 
 class NavigationContainer extends Component {
   constructor(props) {
@@ -153,15 +152,15 @@ class NavigationContainer extends Component {
 
           // data is not of the correct type
         } else {
-          this._fetchProfiles(FIRST_BATCH_SIZE);
+          this._fetchProfiles(FETCH_BATCH_SIZE);
         }
         // storage is null / empty
       } else {
-        this._fetchProfiles(FIRST_BATCH_SIZE);
+        this._fetchProfiles(FETCH_BATCH_SIZE);
       }
       // error accessing storage
     } catch (error) {
-      this._fetchProfiles(FIRST_BATCH_SIZE);
+      this._fetchProfiles(FETCH_BATCH_SIZE);
       throw error;
     }
   }
