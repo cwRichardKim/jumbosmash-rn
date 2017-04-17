@@ -21,6 +21,7 @@ import {
   AsyncStorage,
   Button,
   Image,
+  ActivityIndicator,
 } from 'react-native';
 
 import AuthErrors             from './AuthErrors.js';
@@ -44,6 +45,7 @@ class LoginPage extends Component {
     this.state = {
       email_input: this.props.emailInput || null,
       password:'',
+      isLoading: false,
     }
   }
 
@@ -57,6 +59,9 @@ class LoginPage extends Component {
     } else if (!this.state.email_input) {
         Alert.alert("Please type in your email address");
     } else {
+
+      this.setState({isLoading: true});
+
       this.props.setEmailInput(this.state.email_input);
       var email = FormatInput.email(this.state.email_input, this.props.email_ext);
       this.email = email;
@@ -70,9 +75,11 @@ class LoginPage extends Component {
     let email = this.email;
     let password = this.state.password;
 
+
     this.props.firebase.auth().signInWithEmailAndPassword(email, password)
       .then((user) => {
         if (user && !user.emailVerified) {
+          this.setState({isLoading: false});
           Alert.alert("Please check your email, and verify your account before logging in. If you're experiencing issues, contact us at team@jumbosmash.com");
         } else if (user && user.emailVerified) {
           this.props.firebase.auth().currentUser
@@ -93,20 +100,23 @@ class LoginPage extends Component {
                 let response = await fetch(url);
                 let responseJson = await response.json();
 
+                this.setState({isLoading: false});
                 if (responseJson) {
-                  // Authentication Process complete!
+                  // Authentication Process complete! 
                   this.props.setMyProfile(responseJson);
                   this.props.loadPage(PageNames.appHome);
                 } else {
                   this._goToCreateProfilePage();
                 }
               } catch(error) {
+                this.setState({isLoading: false});
                 Alert.alert("There's been an error. Please try again, and if it persists, please email us at team@jumbosmash.com");
               }
             })
           }
         })
       .catch((error) => {
+        this.setState({isLoading: false});
         AuthErrors.handleLoginError(error);
       })
   }
@@ -118,6 +128,8 @@ class LoginPage extends Component {
     let password = this.state.password;
     
     let studentProfile = await Verification.getStudent(email);
+    this.setState({isLoading: false});
+
     if (studentProfile){
       this.studentProfile = studentProfile;
       this._createAccount(email, password);
@@ -161,57 +173,69 @@ class LoginPage extends Component {
   }
 
   render() {
-    return (
-      <Image source={require("./img/bg.png")} style={AuthStyle.container}>
-        <View style={AuthStyle.logoContainer}>
-          <Image source={require('./img/logo.png')} style={AuthStyle.logo}/>
+    if (this.state.isLoading) {
+      return(
+        <Image source={require("./img/bg.png")} style={AuthStyle.container}>
+        <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+          <ActivityIndicator animating={true}/>
         </View>
-        <View style={AuthStyle.body}>
-          <Text style={AuthStyle.textTitles}> Tufts Email: </Text>
-          <View style={AuthStyle.emailInputBorder}>
+        </Image>
+      );
+    } else {
+      return (
+        <View style={AuthStyle.container}>
+        <Image source={require("./img/bg.png")} style={AuthStyle.imageContainer}>
+          <View style={AuthStyle.logoContainer}>
+            <Image source={require('./img/logo.png')} style={AuthStyle.logo}/>
+          </View>
+          <View style={AuthStyle.body}>
+            <Text style={AuthStyle.textTitles}> Tufts Email: </Text>
+            <View style={AuthStyle.emailInputBorder}>
+              <TextInput
+                style={AuthStyle.emailInput}
+                onChangeText={(text) => this.setState({email_input: text})}
+                value={this.state.email_input}
+              />
+              <Text style={AuthStyle.emailExt}> {this.props.email_ext} </Text>
+            </View>
+
+            <Text style={AuthStyle.textTitles}> Password: </Text>
+            <View style={AuthStyle.passwordInputBorder}>
             <TextInput
-              style={AuthStyle.emailInput}
-              onChangeText={(text) => this.setState({email_input: text})}
-              value={this.state.email_input}
+              style={AuthStyle.passwordInput}
+              onChangeText={(text) => this.setState({password: text})}
+              value={this.state.password}
+              secureTextEntry={true}
             />
-            <Text style={AuthStyle.emailExt}> {this.props.email_ext} </Text>
-          </View>
-
-          <Text style={AuthStyle.textTitles}> Password: </Text>
-          <View style={AuthStyle.passwordInputBorder}>
-          <TextInput
-            style={AuthStyle.passwordInput}
-            onChangeText={(text) => this.setState({password: text})}
-            value={this.state.password}
-            secureTextEntry={true}
-          />
-          </View>
-          <RectButton
-              style={[AuthStyle.forgotPasswordButton]}
-              textStyle={AuthStyle.forgotPasswordButtonText}  
-              onPress={this._forgotPassword.bind(this)}
-              text="Forgot Password?"
-          />
-
-          <View style={styles.buttonContainer}>
+            </View>
             <RectButton
-              style={[AuthStyle.solidButton, AuthStyle.buttonBlue]}
-              textStyle={[AuthStyle.solidButtonText, AuthStyle.bold]}
-              onPress={this._login.bind(this)}
-              text="LOGIN"
+                style={[AuthStyle.forgotPasswordButton]}
+                textStyle={AuthStyle.forgotPasswordButtonText}  
+                onPress={this._forgotPassword.bind(this)}
+                text="Forgot Password?"
             />
 
-            <RectButton
-              style={[AuthStyle.solidButton, AuthStyle.buttonPink]}
-              textStyle={AuthStyle.solidButtonText}
-              onPress={this._signup.bind(this)}
-              text="SIGNUP!"
-            />
+            <View style={styles.buttonContainer}>
+              <RectButton
+                style={[AuthStyle.solidButton, AuthStyle.buttonBlue]}
+                textStyle={[AuthStyle.solidButtonText, AuthStyle.bold]}
+                onPress={this._login.bind(this)}
+                text="LOGIN"
+              />
+
+              <RectButton
+                style={[AuthStyle.solidButton, AuthStyle.buttonPink]}
+                textStyle={AuthStyle.solidButtonText}
+                onPress={this._signup.bind(this)}
+                text="SIGNUP!"
+              />
+            </View>
+          <Image/>
           </View>
-        <Image/>
+        </Image>
         </View>
-      </Image>
-    );
+      );
+    }
   }
 }
 
