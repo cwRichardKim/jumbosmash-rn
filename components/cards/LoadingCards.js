@@ -16,7 +16,7 @@ import {
 import GlobalStyles from "../global/GlobalStyles.js"
 
 const DELAY_TIME = 4000;
-const LoadingText = [
+const LOADING_TEXT = [
   "Optimizing Smashability",
   "Sorting by chill-to-pull",
   "Filtering out your ex",
@@ -49,11 +49,11 @@ class LoadingCards extends Component {
 
   _changeText () {
     if (this && this._mounted === true) {
-      let index = Math.floor(Math.random() * LoadingText.length);
+      let index = Math.floor(Math.random() * LOADING_TEXT.length);
       index = Math.max(0, index);
-      index = Math.min(index, LoadingText.length - 1);
+      index = Math.min(index, LOADING_TEXT.length - 1);
       this.setState({
-        text: LoadingText[index]
+        text: LOADING_TEXT[index]
       })
       setTimeout(this._changeText.bind(this), DELAY_TIME)
     }

@@ -164,9 +164,7 @@ class Card extends Component {
       )
     } else {
       return (
-        <Text style={[globalStyles.text, styles.text]}>
-        {this.props.firstName}
-        </Text>
+        <Text style={[globalStyles.text, styles.text]}>{this.props.firstName}</Text>
       )
     }
   }

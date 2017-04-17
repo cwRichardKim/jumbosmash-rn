@@ -144,9 +144,9 @@ class TagPage extends Component {
 
   _renderTagCategory(title, tags) {
     let numTags = Object.keys(tags).length;
-    let tagViews = Object.keys(tags).map(function(key, index) {
+    let tagViews = Object.keys(tags).map((key, index) => {
       return this._renderSingleTag(title, key, tags[key], index == numTags - 1);
-    }.bind(this));
+    });
     return (
       <View key={title}>
         <Text style={styles.categoryTitle}>{title}:</Text>
