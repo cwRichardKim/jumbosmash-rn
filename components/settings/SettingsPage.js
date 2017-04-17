@@ -295,7 +295,7 @@ class SettingsPage extends Component {
             returnKeyType="done"
           />
           <View style={styles.line}/>
-          <Text style={[styles.header, GlobalStyles.text, styles.textListItem]}>Tags</Text>
+          <Text style={[styles.header, GlobalStyles.text, styles.textListItem]}>Tags / Interests</Text>
           <View style={styles.line}/>
           <TouchableOpacity
             style={styles.tagButton}

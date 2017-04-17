@@ -24,7 +24,8 @@ import GlobalStyles       from "../global/GlobalStyles.js";
 import AuthErrors         from "./AuthErrors.js"
 import ProfilePhotoPicker from "../settings/ProfilePhotoPicker.js";
 import GlobalFunctions    from "../global/GlobalFunctions.js";
-import LoginPage          from "./LoginPage.js"
+import LoginPage          from "./LoginPage.js";
+import TagPage            from "../settings/TagPage.js";
 
 const PageNames = require("../global/GlobalFunctions.js").pageNames();
 
@@ -172,6 +173,10 @@ class CreateProfilePage extends Component {
     }
   }
 
+  _showTagPage() {
+    this.props.navigator.push({name: TagPage})
+  }
+
   render() {
     return (
       <View style={[styles.container, {marginTop: this.props.navBarHeight, height: this.props.pageHeight}]}>
@@ -234,6 +239,15 @@ class CreateProfilePage extends Component {
             returnKeyType="done"
           />
           <View style={styles.line}/>
+          <Text style={[styles.header, GlobalStyles.text, styles.textListItem]}>Tags / Interests</Text>
+          <View style={styles.line}/>
+          <TouchableOpacity
+            style={styles.tagButton}
+            onPress={this._showTagPage.bind(this)}
+          >
+            <Text style={[GlobalStyles.text, styles.textListItem, styles.tagText]}>{(this.props.myProfile && this.props.myProfile.tags && this.props.myProfile.tags.length > 0) ? this.props.myProfile.tags.join(", ") : "none"}</Text>
+          </TouchableOpacity>
+          <View style={styles.line}/>
           <RectButton
             style={[styles.rectButton, styles.createAccountButton]}
             onPress={this._createAccount.bind(this)}
@@ -259,6 +273,7 @@ class CreateProfilePage extends Component {
 
 const styles = StyleSheet.create({
   container: {
+    paddingTop: 20,
   },
   textListItem: {
     paddingLeft: 16,
@@ -278,6 +293,12 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     backgroundColor: "#F8F5F5",
+  },
+  tagText: {
+    alignItems: 'center',
+    color: "#919191",
+    paddingTop: 10,
+    paddingBottom: 10,
   },
   bottom: {
     minHeight: 150,

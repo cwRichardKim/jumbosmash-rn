@@ -248,7 +248,9 @@ class InitialRouter extends Component {
         <AuthNavigator
           firebase={firebase}
           routeNavigator={navigator}
+          myProfile={this.state.myProfile}
           setMyProfile={this._setMyProfile.bind(this)}
+          updateMyProfile={this._updateMyProfile.bind(this)}
           loadPage={this._loadPage.bind(this)}
           isConnected={this.state.isConnected}
         />

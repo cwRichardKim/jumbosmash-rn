@@ -4,8 +4,10 @@
 page for selecting tags
 
 prop:
+myProfile
+token
+showNavBar: bool for whether nav bar is required
 setTags: function that gives an array of tags that the user selected
-dismissTagPage: function that closes the TagPage
 existingTags: (optional), already highlights tags that have been selected before
 */
 
@@ -197,8 +199,8 @@ class TagPage extends Component {
   // used in create account, not used in edit account
   cancelOnPress () {
     //TODO @jade, the prop "dismissTagPage" should close this view
-    if (this.props.dismissTagPage) {
-      this.props.dismissTagPage();
+    if (this.props.navigator && this.props.showNavBar) {
+      this.props.navigator.pop();
     }
   }
 
@@ -225,9 +227,7 @@ class TagPage extends Component {
       });
       this.props.setTags(myTags);
     }
-    if (this.props.dismissTagPage) {
-      this.props.dismissTagPage();
-    }
+    this.cancelOnPress();
   }
 
   _renderNavBarLeftButton() {
