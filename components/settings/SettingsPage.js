@@ -301,7 +301,7 @@ class SettingsPage extends Component {
             style={styles.tagButton}
             onPress={this._showTagPage.bind(this)}
           >
-            <Text style={[GlobalStyles.text, styles.textListItem, styles.tagText]}>{(this.props.myProfile.tags && this.props.myProfile.tags.length > 0) ? this.props.myProfile.tags.join(", ") : "none"}</Text>
+            <Text style={[GlobalStyles.text, styles.textListItem, styles.tagText]}>{(this.props.myProfile.tags && this.props.myProfile.tags.length > 0) ? this.props.myProfile.tags.join(", ") : "none (tap to add)"}</Text>
           </TouchableOpacity>
           <View style={styles.line}/>
           <RectButton
