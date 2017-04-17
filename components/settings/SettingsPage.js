@@ -229,6 +229,10 @@ class SettingsPage extends Component {
     this.props.showProfileCardForProfile(this.props.myProfile);
   }
 
+  _showTagPage() {
+    this.props.navigator.push({name: PageNames.tagPage})
+  }
+
   render() {
     return (
       <View style={[styles.container, {marginTop: this.props.navBarHeight, height: this.props.pageHeight}]}>
@@ -291,6 +295,15 @@ class SettingsPage extends Component {
             returnKeyType="done"
           />
           <View style={styles.line}/>
+          <Text style={[styles.header, GlobalStyles.text, styles.textListItem]}>Tags</Text>
+          <View style={styles.line}/>
+          <TouchableOpacity
+            style={styles.tagButton}
+            onPress={this._showTagPage.bind(this)}
+          >
+            <Text style={[GlobalStyles.text, styles.textListItem, styles.tagText]}>{(this.props.myProfile.tags && this.props.myProfile.tags.length > 0) ? this.props.myProfile.tags.join(", ") : "none"}</Text>
+          </TouchableOpacity>
+          <View style={styles.line}/>
           <RectButton
             style={[styles.rectButton]}
             textStyle={styles.buttonText}
@@ -347,6 +360,14 @@ const styles = StyleSheet.create({
   textInput: {
     height: 42,
     color: "#919191",
+  },
+  tagText: {
+    alignItems: 'center',
+    color: "#919191",
+    paddingTop: 10,
+    paddingBottom: 10,
+  },
+  tagButton: {
   },
   line: {
     height: 1,
