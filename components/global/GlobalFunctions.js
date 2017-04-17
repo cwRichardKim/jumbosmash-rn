@@ -162,5 +162,16 @@ module.exports = {
       demoApp: "DEMOAPP",
       logout: "LOGOUT",
     });
-  }
+  },
+  style: function() {
+    return({
+      color: "#715BB9",
+      gradientColor1: "#7436DF",
+      gradientColor2: "#6877E3",
+      black: "#202020",
+      gray: "#919191",
+      lightGray: "#F8F5F5",
+      red: "#F2585A",
+    });
+  },
 }

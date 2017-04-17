@@ -199,7 +199,7 @@ const styles = StyleSheet.create({
     fontWeight:"600",
   },
   smashButton: {
-    backgroundColor: "#715BB9",
+    backgroundColor: GlobalFunctions.style().color,
   },
 });
 

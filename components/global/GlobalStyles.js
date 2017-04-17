@@ -6,7 +6,7 @@ usage example:
 import GlobalStyles from './GlobalStyles.js'
 */
 
-const TINT_COLOR = "#715BB9";
+const TINT_COLOR = require("./GlobalFunctions.js").style().color;
 
 import React, {Component} from 'react';
 import {
@@ -88,4 +88,7 @@ module.exports = StyleSheet.create({
     fontFamily: 'Avenir Next',
     fontWeight: "bold",
   },
+  global: {
+    color: TINT_COLOR,
+  }
 });

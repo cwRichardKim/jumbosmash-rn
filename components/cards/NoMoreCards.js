@@ -15,6 +15,7 @@ import {
 } from 'react-native';
 
 import GlobalStyles           from "../global/GlobalStyles.js";
+import GlobalFunctions        from "../global/GlobalFunctions.js";
 import RectButton             from "../global/RectButton.js";
 
 const PAGE_WIDTH = Dimensions.get('window').width;
@@ -22,6 +23,10 @@ const PAGE_WIDTH = Dimensions.get('window').width;
 class NoMoreCards extends Component {
   constructor(props) {
     super(props);
+  }
+
+  componentDidMount(){
+    console.log(GlobalFunctions.style().color);
   }
 
   _copyShareLink() {
@@ -73,7 +78,7 @@ const styles = StyleSheet.create({
     height: 60,
     marginBottom: 15,
     opacity: 1,
-    backgroundColor: "#715BB9",
+    backgroundColor: GlobalFunctions.style().color,
   },
 });
 

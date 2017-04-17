@@ -18,6 +18,7 @@ import {
 
 import CircleButton from "../global/CircleButton.js";
 import GlobalStyles from "../global/GlobalStyles.js";
+import GlobalFunctions from "../global/GlobalFunctions.js";
 let Mailer = require('NativeModules').RNMail;
 
 const Analytics = require('react-native-firebase-analytics');
@@ -136,7 +137,7 @@ class SwipeButtonsView extends Component {
           <View style={styles.emojiContainer}>
             <CircleButton
               style={[styles.button]}
-              textStyle={{textAlign: 'center', fontWeight: '300', color: "#7C7C7C"}}
+              textStyle={{textAlign: 'center', fontWeight: '300', color: GlobalFunctions.style().gray}}
               onPress={this._statusOnPress.bind(this)}
               hasShadow={false}
               text={"status\n"+emojiStatus}

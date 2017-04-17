@@ -253,6 +253,7 @@ class CreateProfilePage extends Component {
             style={[styles.rectButton, styles.createAccountButton]}
             onPress={this._createAccount.bind(this)}
             text="Create Account"
+            textStyle={styles.buttonText}
           />
 
           <View style={styles.bottom}>
@@ -287,17 +288,17 @@ const styles = StyleSheet.create({
   },
   textInput: {
     height: 42,
-    color: "#919191",
+    color: GlobalFunctions.style().gray,
   },
   line: {
     height: 1,
     left: 0,
     right: 0,
-    backgroundColor: "#F8F5F5",
+    backgroundColor: GlobalFunctions.style().lightGray,
   },
   tagText: {
     alignItems: 'center',
-    color: "#919191",
+    color: GlobalFunctions.style().gray,
     paddingTop: 10,
     paddingBottom: 10,
   },
@@ -311,16 +312,12 @@ const styles = StyleSheet.create({
   rectButton: {
     height: 70,
     marginTop: 20,
-    backgroundColor: '#F2585A',
     marginLeft: 16,
     marginRight: 16,
     borderRadius: 5,
   },
   createAccountButton: {
-    backgroundColor: 'cornflowerblue',
-  },
-  updateProfileButton: {
-    backgroundColor: "cornflowerblue",
+    backgroundColor: GlobalFunctions.style().color,
   },
   aboutText: {
     textAlign: 'center',
@@ -333,6 +330,10 @@ const styles = StyleSheet.create({
     right: 0,
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  buttonText: {
+    color: "white",
+    fontWeight:"600",
   },
 });
 
