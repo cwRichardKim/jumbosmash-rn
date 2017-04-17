@@ -48,8 +48,8 @@ const PAGE_HEIGHT = Dimensions.get('window').height - NAVBAR_HEIGHT;
 const PAGE_WIDTH = Dimensions.get('window').width;
 const NAVBAR_SELECTOR_WIDTH = PAGE_WIDTH * 0.2;
 const NAVBAR_SELECTOR_HEIGHT = 2;
-const headerTitleLeftMargin = (Platform.OS === 'ios') ? 0 : (Navigator.NavigationBar.Styles.Stages.Left.Title.marginLeft || 0);
-const SaveButtonState = global.saveButtonStates();
+const HEADER_TITLE_LEFT_MARGIN = (Platform.OS === 'ios') ? 0 : (Navigator.NavigationBar.Styles.Stages.Left.Title.marginLeft || 0);
+const SAVE_BUTTON_STATE = global.saveButtonStates();
 
 class JumboNavigator extends Component {
   constructor(props) {
@@ -409,7 +409,7 @@ class JumboNavigator extends Component {
     this.navigator.pop();
     this.setState({hasUnsavedSettings: true});
     this.settingsPage.setState({
-      saveButtonState: SaveButtonState.show,
+      saveButtonState: SAVE_BUTTON_STATE.show,
     })
   }
 
@@ -635,7 +635,7 @@ const styles = StyleSheet.create({
   },
   androidCenterButton: {
     alignSelf: 'center',
-    marginRight: headerTitleLeftMargin,
+    marginRight: HEADER_TITLE_LEFT_MARGIN,
   },
   navBarIcon: {
     height: 20,
