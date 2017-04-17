@@ -8,7 +8,7 @@ It ensures:
   - user email is verified
   - account is created
 
-Directes to appropriate page if not. 
+Directes to appropriate page if not.
 */
 
 import React, {Component} from 'react';
@@ -37,7 +37,7 @@ const PageNames = require("../global/GlobalFunctions.js").pageNames();
 const AuthStyle = require('./AuthStylesheet');
 
 class LoginPage extends Component {
-  
+
   constructor(props) {
     super(props);
     this.studentProfile = null;
@@ -49,7 +49,7 @@ class LoginPage extends Component {
     }
   }
 
-  /* Handles current text input 
+  /* Handles current text input
      Called before Login and Signup
   */
 
@@ -111,6 +111,7 @@ class LoginPage extends Component {
               } catch(error) {
                 this.setState({isLoading: false});
                 Alert.alert("There's been an error. Please try again, and if it persists, please email us at team@jumbosmash.com");
+                throw error;
               }
             })
           }
@@ -126,7 +127,7 @@ class LoginPage extends Component {
     await this._beforeButtonPress();
     let email = this.email;
     let password = this.state.password;
-    
+
     let studentProfile = await Verification.getStudent(email);
     this.setState({isLoading: false});
 
@@ -207,6 +208,7 @@ class LoginPage extends Component {
               value={this.state.password}
               secureTextEntry={true}
             />
+
             </View>
             <RectButton
                 style={[AuthStyle.forgotPasswordButton]}
