@@ -236,7 +236,7 @@ class TagPage extends Component {
         style={{flex: 1, justifyContent: 'center', alignItems: 'center', minWidth: 80}}
         onPress={this.cancelOnPress.bind(this)}
       >
-        <Text style={{color: "#715BB9",}}>Cancel</Text>
+        <Text style={{color: GlobalFunctions.style().color,}}>Cancel</Text>
       </TouchableOpacity>
     );
   }
@@ -255,7 +255,7 @@ class TagPage extends Component {
         style={{flex: 1, justifyContent: 'center', alignItems: 'center', minWidth: 80}}
         onPress={this.doneOnPress.bind(this)}
       >
-        <Text style={{fontWeight: '600', color: "#715BB9",}}>Done</Text>
+        <Text style={{fontWeight: '600', color: GlobalFunctions.style().color,}}>Done</Text>
       </TouchableOpacity>
     );
   }
@@ -336,11 +336,11 @@ const styles = StyleSheet.create({
   },
   tagSelected: {
     fontWeight: "bold",
-    color: "#715BB9",
+    color: GlobalFunctions.style().color,
     textDecorationLine: 'underline',
   },
   emojiSelected: {
-    backgroundColor: "#715BB9",
+    backgroundColor: GlobalFunctions.style().color,
   },
   tagUnselected: {
   },

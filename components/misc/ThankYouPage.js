@@ -154,13 +154,13 @@ const styles = StyleSheet.create({
     fontWeight:"600",
   },
   dummyButton: {
-    backgroundColor: "#715BB9",
+    backgroundColor: GlobalFunctions.style().color,
   },
   smashButton: {
-    backgroundColor: "#715BB9",
+    backgroundColor: GlobalFunctions.style().color,
   },
   aboutButton: {
-    backgroundColor: "#715BB9"
+    backgroundColor: GlobalFunctions.style().color,
   },
   thankYous: {
     marginBottom: 50,
