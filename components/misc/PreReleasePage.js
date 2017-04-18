@@ -2,6 +2,8 @@
 
 /*
 page that shows before the app is released
+
+This shit is super fucking messy and last minute, talk to @richard if you need help
 */
 
 import React, {Component} from 'react';
@@ -15,6 +17,8 @@ import {
   Alert,
   Clipboard,
   Navigator,
+  Image,
+  ActivityIndicator,
 } from 'react-native';
 
 import GlobalStyles           from "../global/GlobalStyles.js";
@@ -41,6 +45,7 @@ class PreReleasePage extends Component {
     this.token = {val: null}
     this.state = {
       shouldShowProfile: false,
+      count: 30,
     };
   }
 
@@ -134,10 +139,14 @@ class PreReleasePage extends Component {
     );
   }
 
-  _renderTitleString() {
+  _getNumDaysUntilLaunch() {
     let today = new Date();
     let timeDiff = Math.abs(GlobalFunctions.dates().startDate.getTime() - today.getTime());
-    let diffDays = Math.floor(timeDiff / (1000 * 3600 * 24));
+    return Math.floor(timeDiff / (1000 * 3600 * 24));
+  }
+
+  _renderTitleString() {
+    let diffDays = this._getNumDaysUntilLaunch();
     if (diffDays > 0) {
       return ("Only "+diffDays.toString()+" more days until release");
     } else {
@@ -225,26 +234,68 @@ class PreReleasePage extends Component {
     );
   }
 
+  _renderPreReleaseImage() {
+    let daysLeft = Math.min(this._getNumDaysUntilLaunch(), 5);
+    let dayImages = [require("./images/1.png"), require("./images/2.png"), require("./images/3.png"), require("./images/4.png"), require("./images/5.png")];
+    return (
+      <Image
+        style={styles.header}
+        source={dayImages[Math.max(daysLeft - 1, 0)]}
+      />
+    );
+  }
+
+  _renderPreReleaseCount() {
+    if (this.state.count === null) {
+      return (
+        <View style={[styles.countContainer, {height: (HEIGHT - WIDTH - PADDING) / 2}]}>
+          <ActivityIndicator animating={true}/>
+        </View>
+      );
+    } else if (this.state.count < 50) {
+      return (
+        <View style={styles.textContainer}>
+          <Text style={[GlobalStyles.boldText, {marginBottom: 10}]}>{this._renderTitleString()}</Text>
+          <Text style={GlobalStyles.text}>Come back at midnight on {GlobalFunctions.formatDate(GlobalFunctions.dates().startDate)} for some smashy goodness. If you are a beta tester or someone who requires early access, tap the button below</Text>
+        </View>
+      );
+    } else {
+      return (
+        <View style={styles.countContainer}>
+          <View style={styles.countLeft}>
+            <View style={{flex: 2, flexDirection: 'row'}}>
+              <Text style={styles.registeredSmashers}>Registered Smashers</Text>
+            </View>
+            <View style={{flex: 3, flexDirection: 'row', alignItems: 'center'}}>
+              <Text style={styles.countText}>
+                {this.state.count}
+              </Text>
+            </View>
+            <View style={{flex: 1, flexDirection: 'row', alignItems: 'flex-end'}}>
+              <RectButton
+                style={[styles.inviteButton]}
+                textStyle={styles.buttonText}
+                text="INVITE"
+                onPress={this._copyShareLink.bind(this)}
+              />
+            </View>
+          </View>
+          <View style={styles.countRight}>
+          </View>
+        </View>
+      );
+    }
+  }
+
   _renderNavigatorScene (route, navigator) {
     if (route.name == PAGE_NAMES.preRelease) {
       return (
         <View style={{flex: 1}}>
           <ScrollView style={styles.scrollView}>
-            <View style={styles.header}>
-              <Text style={[GlobalStyles.boldText, styles.title]}>Welcome to Jumbosmash ;)</Text>
-            </View>
-            <View style={styles.textContainer}>
-              <Text style={[GlobalStyles.boldText, {marginBottom: 10}]}>{this._renderTitleString()}</Text>
-              <Text style={GlobalStyles.text}>Come back at midnight on {GlobalFunctions.formatDate(GlobalFunctions.dates().startDate)} for some smashy goodness. If you are a beta tester or someone who requires early access, tap the button below</Text>
-            </View>
+            {this._renderPreReleaseImage()}
+            {this._renderPreReleaseCount()}
             <View style={styles.buttonContainer}>
               {this._shouldLoadPreReleaseButton()}
-              <RectButton
-                style={[styles.button, styles.smashButton]}
-                textStyle={styles.buttonText}
-                text="Share Download Link"
-                onPress={this._copyShareLink.bind(this)}
-              />
               <RectButton
                 style={[styles.button, styles.smashButton]}
                 textStyle={styles.buttonText}
@@ -317,19 +368,44 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   header: {
-    height: .35 * HEIGHT,
+    height: WIDTH,
     width: WIDTH,
     padding: PADDING,
     backgroundColor: '#DDDDDD',
     justifyContent: 'center',
     alignItems: 'center',
+    resizeMode: 'cover',
   },
   title: {
     textAlign: 'center',
   },
+  countContainer: {
+    flexDirection: 'row',
+    height: HEIGHT - WIDTH - PADDING,
+    padding: PADDING,
+  },
   textContainer: {
     padding: PADDING,
     paddingBottom: 0,
+  },
+  countLeft: {
+    flex: 1,
+    paddingLeft: PADDING / 2,
+    paddingRight: PADDING / 2,
+  },
+  countRight: {
+    flex: 1,
+  },
+  registeredSmashers: {
+    fontSize: 30,
+  },
+  countText: {
+    fontSize: 70,
+  },
+  inviteButton: {
+    flex: 1,
+    height: 40,
+    backgroundColor: GlobalFunctions.style().color,
   },
   buttonContainer: {
     padding: PADDING,

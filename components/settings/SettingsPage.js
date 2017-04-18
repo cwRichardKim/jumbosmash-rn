@@ -21,6 +21,7 @@ import {
   Keyboard,
 } from 'react-native';
 
+import ActionSheet        from 'react-native-actionsheet';
 import ProfilePhotoPicker from "./ProfilePhotoPicker.js";
 import SaveButton         from "./SaveButton.js";
 import RectButton         from "../global/RectButton.js";
@@ -31,6 +32,7 @@ const Analytics = require('react-native-firebase-analytics');
 const GlobalFunctions = require('../global/GlobalFunctions.js');
 const StorageKeys = GlobalFunctions.storageKeys();
 const PageNames = GlobalFunctions.pageNames();
+const ACTION_SHEET_BUTTONS = ['Cancel', "Feedback", "Report Bug", "Block / Avoid User (no questions asked)", "Other"];
 const SaveButtonState = GlobalFunctions.saveButtonStates();
 let Mailer = require('NativeModules').RNMail;
 
@@ -180,15 +182,40 @@ class SettingsPage extends Component {
     }
   }
 
-  _sendMail() {
+  _handleActionSheetPress(index) {
+    if (index === 1) {
+      this._sendMail("Feedback");
+    } else if (index === 2) {
+      this._sendMail("Bug Report");
+    } else if (index === 3) {
+      this._sendMail("Block Request: ", "Please have the following people removed from my list: [first / last name]");
+    } else if (index === 4) {
+      this._sendMail("Feedback: Other");
+    }
+  }
+
+  _renderActionSheet() {
+    console.log("FEEDBACK");
+    return (
+      <ActionSheet
+        ref={(ref) => this.ActionSheet = ref}
+        options={ACTION_SHEET_BUTTONS}
+        cancelButtonIndex={0}
+        tintColor={GlobalFunctions.style().color}
+        onPress={this._handleActionSheetPress.bind(this)}
+      />
+    )
+  }
+
+  _sendMail(title, message) {
     Analytics.logEvent('feedback_button', {
-      'page': 'settings'
+      'option': title
     });
     if (Mailer && Mailer.mail) {
       Mailer.mail({
-        subject: 'Help / Feedback',
+        subject: title,
         recipients: ['team@jumbosmash.com'],
-        body: '',
+        body: "["+(this.props.myProfile.email || "tufts email: ")+"]\n\n"+(message||""),
       }, (error, event) => {
         if(error) {
           Alert.alert('Error', 'Could not send mail. Try sending an email to team@jumbosmash.com through your mail client');
@@ -388,7 +415,7 @@ class SettingsPage extends Component {
           <RectButton
             style={[styles.rectButton]}
             textStyle={styles.buttonText}
-            onPress={this._sendMail.bind(this)}
+            onPress={() => {this.ActionSheet.show()}}
             text="Help / Feedback"
           />
           <View style={styles.bottom}>
@@ -404,6 +431,7 @@ class SettingsPage extends Component {
           </View>
         </ScrollView>
         {this._shouldRenderDynamicSaveButton()}
+        {this._renderActionSheet()}
       </View>
     );
   }
