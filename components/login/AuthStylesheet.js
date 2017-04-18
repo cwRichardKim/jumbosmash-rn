@@ -4,41 +4,49 @@ var React = require('react-native');
 
 var {
   StyleSheet,
+  Dimensions,
 } = React;
+
+var width = Dimensions.get('window').width;
+var height = Dimensions.get('window').height;
 
 module.exports = StyleSheet.create({
   container: {
-    flex: 1
+    flex: 1,
   },
   imageContainer: {
-    flex: 1,
-    justifyContent: 'center',
     alignItems:'center',
-  },
-  logo: {
-    height: 100,
-    width: 94,
+    width: width,
+    height: height,
   },
   logoContainer: {
-    top: 100,
+    height: height * (1/3),
+    flexDirection: 'column'
+  },
+  logo: {
+    marginTop: ((height / 3)  - 100) * 0.5, 
+    height: 100,
+    width: 94,
+    alignSelf: 'flex-end'
   },
   body: {
+    height: height * (2/3),
     alignItems: 'center',
-    marginTop: 150,
+    justifyContent: 'center',
   },
   emailInputBorder: {
     height: 40,
     borderColor: 'white',
     borderBottomWidth: 1.5,
     flexDirection: 'row',
-    width: 300,
+    width: 270,
   },
   emailInput: {
-    flex: 2/3,
+    flex: 3/5,
     color: 'white',
   },
   emailExt: {
-    flex: 1/3,
+    flex: 2/5,
     alignSelf: 'center',
     color: 'white',
     letterSpacing: 2,
@@ -48,7 +56,7 @@ module.exports = StyleSheet.create({
     borderColor: 'white',
     borderBottomWidth: 1.5,
     flexDirection: 'row',
-    width: 300,
+    width: 270,
   },
   passwordInput: {
     flex: 1,
