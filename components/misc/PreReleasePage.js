@@ -31,6 +31,7 @@ import ProfileCardView        from "../cards/ProfileCardView.js";
 let Mailer = require('NativeModules').RNMail;
 const StorageKeys = GlobalFunctions.storageKeys();
 const OverrideActions = GlobalFunctions.overrideActions();
+const PushNotifications = require('../global/PushNotifications.js');
 const Analytics = require('react-native-firebase-analytics');
 const HEIGHT = Dimensions.get('window').height;
 const WIDTH = Dimensions.get('window').width;
@@ -40,6 +41,9 @@ const PAGE_NAMES = GlobalFunctions.pageNames();
 class PreReleasePage extends Component {
   constructor(props) {
     super(props);
+
+    this.pushNotificationsHandler = require('react-native-push-notification');
+
     // done like this so that render isn't called again but we still have
     // access to the object that is being retrieved asynchronously
     this.token = {val: null}
@@ -52,6 +56,7 @@ class PreReleasePage extends Component {
   componentDidMount () {
     this._fetchToken();
     Analytics.logEvent('open_pre_release_page', {});
+    this._requestPermissions()
   }
 
   // at this point we should extrapolate this to initialroute, but i don't want to
@@ -67,6 +72,69 @@ class PreReleasePage extends Component {
           console.log(error);
         });
     }
+  }
+
+  async _requestPermissions() {
+    let permissionsRequested = await AsyncStorage.getItem(StorageKeys.permissionsRequested);
+    if (permissionsRequested == 'true') {
+      return;
+    }
+    if (this.token && this.token.val) {
+      Alert.alert(
+        'Thirsty?',
+        'The app isn\'t released yet. Let us notify you when it is',
+        [
+          {text: 'Sure', onPress: () => this._configureNotifications()},
+          {text: 'Nah', onPress: () => console.log('Cancel Pressed'), style: 'cancel'},
+        ],
+      );
+      try {
+        await AsyncStorage.setItem(StorageKeys.permissionsRequested, 'true');
+      } catch (err) {
+        // Error saving data
+        //¯\_(ツ)_/¯
+        console.log(err);
+      }
+    } else {
+      setTimeout( () => {
+        this._requestPermissions();
+      }, 1000);
+    }
+  }
+
+  // Note: A similiar function is in JumboNavigator. Notifications need
+  // to be configured differently for each
+  _configureNotifications () {
+    this.pushNotificationsHandler.configure({
+
+        // (optional) Called when Token is generated (iOS and Android)
+        onRegister: function(token) {
+            PushNotifications.onRegister(token,
+              {authToken: this.token.val,
+               profile: this.props.myProfile});
+        }.bind(this),
+
+        // (required) Called when a remote or local notification is opened or received
+        onNotification: function(notification) {
+          console.log("Received notification: " + notification.message.body);
+        },
+
+        // ANDROID ONLY: GCM Sender ID (optional - not required for local notifications, but is needed to receive remote push notifications)
+        senderID: "559975994653",
+
+        // IOS ONLY (optional): default: all - Permissions to register.
+        permissions: {
+            alert: true,
+            badge: true,
+            sound: true
+        },
+
+        // Should the initial notification be popped automatically
+        // default: true
+        popInitialNotification: true,
+
+        requestPermissions: true,
+    });
   }
 
   _loadPreReleaseApp() {
