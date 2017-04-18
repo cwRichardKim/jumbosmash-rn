@@ -104,9 +104,11 @@ class SettingsPage extends Component {
         });
         this.props.updateProfileToServer()
           .then((newProfileResponse) => { // success
-            this.refs.saveButton.animateOut(() => {
-              this._changesSuccessfullyUpdated();
-            });
+            if (this.refs.saveButton) {
+              this.refs.saveButton.animateOut(() => {
+                this._changesSuccessfullyUpdated();
+              });
+            }
         }).catch((error) => {
           Alert.alert(
             "Update Error",
@@ -233,6 +235,81 @@ class SettingsPage extends Component {
     this.props.navigator.push({name: PageNames.tagPage})
   }
 
+  _shouldRenderShowProfileButton() {
+    if (this.props.showProfileCardForProfile) {
+      return (
+        <RectButton
+          style={[styles.rectButton]}
+          textStyle={styles.buttonText}
+          onPress={this._viewProfile.bind(this)}
+          text="View Profile"
+        />
+      );
+    } else {
+      return null;
+    }
+  }
+
+  _shouldRenderLogoutButton() {
+    if (this.props.hasLogout === true) {
+      return (
+        <RectButton
+          style={[styles.rectButton]}
+          textStyle={styles.buttonText}
+          onPress={this._logout.bind(this)}
+          text="Logout"
+        />
+      );
+    } else {
+      return null;
+    }
+  }
+
+  _shouldRenderStaticSaveButton() {
+    if (this.props.hasStaticSaveButton === true) {
+      return (
+        <RectButton
+          style={[styles.rectButton]}
+          textStyle={styles.buttonText}
+          onPress={this.saveButtonPressed.bind(this)}
+          text="Save"
+        />
+      );
+    } else {
+      return null;
+    }
+  }
+
+  _shouldRenderDynamicSaveButton() {
+    if (this.props.hasStaticSaveButton !== true) {
+      return (
+        <SaveButton
+          ref="saveButton"
+          onPress={this.saveButtonPressed.bind(this)}
+          saveButtonState={this.state.saveButtonState}
+          keyboardHeight={this.keyboardHeight}
+        />
+      );
+    } else {
+      return null;
+    }
+  }
+
+  _shouldRenderCloseButton() {
+    if (this.props.closeOnPress) {
+      return (
+        <RectButton
+          style={[styles.rectButton]}
+          textStyle={styles.buttonText}
+          onPress={this.props.closeOnPress}
+          text="Close"
+        />
+      );
+    } else {
+      return null;
+    }
+  }
+
   render() {
     return (
       <View style={[styles.container, {marginTop: this.props.navBarHeight, height: this.props.pageHeight}]}>
@@ -304,18 +381,10 @@ class SettingsPage extends Component {
             <Text style={[GlobalStyles.text, styles.textListItem, styles.tagText]}>{(this.props.myProfile.tags && this.props.myProfile.tags.length > 0) ? this.props.myProfile.tags.join(", ") : "none (tap to add)"}</Text>
           </TouchableOpacity>
           <View style={styles.line}/>
-          <RectButton
-            style={[styles.rectButton]}
-            textStyle={styles.buttonText}
-            onPress={this._viewProfile.bind(this)}
-            text="View Profile"
-          />
-          <RectButton
-            style={[styles.rectButton]}
-            textStyle={styles.buttonText}
-            onPress={this._logout.bind(this)}
-            text="Logout"
-          />
+          {this._shouldRenderStaticSaveButton()}
+          {this._shouldRenderCloseButton()}
+          {this._shouldRenderShowProfileButton()}
+          {this._shouldRenderLogoutButton()}
           <RectButton
             style={[styles.rectButton]}
             textStyle={styles.buttonText}
@@ -334,12 +403,7 @@ class SettingsPage extends Component {
             <Text style={{textAlign: 'center'}}>🍆🍑</Text>
           </View>
         </ScrollView>
-        <SaveButton
-          ref="saveButton"
-          onPress={this.saveButtonPressed.bind(this)}
-          saveButtonState={this.state.saveButtonState}
-          keyboardHeight={this.keyboardHeight}
-        />
+        {this._shouldRenderDynamicSaveButton()}
       </View>
     );
   }

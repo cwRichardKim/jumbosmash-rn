@@ -279,55 +279,9 @@ class NavigationContainer extends Component {
     }
   }
 
-  // rearranges photos pushed to the front eg: [null, x, y] -> [x, y, null]
-  _reArrangePhotos() {
-    let photos = this.props.myProfile.photos;
-    var newPhotos = [];
-    for (var i in photos) {
-      if (photos[i] != null && photos[i].large != null && photos[i].small != null && photos[i].large.length > 0) {
-        newPhotos.push(photos[i]);
-      }
-    }
-    while (newPhotos.length < photos.length) {
-      newPhotos.push(null);
-    }
-    this.props.updateMyProfile({"photos": newPhotos});
-    return newPhotos;
-  }
-
-  async _asyncUpdateServerProfile(id, newProfile) {
-    if (this.props.shouldUseDummyData) {
-      return;
-    }
-    newProfile["photos"] = this._reArrangePhotos();
-    let url = "https://jumbosmash2017.herokuapp.com/profile/update/".concat(id).concat("/").concat(this.token.val);
-    fetch(url, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(newProfile),
-    }).then((response) => {
-      if (global.isGoodResponse(response)) {
-        Alert.alert(
-          "Success!",
-          "Successfully updated your profile",
-          [{text: 'OK', onPress: () => {}},]
-        )
-      } else {
-        Alert.alert(
-          "Error",
-          "We were unable to update your profile. Try quitting the app, or send us an email at team@jumbosmash.com and we can try to make the change manually",
-          [{text: 'OK', onPress: () => {}},]
-        )
-      }
-    }).catch((error) => {
-      throw error; //TODO @richard show error thing
-    });
-  }
-
   async _updateProfileToServer() {
-    let updateSuccess = await this._asyncUpdateServerProfile(this.props.myProfile.id, this.props.myProfile);
+    this.props.updateMyProfile({"photos": global.reArrangePhotos(this.props.myProfile.photos)});
+    let updateSuccess = await global.asyncUpdateServerProfile(this.props.myProfile.id, this.props.myProfile, this.props.shouldUseDummyData, this.token.val);
     return updateSuccess;
   }
 

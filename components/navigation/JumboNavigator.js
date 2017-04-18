@@ -102,11 +102,11 @@ class JumboNavigator extends Component {
 
         // (required) Called when a remote or local notification is opened or received
         onNotification: function(notification) {
-            PushNotifications.increaseBadgeNumber(this.pushNotificationsHandler);
             PushNotifications.onNotification(notification,
               {banner: this.notificationBanner,
                onPress: () => {this.changePage(PageNames.chatPage)},
-               firebase: this.props.firebase});
+               firebase: this.props.firebase,
+               chatPage: this.chatPage,});
         }.bind(this),
 
         // ANDROID ONLY: GCM Sender ID (optional - not required for local notifications, but is needed to receive remote push notifications)
@@ -190,7 +190,6 @@ class JumboNavigator extends Component {
       return (
         <SettingsPage
           navigator={navigator}
-          showNavBar={false}
           myProfile={this.props.myProfile}
           ref={(elem) => {this.settingsPage = elem}}
           pageHeight={PAGE_HEIGHT}
@@ -201,6 +200,8 @@ class JumboNavigator extends Component {
           routeNavigator={this.props.routeNavigator}
           showProfileCardForProfile={this._showProfileCardForProfile.bind(this)}
           updateMyProfile={this.props.updateMyProfile}
+          hasLogout={true}
+          hasStaticSaveButton={false}
         />
       );
     } else if (route.name == PageNames.tagPage) {
@@ -514,7 +515,6 @@ class JumboNavigator extends Component {
 
 
   // given a profile, shows the profile over the navigator
-
   _shouldRenderProfileView() {
     if (this.state.profileToShow !== null) {
       return(
