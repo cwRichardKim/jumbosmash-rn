@@ -146,7 +146,7 @@ module.exports = {
     })
   },
   betaTesters: function() {
-    let testers = ["Zoe Baghdoyan", "Josh Beri", "Frankie Caiazzo", "Tafari Duncan", "Orlando Economos", "Jason Fan", "Derek Fieldhouse", "Shana Gallagher", "Lucy Gerhart", "Ryan Gill", "Cori Jacoby", "Nishant Joshi", "Dhruv Khurana", "Rebecca Larson", "Ian Leaman", "Ann Lin", "Emily Lin", "Brian McGough", "Jordan Meisel", "Mackenzie Merriam", "Sylvia R. Ofama", "Isha Patnaik", "Luis Rebollar", "Joaquin Rodgriguez", "Ben Sack", "Maya Salcido White", "Katie Saviano", "Kabir Singh", "Clare Stone", "Lilly Tahmasebi", "Aubrey Tan", "Mudit Tandon", "Joshua Terry", "Nicholas Turiano", "Harry Weissman", "Gideon Wulfsohn"];
+    let testers = ["Josh Berl", "Orlando Economos", "Shana Gallagher", "Lucy Gerhart", "Ryan Gill", "Dhruv Khurana", "Rebecca Larson", "Brian McGough", "Jordan Meisel", "Mackenzie Merriam", "Kabir Singh", "Claire Stone", "Lilly Tahmasebi", "Joshua Terry"];
     this.shuffle(testers);
     return testers.join(", ");
   },
