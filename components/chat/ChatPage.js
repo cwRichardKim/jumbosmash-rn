@@ -32,7 +32,7 @@ class ChatPage extends React.Component {
     super(props);
     const ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
     this.state = {
-      dataSource: ds.cloneWithRows(this._fetchConversationsAsync()),
+      dataSource: ds.cloneWithRows([]),
       navigator: props.navigator,
       refreshing: false,
       rawData: [],
@@ -40,6 +40,7 @@ class ChatPage extends React.Component {
       searchText: '',
       isMounted: false,
     };
+    this._fetchConversationsAsync();
   }
 
   componentDidMount () {
@@ -55,7 +56,7 @@ class ChatPage extends React.Component {
     this.setState({isMounted: false});
   }
 
-  _fetchConversationsAsync () {
+  async _fetchConversationsAsync () {
     let url = 'https://jumbosmash2017.herokuapp.com/chat/id/'.concat(this.props.myProfile.id).concat("/").concat(this.props.token.val);
     return fetch(url)
       .then((response) => {
