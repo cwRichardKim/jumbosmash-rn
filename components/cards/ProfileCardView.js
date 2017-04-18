@@ -2,6 +2,8 @@
 
 /*
 This file is responsible for providing the zoomed in card view after tapping on a card
+
+isSharedTags: bool for "shared tags" vs "all tags" text
 */
 
 import React, {Component} from 'react';
@@ -113,7 +115,7 @@ class ProfileCardView extends Component {
     if (this.props.tags && this.props.tags.length > 0) {
       let tagsString = this.props.tags.join(", ");
       return (
-        <Text style={[GlobalStyles.subtext, styles.subTitle,  {paddingBottom: 15}]}>Shared Tags: {tagsString}</Text>
+        <Text style={[GlobalStyles.subtext, styles.subTitle,  {paddingBottom: 15}]}>{this.props.isSharedTags ? "Shared Tags: " : "All Tags: "} {tagsString}</Text>
       )
     } else {
       return (
@@ -242,6 +244,7 @@ const styles = StyleSheet.create({
   },
   subTitle: {
     paddingLeft: 20,
+    paddingRight: 20,
     paddingBottom: 5,
   },
   text: {
