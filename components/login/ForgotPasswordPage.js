@@ -82,8 +82,11 @@ class ForgotPasswordPage extends Component {
       );
     } else {
       return (
+        <View style={AuthStyle.container}>
         <Image source={require("./img/bg.png")} style={AuthStyle.imageContainer}>
           <View style={AuthStyle.logoContainer}>
+            <View style={AuthStyle.logoTopMargin}>
+            </View>
             <Image source={require('./img/logo.png')} style={AuthStyle.logo}/>
           </View>
           <View style={AuthStyle.body}>
@@ -115,6 +118,7 @@ class ForgotPasswordPage extends Component {
             </View>
           </View>
         </Image>
+        </View>
       );
     }
   }
