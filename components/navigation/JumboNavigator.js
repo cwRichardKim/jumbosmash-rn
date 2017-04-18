@@ -269,7 +269,12 @@ class JumboNavigator extends Component {
   _renderNavBarLeftButton(route, navigator, index, navState) {
     if (route.name == PageNames.conversation) {
       return (
-        <TouchableOpacity onPress={() => {navigator.pop();}}>
+        <TouchableOpacity onPress={() => {
+          if (this.chatPage) {
+            this.chatPage.refresh();
+          }
+          navigator.pop();
+        }}>
           <View style={styles.convoNavBarContainer}>
             <Image
               source={require("./images/back-icon.png")}
