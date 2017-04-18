@@ -190,7 +190,6 @@ class JumboNavigator extends Component {
       return (
         <SettingsPage
           navigator={navigator}
-          showNavBar={false}
           myProfile={this.props.myProfile}
           ref={(elem) => {this.settingsPage = elem}}
           pageHeight={PAGE_HEIGHT}
@@ -201,6 +200,8 @@ class JumboNavigator extends Component {
           routeNavigator={this.props.routeNavigator}
           showProfileCardForProfile={this._showProfileCardForProfile.bind(this)}
           updateMyProfile={this.props.updateMyProfile}
+          hasLogout={true}
+          hasStaticSaveButton={false}
         />
       );
     } else if (route.name == PageNames.tagPage) {
@@ -514,7 +515,6 @@ class JumboNavigator extends Component {
 
 
   // given a profile, shows the profile over the navigator
-
   _shouldRenderProfileView() {
     if (this.state.profileToShow !== null) {
       return(
