@@ -128,11 +128,13 @@ class ConversationPage extends Component {
   }
 
   onReceive(message) {
-    this.setState((previousState) => {
-      return {
-        messages: GiftedChat.append(previousState.messages, message),
-      };
-    });
+    if (this._isMounted) {
+      this.setState((previousState) => {
+        return {
+          messages: GiftedChat.append(previousState.messages, message),
+        };
+      });
+    }
   }
 
   // removes a conversation from firebase
