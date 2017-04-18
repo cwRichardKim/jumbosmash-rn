@@ -32,7 +32,6 @@ class ConversationPage extends Component {
     this.state = {
       messages: this._messages,
       typingText: null,
-      conversation: this.props.conversation,
     };
 
   }
@@ -55,12 +54,20 @@ class ConversationPage extends Component {
         date: new Date(child.val().date),
         createdAt: new Date(child.val().createdAt),
       });
-      this.state.conversation.lastSent = {'profileId': child.val().user._id, 'message': child.val().text, 'date': child.val().createdAt}
-      let len = this.state.conversation.participants.length;
-      for(var i = 0; i < len; i++) {
-        if (this.state.conversation.participants[i].profileId == this.props.myProfile.id) {
-          this.state.conversation.participants[i].read = true;
+      let now = new Date(child.val().createdAt);
+      let then = new Date(this.props.conversation.lastSent.date);
+      if (now.getTime() > then.getTime()) {
+        console.log("IN HERE");
+        this.props.conversation.lastSent = {'profileId': child.val().user._id, 'message': child.val().text, 'date': child.val().createdAt}
+        let len = this.props.conversation.participants.length;
+        for(var i = 0; i < len; i++) {
+          if (this.props.conversation.participants[i].profileId == this.props.myProfile.id) {
+            this.props.conversation.participants[i].read = true;
+          } else {
+            this.props.conversation.participants[i].read = false;
+          }
         }
+        this._asyncUpdateConversation(this.props.chatroomId, this.props.conversation);
       }
     });
     Analytics.logEvent('open_conversation_page', {});
@@ -69,11 +76,11 @@ class ConversationPage extends Component {
   componentWillUnmount() {
     //TODO: there is a bug here with unmount. sent message go back to table then come
     //back and send another message
-    this._asyncUpdateConversation(this.props.chatroomId, this.state.conversation);
     this._isMounted = false;
   }
 
   async _asyncUpdateConversation(id, chatChanges) {
+    console.log(JSON.stringify(chatChanges));
     let url = "https://jumbosmash2017.herokuapp.com/chat/update/".concat(id).concat("/").concat(this.props.token.val);
     fetch(url, {
       method: 'POST',
