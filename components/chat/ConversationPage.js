@@ -57,7 +57,6 @@ class ConversationPage extends Component {
       let now = new Date(child.val().createdAt);
       let then = new Date(this.props.conversation.lastSent.date);
       if (now.getTime() > then.getTime()) {
-        console.log("IN HERE");
         this.props.conversation.lastSent = {'profileId': child.val().user._id, 'message': child.val().text, 'date': child.val().createdAt}
         let len = this.props.conversation.participants.length;
         for(var i = 0; i < len; i++) {
@@ -80,7 +79,6 @@ class ConversationPage extends Component {
   }
 
   async _asyncUpdateConversation(id, chatChanges) {
-    console.log(JSON.stringify(chatChanges));
     let url = "https://jumbosmash2017.herokuapp.com/chat/update/".concat(id).concat("/").concat(this.props.token.val);
     fetch(url, {
       method: 'POST',
