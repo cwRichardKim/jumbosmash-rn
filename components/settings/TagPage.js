@@ -118,7 +118,7 @@ class TagPage extends Component {
       this.hasShownNSFWWarning = true;
       Alert.alert(
         "Nice 😘👌",
-        "Other people who also selected '"+key+"' will see that you selected it. Make sure you're ok with that before saving this tag!\n\n(you can tap on it again to unselect it)"
+        "Other people who also selected '"+key+"' (and everyone you match with) will see that you selected it. Make sure you're ok with that before saving this tag!\n\n(you can tap on it again to unselect it)"
       )
     }
   }
