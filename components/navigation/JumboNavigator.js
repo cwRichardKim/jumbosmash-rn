@@ -229,7 +229,7 @@ class JumboNavigator extends Component {
           pushNotificationsHandler={this.pushNotificationsHandler}
           removeSeenCards={this.props.removeSeenCards}
           notifyUserOfMatchWith={this._notifyUserOfMatchWith.bind(this)}
-          openProfileCard={()=>{this._showProfileCardForProfile(null, false)}}
+          openProfileCard={()=>{this._showProfileCardForProfile(null, true)}}
           shouldUseDummyData={this.props.shouldUseDummyData}
           noMoreCards={this.props.noMoreCards}
           removeDuplicateProfiles={this.props.removeDuplicateProfiles}
@@ -473,7 +473,7 @@ class JumboNavigator extends Component {
       } else if (this.conversationParticipantBasic.profileId != this.conversationParticipant.id) {
         this.conversationParticipant = await this.fetchProfile(this.conversationParticipantBasic.profileId);
       }
-      this._showProfileCardForProfile(this.conversationParticipant, false);
+      this._showProfileCardForProfile(this.conversationParticipant, true);
   }
 
   fetchProfile(profileId) {
