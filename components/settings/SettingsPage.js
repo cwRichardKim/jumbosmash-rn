@@ -195,7 +195,6 @@ class SettingsPage extends Component {
   }
 
   _renderActionSheet() {
-    console.log("FEEDBACK");
     return (
       <ActionSheet
         ref={(ref) => this.ActionSheet = ref}
