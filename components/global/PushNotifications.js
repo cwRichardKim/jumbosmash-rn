@@ -10,7 +10,11 @@ module.exports = {
   // Function to be called when push notification is received
   onNotification: function (notification, params) {
 
-    params.banner.showWithMessage(notification.message.body, params.banner.onPress);
+    if (params.chatPage) {
+      params.chatPage.refresh();
+    } else {
+      params.banner.showWithMessage(notification.message.body, params.onPress);
+    }
 
     if (notification.foreground) {
       switch (notification.data.code) {

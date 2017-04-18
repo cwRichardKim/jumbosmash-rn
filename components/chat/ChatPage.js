@@ -38,15 +38,21 @@ class ChatPage extends React.Component {
       rawData: [],
       filteredData: [],
       searchText: '',
+      isMounted: false,
     };
   }
 
   componentDidMount () {
+    this.setState({isMounted: true});
     if (_listView) {
       _listView.scrollTo({x: 0, y: SCROLL_TO_Y, animated: true});
     }
     Analytics.logEvent('open_chat_page', {});
     PushNotifications.clearBadgeNumber(this.props.myProfile, require('react-native-push-notification'), this.props.token.val);
+  }
+
+  componentWillUnmount () {
+    this.setState({isMounted: false});
   }
 
   _fetchConversationsAsync () {
@@ -85,7 +91,7 @@ class ChatPage extends React.Component {
   }
 
   refresh() {
-    this._onRefresh();
+    this._fetchConversationsAsync();
   }
 
   setSearchText(event) {
@@ -200,7 +206,7 @@ class ChatPage extends React.Component {
       flex: 3,
       textAlign: 'center',
       paddingBottom: 16,
-      color: read? '#CAC4C4' : 'black',
+      color: read? '#CAC4C4' : '#444141',
       fontWeight: read ? 'normal' : '500',
     });};
     let nameTextStyle = function (read) {
