@@ -22,6 +22,8 @@ import {
   Button,
   Image,
   ActivityIndicator,
+  ScrollView,
+  findNodeHandle,
 } from 'react-native';
 
 import AuthErrors             from './AuthErrors.js';
@@ -159,7 +161,7 @@ class LoginPage extends Component {
     this._goToForgotPassword();
   }
 
-  /*************************** Navigation ***************************/
+  /***************************** Navigation *****************************/
 
   _goToForgotPassword() {
     this.props.navigator.replace({
@@ -173,6 +175,26 @@ class LoginPage extends Component {
     });
   }
 
+/******************** Handles Textinput Scrolling ********************/
+
+  _inputFocused(refName) {
+    setTimeout(() => {
+    let scrollResponder = this.refs.scrollView.getScrollResponder();
+    scrollResponder.scrollResponderScrollNativeHandleToKeyboard(
+      findNodeHandle(this.refs[refName]),
+      150, //additionalOffset
+      true
+    );
+    }, 70);
+  }
+
+  _dismissFocus(refName) {
+    setTimeout(() => {
+    let scrollResponder = this.refs.scrollView.getScrollResponder();
+    scrollResponder.scrollResponderScrollTo(
+    )
+  }, 0);
+  }
   render() {
     if (this.state.isLoading) {
       return(
@@ -184,7 +206,7 @@ class LoginPage extends Component {
       );
     } else {
       return (
-        <View style={AuthStyle.container}>
+        <ScrollView ref="scrollView" style={AuthStyle.container}>
         <Image source={require("./img/bg.png")} style={AuthStyle.imageContainer}>
           <View style={AuthStyle.logoContainer}>
             <Image source={require('./img/logo.png')} style={AuthStyle.logo}/>
@@ -192,24 +214,36 @@ class LoginPage extends Component {
           <View style={AuthStyle.body}>
             <Text style={AuthStyle.textTitles}> Tufts Email: </Text>
             <View style={AuthStyle.emailInputBorder}>
-              <TextInput
-                style={AuthStyle.emailInput}
-                onChangeText={(text) => this.setState({email_input: text})}
-                value={this.state.email_input}
-              />
+                <TextInput
+                  ref="emailInput"
+                  style={AuthStyle.emailInput}
+                  onChangeText={(text) => this.setState({email_input: text})}
+                  value={this.state.email_input}
+                  returnKeyType={"next"}
+                  onFocus={this._inputFocused.bind(this, "emailInput")}
+                  onBlur={this._dismissFocus.bind(this, "emailInput")}
+                  onSubmitEditing={(event) => {
+                    this.refs.passwordInput.focus();
+                  }}
+                />
               <Text style={AuthStyle.emailExt}> {this.props.email_ext} </Text>
             </View>
 
             <Text style={AuthStyle.textTitles}> Password: </Text>
             <View style={AuthStyle.passwordInputBorder}>
             <TextInput
+              ref="passwordInput"
               style={AuthStyle.passwordInput}
               onChangeText={(text) => this.setState({password: text})}
               value={this.state.password}
               secureTextEntry={true}
-            />
+              returnKeyType={"done"}
+              onFocus={this._inputFocused.bind(this, "passwordInput")}
+              onBlur={this._dismissFocus.bind(this, "passwordInput")}
+            />  
 
             </View>
+
             <RectButton
                 style={[AuthStyle.forgotPasswordButton]}
                 textStyle={AuthStyle.forgotPasswordButtonText}  
@@ -235,7 +269,7 @@ class LoginPage extends Component {
           <Image/>
           </View>
         </Image>
-        </View>
+        </ScrollView>
       );
     }
   }
