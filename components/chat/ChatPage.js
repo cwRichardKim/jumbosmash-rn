@@ -206,7 +206,7 @@ class ChatPage extends React.Component {
       flex: 3,
       textAlign: 'center',
       paddingBottom: 16,
-      color: read? '#CAC4C4' : 'black',
+      color: read? '#CAC4C4' : '#444141',
       fontWeight: read ? 'normal' : '500',
     });};
     let nameTextStyle = function (read) {
