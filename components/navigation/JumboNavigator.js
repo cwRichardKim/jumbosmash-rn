@@ -229,7 +229,7 @@ class JumboNavigator extends Component {
           pushNotificationsHandler={this.pushNotificationsHandler}
           removeSeenCards={this.props.removeSeenCards}
           notifyUserOfMatchWith={this._notifyUserOfMatchWith.bind(this)}
-          openProfileCard={()=>{this._showProfileCardForProfile(null, true)}}
+          openProfileCard={()=>{this._showProfileCardForProfile(null, false)}}
           shouldUseDummyData={this.props.shouldUseDummyData}
           noMoreCards={this.props.noMoreCards}
           removeDuplicateProfiles={this.props.removeDuplicateProfiles}
