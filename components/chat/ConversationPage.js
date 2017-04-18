@@ -93,7 +93,6 @@ class ConversationPage extends Component {
       console.log("Successfully updated last sent");
     }).catch((error) => {
       console.log(error);
-      //DO NOTHING (user doesn't really need to know this didn't work)
     });
   }
 

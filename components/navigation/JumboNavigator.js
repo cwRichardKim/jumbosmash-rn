@@ -64,14 +64,13 @@ class JumboNavigator extends Component {
 
     this.state = {
       // WAIT. before you add anything here, remember that this is the UI of the
-      // navigator, only add things that pertain to UI
+      // navigator, only add things that pertain to UId
       chatNotifCount: 0,
       hasUnsavedSettings: false,
       profileToShow: null,
       showMatchView: false,
       matchedProfile: null, // profile of the person you matched with for MatchView
       selectorBarPan: new Animated.ValueXY({x:0, y:0}),
-      isSharedTags: false,
     };
   }
 
@@ -91,6 +90,8 @@ class JumboNavigator extends Component {
     this._configureNotifications();
   }
 
+  // Note: A similiar function is in PreReleasePage. Notifications need
+  // to be configured differently for each
   _configureNotifications () {
     this.pushNotificationsHandler.configure({
 
@@ -229,7 +230,7 @@ class JumboNavigator extends Component {
           pushNotificationsHandler={this.pushNotificationsHandler}
           removeSeenCards={this.props.removeSeenCards}
           notifyUserOfMatchWith={this._notifyUserOfMatchWith.bind(this)}
-          openProfileCard={()=>{this._showProfileCardForProfile(null, true)}}
+          openProfileCard={()=>{this._showProfileCardForProfile(null)}}
           shouldUseDummyData={this.props.shouldUseDummyData}
           noMoreCards={this.props.noMoreCards}
           removeDuplicateProfiles={this.props.removeDuplicateProfiles}
@@ -269,7 +270,12 @@ class JumboNavigator extends Component {
   _renderNavBarLeftButton(route, navigator, index, navState) {
     if (route.name == PageNames.conversation) {
       return (
-        <TouchableOpacity onPress={() => {navigator.pop();}}>
+        <TouchableOpacity onPress={() => {
+          if (this.chatPage) {
+            this.chatPage.refresh();
+          }
+          navigator.pop();
+        }}>
           <View style={styles.convoNavBarContainer}>
             <Image
               source={require("./images/back-icon.png")}
@@ -473,12 +479,11 @@ class JumboNavigator extends Component {
       } else if (this.conversationParticipantBasic.profileId != this.conversationParticipant.id) {
         this.conversationParticipant = await this.fetchProfile(this.conversationParticipantBasic.profileId);
       }
-      this._showProfileCardForProfile(this.conversationParticipant, true);
+      this._showProfileCardForProfile(this.conversationParticipant);
   }
 
   fetchProfile(profileId) {
-    let myId = (this.props.myProfile && this.props.myProfile.id) ? this.props.myProfile.id : "";
-    let url = "https://jumbosmash2017.herokuapp.com/profile/common/".concat(myId).concat("/").concat(profileId).concat("/").concat(this.props.token.val);
+    let url = "https://jumbosmash2017.herokuapp.com/profile/id/".concat(profileId).concat("/").concat(this.props.token.val);
     return fetch(url)
       .then((response) => {
         if ("status" in response && response["status"] >= 200 && response["status"] < 300) {
@@ -524,7 +529,6 @@ class JumboNavigator extends Component {
           <ProfileCardView {...(this.state.profileToShow)}
             pageHeight={PAGE_HEIGHT + NAVBAR_HEIGHT}
             exitFunction={this._closeProfileCard.bind(this)}
-            isSharedTags={this.state.isSharedTags}
           />
         </View>
       );
@@ -533,21 +537,19 @@ class JumboNavigator extends Component {
 
   // called to show a profile card. if no card is set, it will show
   // the card with the current index
-  _showProfileCardForProfile(profile, isSharedTags) {
+  _showProfileCardForProfile(profile) {
     let profileToShow = profile;
     if (profile === null && this.swipingPage.state.cardIndex < this.props.profiles.length) {
       profileToShow = this.props.profiles[this.swipingPage.state.cardIndex];
     }
     this.setState({
       profileToShow: profileToShow,
-      isSharedTags: isSharedTags,
     })
   }
 
   _closeProfileCard() {
     this.setState({
       profileToShow: null,
-      isSharedTags: false,
     })
   }
 
