@@ -41,12 +41,18 @@ class ConversationPage extends Component {
   }
 
   componentWillUnmount() {
+    let len = this.props.conversation.participants.length;
     this._isMounted = false;
+    for(var i = 0; i < len; i++) {
+      if (this.props.conversation.participants[i].profileId == this.props.myProfile.id) {
+        this.props.conversation.participants[i].read = true;
+      }
+    }
+    this._asyncUpdateConversation(this.props.chatroomId, this.props.conversation);
   }
 
   componentDidMount() {
     this._messagesRef.on('child_added', (child) => {
-      if (this._isMounted) {
         var pos = 'right';
         if (child.val().user._id != this.props.myProfile.id) {
           pos = 'left';
@@ -67,13 +73,10 @@ class ConversationPage extends Component {
           for(var i = 0; i < len; i++) {
             if (this.props.conversation.participants[i].profileId == this.props.myProfile.id) {
               this.props.conversation.participants[i].read = true;
-            } else {
-              this.props.conversation.participants[i].read = false;
             }
           }
           this._asyncUpdateConversation(this.props.chatroomId, this.props.conversation);
         }
-      }
     });
     Analytics.logEvent('open_conversation_page', {});
   }
@@ -128,11 +131,13 @@ class ConversationPage extends Component {
   }
 
   onReceive(message) {
-    this.setState((previousState) => {
-      return {
-        messages: GiftedChat.append(previousState.messages, message),
-      };
-    });
+    if (this._isMounted) {
+      this.setState((previousState) => {
+        return {
+          messages: GiftedChat.append(previousState.messages, message),
+        };
+      });
+    }
   }
 
   // removes a conversation from firebase
