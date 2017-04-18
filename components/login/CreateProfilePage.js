@@ -118,6 +118,7 @@ class CreateProfilePage extends Component {
   _createAccount() {
     if (this._checkPropertiesAreValid()) {
       let url = "https://jumbosmash2017.herokuapp.com/profile/add/".concat(this.token);
+      let userTags = (this.props.myProfile && this.props.myProfile.tags) ? this.props.myProfile.tags : []
       let body = {
         id: this.studentProfile._id,
         firstName: this.state.firstName,
@@ -127,7 +128,7 @@ class CreateProfilePage extends Component {
         major: this.state.major,
         description: this.state.description,
         email: this.studentProfile.email,
-        tags: this.props.myProfile.tags,
+        tags: userTags,
         photos: GlobalFunctions.reArrangePhotos(this.state.photos),
       };
       fetch(url, {

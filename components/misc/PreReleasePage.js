@@ -81,11 +81,11 @@ class PreReleasePage extends Component {
     }
     if (this.token && this.token.val) {
       Alert.alert(
-        'Thirsty?',
-        'The app isn\'t released yet. Let us notify you when it is',
+        'Instant Smashification',
+        'Would you like to get notifications from us when people want to smash you?',
         [
-          {text: 'Sure', onPress: () => this._configureNotifications()},
-          {text: 'Nah', onPress: () => console.log('Cancel Pressed'), style: 'cancel'},
+          {text: 'Yes Please', onPress: () => this._configureNotifications()},
+          {text: 'Nah I\'m Good', onPress: () => console.log('Cancel Pressed'), style: 'cancel'},
         ],
       );
       try {
@@ -207,9 +207,14 @@ class PreReleasePage extends Component {
     );
   }
 
+  _getTimeUntilLaunch() {
+    let today = new Date();
+    return Math.abs(GlobalFunctions.dates().startDate.getTime() - today.getTime());
+  }
+
   _getNumDaysUntilLaunch() {
     let today = new Date();
-    let timeDiff = Math.abs(GlobalFunctions.dates().startDate.getTime() - today.getTime());
+    let timeDiff = this._getTimeUntilLaunch();
     return Math.floor(timeDiff / (1000 * 3600 * 24));
   }
 
@@ -218,7 +223,7 @@ class PreReleasePage extends Component {
     if (diffDays > 0) {
       return ("Only "+diffDays.toString()+" more days until release");
     } else {
-      let diffHours = Math.floor(timeDiff / (1000 * 3600));
+      let diffHours = Math.floor(this._getTimeUntilLaunch() / (1000 * 3600));
       return ("Only "+diffHours.toString()+" more hours until release");
     }
   }

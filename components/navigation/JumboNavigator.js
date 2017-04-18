@@ -71,6 +71,7 @@ class JumboNavigator extends Component {
       showMatchView: false,
       matchedProfile: null, // profile of the person you matched with for MatchView
       selectorBarPan: new Animated.ValueXY({x:0, y:0}),
+      isSharedTags: false,
     };
   }
 
@@ -228,7 +229,7 @@ class JumboNavigator extends Component {
           pushNotificationsHandler={this.pushNotificationsHandler}
           removeSeenCards={this.props.removeSeenCards}
           notifyUserOfMatchWith={this._notifyUserOfMatchWith.bind(this)}
-          openProfileCard={()=>{this._showProfileCardForProfile(null)}}
+          openProfileCard={()=>{this._showProfileCardForProfile(null, true)}}
           shouldUseDummyData={this.props.shouldUseDummyData}
           noMoreCards={this.props.noMoreCards}
           removeDuplicateProfiles={this.props.removeDuplicateProfiles}
@@ -472,7 +473,7 @@ class JumboNavigator extends Component {
       } else if (this.conversationParticipantBasic.profileId != this.conversationParticipant.id) {
         this.conversationParticipant = await this.fetchProfile(this.conversationParticipantBasic.profileId);
       }
-      this._showProfileCardForProfile(this.conversationParticipant);
+      this._showProfileCardForProfile(this.conversationParticipant, false);
   }
 
   fetchProfile(profileId) {
@@ -522,6 +523,7 @@ class JumboNavigator extends Component {
           <ProfileCardView {...(this.state.profileToShow)}
             pageHeight={PAGE_HEIGHT + NAVBAR_HEIGHT}
             exitFunction={this._closeProfileCard.bind(this)}
+            isSharedTags={this.state.isSharedTags}
           />
         </View>
       );
@@ -530,19 +532,21 @@ class JumboNavigator extends Component {
 
   // called to show a profile card. if no card is set, it will show
   // the card with the current index
-  _showProfileCardForProfile(profile) {
+  _showProfileCardForProfile(profile, isSharedTags) {
     let profileToShow = profile;
     if (profile === null && this.swipingPage.state.cardIndex < this.props.profiles.length) {
       profileToShow = this.props.profiles[this.swipingPage.state.cardIndex];
     }
     this.setState({
       profileToShow: profileToShow,
+      isSharedTags: isSharedTags,
     })
   }
 
   _closeProfileCard() {
     this.setState({
       profileToShow: null,
+      isSharedTags: false,
     })
   }
 

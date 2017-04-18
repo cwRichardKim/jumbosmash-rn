@@ -103,7 +103,7 @@ class TagPage extends Component {
   _showMoreInformation () {
     Alert.alert(
       "Who can see my tags?",
-      "Tags will only be shown to people who have selected the same tag. For example, if you like apples, only other apple-lovers will see that tag.\n\nWe can't stop people from lying about their interests to see other people's tags, so please treat this as public information"
+      "Tags will be viewable by people you match with and people who have selected the same tag. For example, if you like apples, all matches and all other apple-lovers will see that tag.\n\nWe can't stop people from lying about their interests to see other people's tags, so please treat this as public information"
     )
   }
 
@@ -179,7 +179,7 @@ class TagPage extends Component {
         <View style={styles.titleView}>
           <Text style={[GlobalStyles.boldText, styles.title]}><Text style={styles.tagSelected}>Tap</Text> the tags or interests that apply to you</Text>
           <Text style={[GlobalStyles.text, styles.subtitle]}>
-            These are <Text style={styles.highlightedText}>public</Text> to anyone with the same tag. Don't stress, you can change these later{" "}
+            These are <Text style={styles.highlightedText}>public</Text> to anyone you match with or anyone with the same tag. Don't stress, you can change these later{" "}
             <Text
               style={[GlobalStyles.text, styles.moreInfoText]}
               onPress={this._showMoreInformation.bind(this)}
@@ -314,7 +314,6 @@ const styles = StyleSheet.create({
   },
   highlightedText: {
     fontWeight: "600",
-    textDecorationLine: 'underline',
   },
   subtitle: {
   },
