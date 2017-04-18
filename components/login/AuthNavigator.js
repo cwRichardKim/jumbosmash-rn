@@ -65,7 +65,7 @@ class AuthNavigator extends Component {
           loadPage = {this.props.loadPage.bind(this)}
         />
       )
-    } else if (route.name == TagPage) {
+    } else if (route.name == PageNames.tagPage) {
       return(
         <View style={{flex: 1, backgroundColor: 'white'}}>
           <TagPage
