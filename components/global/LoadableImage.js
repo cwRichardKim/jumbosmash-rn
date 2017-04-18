@@ -20,7 +20,8 @@ import {
     Animated,
 } from 'react-native';
 
-import GlobalStyles from "../global/GlobalStyles.js";
+import GlobalStyles     from "../global/GlobalStyles.js";
+import GlobalFunctions  from "../global/GlobalFunctions.js";
 
 class LoadableImage extends Component {
   constructor(props) {
@@ -126,7 +127,7 @@ const styles = StyleSheet.create({
     resizeMode: 'cover',
   },
   loadingPage: {
-    backgroundColor: "#F0F0F0",
+    backgroundColor: GlobalFunctions.style().lightGray,
     justifyContent: 'center',
     alignItems: 'center',
   },

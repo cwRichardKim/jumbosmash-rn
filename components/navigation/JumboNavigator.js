@@ -283,7 +283,7 @@ class JumboNavigator extends Component {
           style={{flex: 1, justifyContent: 'center', alignItems: 'center', minWidth: 80}}
           onPress={this._tagCancelOnPress.bind(this)}
         >
-          <Text style={{color: "#715BB9",}}>Cancel</Text>
+          <Text style={{color: global.style().color,}}>Cancel</Text>
         </TouchableOpacity>
       );
     } else {
@@ -325,7 +325,7 @@ class JumboNavigator extends Component {
           style={{flex: 1, justifyContent: 'center', alignItems: 'center', minWidth: 80}}
           onPress={this._tagDoneOnPress.bind(this)}
         >
-          <Text style={{fontWeight: '600', color: "#715BB9",}}>Done</Text>
+          <Text style={{fontWeight: '600', color: global.style().color,}}>Done</Text>
         </TouchableOpacity>
       );
     } else {
