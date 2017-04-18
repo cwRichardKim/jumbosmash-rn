@@ -108,8 +108,8 @@ class ChatPage extends React.Component {
   filterConversations(searchText, conversations) {
     let text = searchText.toLowerCase();
     return conversations.filter((c) => {
-      let otherParticipants = global.otherParticipants(c.participants, this.props.myProfile.profileId);
-      let convo = otherParticipants.length > 0 ? otherParticipants[1].firstName.toLowerCase() : "";
+      let otherParticipants = global.otherParticipants(c.participants, this.props.myProfile.id);
+      let convo = otherParticipants.length > 0 ? otherParticipants[0].firstName.toLowerCase() : "";
       return convo.search(text) !== -1;
     });
   }
