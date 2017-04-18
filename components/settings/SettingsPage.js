@@ -423,11 +423,11 @@ const styles = StyleSheet.create({
   },
   textInput: {
     height: 42,
-    color: "#919191",
+    color: GlobalFunctions.style().gray,
   },
   tagText: {
     alignItems: 'center',
-    color: "#919191",
+    color: GlobalFunctions.style().gray,
     paddingTop: 10,
     paddingBottom: 10,
   },
@@ -437,7 +437,7 @@ const styles = StyleSheet.create({
     height: 1,
     left: 0,
     right: 0,
-    backgroundColor: "#F8F5F5",
+    backgroundColor: GlobalFunctions.style().lightGray,
   },
   bottom: {
     minHeight: 150,
@@ -449,7 +449,7 @@ const styles = StyleSheet.create({
   rectButton: {
     height: 60,
     marginTop: 15,
-    backgroundColor: '#715BB9',
+    backgroundColor: GlobalFunctions.style().color,
     marginLeft: 16,
     marginRight: 16,
     borderRadius: 5,
@@ -457,9 +457,6 @@ const styles = StyleSheet.create({
   buttonText: {
     color: "white",
     fontWeight:"600",
-  },
-  updateProfileButton: {
-    backgroundColor: "cornflowerblue",
   },
   aboutText: {
     textAlign: 'center',

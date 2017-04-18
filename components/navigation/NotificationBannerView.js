@@ -23,8 +23,9 @@ import {
   PanResponder
 } from 'react-native';
 
-import GlobalStyles   from "../global/GlobalStyles.js";
-import SimpleBadge    from "../global/SimpleBadge.js";
+import GlobalStyles     from "../global/GlobalStyles.js";
+import SimpleBadge      from "../global/SimpleBadge.js";
+import GlobalFunctions  from "../global/GlobalFunctions.js";
 
 const VERTICAL_THRESHOLD = 10; // distance pull/push required to register action
 const BANNER_SHOW_HEIGHT = 90; // perceived height of banner
@@ -212,7 +213,7 @@ const styles = StyleSheet.create({
     alignItems: "flex-start",
     paddingTop: 7,
     justifyContent: "center",
-    backgroundColor: "#715BB9",
+    backgroundColor: GlobalFunctions.style().color,
   },
   text: {
     paddingTop: BANNER_TOTAL_HEIGHT - BANNER_SHOW_HEIGHT,

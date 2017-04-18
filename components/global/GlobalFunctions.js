@@ -167,6 +167,17 @@ module.exports = {
       logout: "LOGOUT",
     });
   },
+  style: function() {
+    return({
+      color: "#715BB9",
+      gradientColor1: "#7436DF",
+      gradientColor2: "#6877E3",
+      black: "#202020",
+      gray: "#919191",
+      lightGray: "#F8F5F5",
+      red: "#F2585A",
+    });
+  },
   // rearranges photos pushed to the front eg: [null, x, y] -> [x, y, null]
   reArrangePhotos: function(photos) {
     var newPhotos = [];
