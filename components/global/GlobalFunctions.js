@@ -57,7 +57,7 @@ module.exports = {
       likePoints: prefix+"likePoints",
       deviceToken: prefix+"deviceToken",
       myProfile: prefix+"myProfile",
-
+      permissionsRequested: prefix+"permissionsRequested",
     })
   },
   mod: function (n, m) {
