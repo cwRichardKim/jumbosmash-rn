@@ -5,6 +5,10 @@ const global = require('../global/GlobalFunctions.js');
 global.functionName(param);
 */
 
+import {
+  Alert,
+} from 'react-native'
+
 module.exports = {
   shuffle: function (array) {
     let currentIndex = array.length, temporaryValue, randomIndex;
@@ -122,7 +126,7 @@ module.exports = {
     let endDate = this.dates().endDate;
 
     if (__DEV__) {
-      return this.appExpirationStates().active; //TODO @richard remove this
+      // return this.appExpirationStates().active; //TODO @richard remove this
     }
 
     if (today > startDate && today < endDate) {
@@ -161,6 +165,53 @@ module.exports = {
       openApp: "OPENAPP",
       demoApp: "DEMOAPP",
       logout: "LOGOUT",
+    });
+  },
+  // rearranges photos pushed to the front eg: [null, x, y] -> [x, y, null]
+  reArrangePhotos: function(photos) {
+    var newPhotos = [];
+    for (var i in photos) {
+      if (photos[i] != null && photos[i].large != null && photos[i].small != null && photos[i].large.length > 0) {
+        newPhotos.push(photos[i]);
+      }
+    }
+    while (newPhotos.length < photos.length) {
+      newPhotos.push(null);
+    }
+    return newPhotos;
+  },
+  asyncUpdateServerProfile: async function(id, newProfile, shouldUseDummyData, token, successOption) {
+    if (shouldUseDummyData === true) {
+      return;
+    }
+    newProfile["photos"] = this.reArrangePhotos(newProfile.photos);
+    let url = "https://jumbosmash2017.herokuapp.com/profile/update/".concat(id).concat("/").concat(token);
+    fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(newProfile),
+    }).then((response) => {
+      if (this.isGoodResponse(response)) {
+        let options = [{text: 'OK', onPress: () => {}},];
+        if (successOption) {
+          options.push(successOption);
+        }
+        Alert.alert(
+          "Success!",
+          "Successfully updated your profile",
+          options
+        )
+      } else {
+        Alert.alert(
+          "Error",
+          "We were unable to update your profile. Try quitting the app, or send us an email at team@jumbosmash.com and we can try to make the change manually",
+          [{text: 'OK', onPress: () => {}},]
+        )
+      }
+    }).catch((error) => {
+      throw error; //TODO @richard show error thing
     });
   }
 }

@@ -65,22 +65,6 @@ class CreateProfilePage extends Component {
     return true;
   }
 
-  // returns the photos pushed to the front eg: [null, x, y] -> [x, y, null]
-  // returns false if all photos are null
-  _reArrangePhotos() {
-    let photos = this.state.photos;
-    var newPhotos = [];
-    for (var i in photos) {
-      if (photos[i] != null && photos[i].large != null && photos[i].small != null && photos[i].large.length > 0) {
-        newPhotos.push(photos[i]);
-      }
-    }
-    while (newPhotos.length < photos.length) {
-      newPhotos.push(null);
-    }
-    return newPhotos;
-  }
-
     // returns true if all checks are met, returns false and calls proper
   // errors if not
   _checkPropertiesAreValid () {
@@ -144,7 +128,7 @@ class CreateProfilePage extends Component {
         description: this.state.description,
         email: this.studentProfile.email,
         tags: this.props.myProfile.tags,
-        photos: this._reArrangePhotos(),
+        photos: GlobalFunctions.reArrangePhotos(this.state.photos),
       };
       fetch(url, {
         method: 'POST',
