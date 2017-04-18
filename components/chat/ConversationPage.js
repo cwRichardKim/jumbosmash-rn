@@ -40,42 +40,42 @@ class ConversationPage extends Component {
     this._isMounted = true;
   }
 
+  componentWillUnmount() {
+    this._isMounted = false;
+  }
+
   componentDidMount() {
     this._messagesRef.on('child_added', (child) => {
-      var pos = 'right';
-      if (child.val().user._id != this.props.myProfile.id) {
-        pos = 'left';
-      }
-      this.onReceive({
-        _id: child.val()._id,
-        text: child.val().text,
-        user: child.val().user,
-        position: pos,
-        date: new Date(child.val().date),
-        createdAt: new Date(child.val().createdAt),
-      });
-      let now = new Date(child.val().createdAt);
-      let then = new Date(this.props.conversation.lastSent.date);
-      if (now.getTime() > then.getTime()) {
-        this.props.conversation.lastSent = {'profileId': child.val().user._id, 'message': child.val().text, 'date': child.val().createdAt}
-        let len = this.props.conversation.participants.length;
-        for(var i = 0; i < len; i++) {
-          if (this.props.conversation.participants[i].profileId == this.props.myProfile.id) {
-            this.props.conversation.participants[i].read = true;
-          } else {
-            this.props.conversation.participants[i].read = false;
-          }
+      if (this._isMounted) {
+        var pos = 'right';
+        if (child.val().user._id != this.props.myProfile.id) {
+          pos = 'left';
         }
-        this._asyncUpdateConversation(this.props.chatroomId, this.props.conversation);
+        this.onReceive({
+          _id: child.val()._id,
+          text: child.val().text,
+          user: child.val().user,
+          position: pos,
+          date: new Date(child.val().date),
+          createdAt: new Date(child.val().createdAt),
+        });
+        let now = new Date(child.val().createdAt);
+        let then = new Date(this.props.conversation.lastSent.date);
+        if (now.getTime() > then.getTime()) {
+          this.props.conversation.lastSent = {'profileId': child.val().user._id, 'message': child.val().text, 'date': child.val().createdAt}
+          let len = this.props.conversation.participants.length;
+          for(var i = 0; i < len; i++) {
+            if (this.props.conversation.participants[i].profileId == this.props.myProfile.id) {
+              this.props.conversation.participants[i].read = true;
+            } else {
+              this.props.conversation.participants[i].read = false;
+            }
+          }
+          this._asyncUpdateConversation(this.props.chatroomId, this.props.conversation);
+        }
       }
     });
     Analytics.logEvent('open_conversation_page', {});
-  }
-
-  componentWillUnmount() {
-    //TODO: there is a bug here with unmount. sent message go back to table then come
-    //back and send another message
-    this._isMounted = false;
   }
 
   async _asyncUpdateConversation(id, chatChanges) {
@@ -127,7 +127,6 @@ class ConversationPage extends Component {
     this._notifyParticipants()
   }
 
-  //TODO: BUG updating on unmounted
   onReceive(message) {
     this.setState((previousState) => {
       return {
