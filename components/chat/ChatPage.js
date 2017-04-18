@@ -70,7 +70,6 @@ class ChatPage extends React.Component {
         data.sort(function(a,b){
           return (b.lastSent && a.lastSent) ? new Date(b.lastSent.date) - new Date(a.lastSent.date) : 0;
         });
-
         this.setState({
           dataSource: this.state.dataSource.cloneWithRows(data),
           rawData: data,
@@ -115,6 +114,20 @@ class ChatPage extends React.Component {
   }
 
   rowPressed(conversation) {
+    // TODO: make a dictionary so code is cleaner I guess
+    let data = this.state.rawData;
+    let len = data.length;
+    for (var i = 0; i < len; i++) {
+      if (data[i]._id == conversation._id) {
+        let length = data[i].participants.length;
+        for (var j = 0; j < length; j++) {
+          if (data[i].participants[j].profileId == this.props.myProfile.id) {
+            data[i].participants[j].read = true;
+            this.setState({rawData: data});
+          }
+        }
+      }
+    }
     this.renderConversation(conversation);
   }
 
