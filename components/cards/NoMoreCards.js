@@ -25,10 +25,6 @@ class NoMoreCards extends Component {
     super(props);
   }
 
-  componentDidMount(){
-    console.log(GlobalFunctions.style().color);
-  }
-
   _copyShareLink() {
     Clipboard.setString('jumbosmash.com/share');
     Alert.alert(
