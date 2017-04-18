@@ -32,18 +32,19 @@ class ChatPage extends React.Component {
     super(props);
     const ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
     this.state = {
-      dataSource: ds.cloneWithRows(this._fetchConversationsAsync()),
+      dataSource: ds.cloneWithRows([]),
       navigator: props.navigator,
       refreshing: false,
       rawData: [],
       filteredData: [],
       searchText: '',
-      isMounted: false,
+      _isMounted: false,
     };
+    this._fetchConversationsAsync();
   }
 
   componentDidMount () {
-    this.setState({isMounted: true});
+    this.setState({_isMounted: true});
     if (_listView) {
       _listView.scrollTo({x: 0, y: SCROLL_TO_Y, animated: true});
     }
@@ -52,10 +53,10 @@ class ChatPage extends React.Component {
   }
 
   componentWillUnmount () {
-    this.setState({isMounted: false});
+    this.setState({_isMounted: false});
   }
 
-  _fetchConversationsAsync () {
+  async _fetchConversationsAsync () {
     let url = 'https://jumbosmash2017.herokuapp.com/chat/id/'.concat(this.props.myProfile.id).concat("/").concat(this.props.token.val);
     return fetch(url)
       .then((response) => {
@@ -115,6 +116,7 @@ class ChatPage extends React.Component {
 
   rowPressed(conversation) {
     // TODO: make a dictionary so code is cleaner I guess
+    // TODO: update filteredData if needed
     let data = this.state.rawData;
     let len = data.length;
     for (var i = 0; i < len; i++) {
