@@ -116,7 +116,7 @@ class ChatPage extends React.Component {
 
   rowPressed(conversation) {
     // TODO: make a dictionary so code is cleaner I guess
-    let data = this.state.rawData;
+    let data = this.state.filteredData.length <= 0 ? this.state.rawData : this.state.filteredData;
     let len = data.length;
     for (var i = 0; i < len; i++) {
       if (data[i]._id == conversation._id) {
@@ -124,7 +124,11 @@ class ChatPage extends React.Component {
         for (var j = 0; j < length; j++) {
           if (data[i].participants[j].profileId == this.props.myProfile.id) {
             data[i].participants[j].read = true;
-            this.setState({rawData: data});
+            if (this.state.filteredData.length <= 0) {
+              this.setState({filteredData: data});
+            } else {
+              this.setState({rawData: data});
+            }
           }
         }
       }
