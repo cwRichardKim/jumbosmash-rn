@@ -53,7 +53,6 @@ class ConversationPage extends Component {
 
   componentDidMount() {
     this._messagesRef.on('child_added', (child) => {
-      // if (this._isMounted) {
         var pos = 'right';
         if (child.val().user._id != this.props.myProfile.id) {
           pos = 'left';
@@ -78,7 +77,6 @@ class ConversationPage extends Component {
           }
           this._asyncUpdateConversation(this.props.chatroomId, this.props.conversation);
         }
-      // }
     });
     Analytics.logEvent('open_conversation_page', {});
   }
