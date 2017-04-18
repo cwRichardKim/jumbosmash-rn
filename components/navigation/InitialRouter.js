@@ -223,7 +223,6 @@ class InitialRouter extends Component {
           myProfile={this.state.myProfile}
           firebase={firebase}
           routeNavigator={navigator}
-          updateMyProfile={this._updateMyProfile.bind(this)}
         />
       )
     } else if (route.name == PageNames.appHome) {
