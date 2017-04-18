@@ -10,7 +10,11 @@ module.exports = {
   // Function to be called when push notification is received
   onNotification: function (notification, params) {
 
-    params.banner.showWithMessage(notification.message.body, params.banner.onPress);
+    if (params.chatPage) {
+      params.chatPage.refresh();
+    } else {
+      params.banner.showWithMessage(notification.message.body, params.onPress);
+    }
 
     if (notification.foreground) {
       switch (notification.data.code) {
@@ -38,6 +42,11 @@ module.exports = {
       console.log(error);
     });
   },
+  // increaseBadgeNumber: function(pushNotificationsHandler) {
+  //   pushNotificationsHandler.getApplicationIconBadgeNumber(function(numBadges) {
+  //     pushNotificationsHandler.setApplicationIconBadgeNumber(numBadges + 1);
+  //   });
+  // },
   clearBadgeNumber: async function(profile, pushNotificationsHandler, authToken) {
     profile.notificationsCount = 0;
     let url = "https://jumbosmash2017.herokuapp.com/profile/update/".concat(profile.id).concat("/").concat(authToken);
