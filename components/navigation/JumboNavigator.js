@@ -477,7 +477,8 @@ class JumboNavigator extends Component {
   }
 
   fetchProfile(profileId) {
-    let url = "https://jumbosmash2017.herokuapp.com/profile/id/".concat(profileId).concat("/").concat(this.props.token.val);
+    let myId = (this.props.myProfile && this.props.myProfile.id) ? this.props.myProfile.id : "";
+    let url = "https://jumbosmash2017.herokuapp.com/profile/common/".concat(myId).concat("/").concat(profileId).concat("/").concat(this.props.token.val);
     return fetch(url)
       .then((response) => {
         if ("status" in response && response["status"] >= 200 && response["status"] < 300) {
