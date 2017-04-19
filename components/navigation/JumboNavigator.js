@@ -501,7 +501,7 @@ class JumboNavigator extends Component {
   }
 
   unmatchProfile(profileId) {
-    let url = "https://jumbosmash2017.herokuapp.com/chat/unmatch/".concat(this.conversationId).concat("/").concat(this.props.myProfile.id).concat("/").concat(this.conversationParticipantBasic.profileId).concat("/").concat(this.props.token.val);
+    let url = "https://jumbosmash2017.herokuapp.com/chat/unmatch/".concat(this.conversationId).concat("/").concat(this.conversationParticipantBasic.profileId).concat("/").concat(this.props.myProfile.id).concat("/").concat(this.props.token.val);
     fetch(url, {
       method: 'POST',
       headers: {
