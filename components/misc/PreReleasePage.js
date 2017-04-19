@@ -49,7 +49,6 @@ class PreReleasePage extends Component {
     this.token = {val: null}
     this.state = {
       shouldShowProfile: false,
-      count: 30,
     };
   }
 
@@ -215,16 +214,16 @@ class PreReleasePage extends Component {
   _getNumDaysUntilLaunch() {
     let today = new Date();
     let timeDiff = this._getTimeUntilLaunch();
-    return Math.floor(timeDiff / (1000 * 3600 * 24));
+    return Math.ceil(timeDiff / (1000 * 3600 * 24));
   }
 
-  _renderTitleString() {
+  _renderCountdownString() {
     let diffDays = this._getNumDaysUntilLaunch();
-    if (diffDays > 0) {
-      return ("Only "+diffDays.toString()+" more days until release");
+    if (diffDays > 1) {
+      return (diffDays.toString()+" days\n");
     } else {
       let diffHours = Math.floor(this._getTimeUntilLaunch() / (1000 * 3600));
-      return ("Only "+diffHours.toString()+" more hours until release");
+      return (diffHours.toString()+" hours\n");
     }
   }
 
@@ -319,45 +318,12 @@ class PreReleasePage extends Component {
   }
 
   _renderPreReleaseCount() {
-    if (this.state.count === null) {
-      return (
-        <View style={[styles.countContainer, {height: (HEIGHT - WIDTH - PADDING) / 2}]}>
-          <ActivityIndicator animating={true}/>
-        </View>
-      );
-    } else if (this.state.count < 50) {
-      return (
-        <View style={styles.textContainer}>
-          <Text style={[GlobalStyles.boldText, {marginBottom: 10}]}>{this._renderTitleString()}</Text>
-          <Text style={GlobalStyles.text}>Come back at midnight on {GlobalFunctions.formatDate(GlobalFunctions.dates().startDate)} for some smashy goodness. If you are a beta tester or someone who requires early access, tap the button below</Text>
-        </View>
-      );
-    } else {
-      return (
-        <View style={styles.countContainer}>
-          <View style={styles.countLeft}>
-            <View style={{flex: 2, flexDirection: 'row'}}>
-              <Text style={styles.registeredSmashers}>Registered Smashers</Text>
-            </View>
-            <View style={{flex: 3, flexDirection: 'row', alignItems: 'center'}}>
-              <Text style={styles.countText}>
-                {this.state.count}
-              </Text>
-            </View>
-            <View style={{flex: 1, flexDirection: 'row', alignItems: 'flex-end'}}>
-              <RectButton
-                style={[styles.inviteButton]}
-                textStyle={styles.buttonText}
-                text="INVITE"
-                onPress={this._copyShareLink.bind(this)}
-              />
-            </View>
-          </View>
-          <View style={styles.countRight}>
-          </View>
-        </View>
-      );
-    }
+    return (
+      <View style={styles.textContainer}>
+        <Text style={[GlobalStyles.boldText, {marginBottom: 10}]}>Jumbosmash is Coming</Text>
+        <Text style={GlobalStyles.text}>Countdown: {this._renderCountdownString()}If you are a beta tester or someone who requires early access, tap the button below</Text>
+      </View>
+    );
   }
 
   _renderNavigatorScene (route, navigator) {
@@ -369,6 +335,12 @@ class PreReleasePage extends Component {
             {this._renderPreReleaseCount()}
             <View style={styles.buttonContainer}>
               {this._shouldLoadPreReleaseButton()}
+              <RectButton
+                style={[styles.button, styles.smashButton]}
+                textStyle={styles.buttonText}
+                text="Share / Invite"
+                onPress={this._copyShareLink.bind(this)}
+              />
               <RectButton
                 style={[styles.button, styles.smashButton]}
                 textStyle={styles.buttonText}
@@ -452,33 +424,12 @@ const styles = StyleSheet.create({
   title: {
     textAlign: 'center',
   },
-  countContainer: {
-    flexDirection: 'row',
-    height: HEIGHT - WIDTH - PADDING,
-    padding: PADDING,
-  },
   textContainer: {
     padding: PADDING,
     paddingBottom: 0,
   },
-  countLeft: {
-    flex: 1,
-    paddingLeft: PADDING / 2,
-    paddingRight: PADDING / 2,
-  },
-  countRight: {
-    flex: 1,
-  },
   registeredSmashers: {
     fontSize: 30,
-  },
-  countText: {
-    fontSize: 70,
-  },
-  inviteButton: {
-    flex: 1,
-    height: 40,
-    backgroundColor: GlobalFunctions.style().color,
   },
   buttonContainer: {
     padding: PADDING,
@@ -488,8 +439,8 @@ const styles = StyleSheet.create({
   },
   button: {
     width: WIDTH - PADDING * 2,
-    height: 50,
-    marginBottom: 10,
+    height: 60,
+    marginBottom: 15,
     opacity: 1,
   },
   buttonText: {
