@@ -104,7 +104,7 @@ class LoginPage extends Component {
 
                 this.setState({isLoading: false});
                 if (responseJson) {
-                  // Authentication Process complete! 
+                  // Authentication Process complete!
                   this.props.setMyProfile(responseJson);
                   this.props.loadPage(PageNames.appHome);
                 } else {
@@ -198,7 +198,7 @@ class LoginPage extends Component {
   render() {
     if (this.state.isLoading) {
       return(
-        <Image source={require("./img/bg.png")} style={AuthStyle.container}>
+        <Image source={require("./img/bg.png")} style={AuthStyle.imageContainer}>
         <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
           <ActivityIndicator animating={true}/>
         </View>
@@ -240,13 +240,13 @@ class LoginPage extends Component {
               returnKeyType={"done"}
               onFocus={this._inputFocused.bind(this, "passwordInput")}
               onBlur={this._dismissFocus.bind(this, "passwordInput")}
-            />  
+            />
 
             </View>
 
             <RectButton
                 style={[AuthStyle.forgotPasswordButton]}
-                textStyle={AuthStyle.forgotPasswordButtonText}  
+                textStyle={AuthStyle.forgotPasswordButtonText}
                 onPress={this._forgotPassword.bind(this)}
                 text="Forgot Password?"
             />
