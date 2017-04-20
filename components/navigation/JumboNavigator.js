@@ -630,7 +630,7 @@ const styles = StyleSheet.create({
   navigationBarTitleText: {
     marginLeft: 12,
     fontSize: 16,
-    color: '#CAC4C4',
+    color: '#474747',
     fontFamily: 'Avenir Next',
   },
   coverView: {

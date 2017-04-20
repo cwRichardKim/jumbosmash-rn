@@ -219,18 +219,19 @@ class ChatPage extends React.Component {
       borderWidth: read ? 0 : 3,
     });};
     let messageTextStyle = function (read) {return ({
-      fontSize: 13,
+      fontSize: 14,
       fontFamily: 'Avenir Next',
       flex: 3,
       textAlign: 'center',
       paddingBottom: 16,
-      color: read? '#CAC4C4' : '#444141',
+      color: read? '#7C7C7C' : '#7436DF',
       fontWeight: read ? 'normal' : '500',
     });};
     let nameTextStyle = function (read) {
-      return({fontSize: 13,
+      return({fontSize: 15,
       fontFamily: 'Avenir Next',
       textAlign: 'center',
+      color: '#474747',
       fontWeight: read ? 'normal' : '500',});
     };
 
@@ -310,11 +311,6 @@ const styles = StyleSheet.create({
     paddingBottom: 16,
     color: '#CAC4C4',
   },
-  rowNameText: {
-    fontSize: 13,
-    fontFamily: 'Avenir Next',
-    textAlign: 'center',
-  },
   rowPhoto: {
     height: 50,
     width: 50,
@@ -326,7 +322,7 @@ const styles = StyleSheet.create({
     height: 36,
     flex: 1,
     paddingHorizontal: 8,
-    fontSize: 15,
+    fontSize: 14,
     backgroundColor: '#F0F0F0',
     borderRadius: 2,
   },
