@@ -27,14 +27,14 @@ module.exports = {
     }
   },
   onRegister: async function (token, params) {
-    params.profile.deviceId = token.token;
+    let deviceId = {deviceId: token.token};
     let url = "https://jumbosmash2017.herokuapp.com/profile/update/".concat(params.profile.id).concat("/").concat(params.authToken);
     fetch(url, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify(params.profile)
+      body: JSON.stringify(deviceId)
     }).then((response) => {
       console.log("Successfully added device");
     }).catch((error) => {
@@ -42,14 +42,14 @@ module.exports = {
     });
   },
   clearBadgeNumber: async function(profile, pushNotificationsHandler, authToken) {
-    profile.notificationsCount = 0;
+    let notifCount = {notificationsCount: 0};
     let url = "https://jumbosmash2017.herokuapp.com/profile/update/".concat(profile.id).concat("/").concat(authToken);
     fetch(url, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify(profile)
+      body: JSON.stringify(notifCount)
     }).then((response) => {
       console.log(response);
     }).catch((error) => {

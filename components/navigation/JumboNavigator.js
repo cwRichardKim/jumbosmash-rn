@@ -125,7 +125,6 @@ class JumboNavigator extends Component {
         popInitialNotification: true,
 
         requestPermissions: false,
-        //TODO: @jared makes sure this isn't popping every time
     });
   }
 
