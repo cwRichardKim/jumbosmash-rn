@@ -126,7 +126,7 @@ module.exports = {
     let endDate = this.dates().endDate;
 
     if (__DEV__) {
-      return this.appExpirationStates().expired; //TODO @richard remove this
+      // return this.appExpirationStates().expired; //TODO @richard remove this
     }
 
     if (today > startDate && today < endDate) {
@@ -146,7 +146,7 @@ module.exports = {
     })
   },
   betaTesters: function() {
-    let testers = ["Josh Berl", "Orlando Economos", "Shana Gallagher", "Lucy Gerhart", "Ryan Gill", "Dhruv Khurana", "Rebecca Larson", "Brian McGough", "Jordan Meisel", "Mackenzie Merriam", "Kabir Singh", "Claire Stone", "Lilly Tahmasebi", "Joshua Terry"];
+    let testers = ["Josh Berl", "Orlando Economos", "Shana Gallagher", "Lucy Gerhart", "Ryan Gill", "Dhruv Khurana", "Rebecca Larson", "Brian McGough", "Jordan Meisel", "Mackenzie Merriam", "Kabir Singh", "Claire Stone", "Lilly Tahmasebi", "Joshua Terry", "Katie Saviano"];
     this.shuffle(testers);
     return testers.join(", ");
   },
