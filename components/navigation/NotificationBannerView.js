@@ -170,7 +170,7 @@ class NotificationBannerView extends Component {
         <TouchableHighlight style={{flex:1}} onPress={this._notificationBannerTapped.bind(this)}>
           <View style={[styles.view]}>
             <Image
-              source={require("../global/images/logo-med.jpg")}
+              source={require("../global/images/logo-med.png")}
               style={styles.image}
             />
             <Text
