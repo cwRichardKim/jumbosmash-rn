@@ -16,7 +16,7 @@
             <rect key="frame" x="0.0" y="0.0" width="438" height="761"/>
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
-                <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="logo-black" translatesAutoresizingMaskIntoConstraints="NO" id="xPh-3z-RIV">
+                <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="wink" translatesAutoresizingMaskIntoConstraints="NO" id="xPh-3z-RIV">
                     <rect key="frame" x="144" y="210.5" width="150" height="150"/>
                     <constraints>
                         <constraint firstAttribute="height" constant="150" id="4vH-Z9-Stm"/>
@@ -35,6 +35,6 @@
         </view>
     </objects>
     <resources>
-        <image name="logo-black" width="240" height="240"/>
+        <image name="wink" width="512" height="540"/>
     </resources>
 </document>
