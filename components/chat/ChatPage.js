@@ -170,6 +170,7 @@ class ChatPage extends React.Component {
     return null;
   }
 
+  //TODO: @jared clearButtonMode #android this prop isn't there
   _renderSearchBar() {
     let numMatches = this.state.rawData != null && this.state.rawData.length != null ? this.state.rawData.length : 0;
     let str = "Search " + numMatches + " Matches";
@@ -180,7 +181,7 @@ class ChatPage extends React.Component {
          returnKeyType='done'
          value={this.state.searchText}
          onChange={this.setSearchText.bind(this)}
-         clearButtonMode='always' //TODO: @jared #android this prop isn't there
+         clearButtonMode='always'
          placeholder={str} />
       </View>);
   }
@@ -215,7 +216,7 @@ class ChatPage extends React.Component {
       height: 60,
       width: 60,
       borderRadius: 30,
-      borderColor: '#6A6ACB',
+      borderColor: global.style().color,
       borderWidth: read ? 0 : 3,
     });};
     let messageTextStyle = function (read) {return ({
@@ -224,11 +225,12 @@ class ChatPage extends React.Component {
       flex: 3,
       textAlign: 'center',
       paddingBottom: 16,
-      color: read? '#7C7C7C' : '#7436DF',
+      color: read? '#7C7C7C' : global.style().color,
       fontWeight: read ? 'normal' : '500',
     });};
     let nameTextStyle = function (read) {
       return({fontSize: 15,
+      marginTop: 2,
       fontFamily: 'Avenir Next',
       textAlign: 'center',
       color: '#474747',
@@ -315,7 +317,7 @@ const styles = StyleSheet.create({
     height: 50,
     width: 50,
     borderRadius: 25,
-    borderColor: '#6A6ACB',
+    borderColor: global.style().color,
     borderWidth: 3,
   },
   searchInput: {
