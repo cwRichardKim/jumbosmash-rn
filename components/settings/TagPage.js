@@ -135,7 +135,7 @@ class TagPage extends Component {
     let selectedStyle = {};
     let emojiRegex = new RegExp(/([\uE000-\uF8FF]|\uD83C[\uDF00-\uDFFF]|\uD83D[\uDC00-\uDDFF])/g);
     if (isSelected) {
-      selectedStyle = (emojiRegex.test(key)) ? styles.emojiSelected : styles.tagSelected;
+      selectedStyle = (emojiRegex.test(key) && !key.includes(" ")) ? styles.emojiSelected : styles.tagSelected;
     } else {
       selectedStyle = styles.tagUnselected;
     }
