@@ -656,6 +656,7 @@ const styles = StyleSheet.create({
   },
   convoNavBarIcon: {
     height: 18,
+    width: 25,
     resizeMode: 'contain',
   },
   navBarSelector: {
