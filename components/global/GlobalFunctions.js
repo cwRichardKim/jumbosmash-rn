@@ -195,12 +195,6 @@ module.exports = {
     if (shouldUseDummyData === true) {
       return;
     }
-    if ("likeList" in newProfile) {
-      delete thisIsObject["likeList"]
-    }
-    if ("matchList" in newProfile) {
-      delete thisIsObject["matchList"]
-    }
     newProfile["photos"] = this.reArrangePhotos(newProfile.photos);
     let url = "https://jumbosmash2017.herokuapp.com/profile/update/".concat(id).concat("/").concat(token);
     fetch(url, {
