@@ -777,7 +777,7 @@
 					};
 					13B07F861A680F5B00A75B9A = {
 						DevelopmentTeam = CBME5RD7L2;
-						ProvisioningStyle = Manual;
+						ProvisioningStyle = Automatic;
 						SystemCapabilities = {
 							com.apple.Push = {
 								enabled = 1;
@@ -1399,10 +1399,10 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = jumbosmash/jumbosmash.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Distribution: Choong-Won Kim (CBME5RD7L2)";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: Choong-Won Kim (CBME5RD7L2)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CURRENT_PROJECT_VERSION = 24;
 				DEAD_CODE_STRIPPING = NO;
-				DEVELOPMENT_TEAM = CBME5RD7L2;
+				DEVELOPMENT_TEAM = "";
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(SRCROOT)/../node_modules/react-native-fetch-blob/ios/**",
@@ -1422,8 +1422,8 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.2017.jumbosmash;
 				PRODUCT_NAME = jumbosmash;
-				PROVISIONING_PROFILE = "7f9c19b8-8883-483e-98f6-e8efa57c23d3";
-				PROVISIONING_PROFILE_SPECIFIER = "match AdHoc com.2017.jumbosmash";
+				PROVISIONING_PROFILE = "";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				VERSIONING_SYSTEM = "apple-generic";
 			};
 			name = Debug;
@@ -1435,9 +1435,9 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = jumbosmash/jumbosmash.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Distribution: Choong-Won Kim (CBME5RD7L2)";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: Choong-Won Kim (CBME5RD7L2)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CURRENT_PROJECT_VERSION = 24;
-				DEVELOPMENT_TEAM = CBME5RD7L2;
+				DEVELOPMENT_TEAM = "";
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(SRCROOT)/../node_modules/react-native-fetch-blob/ios/**",
@@ -1457,8 +1457,8 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.2017.jumbosmash;
 				PRODUCT_NAME = jumbosmash;
-				PROVISIONING_PROFILE = "7f9c19b8-8883-483e-98f6-e8efa57c23d3";
-				PROVISIONING_PROFILE_SPECIFIER = "match AdHoc com.2017.jumbosmash";
+				PROVISIONING_PROFILE = "";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				VERSIONING_SYSTEM = "apple-generic";
 			};
 			name = Release;
