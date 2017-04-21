@@ -20,7 +20,8 @@ import {
   TouchableHighlight,
   TouchableOpacity,
   Animated,
-  PanResponder
+  PanResponder,
+  Dimensions,
 } from 'react-native';
 
 import GlobalStyles     from "../global/GlobalStyles.js";
@@ -38,6 +39,7 @@ const PULL_INDICATOR_WIDTH = 40;
 const PULL_INDICATOR_HEIGHT = 6;
 const PULL_INDICATOR_BOTTOM = 8;
 const CLOSE_BUTTON_WIDTH = 20;
+const PAGE_WIDTH = Dimensions.get('window').width;
 
 const INITIAL_POSITION = {x:0, y: -BANNER_TOTAL_HEIGHT - 10};
 const SHOW_POSITION = {x:0, y: BANNER_SHOW_HEIGHT - BANNER_TOTAL_HEIGHT};
@@ -170,6 +172,10 @@ class NotificationBannerView extends Component {
         <TouchableHighlight style={{flex:1}} onPress={this._notificationBannerTapped.bind(this)}>
           <View style={[styles.view]}>
             <Image
+              source={require("./images/banner.png")}
+              style={styles.bannerBackground}
+            />
+            <Image
               source={require("../global/images/logo-med.png")}
               style={styles.image}
             />
@@ -222,6 +228,13 @@ const styles = StyleSheet.create({
     fontSize: 16,
     backgroundColor: 'transparent',
     color: 'white',
+  },
+  bannerBackground: {
+    height: BANNER_TOTAL_HEIGHT,
+    position: 'absolute',
+    bottom: 0,
+    width: PAGE_WIDTH,
+    resizeMode: 'cover',
   },
   image: {
     position: "absolute",
