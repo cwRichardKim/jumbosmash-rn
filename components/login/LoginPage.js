@@ -200,7 +200,7 @@ class LoginPage extends Component {
       return(
         <Image source={require("./img/bg.png")} style={AuthStyle.imageContainer}>
         <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-          <ActivityIndicator animating={true}/>
+          <ActivityIndicator animating={true} color="white"/>
         </View>
         </Image>
       );
