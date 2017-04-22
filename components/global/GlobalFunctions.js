@@ -146,7 +146,7 @@ module.exports = {
     })
   },
   betaTesters: function() {
-    let testers = ["Josh Berl", "Orlando Economos", "Shana Gallagher", "Lucy Gerhart", "Ryan Gill", "Dhruv Khurana", "Rebecca Larson", "Brian McGough", "Jordan Meisel", "Mackenzie Merriam", "Kabir Singh", "Claire Stone", "Lilly Tahmasebi", "Joshua Terry", "Katie Saviano"];
+    let testers = ["Josh Berl", "Orlando Economos", "Shana Gallagher", "Lucy Gerhart", "Ryan Gill", "Dhruv Khurana", "Rebecca Larson", "Brian McGough", "Jordan Meisel", "Mackenzie Merriam", "Kabir Singh", "Claire Stone", "Lilly Tahmasebi", "Joshua Terry", "Katie Saviano", "Mudit Tandon"];
     this.shuffle(testers);
     return testers.join(", ");
   },
@@ -174,6 +174,7 @@ module.exports = {
       gradientColor2: "#6877E3",
       black: "#202020",
       gray: "#919191",
+      darkGray: "#555",
       lightGray: "#F8F5F5",
       red: "#F2585A",
     });

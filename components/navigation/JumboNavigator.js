@@ -428,7 +428,7 @@ class JumboNavigator extends Component {
         ref={(ref) => this.ActionSheet = ref}
         options={actionSheetButtons}
         cancelButtonIndex={CANCEL_INDEX}
-        tintColor={'#E53B6E'}
+        tintColor={global.style().color}
         onPress={this._handleActionSheetPress.bind(this)}
       />
     );

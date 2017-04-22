@@ -447,14 +447,15 @@ const styles = StyleSheet.create({
   header: {
     paddingTop: 12,
     paddingBottom: 9,
+    fontWeight: '600',
   },
   textInput: {
     height: 42,
-    color: GlobalFunctions.style().gray,
+    color: GlobalFunctions.style().darkGray,
   },
   tagText: {
     alignItems: 'center',
-    color: GlobalFunctions.style().gray,
+    color: GlobalFunctions.style().darkGray,
     paddingTop: 10,
     paddingBottom: 10,
   },

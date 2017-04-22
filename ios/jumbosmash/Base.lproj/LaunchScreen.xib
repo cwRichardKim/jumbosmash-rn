@@ -35,6 +35,6 @@
         </view>
     </objects>
     <resources>
-        <image name="wink" width="512" height="540"/>
+        <image name="wink" width="236" height="250"/>
     </resources>
 </document>
