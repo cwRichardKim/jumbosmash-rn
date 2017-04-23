@@ -7,6 +7,7 @@ global.functionName(param);
 
 import {
   Alert,
+  Linking,
 } from 'react-native'
 
 module.exports = {
@@ -126,7 +127,7 @@ module.exports = {
     let endDate = this.dates().endDate;
 
     if (__DEV__) {
-      return this.appExpirationStates().active; //TODO @richard remove this
+      // return this.appExpirationStates().active; //TODO @richard remove this
     }
 
     if (today > startDate && today < endDate) {
@@ -191,6 +192,16 @@ module.exports = {
       newPhotos.push(null);
     }
     return newPhotos;
+  },
+  openTOS: function () {
+    let url = "http://jumbosmash.com/terms"
+    Linking.canOpenURL(url).then(supported => {
+      if (!supported) {
+        console.log('Can\'t handle url: ' + url);
+      } else {
+        return Linking.openURL(url);
+      }
+    }).catch(err => console.error('An error occurred', err));
   },
   asyncUpdateServerProfile: async function(id, newProfile, shouldUseDummyData, token, successOption) {
     if (shouldUseDummyData === true) {
