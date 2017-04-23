@@ -22,6 +22,7 @@ module.exports = StyleSheet.create({
     height: height,
   },
   logoContainer: {
+    alignSelf:'center',
     height: height * (1/3),
     flexDirection: 'column'
   },
@@ -50,6 +51,7 @@ module.exports = StyleSheet.create({
   emailExt: {
     flex: 2/5,
     alignSelf: 'center',
+    justifyContent: 'flex-end',
     color: 'white',
     letterSpacing: 2,
   },
