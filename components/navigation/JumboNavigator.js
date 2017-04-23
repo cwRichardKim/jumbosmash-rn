@@ -446,7 +446,6 @@ class JumboNavigator extends Component {
       await this.unmatchProfile(this.conversationParticipantBasic.profileId);
       await this.conversationPage ? this.conversationPage.onUnmatch() : () => {}; // remove from firebase
       this.navigator.pop();
-      this.chatPage.refresh(); //BUG: @jared if last conversation unmatching then won't reload table automatically
     }
   }
 
@@ -508,7 +507,9 @@ class JumboNavigator extends Component {
       },
       body: "",
     }).then((response) => {
-      console.log("Successfully unmatched");
+      if (this.chatPage) {
+        this.chatPage.refresh(); //BUG: @jared if last conversation unmatching then won't reload table automatically
+      }
     }).catch((error) => {
       let errorString = "Sorry, we could not unmatch you and " + this.conversationParticipantBasic.firstName + " please try again later";
       Alert.alert('Error', errorString);
