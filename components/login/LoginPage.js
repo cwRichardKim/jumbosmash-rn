@@ -137,6 +137,7 @@ class LoginPage extends Component {
     if (studentProfile){
       this.studentProfile = studentProfile;
       this._createAccount(email, password);
+      // isloading gets set to false in createAccount
     } else {
       this.setState({isLoading: false});
       Verification.doesNotExist();
