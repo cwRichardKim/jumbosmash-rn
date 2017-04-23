@@ -139,7 +139,7 @@ class PreReleasePage extends Component {
   _loadPreReleaseApp() {
     Alert.alert(
       "You're here early",
-      "Official release: "+GlobalFunctions.formatDate(GlobalFunctions.dates().startDate)+"\n\nThe 'pre-release state' is fully functional, but since we only have a handful of beta testers, we've included a few extra temporary fake users.\n\nteam@jumbosmash.com for questions!",
+      "Official release: "+GlobalFunctions.formatDate(GlobalFunctions.dates().startDate)+"\n\nWelcome 😊 This 'pre-release state' is fully functional, but may include a few test users.\n\nteam@jumbosmash.com for questions!",
       [
         {text:"Open in Pre-release State", onPress:()=>{this.props.changePage(OverrideActions.openApp)}},
       ]

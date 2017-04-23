@@ -24,6 +24,7 @@ import {
   ActivityIndicator,
   ScrollView,
   findNodeHandle,
+  Platform,
 } from 'react-native';
 
 import AuthErrors             from './AuthErrors.js';
@@ -37,6 +38,7 @@ import CreateProfilePage      from './CreateProfilePage.js'
 
 const PageNames = require("../global/GlobalFunctions.js").pageNames();
 const AuthStyle = require('./AuthStylesheet');
+const IS_ANDROID = Platform.OS === 'android';
 
 class LoginPage extends Component {
 
@@ -217,6 +219,7 @@ class LoginPage extends Component {
                 <TextInput
                   ref="emailInput"
                   style={AuthStyle.emailInput}
+                  underlineColorAndroid="white"
                   onChangeText={(text) => this.setState({email_input: text})}
                   value={this.state.email_input}
                   returnKeyType={"next"}
@@ -234,6 +237,7 @@ class LoginPage extends Component {
             <TextInput
               ref="passwordInput"
               style={AuthStyle.passwordInput}
+              underlineColorAndroid="white"
               onChangeText={(text) => this.setState({password: text})}
               value={this.state.password}
               secureTextEntry={true}

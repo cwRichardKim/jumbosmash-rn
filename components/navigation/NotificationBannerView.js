@@ -22,12 +22,14 @@ import {
   Animated,
   PanResponder,
   Dimensions,
+  Platform,
 } from 'react-native';
 
 import GlobalStyles     from "../global/GlobalStyles.js";
 import SimpleBadge      from "../global/SimpleBadge.js";
 import GlobalFunctions  from "../global/GlobalFunctions.js";
 
+const IS_ANDROID = Platform.OS === 'android';
 const VERTICAL_THRESHOLD = 10; // distance pull/push required to register action
 const BANNER_SHOW_HEIGHT = 90; // perceived height of banner
 const BANNER_TOTAL_HEIGHT = 200; // perceived + hidden height of banner
@@ -159,6 +161,11 @@ class NotificationBannerView extends Component {
   render() {
     let pan = this.state.pan;
     let origY = BANNER_SHOW_HEIGHT - BANNER_TOTAL_HEIGHT;
+
+    if (IS_ANDROID) {
+      origY -= 10;
+    }
+
     let translateY = pan.y.interpolate({
                                         inputRange:[origY - BANNER_SHOW_HEIGHT, origY, origY + 300],
                                         outputRange:[origY - BANNER_SHOW_HEIGHT, origY, origY + MAX_BANNER_PULL],

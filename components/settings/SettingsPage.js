@@ -349,6 +349,7 @@ class SettingsPage extends Component {
 
           <View style={styles.line}/>
           <TextInput style={[GlobalStyles.text, styles.textListItem, styles.textInput]}
+            underlineColorAndroid="transparent"
             onChangeText={(firstName) => {this._changeWasMade({"firstName":firstName})}}
             value={this.props.myProfile.firstName}
             maxLength={80}
@@ -363,6 +364,7 @@ class SettingsPage extends Component {
 
           <View style={styles.line}/>
           <TextInput style={[GlobalStyles.text, styles.textListItem, styles.textInput]}
+            underlineColorAndroid="transparent"
             onChangeText={(lastName) => {this._changeWasMade({"lastName":lastName})}}
             value={this.props.myProfile.lastName}
             maxLength={80}
@@ -377,6 +379,7 @@ class SettingsPage extends Component {
 
           <View style={styles.line}/>
           <TextInput style={[GlobalStyles.text, styles.textListItem, styles.textInput, {height: 100, paddingTop: 5, paddingBottom: 5}]}
+            underlineColorAndroid="transparent"
             onChangeText={(description) => {this._changeWasMade({"description":description})}}
             value={this.props.myProfile.description}
             multiline={true}
@@ -390,6 +393,7 @@ class SettingsPage extends Component {
 
           <View style={styles.line}/>
           <TextInput style={[GlobalStyles.text, styles.textListItem, styles.textInput]}
+            underlineColorAndroid="transparent"
             onChangeText={(major) => {this._changeWasMade({"major":major})}}
             value={this.props.myProfile.major}
             maxLength={100}
@@ -472,6 +476,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     marginTop: 20,
+    marginBottom: 20,
     padding: 16,
   },
   rectButton: {
