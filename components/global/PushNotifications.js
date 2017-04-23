@@ -10,7 +10,11 @@ module.exports = {
   // Function to be called when push notification is received
   onNotification: function (notification, params) {
 
-    params.banner.showWithMessage(notification.message.body, params.banner.onPress);
+    if (params.chatPage) {
+      params.chatPage.refresh();
+    } else {
+      params.banner.showWithMessage(notification.message.body, params.onPress);
+    }
 
     if (notification.foreground) {
       switch (notification.data.code) {
@@ -23,27 +27,35 @@ module.exports = {
     }
   },
   onRegister: async function (token, params) {
-    params.profile.deviceId = token.token;
+    let deviceId = {deviceId: token.token};
     let url = "https://jumbosmash2017.herokuapp.com/profile/update/".concat(params.profile.id).concat("/").concat(params.authToken);
-    console.log("URL " + url);
     fetch(url, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify(params.profile)
+      body: JSON.stringify(deviceId)
     }).then((response) => {
       console.log("Successfully added device");
     }).catch((error) => {
       console.log(error);
     });
   },
-  increaseBadgeNumber: function(pushNotificationsHandler) {
-    pushNotificationsHandler.getApplicationIconBadgeNumber(function(numBadges) {
-      pushNotificationsHandler.setApplicationIconBadgeNumber(numBadges + 1);
+  clearBadgeNumber: async function(profile, pushNotificationsHandler, authToken) {
+    let notifCount = {notificationsCount: 0};
+    let url = "https://jumbosmash2017.herokuapp.com/profile/update/".concat(profile.id).concat("/").concat(authToken);
+    fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(notifCount)
+    }).then((response) => {
+      console.log(response);
+    }).catch((error) => {
+      console.log(error);
     });
-  },
-  clearBadgeNumber: async function(pushNotificationsHandler) {
+
     pushNotificationsHandler.setApplicationIconBadgeNumber(0);
   },
 }

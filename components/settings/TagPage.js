@@ -4,8 +4,10 @@
 page for selecting tags
 
 prop:
+myProfile
+token
+showNavBar: bool for whether nav bar is required
 setTags: function that gives an array of tags that the user selected
-dismissTagPage: function that closes the TagPage
 existingTags: (optional), already highlights tags that have been selected before
 */
 
@@ -34,50 +36,141 @@ const NAVBAR_HEIGHT = (Platform.OS === 'ios') ? 64 : 54; // TODO: check the andr
 class TagPage extends Component {
   constructor(props) {
     super(props);
-    //TODO @richard temporary stuff until we get the real tags
+    this.hasShownNSFWWarning = false;
+    this.hasShownIdentitiesWarning = false;
     this.state = {
-      tags: {"cough": false,"defiant": false,"control": false,"spoil": false,"punch": false,"count": false,"boundless": false,"dreary": false,"grey": false,"crush": false,"hushed": false,"representative": false,"reproduce": false,"petite": false,"wrench": false,"please": false,"functional": false,"queen": false,"feigned": false,"defective": false,"rain": false,"wry": false,"precede": false,"drain": false,"treat": false,"sniff": false,"unequal": false,"wail": false,"hand": false,"tease": false,"dinner": false,"search": false,"end": false,"tremendous": false,"late": false,"gray": false,"trucks": false,"ahead": false,"account": false,"snatch": false,"fall": false,"yoke": false,"tasteless": false,"woman": false,"robin": false,"laborer": false,"hydrant": false,"theory": false,"subsequent": false,"cover": false,"animal": false,"orange": false,"strange": false,"fill": false,"knowing": false,"bright": false,"paint": false,"squealing": false,"tomatoes": false,"stick": false,"zippy": false,"inform": false,"quarrelsome": false,"reflect": false,"cloistered": false,"gather": false,"satisfying": false,"sticks": false,"combative": false,"raspy": false,"throat": false,"coast": false,"discussion": false,"place": false,"mature": false,"group": false,"transport": false,"abashed": false,"warlike": false,"fear": false,"welcome": false,"narrow": false,"bubble": false,"shivering": false,"faint": false,"relation": false,"wax": false,"null": false,"harsh": false,"work": false,"twist": false,"play": false,"tow": false,"advice": false,"substantial": false,"sign": false,"kitty": false,"second-hand": false,"fabulous": false,"ill": false},
+      tags: null,
     };
   }
 
   componentDidMount () {
     Analytics.logEvent('open_tag_page', {});
+    this._fetchTags();
+  }
+
+  // sets the true / false values of all the tags in allTags based on the
+  // user's tags
+  _setTagStates(allTags) {
+    let myTags = {};
+    if (this.props.myProfile && this.props.myProfile.tags) {
+      for (var i in this.props.myProfile.tags) {
+        myTags[this.props.myProfile.tags[i]] = true;
+      }
+    }
+    let newTags = {};
+    for (var category in allTags) {
+      newTags[category] = {};
+      for (var tagi in allTags[category]) {
+        let tagName = allTags[category][tagi];
+        newTags[category][tagName] = myTags[tagName] === true;
+      }
+    }
+    return newTags
+  }
+
+  _fetchTags() {
+    if (this.props.token && this.props.token.val) {
+      let url = "https://jumbosmash2017.herokuapp.com/tags/"+this.props.token.val;
+      return fetch(url)
+      .then((response) => {
+        if (GlobalFunctions.isGoodResponse(response)) {
+          return response.json();
+        } else {
+          throw ("status" in response) ? response["status"] : "Unknown Error";
+        }
+      }).then((responseJson) => {
+        responseJson = this._setTagStates(responseJson);
+        if (Object.keys(responseJson).length > 0) {
+          this.setState({
+            tags: responseJson,
+          })
+        } else {
+          throw "something went wrong when fetching tags"
+        }
+      })
+      .catch((error) => {
+        throw error
+        Alert.alert(
+          "Something Went Wrong :(",
+          "We couldn't fetch the tags from the server. It could be a server issue or a connectivity issue. Cancel the tag stuff for now and add them later",
+          [{text: "OK", onPress: ()=>{}}]
+        );
+      });
+    } else {
+      setTimeout(this._fetchTags.bind(this), 500);
+    }
   }
 
   _showMoreInformation () {
     Alert.alert(
       "Who can see my tags?",
-      "Tags will only be shown when they are shared between two people. For example, if you like apples, only other apple-lovers will see that you love apples.\n\nWe can't stop people from lying about their interests to see other people's tags, so please treat this as public information"
+      "Tags will be viewable by people who have also selected the same tag. For example, if you like apples, all other apple-lovers will see that tag.\n\nWe can't stop people from lying about their interests to see other people's tags, so please treat this as public information"
     )
   }
 
-  _tagSelected(key) {
-    if (key in this.state.tags) {
-      this.state.tags[key] = !this.state.tags[key];
+  _tagSelected(category, key) {
+    let selectedState = false;
+    if (category in this.state.tags && key in this.state.tags[category]) {
+      this.state.tags[category][key] = !this.state.tags[category][key];
+      selectedState = this.state.tags[category][key];
       this.setState({tags: this.state.tags});
+    }
+    if (category === "nsfw" && !this.hasShownNSFWWarning && selectedState === true) {
+      this.hasShownNSFWWarning = true;
+      Alert.alert(
+        "Nice 😘👌",
+        "Other people who also selected '"+key+"' will see that you selected it. Make sure you're ok with that before saving this tag!\n\n(you can tap on it again to unselect it)"
+      )
+    }
+    if (category === "identity" || category === "identities" && !this.hasShownIdentitiesWarning && selectedState === true) {
+      this.hasShownIdentitiesWarning = true;
+      Alert.alert(
+        "AYYYY ✌️😊✌️",
+        "Other people who also selected '"+key+"' will see that you selected it. Make sure you're ok with that before saving this tag!\n\n(you can tap on it again to unselect it)"
+      )
     }
   }
 
-  _renderSingleTag(key, isSelected) {
+  _renderSingleTag(category, key, isSelected, isLast) {
+    let selectedStyle = {};
+    let emojiRegex = new RegExp(/([\uE000-\uF8FF]|\uD83C[\uDF00-\uDFFF]|\uD83D[\uDC00-\uDDFF])/g);
+    if (isSelected) {
+      selectedStyle = (emojiRegex.test(key) && !key.includes(" ")) ? styles.emojiSelected : styles.tagSelected;
+    } else {
+      selectedStyle = styles.tagUnselected;
+    }
     return (
-      <Text key={key}>
+      <Text key={category+key}>
         <Text
-          onPress={() => {this._tagSelected(key)}}
-          style={[GlobalStyles.text, styles.tag, (isSelected) ? styles.tagSelected : styles.tagUnselected]}
+          onPress={() => {this._tagSelected(category, key)}}
+          style={[GlobalStyles.text, styles.tag, selectedStyle]}
         >
           { key }
         </Text>
-        <Text>,  </Text>
+        <Text>{isLast ? "" : ",   "}</Text>
       </Text>
     )
   }
 
+  _renderTagCategory(title, tags) {
+    let numTags = Object.keys(tags).length;
+    let tagViews = Object.keys(tags).map((key, index) => {
+      return this._renderSingleTag(title, key, tags[key], index == numTags - 1);
+    });
+    return (
+      <View key={title}>
+        <Text style={styles.categoryTitle}>{title}:</Text>
+        <Text style={styles.tags}>{tagViews}</Text>
+      </View>
+    );
+  }
+
   _renderTags() {
     if (this.state.tags) {
-      let tagViews = Object.keys(this.state.tags).map(function(key, index) {
-        return this._renderSingleTag(key, this.state.tags[key]);
+      let tagCategories = Object.keys(this.state.tags).map(function(key, index) {
+        return this._renderTagCategory(key, this.state.tags[key]);
       }.bind(this));
-      return (<Text>{tagViews}</Text>);
+      return (tagCategories);
     } else {
       return (
         <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
@@ -92,16 +185,16 @@ class TagPage extends Component {
     return (
       <ScrollView style={styles.scrollView}>
         <View style={styles.titleView}>
-          <Text style={[GlobalStyles.boldText, styles.title]}>Select the tags or interests that apply to you</Text>
+          <Text style={[GlobalStyles.boldText, styles.title]}><Text style={styles.tagSelected}>Tap</Text> the tags or interests that apply to you</Text>
           <Text style={[GlobalStyles.text, styles.subtitle]}>
-            These are <Text style={styles.highlightedText}>public</Text> to anyone with the same tag. Don't stress, you can change these later
+            These are <Text style={styles.highlightedText}>public</Text> to anyone with the same tag. Don't worry, you can change these later{" "}
+            <Text
+              style={[GlobalStyles.text, styles.moreInfoText]}
+              onPress={this._showMoreInformation.bind(this)}
+            >
+              (learn more)
+            </Text>
           </Text>
-          <TouchableOpacity
-            style={styles.moreInfo}
-            onPress={this._showMoreInformation.bind(this)}
-          >
-            <Text style={[GlobalStyles.text, styles.moreInfoText]}>(learn more)</Text>
-          </TouchableOpacity>
         </View>
         <View style={styles.line}/>
         <View style={styles.bodyView}>
@@ -111,39 +204,47 @@ class TagPage extends Component {
     )
   }
 
-  _cancelOnPress () {
+  // used in create account, not used in edit account
+  cancelOnPress () {
     //TODO @jade, the prop "dismissTagPage" should close this view
-    if (this.props.dismissTagPage) {
-      this.props.dismissTagPage();
+    if (this.props.navigator && this.props.showNavBar) {
+      this.props.navigator.pop();
     }
   }
 
-  _doneOnPress () {
-    //TODO @jade, the prop function "setTags" is given all the tags the user selected
-    if (this.props.setTags) {
-      let myTags = [];
-      for (var key in this.state.tags) {
-        if (this.state.tags[key] === true) {
+  // used by both create accound and edit account
+  extractTags() {
+    let myTags = [];
+    for (var category in this.state.tags) {
+      for (var key in this.state.tags[category]) {
+        if (this.state.tags[category][key] === true) {
           myTags.push(key);
         }
       }
+    }
+    return myTags
+  }
+
+  // used in create account, not used in edit account
+  doneOnPress () {
+    //TODO @jade, the prop function "setTags" is given all the tags the user selected
+    let myTags = this.extractTags();
+    if (this.props.setTags) {
       Analytics.logEvent('tags_selected', {
         'num_tags': myTags.length,
       });
       this.props.setTags(myTags);
     }
-    if (this.props.dismissTagPage) {
-      this.props.dismissTagPage();
-    }
+    this.cancelOnPress();
   }
 
   _renderNavBarLeftButton() {
     return (
       <TouchableOpacity
         style={{flex: 1, justifyContent: 'center', alignItems: 'center', minWidth: 80}}
-        onPress={this._cancelOnPress.bind(this)}
+        onPress={this.cancelOnPress.bind(this)}
       >
-        <Text style={{color: "#715BB9",}}>Cancel</Text>
+        <Text style={{color: GlobalFunctions.style().color,}}>Cancel</Text>
       </TouchableOpacity>
     );
   }
@@ -160,9 +261,9 @@ class TagPage extends Component {
     return (
       <TouchableOpacity
         style={{flex: 1, justifyContent: 'center', alignItems: 'center', minWidth: 80}}
-        onPress={this._doneOnPress.bind(this)}
+        onPress={this.doneOnPress.bind(this)}
       >
-        <Text style={{fontWeight: '600', color: "#715BB9",}}>Done</Text>
+        <Text style={{fontWeight: '600', color: GlobalFunctions.style().color,}}>Done</Text>
       </TouchableOpacity>
     );
   }
@@ -181,15 +282,19 @@ class TagPage extends Component {
   }
 
   render() {
-    return (
-      <View style={{flex: 1}}>
-        <Navigator
-          ref={(elem)=>{this.navigator = elem}}
-          renderScene={this._renderNavigatorScene.bind(this)}
-          navigationBar={this._renderNavigationBar()}
-        />
-      </View>
-    )
+    if (!this.props.showNavBar) {
+      return (<View style={{flex: 1, backgroundColor: 'white'}}>{this._renderNavigatorScene()}</View>);
+    } else {
+      return (
+        <View style={{flex: 1}}>
+          <Navigator
+            ref={(elem)=>{this.navigator = elem}}
+            renderScene={this._renderNavigatorScene.bind(this)}
+            navigationBar={this._renderNavigationBar()}
+          />
+        </View>
+      )
+    }
   }
 }
 
@@ -217,7 +322,6 @@ const styles = StyleSheet.create({
   },
   highlightedText: {
     fontWeight: "600",
-    textDecorationLine: 'underline',
   },
   subtitle: {
   },
@@ -238,9 +342,12 @@ const styles = StyleSheet.create({
     lineHeight: 25,
   },
   tagSelected: {
-    fontWeight: "600",
-    color: "#715BB9",
+    fontWeight: "bold",
+    color: GlobalFunctions.style().color,
     textDecorationLine: 'underline',
+  },
+  emojiSelected: {
+    backgroundColor: GlobalFunctions.style().color,
   },
   tagUnselected: {
   },
@@ -251,6 +358,14 @@ const styles = StyleSheet.create({
     backgroundColor: "#EEE",
     marginBottom: 10,
   },
+  categoryTitle: {
+    fontSize: 16,
+    fontFamily: 'Avenir Next',
+    fontWeight: "bold",
+  },
+  tags: {
+    marginBottom: 7,
+  }
 });
 
   export default TagPage;

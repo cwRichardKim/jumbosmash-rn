@@ -24,7 +24,8 @@ import GlobalStyles       from "../global/GlobalStyles.js";
 import AuthErrors         from "./AuthErrors.js"
 import ProfilePhotoPicker from "../settings/ProfilePhotoPicker.js";
 import GlobalFunctions    from "../global/GlobalFunctions.js";
-import LoginPage          from "./LoginPage.js"
+import LoginPage          from "./LoginPage.js";
+import TagPage            from "../settings/TagPage.js";
 
 const PageNames = require("../global/GlobalFunctions.js").pageNames();
 
@@ -62,22 +63,6 @@ class CreateProfilePage extends Component {
       }
     }
     return true;
-  }
-
-  // returns the photos pushed to the front eg: [null, x, y] -> [x, y, null]
-  // returns false if all photos are null
-  _reArrangePhotos() {
-    let photos = this.state.photos;
-    var newPhotos = [];
-    for (var i in photos) {
-      if (photos[i] != null && photos[i].large != null && photos[i].small != null && photos[i].large.length > 0) {
-        newPhotos.push(photos[i]);
-      }
-    }
-    while (newPhotos.length < photos.length) {
-      newPhotos.push(null);
-    }
-    return newPhotos;
   }
 
     // returns true if all checks are met, returns false and calls proper
@@ -133,6 +118,7 @@ class CreateProfilePage extends Component {
   _createAccount() {
     if (this._checkPropertiesAreValid()) {
       let url = "https://jumbosmash2017.herokuapp.com/profile/add/".concat(this.token);
+      let userTags = (this.props.myProfile && this.props.myProfile.tags) ? this.props.myProfile.tags : []
       let body = {
         id: this.studentProfile._id,
         firstName: this.state.firstName,
@@ -142,7 +128,8 @@ class CreateProfilePage extends Component {
         major: this.state.major,
         description: this.state.description,
         email: this.studentProfile.email,
-        photos: this._reArrangePhotos(),
+        tags: userTags,
+        photos: GlobalFunctions.reArrangePhotos(this.state.photos),
       };
       fetch(url, {
         method: 'POST',
@@ -170,6 +157,10 @@ class CreateProfilePage extends Component {
         [{text: 'OK', onPress: () => {}},],
       );
     }
+  }
+
+  _showTagPage() {
+    this.props.navigator.push({name: TagPage})
   }
 
   render() {
@@ -234,10 +225,20 @@ class CreateProfilePage extends Component {
             returnKeyType="done"
           />
           <View style={styles.line}/>
+          <Text style={[styles.header, GlobalStyles.text, styles.textListItem]}>Tags / Interests</Text>
+          <View style={styles.line}/>
+          <TouchableOpacity
+            style={styles.tagButton}
+            onPress={this._showTagPage.bind(this)}
+          >
+            <Text style={[GlobalStyles.text, styles.textListItem, styles.tagText]}>{(this.props.myProfile && this.props.myProfile.tags && this.props.myProfile.tags.length > 0) ? this.props.myProfile.tags.join(", ") : "none (tap to add)"}</Text>
+          </TouchableOpacity>
+          <View style={styles.line}/>
           <RectButton
             style={[styles.rectButton, styles.createAccountButton]}
             onPress={this._createAccount.bind(this)}
             text="Create Account"
+            textStyle={styles.buttonText}
           />
 
           <View style={styles.bottom}>
@@ -259,6 +260,7 @@ class CreateProfilePage extends Component {
 
 const styles = StyleSheet.create({
   container: {
+    paddingTop: 20,
   },
   textListItem: {
     paddingLeft: 16,
@@ -268,16 +270,23 @@ const styles = StyleSheet.create({
   header: {
     paddingTop: 12,
     paddingBottom: 9,
+    fontWeight: '600',
   },
   textInput: {
     height: 42,
-    color: "#919191",
+    color: GlobalFunctions.style().darkGray,
   },
   line: {
     height: 1,
     left: 0,
     right: 0,
-    backgroundColor: "#F8F5F5",
+    backgroundColor: GlobalFunctions.style().lightGray,
+  },
+  tagText: {
+    alignItems: 'center',
+    color: GlobalFunctions.style().darkGray,
+    paddingTop: 10,
+    paddingBottom: 10,
   },
   bottom: {
     minHeight: 150,
@@ -289,16 +298,12 @@ const styles = StyleSheet.create({
   rectButton: {
     height: 70,
     marginTop: 20,
-    backgroundColor: '#F2585A',
     marginLeft: 16,
     marginRight: 16,
     borderRadius: 5,
   },
   createAccountButton: {
-    backgroundColor: 'cornflowerblue',
-  },
-  updateProfileButton: {
-    backgroundColor: "cornflowerblue",
+    backgroundColor: GlobalFunctions.style().color,
   },
   aboutText: {
     textAlign: 'center',
@@ -311,6 +316,10 @@ const styles = StyleSheet.create({
     right: 0,
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  buttonText: {
+    color: "white",
+    fontWeight:"600",
   },
 });
 

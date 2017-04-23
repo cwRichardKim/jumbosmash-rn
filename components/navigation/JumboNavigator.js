@@ -28,6 +28,7 @@ import ProfileCardView        from '../cards/ProfileCardView.js';
 import MatchView              from './MatchView.js';
 import NotificationBannerView from "./NotificationBannerView.js";
 import GlobalStyles           from "../global/GlobalStyles.js";
+import TagPage                from "../settings/TagPage.js";
 
 let Mailer = require('NativeModules').RNMail;
 
@@ -42,12 +43,14 @@ const global = require('../global/GlobalFunctions.js');
 const PushNotifications = require('../global/PushNotifications.js');
 const PageNames = require("../global/GlobalFunctions").pageNames();
 
-const NAVBAR_HEIGHT = (Platform.OS === 'ios') ? 64 : 54; // TODO: check the android tabbar height
+const IS_ANDROID = Platform.OS === 'android'
+const NAVBAR_HEIGHT = (IS_ANDROID) ? 54 : 64; // TODO: check the android tabbar height
 const PAGE_HEIGHT = Dimensions.get('window').height - NAVBAR_HEIGHT;
 const PAGE_WIDTH = Dimensions.get('window').width;
 const NAVBAR_SELECTOR_WIDTH = PAGE_WIDTH * 0.2;
 const NAVBAR_SELECTOR_HEIGHT = 2;
-const headerTitleLeftMargin = (Platform.OS === 'ios') ? 0 : (Navigator.NavigationBar.Styles.Stages.Left.Title.marginLeft || 0);
+const HEADER_TITLE_LEFT_MARGIN = (Platform.OS === 'ios') ? 0 : (Navigator.NavigationBar.Styles.Stages.Left.Title.marginLeft || 0);
+const SAVE_BUTTON_STATE = global.saveButtonStates();
 
 class JumboNavigator extends Component {
   constructor(props) {
@@ -69,6 +72,7 @@ class JumboNavigator extends Component {
       showMatchView: false,
       matchedProfile: null, // profile of the person you matched with for MatchView
       selectorBarPan: new Animated.ValueXY({x:0, y:0}),
+      isSharedTags: false,
     };
   }
 
@@ -100,11 +104,11 @@ class JumboNavigator extends Component {
 
         // (required) Called when a remote or local notification is opened or received
         onNotification: function(notification) {
-            PushNotifications.increaseBadgeNumber(this.pushNotificationsHandler);
             PushNotifications.onNotification(notification,
               {banner: this.notificationBanner,
                onPress: () => {this.changePage(PageNames.chatPage)},
-               firebase: this.props.firebase});
+               firebase: this.props.firebase,
+               chatPage: this.chatPage,});
         }.bind(this),
 
         // ANDROID ONLY: GCM Sender ID (optional - not required for local notifications, but is needed to receive remote push notifications)
@@ -122,7 +126,6 @@ class JumboNavigator extends Component {
         popInitialNotification: true,
 
         requestPermissions: false,
-        //TODO: @jared makes sure this isn't popping every time
     });
   }
 
@@ -187,6 +190,7 @@ class JumboNavigator extends Component {
     if (route.name == PageNames.settingsPage) {
       return (
         <SettingsPage
+          navigator={navigator}
           myProfile={this.props.myProfile}
           ref={(elem) => {this.settingsPage = elem}}
           pageHeight={PAGE_HEIGHT}
@@ -197,8 +201,18 @@ class JumboNavigator extends Component {
           routeNavigator={this.props.routeNavigator}
           showProfileCardForProfile={this._showProfileCardForProfile.bind(this)}
           updateMyProfile={this.props.updateMyProfile}
+          hasLogout={true}
+          hasStaticSaveButton={false}
         />
       );
+    } else if (route.name == PageNames.tagPage) {
+      return (
+        <TagPage
+          ref={(elem)=>{this.tagPage=elem}}
+          myProfile={this.props.myProfile}
+          token={this.props.token}
+        />
+      )
     } else if (route.name == PageNames.cardsPage) {
       return (
         <SwipingPage
@@ -215,10 +229,11 @@ class JumboNavigator extends Component {
           pushNotificationsHandler={this.pushNotificationsHandler}
           removeSeenCards={this.props.removeSeenCards}
           notifyUserOfMatchWith={this._notifyUserOfMatchWith.bind(this)}
-          openProfileCard={()=>{this._showProfileCardForProfile(null)}}
+          openProfileCard={()=>{this._showProfileCardForProfile(null, true)}}
           shouldUseDummyData={this.props.shouldUseDummyData}
           noMoreCards={this.props.noMoreCards}
           removeDuplicateProfiles={this.props.removeDuplicateProfiles}
+          addRecentLikes={this.props.addRecentLikes}
         />
       );
     } else if (route.name == PageNames.chatPage) {
@@ -254,7 +269,12 @@ class JumboNavigator extends Component {
   _renderNavBarLeftButton(route, navigator, index, navState) {
     if (route.name == PageNames.conversation) {
       return (
-        <TouchableOpacity onPress={() => {navigator.pop();}}>
+        <TouchableOpacity style={styles.buttonArea} onPress={() => {
+          if (this.chatPage) {
+            this.chatPage.refresh();
+          }
+          navigator.pop();
+        }}>
           <View style={styles.convoNavBarContainer}>
             <Image
               source={require("./images/back-icon.png")}
@@ -263,10 +283,19 @@ class JumboNavigator extends Component {
           </View>
         </TouchableOpacity>
       );
+    } else if (route.name === PageNames.tagPage) {
+      return (
+        <TouchableOpacity
+          style={{flex: 1, justifyContent: 'center', alignItems: 'center', minWidth: 80}}
+          onPress={this._tagCancelOnPress.bind(this)}
+        >
+          <Text style={{color: global.style().color,}}>Cancel</Text>
+        </TouchableOpacity>
+      );
     } else {
       return (
         <TouchableOpacity
-          style={styles.buttonArea}
+          style={[styles.buttonArea]}
           onPress={() => {
             this.changePage(PageNames.settingsPage);
           }}
@@ -287,13 +316,22 @@ class JumboNavigator extends Component {
       this.conversationParticipantBasic = len > 0 ? other[0] : null;
       this.conversationId = route.chatroomId;
       return (
-        <TouchableOpacity onPress={() => {this.ActionSheet.show()}}>
+        <TouchableOpacity style={styles.buttonArea} onPress={() => {this.ActionSheet.show()}}>
           <View style={styles.convoNavBarContainer}>
             <Image
               source={require("./images/options-icon.png")}
               style={styles.convoNavBarIcon}
             />
           </View>
+        </TouchableOpacity>
+      );
+    } else if (route.name === PageNames.tagPage) {
+      return (
+        <TouchableOpacity
+          style={{flex: 1, justifyContent: 'center', alignItems: 'center', minWidth: 80}}
+          onPress={this._tagDoneOnPress.bind(this)}
+        >
+          <Text style={{fontWeight: '600', color: global.style().color,}}>Done</Text>
         </TouchableOpacity>
       );
     } else {
@@ -313,11 +351,24 @@ class JumboNavigator extends Component {
     }
   }
 
+  _renderSelectorBar() {
+    if (IS_ANDROID) {
+      return null;
+    } else {
+      return (
+        <Animated.Image
+          source={require("./images/selector-bar.png")}
+          style={[styles.navBarSelector, {transform: this.state.selectorBarPan.getTranslateTransform()}]}
+        />
+      );
+    }
+  }
+
   _renderNavBarCenter(route, navigator, index, navState) {
     if (route.name == PageNames.conversation) {
       let participants = global.otherParticipants(route.participants, this.props.myProfile.id);
       return (
-        <View style={(Platform.OS === 'ios') ? null : styles.androidCenterButton}>
+        <View style={IS_ANDROID ? [styles.androidCenterButton, {paddingTop: 7}] : null}>
           <TouchableOpacity
             onPress={() => {this._showConversationProfile()}}>
             <View style={styles.navigationBarTitleContainer}>
@@ -329,9 +380,11 @@ class JumboNavigator extends Component {
           </TouchableOpacity>
         </View>
       );
+    } else if (route.name === PageNames.tagPage) {
+      return (null);
     } else {
       return (
-        <View style={[styles.buttonArea, (Platform.OS === 'ios') ? null : styles.androidCenterButton]}>
+        <View style={[styles.buttonArea, IS_ANDROID ? styles.androidCenterButton : null]}>
           <TouchableOpacity onPress={() => {
             this.changePage(PageNames.cardsPage);
           }}>
@@ -340,10 +393,7 @@ class JumboNavigator extends Component {
               style={styles.navBarIcon}
             />
           </TouchableOpacity>
-          <Animated.Image
-            source={require("./images/selector-bar.png")}
-            style={[styles.navBarSelector, {transform: this.state.selectorBarPan.getTranslateTransform()}]}
-          />
+          {this._renderSelectorBar()}
         </View>
       );
     }
@@ -362,6 +412,24 @@ class JumboNavigator extends Component {
     );
   }
 
+  // Tag stuff
+
+  _tagCancelOnPress() {
+    this.navigator.pop();
+  }
+
+  _tagDoneOnPress() {
+    if (this.props.updateMyProfile) {
+      let newTags = this.tagPage.extractTags();
+      this.props.updateMyProfile({tags: newTags})
+    }
+    this.navigator.pop();
+    this.setState({hasUnsavedSettings: true});
+    this.settingsPage.setState({
+      saveButtonState: SAVE_BUTTON_STATE.show,
+    })
+  }
+
   // Action Sheet
 
   // return UI element for action sheet
@@ -371,7 +439,7 @@ class JumboNavigator extends Component {
         ref={(ref) => this.ActionSheet = ref}
         options={actionSheetButtons}
         cancelButtonIndex={CANCEL_INDEX}
-        tintColor={'#E53B6E'}
+        tintColor={global.style().color}
         onPress={this._handleActionSheetPress.bind(this)}
       />
     );
@@ -415,16 +483,17 @@ class JumboNavigator extends Component {
   }
 
   async _showConversationProfile() {
-      if (this.conversationParticipant == null) {
-        this.conversationParticipant = await this.fetchProfile(this.conversationParticipantBasic.profileId);
-      } else if (this.conversationParticipantBasic.profileId != this.conversationParticipant.id) {
-        this.conversationParticipant = await this.fetchProfile(this.conversationParticipantBasic.profileId);
-      }
-      this._showProfileCardForProfile(this.conversationParticipant);
+    if (this.conversationParticipant == null) {
+      this.conversationParticipant = await this.fetchProfile(this.conversationParticipantBasic.profileId);
+    } else if (this.conversationParticipantBasic.profileId != this.conversationParticipant.id) {
+      this.conversationParticipant = await this.fetchProfile(this.conversationParticipantBasic.profileId);
+    }
+    this._showProfileCardForProfile(this.conversationParticipant, true);
   }
 
   fetchProfile(profileId) {
-    let url = "https://jumbosmash2017.herokuapp.com/profile/id/".concat(profileId).concat("/").concat(this.props.token.val);
+    let myId = (this.props.myProfile && this.props.myProfile.id) ? this.props.myProfile.id : "";
+    let url = "https://jumbosmash2017.herokuapp.com/profile/common/".concat(myId).concat("/").concat(profileId).concat("/").concat(this.props.token.val);
     return fetch(url)
       .then((response) => {
         if ("status" in response && response["status"] >= 200 && response["status"] < 300) {
@@ -442,7 +511,7 @@ class JumboNavigator extends Component {
   }
 
   unmatchProfile(profileId) {
-    let url = "https://jumbosmash2017.herokuapp.com/chat/unmatch/".concat(this.conversationId).concat("/").concat(this.props.myProfile.id).concat("/").concat(this.conversationParticipantBasic.profileId).concat("/").concat(this.props.token.val);
+    let url = "https://jumbosmash2017.herokuapp.com/chat/unmatch/".concat(this.conversationId).concat("/").concat(this.conversationParticipantBasic.profileId).concat("/").concat(this.props.myProfile.id).concat("/").concat(this.props.token.val);
     fetch(url, {
       method: 'POST',
       headers: {
@@ -463,35 +532,41 @@ class JumboNavigator extends Component {
 
 
   // given a profile, shows the profile over the navigator
-
   _shouldRenderProfileView() {
     if (this.state.profileToShow !== null) {
+      let marginTopAndroid = IS_ANDROID ? NAVBAR_HEIGHT : 0
       return(
         <View style={[GlobalStyles.absoluteCover, styles.coverView]}>
           <ProfileCardView {...(this.state.profileToShow)}
             pageHeight={PAGE_HEIGHT + NAVBAR_HEIGHT}
             exitFunction={this._closeProfileCard.bind(this)}
+            isSharedTags={this.state.isSharedTags}
+            style={{marginTop: marginTopAndroid}}
           />
         </View>
       );
+    } else {
+      return null;
     }
   }
 
   // called to show a profile card. if no card is set, it will show
   // the card with the current index
-  _showProfileCardForProfile(profile) {
+  _showProfileCardForProfile(profile, isSharedTags) {
     let profileToShow = profile;
     if (profile === null && this.swipingPage.state.cardIndex < this.props.profiles.length) {
       profileToShow = this.props.profiles[this.swipingPage.state.cardIndex];
     }
     this.setState({
       profileToShow: profileToShow,
+      isSharedTags: isSharedTags,
     })
   }
 
   _closeProfileCard() {
     this.setState({
       profileToShow: null,
+      isSharedTags: false,
     })
   }
 
@@ -509,6 +584,8 @@ class JumboNavigator extends Component {
           />
         </View>
       );
+    } else {
+      return null;
     }
   }
 
@@ -570,7 +647,7 @@ const styles = StyleSheet.create({
   navigationBarTitleText: {
     marginLeft: 12,
     fontSize: 16,
-    color: '#CAC4C4',
+    color: '#474747',
     fontFamily: 'Avenir Next',
   },
   coverView: {
@@ -584,7 +661,8 @@ const styles = StyleSheet.create({
   },
   androidCenterButton: {
     alignSelf: 'center',
-    marginRight: headerTitleLeftMargin,
+    justifyContent: 'center',
+    marginRight: HEADER_TITLE_LEFT_MARGIN,
   },
   navBarIcon: {
     height: 20,
@@ -596,6 +674,7 @@ const styles = StyleSheet.create({
   },
   convoNavBarIcon: {
     height: 18,
+    width: 25,
     resizeMode: 'contain',
   },
   navBarSelector: {

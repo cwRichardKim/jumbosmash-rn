@@ -219,8 +219,10 @@ class InitialRouter extends Component {
       return (
         <PreReleasePage
           changePage={this._changePageFromAppNonActivityPages.bind(this)}
+          updateMyProfile={this._updateMyProfile.bind(this)}
           myProfile={this.state.myProfile}
           firebase={firebase}
+          routeNavigator={navigator}
         />
       )
     } else if (route.name == PageNames.appHome) {
@@ -248,7 +250,9 @@ class InitialRouter extends Component {
         <AuthNavigator
           firebase={firebase}
           routeNavigator={navigator}
+          myProfile={this.state.myProfile}
           setMyProfile={this._setMyProfile.bind(this)}
+          updateMyProfile={this._updateMyProfile.bind(this)}
           loadPage={this._loadPage.bind(this)}
           isConnected={this.state.isConnected}
         />

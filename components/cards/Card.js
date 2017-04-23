@@ -20,7 +20,9 @@ import {
 import clamp          from 'clamp';
 import LoadableImage  from '../global/LoadableImage.js';
 
-const globalStyles = require("../global/GlobalStyles.js");
+const GlobalStyles = require("../global/GlobalStyles.js");
+const GlobalFunctions = require("../global/GlobalFunctions.js");
+const IS_ANDROID = Platform.OS === 'android';
 
 const SWIPE_THRESHOLD = 90;
 
@@ -155,6 +157,20 @@ class Card extends Component {
     }
   }
 
+  _renderText() {
+    if (this.props.tags && this.props.tags.length > 0) {
+      return (
+        <Text style={[GlobalStyles.text, styles.text]}>
+          {this.props.firstName} <Text style={GlobalStyles.subtext}>- {this.props.tags.length} shared tags</Text>
+        </Text>
+      )
+    } else {
+      return (
+        <Text style={[GlobalStyles.text, styles.text]}>{this.props.firstName}</Text>
+      )
+    }
+  }
+
   //TODO @richard remove later, for debugging purposes
   _renderIndexView() {
     if (__DEV__ && this.props.index && this.props.numCards) {
@@ -179,11 +195,18 @@ class Card extends Component {
     let isTeamMember = this.props.teamMember === true;
     let popCard = isTeamMember && this.props.positionInDeck == 0;
 
+    let androidElevation = 0;
+    if (this.props.positionInDeck === 0) {
+      androidElevation = 7;
+    } else if (this.props.positionInDeck === 1) {
+      androidElevation = 3
+    }
+
     let cardShadow = {
       // android shadow
-      elevation: 3,
-      // shadowColor: popCard ? '#715BB9' : '#000000',
-      shadowColor: '#715BB9',
+      elevation: androidElevation,
+      // shadowColor: popCard ? GlobalFunctions.style().color : '#000000',
+      shadowColor: GlobalFunctions.style().color,
 
       // ios shadow
       shadowOffset: {
@@ -195,25 +218,22 @@ class Card extends Component {
     }
 
     return (
-      <Animated.View style={[globalStyles.absoluteCover, styles.cardView, animatedCardstyles, {zIndex: 10 - this.props.positionInDeck}]} {...this._panResponder.panHandlers}>
+      <Animated.View style={[cardShadow, GlobalStyles.absoluteCover, styles.cardView, animatedCardstyles, {zIndex: 10 - this.props.positionInDeck}]} {...this._panResponder.panHandlers}>
         <TouchableWithoutFeedback style={styles.touchArea}
           onPress={this.props.onPress}>
-          <View style={[cardShadow, styles.backgroundView]}>
-            <View style={styles.card}>
-              <LoadableImage
-                source={{uri: (this.props.photos && this.props.photos.length >= 1) ? this.props.photos[0].large : ""}}
-                style={styles.image}
-                imageStyle={(Platform.OS === 'ios') ? null : styles.androidImageAdditional}
-                _key={this.props.id}
-                thumbnail={{uri: (this.props.photos && this.props.photos.length >=1) ? this.props.photos[0].small : ""}}
-              />
-              {this._renderIndexView()}
-              <View style={styles.textContainer}>
-                <Text style={[globalStyles.text, styles.text]}>
-                  {this.props.firstName}
-                </Text>
-                {this._shouldRenderCheck(isTeamMember)}
-              </View>
+          <View style={styles.card}>
+            <LoadableImage
+              source={{uri: (this.props.photos && this.props.photos.length >= 1) ? this.props.photos[0].large : ""}}
+              style={styles.image}
+              imageStyle={styles.imageStyle}
+              backgroundStyle={styles.imageBackgroundStyle}
+              _key={this.props.id}
+              thumbnail={{uri: (this.props.photos && this.props.photos.length >=1) ? this.props.photos[0].small : ""}}
+            />
+            {this._renderIndexView()}
+            <View style={styles.textContainer}>
+              {this._renderText()}
+              {this._shouldRenderCheck(isTeamMember)}
             </View>
           </View>
         </TouchableWithoutFeedback>
@@ -226,25 +246,25 @@ let borderRadius = 20;
 
 const styles = StyleSheet.create({
   cardView: {
+    borderRadius: borderRadius,
   },
   touchArea: {
     flex: 1,
   },
-  backgroundView: {
-    flex: 1,
-    borderRadius: borderRadius,
-    backgroundColor: "white",
-  },
   card: {
     borderRadius: borderRadius,
-    overflow: 'hidden',
+    overflow: IS_ANDROID ? null : 'hidden',
     backgroundColor: 'white',
     flex: 1,
   },
   image: {
     flex: 1,
   },
-  androidImageAdditional: {
+  imageStyle: {
+    borderTopLeftRadius: borderRadius,
+    borderTopRightRadius: borderRadius,
+  },
+  imageBackgroundStyle: {
     borderTopLeftRadius: borderRadius,
     borderTopRightRadius: borderRadius,
   },

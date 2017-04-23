@@ -1,17 +1,19 @@
 'use strict';
 
+import LoadingCards     from '../cards/LoadingCards.js';
 /*
 This is the page that handles and displays a conversations with an
 a person or persons (or bot ;) )
 */
 
 import React, {Component} from 'react';
-import {View} from 'react-native';
+import {View, Platform} from 'react-native';
 import { GiftedChat } from 'react-native-gifted-chat';
 
 let Mailer = require('NativeModules').RNMail;
 
 const Analytics = require('react-native-firebase-analytics');
+let TOP_MARGIN = Platform.OS === 'android' ? 54 : 64;
 
 class ConversationPage extends Component {
   constructor(props) {
@@ -22,13 +24,14 @@ class ConversationPage extends Component {
     const path = "messages/".concat(this.props.chatroomId);
     this._messagesRef = this.props.firebase.database().ref(path);
 
+    this._isMounted = false;
     this.onSend = this.onSend.bind(this);
     this.onReceive = this.onReceive.bind(this);
+
     this._messages = []
     this.state = {
       messages: this._messages,
       typingText: null,
-      conversation: this.props.conversation,
     };
 
   }
@@ -37,35 +40,39 @@ class ConversationPage extends Component {
     this._isMounted = true;
   }
 
-  componentDidMount() {
-    this._messagesRef.on('child_added', (child) => {
-      var pos = 'right';
-      if (child.val().user._id != this.props.myProfile.id) {
-        pos = 'left';
+  componentWillUnmount() {
+    let len = this.props.conversation.participants.length;
+    this._isMounted = false;
+    for(var i = 0; i < len; i++) {
+      if (this.props.conversation.participants[i].profileId == this.props.myProfile.id) {
+        this.props.conversation.participants[i].read = true;
       }
-      this.onReceive({
-        _id: child.val()._id,
-        text: child.val().text,
-        user: child.val().user,
-        position: pos,
-        date: new Date(child.val().date),
-        createdAt: new Date(child.val().createdAt),
-      });
-      this.state.conversation.lastSent = {'profileId': child.val().user._id, 'message': child.val().text, 'date': child.val().createdAt}
-      let len = this.state.conversation.participants.length;
-      for(var i = 0; i < len; i++) {
-        if (this.state.conversation.participants[i].profileId == this.props.myProfile.id) {
-          this.state.conversation.participants[i].read = true;
-        }
-      }
-    });
-    Analytics.logEvent('open_conversation_page', {});
+    }
+    this._asyncUpdateConversation(this.props.chatroomId, this.props.conversation);
   }
 
-  componentWillUnmount() {
-    //TODO: there is a bug here with unmount. sent message go back to table then come
-    //back and send another message
-    this._asyncUpdateConversation(this.props.chatroomId, this.state.conversation);
+  componentDidMount() {
+    this._messagesRef.on('child_added', (child) => {
+        var pos = 'right';
+        if (child.val().user._id != this.props.myProfile.id) {
+          pos = 'left';
+        }
+        this.onReceive({
+          _id: child.val()._id,
+          text: child.val().text,
+          user: child.val().user,
+          position: pos,
+          date: new Date(child.val().date),
+          createdAt: new Date(child.val().createdAt),
+        });
+        let now = new Date(child.val().createdAt);
+        let then = new Date(this.props.conversation.lastSent.date);
+        if (now.getTime() > then.getTime()) {
+          this.props.conversation.lastSent = {'profileId': child.val().user._id, 'message': child.val().text, 'date': child.val().createdAt}
+          this._asyncUpdateConversation(this.props.chatroomId, {lastSent: this.props.conversation.lastSent});
+        }
+    });
+    Analytics.logEvent('open_conversation_page', {});
   }
 
   async _asyncUpdateConversation(id, chatChanges) {
@@ -118,11 +125,13 @@ class ConversationPage extends Component {
   }
 
   onReceive(message) {
-    this.setState((previousState) => {
-      return {
-        messages: GiftedChat.append(previousState.messages, message),
-      };
-    });
+    if (this._isMounted) {
+      this.setState((previousState) => {
+        return {
+          messages: GiftedChat.append(previousState.messages, message),
+        };
+      });
+    }
   }
 
   // removes a conversation from firebase
@@ -131,17 +140,18 @@ class ConversationPage extends Component {
   }
 
   render() {
-    return (
-      <View style={{flex: 1, backgroundColor: 'white'}}>
-        <GiftedChat
-          messages={this.state.messages}
-          onSend={this.onSend}
-          onReceive={this.onReceive}
-          user={{
-            _id: this.props.myProfile.id
-          }}/>
-      </View>
-    );
+      return (
+        <View style={{marginTop: TOP_MARGIN, flex: 1, backgroundColor: 'white'}}>
+          <GiftedChat
+            messages={this.state.messages}
+            onSend={this.onSend}
+            onReceive={this.onReceive}
+            renderLoading={() => {return (<LoadingCards/>)}}
+            user={{
+              _id: this.props.myProfile.id
+            }}/>
+        </View>
+      );
   }
 }
 export default ConversationPage;

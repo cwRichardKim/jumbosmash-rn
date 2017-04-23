@@ -20,12 +20,16 @@ import {
   TouchableHighlight,
   TouchableOpacity,
   Animated,
-  PanResponder
+  PanResponder,
+  Dimensions,
+  Platform,
 } from 'react-native';
 
-import GlobalStyles   from "../global/GlobalStyles.js";
-import SimpleBadge    from "../global/SimpleBadge.js";
+import GlobalStyles     from "../global/GlobalStyles.js";
+import SimpleBadge      from "../global/SimpleBadge.js";
+import GlobalFunctions  from "../global/GlobalFunctions.js";
 
+const IS_ANDROID = Platform.OS === 'android';
 const VERTICAL_THRESHOLD = 10; // distance pull/push required to register action
 const BANNER_SHOW_HEIGHT = 90; // perceived height of banner
 const BANNER_TOTAL_HEIGHT = 200; // perceived + hidden height of banner
@@ -37,6 +41,7 @@ const PULL_INDICATOR_WIDTH = 40;
 const PULL_INDICATOR_HEIGHT = 6;
 const PULL_INDICATOR_BOTTOM = 8;
 const CLOSE_BUTTON_WIDTH = 20;
+const PAGE_WIDTH = Dimensions.get('window').width;
 
 const INITIAL_POSITION = {x:0, y: -BANNER_TOTAL_HEIGHT - 10};
 const SHOW_POSITION = {x:0, y: BANNER_SHOW_HEIGHT - BANNER_TOTAL_HEIGHT};
@@ -156,6 +161,11 @@ class NotificationBannerView extends Component {
   render() {
     let pan = this.state.pan;
     let origY = BANNER_SHOW_HEIGHT - BANNER_TOTAL_HEIGHT;
+
+    if (IS_ANDROID) {
+      origY -= 10;
+    }
+
     let translateY = pan.y.interpolate({
                                         inputRange:[origY - BANNER_SHOW_HEIGHT, origY, origY + 300],
                                         outputRange:[origY - BANNER_SHOW_HEIGHT, origY, origY + MAX_BANNER_PULL],
@@ -169,7 +179,11 @@ class NotificationBannerView extends Component {
         <TouchableHighlight style={{flex:1}} onPress={this._notificationBannerTapped.bind(this)}>
           <View style={[styles.view]}>
             <Image
-              source={require("../global/images/logo-med.jpg")}
+              source={require("./images/banner.png")}
+              style={styles.bannerBackground}
+            />
+            <Image
+              source={require("../global/images/logo-med.png")}
               style={styles.image}
             />
             <Text
@@ -212,7 +226,7 @@ const styles = StyleSheet.create({
     alignItems: "flex-start",
     paddingTop: 7,
     justifyContent: "center",
-    backgroundColor: "#715BB9",
+    backgroundColor: GlobalFunctions.style().color,
   },
   text: {
     paddingTop: BANNER_TOTAL_HEIGHT - BANNER_SHOW_HEIGHT,
@@ -221,6 +235,13 @@ const styles = StyleSheet.create({
     fontSize: 16,
     backgroundColor: 'transparent',
     color: 'white',
+  },
+  bannerBackground: {
+    height: BANNER_TOTAL_HEIGHT,
+    position: 'absolute',
+    bottom: 0,
+    width: PAGE_WIDTH,
+    resizeMode: 'cover',
   },
   image: {
     position: "absolute",

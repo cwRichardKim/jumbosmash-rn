@@ -2,6 +2,8 @@
 
 /*
 This file is responsible for providing the zoomed in card view after tapping on a card
+
+isSharedTags: bool for "shared tags" vs "all tags" text
 */
 
 import React, {Component} from 'react';
@@ -13,7 +15,6 @@ import {
   TouchableWithoutFeedback,
   ScrollView,
   TouchableOpacity,
-  Animated,
   Dimensions,
 } from 'react-native';
 
@@ -109,18 +110,31 @@ class ProfileCardView extends Component {
     }
   }
 
+  _shouldRenderSharedTags() {
+    if (this.props.tags && this.props.tags.length > 0) {
+      let tagsString = this.props.tags.join(", ");
+      return (
+        <Text style={[GlobalStyles.subtext, styles.subTitle,  {paddingBottom: 15}]}>{this.props.isSharedTags ? "Shared Tags: " : "All Tags: "} {tagsString}</Text>
+      )
+    } else {
+      return (
+        <View style={{paddingBottom: 5}}/>
+      );
+    }
+  }
+
   render() {
     let isTeamMember = this.props.teamMember === true;
     let pageHeight = this.props.pageHeight;
     let _scrollView: ScrollView;
     return (
-      <View style={{flex: 1}}>
+      <View style={[styles.container, this.props.style]}>
 
-        <Animated.View style={{flex: 1}}>
+        <View style={{flex: 1}}>
           <View style={[GlobalStyles.absoluteCover, styles.background]}/>
-        </Animated.View>
+        </View>
 
-        <Animated.View style={[GlobalStyles.absoluteCover]}>
+        <View style={[GlobalStyles.absoluteCover]}>
           <ScrollView style={styles.touchArea}
             ref={(scrollView) => { _scrollView = scrollView; }}
           >
@@ -133,6 +147,7 @@ class ProfileCardView extends Component {
                     {this._shouldRenderCheck(isTeamMember)}
                   </View>
                   <Text style={[GlobalStyles.subtext, styles.subTitle]}>{this.props.major}</Text>
+                  {this._shouldRenderSharedTags()}
                   <Text style={[GlobalStyles.text, styles.text]}>{this.props.description}</Text>
                 </View>
               </TouchableWithoutFeedback>
@@ -144,13 +159,16 @@ class ProfileCardView extends Component {
               </TouchableOpacity>
             </View>
           </ScrollView>
-        </Animated.View>
+        </View>
       </View>
     );
   }
 }
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
   closeButton: {
     position: "absolute",
     left: 20,
@@ -228,7 +246,8 @@ const styles = StyleSheet.create({
   },
   subTitle: {
     paddingLeft: 20,
-    paddingBottom: 15,
+    paddingRight: 20,
+    paddingBottom: 5,
   },
   text: {
     paddingLeft: 20,
