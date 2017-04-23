@@ -5,10 +5,12 @@ var React = require('react-native');
 var {
   StyleSheet,
   Dimensions,
+  Platform,
 } = React;
 
-var width = Dimensions.get('window').width;
-var height = Dimensions.get('window').height;
+const width = Dimensions.get('window').width;
+const height = Dimensions.get('window').height;
+const IS_ANDROID = Platform.OS === 'android';
 
 module.exports = StyleSheet.create({
   container: {
@@ -24,7 +26,7 @@ module.exports = StyleSheet.create({
     flexDirection: 'column'
   },
   logo: {
-    marginTop: ((height / 3)  - 100) * 0.5, 
+    marginTop: ((height / 3)  - 100) * 0.5,
     height: 100,
     width: 94,
     alignSelf: 'flex-end'
@@ -36,7 +38,7 @@ module.exports = StyleSheet.create({
   },
   emailInputBorder: {
     height: 40,
-    borderColor: 'white',
+    borderColor: IS_ANDROID ? 'transparent' : 'white',
     borderBottomWidth: 1.5,
     flexDirection: 'row',
     width: 270,
@@ -53,7 +55,7 @@ module.exports = StyleSheet.create({
   },
   passwordInputBorder: {
     height: 40,
-    borderColor: 'white',
+    borderColor: IS_ANDROID ? 'transparent' : 'white',
     borderBottomWidth: 1.5,
     flexDirection: 'row',
     width: 270,

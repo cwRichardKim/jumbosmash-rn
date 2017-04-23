@@ -15,6 +15,7 @@ import {
   Dimensions,
   Alert,
   AsyncStorage,
+  Platform,
 } from 'react-native';
 
 import SwipeButtonsView from './SwipeButtonsView.js'
@@ -30,6 +31,7 @@ const CARD_WIDTH = Dimensions.get('window').width - 40;
 const DECK_SIZE = 3; // number of cards rendered at a time
 const StorageKeys = global.storageKeys();
 const MAX_SWIPES_REMEMBERED = 40;
+const IS_ANDROID = Platform.OS === 'android';
 
 class SwipingPage extends Component {
   constructor(props) {
@@ -304,12 +306,11 @@ class SwipingPage extends Component {
 
   render() {
     return (
-      <View style={{marginTop: this.props.navBarHeight, height:this.props.pageHeight}}>
+      <View style={{marginTop: this.props.navBarHeight, flex: 1}}>
         <View style={[styles.container]}>
-          <View style={styles.topPadding}/>
-          <View style={styles.cardContainer}>
-            {this._shouldRenderCards()}
-          </View>
+        <View style={styles.cardContainer}>
+          {this._shouldRenderCards()}
+        </View>
 
           <View style={styles.swipeButtonsView}>
             <SwipeButtonsView
@@ -335,17 +336,15 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: 'white',
   },
-  topPadding: {
-    height: 20,
-  },
   cardContainer: { // the area the card will occupy
     flex: 1,
+    marginTop: 20,
     width: CARD_WIDTH,
   },
   swipeButtonsView: {
     height: 100,
     alignSelf: "stretch",
-    zIndex: -1,
+    zIndex: IS_ANDROID ? 1 : -1, //idk why this is necessary, but buttons don't show up otherwise
   },
 });
 
