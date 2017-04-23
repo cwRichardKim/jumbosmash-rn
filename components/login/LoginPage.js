@@ -133,12 +133,13 @@ class LoginPage extends Component {
     let password = this.state.password;
 
     let studentProfile = await Verification.getStudent(email);
-    this.setState({isLoading: false});
 
     if (studentProfile){
       this.studentProfile = studentProfile;
       this._createAccount(email, password);
+      // isloading gets set to false in createAccount
     } else {
+      this.setState({isLoading: false});
       Verification.doesNotExist();
     }
   }
@@ -149,9 +150,11 @@ class LoginPage extends Component {
       // Success case
       .then((user) => {
         Verification.sendEmail(user);
+        this.setState({isLoading: false});
       })
       // Failure case: Signup Error
       .catch((error) => {
+        this.setState({isLoading: false});
         AuthErrors.handleSignupError(error);
       })
   }
@@ -208,8 +211,8 @@ class LoginPage extends Component {
       );
     } else {
       return (
-        <ScrollView ref="scrollView" style={AuthStyle.container}>
         <Image source={require("./img/bg.png")} style={AuthStyle.imageContainer}>
+        <ScrollView ref="scrollView" style={AuthStyle.container}>
           <View style={AuthStyle.logoContainer}>
             <Image source={require('./img/logo.png')} style={AuthStyle.logo}/>
           </View>
@@ -272,8 +275,8 @@ class LoginPage extends Component {
             </View>
           <Image/>
           </View>
-        </Image>
         </ScrollView>
+        </Image>
       );
     }
   }
