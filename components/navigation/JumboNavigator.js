@@ -508,8 +508,9 @@ class JumboNavigator extends Component {
       body: "",
     }).then((response) => {
       if (this.chatPage) {
-        this.chatPage.refresh(); //BUG: @jared if last conversation unmatching then won't reload table automatically
+        this.chatPage.refresh();
       }
+      console.log("successfully unmatched!");
     }).catch((error) => {
       let errorString = "Sorry, we could not unmatch you and " + this.conversationParticipantBasic.firstName + " please try again later";
       Alert.alert('Error', errorString);
