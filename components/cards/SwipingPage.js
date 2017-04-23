@@ -267,15 +267,15 @@ class SwipingPage extends Component {
     if (index < this.props.profiles.length) {
       return (
         <Card {...this.props.profiles[index]}
-        ref={(elem) => {this.cards[cardIndex] = elem}}
-        onPress={this.props.openProfileCard}
-        handleRightSwipeForIndex={this._handleRightSwipeForIndex.bind(this)}
-        handleLeftSwipeForIndex={this._handleLeftSwipeForIndex.bind(this)}
-        swipeDidComplete={this._swipeDidComplete.bind(this)}
-        cardIndex={index}
-        positionInDeck={positionInDeck}
-        cardWidth={CARD_WIDTH}
-        numCards={this.props.profiles.length}
+          ref={(elem) => {this.cards[cardIndex] = elem}}
+          onPress={this.props.openProfileCard}
+          handleRightSwipeForIndex={this._handleRightSwipeForIndex.bind(this)}
+          handleLeftSwipeForIndex={this._handleLeftSwipeForIndex.bind(this)}
+          swipeDidComplete={this._swipeDidComplete.bind(this)}
+          cardIndex={index}
+          positionInDeck={positionInDeck}
+          cardWidth={CARD_WIDTH}
+          numCards={this.props.profiles.length}
         />
       );
     } else {
