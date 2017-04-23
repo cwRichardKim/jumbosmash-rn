@@ -7,13 +7,13 @@ a person or persons (or bot ;) )
 */
 
 import React, {Component} from 'react';
-import {View} from 'react-native';
+import {View, Platform} from 'react-native';
 import { GiftedChat } from 'react-native-gifted-chat';
 
 let Mailer = require('NativeModules').RNMail;
 
 const Analytics = require('react-native-firebase-analytics');
-let TOP_MARGIN = 64;
+let TOP_MARGIN = Platform.OS === 'android' ? 54 : 64;
 
 class ConversationPage extends Component {
   constructor(props) {

@@ -29,9 +29,11 @@ import {
   TouchableWithoutFeedback,
   Animated,
   ActivityIndicator,
+  Platform,
 } from 'react-native';
 
 import GlobalStyles from "./GlobalStyles.js";
+const IS_ANDROID = Platform.OS === 'android';
 
 class CircleButton extends Component {
   constructor(props) {
@@ -129,11 +131,12 @@ class CircleButton extends Component {
       opacity = this.props.disabledOpacity || 0.5;
     }
     if (opacity != this.state.opacity._value) {
+      console.log(IS_ANDROID);
       Animated.timing(
         this.state.opacity,
         {
           toValue: opacity,
-          duration: 200,
+          duration: IS_ANDROID ? 0 : 200,
         }
       ).start();
     }
@@ -153,7 +156,7 @@ class CircleButton extends Component {
         shadow = GlobalStyles.buttonShadow;
       }
     } else if (this.props.hasShadow || this.props.hasLowShadow) {
-      shadow = GlobalStyles.weakShadow;
+      shadow = (IS_ANDROID && this.props.disabled) ? null : GlobalStyles.weakShadow;
     }
     return(
       <Animated.View
