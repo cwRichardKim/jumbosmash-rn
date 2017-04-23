@@ -40,6 +40,7 @@ module.exports = StyleSheet.create({
   emailExt: {
     flex: 1/3,
     alignSelf: 'center',
+    justifyContent: 'flex-end',
     color: 'white',
     letterSpacing: 2,
   },
