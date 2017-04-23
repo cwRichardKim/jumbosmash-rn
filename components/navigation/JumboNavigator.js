@@ -510,7 +510,6 @@ class JumboNavigator extends Component {
       if (this.chatPage) {
         this.chatPage.refresh();
       }
-      console.log("successfully unmatched!");
     }).catch((error) => {
       let errorString = "Sorry, we could not unmatch you and " + this.conversationParticipantBasic.firstName + " please try again later";
       Alert.alert('Error', errorString);
