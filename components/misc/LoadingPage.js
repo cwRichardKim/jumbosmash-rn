@@ -33,7 +33,7 @@ class LoadingPage extends Component {
 
   _renderNavigationBar() {
     return (
-      <Navigator.NavigationBar style={[GlobalStyles.basicShadow, {backgroundColor: 'white'}]}
+      <Navigator.NavigationBar style={[GlobalStyles.weakShadow, {backgroundColor: 'white'}]}
         routeMapper={{
           LeftButton: (route, navigator, index, navState) => { return (null); },
           RightButton: (route, navigator, index, navState) => { return (null); },

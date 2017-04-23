@@ -25,8 +25,7 @@ const global = require('../global/GlobalFunctions.js');
 const PageNames = global.pageNames();
 const StorageKeys = global.storageKeys();
 
-const FIRST_BATCH_SIZE = 50;
-const FETCH_BATCH_SIZE = 100;
+const FETCH_BATCH_SIZE = 50;
 
 class NavigationContainer extends Component {
   constructor(props) {
@@ -35,6 +34,7 @@ class NavigationContainer extends Component {
     // make a lot of things break whether you realize it or not
     this.token = {val: null};
     this.isFetchInProgress = false; //flag to make sure only one fetch call is called at a time
+    this.recentLikes = {}; // helps with edge case where the like request took longer than the fetch request
     this.state = {
       profiles: [],
       noMoreCards: false,
@@ -152,15 +152,15 @@ class NavigationContainer extends Component {
 
           // data is not of the correct type
         } else {
-          this._fetchProfiles(FIRST_BATCH_SIZE);
+          this._fetchProfiles(FETCH_BATCH_SIZE);
         }
         // storage is null / empty
       } else {
-        this._fetchProfiles(FIRST_BATCH_SIZE);
+        this._fetchProfiles(FETCH_BATCH_SIZE);
       }
       // error accessing storage
     } catch (error) {
-      this._fetchProfiles(FIRST_BATCH_SIZE);
+      this._fetchProfiles(FETCH_BATCH_SIZE);
       throw error;
     }
   }
@@ -188,6 +188,26 @@ class NavigationContainer extends Component {
     } catch (error) {
       throw "Tried to save lastIndex "+error;
     }
+  }
+
+  _addRecentLikes(profileId) {
+    if (this.recentLikes) {
+      this.recentLikes[profileId] = true;
+    }
+  }
+
+  // solves the concurrency issue of fetching while a like is being processed
+  _removeRecentlyLiked(array) {
+    if (array && array.length > 0) {
+      for (var i = 0; i < array.length; i++) {
+        if (this.recentLikes && array[i].id in this.recentLikes) {
+          array.splice(i, 1);
+          i--;
+        }
+      }
+    }
+    this.recentLikes = {};
+    return array
   }
 
   // fetches new profiles and adds them to the profiles array
@@ -227,6 +247,7 @@ class NavigationContainer extends Component {
           throw ("status" in response) ? response["status"] : "Unknown Error";
         }
       }).then((responseJson) => {
+        responseJson = this._removeRecentlyLiked(responseJson);
         if (responseJson.length > 0) {
           if (__DEV__) { //TODO @richard remove. for debugging purposes
             this.navigator.notificationBanner.showWithMessage("Retrieved " + responseJson.length + " profiles. prev index: "+lastIndex+", indexes: " + responseJson[0].index.toString() + " - " + responseJson[responseJson.length-1].index.toString())
@@ -258,55 +279,9 @@ class NavigationContainer extends Component {
     }
   }
 
-  // rearranges photos pushed to the front eg: [null, x, y] -> [x, y, null]
-  _reArrangePhotos() {
-    let photos = this.props.myProfile.photos;
-    var newPhotos = [];
-    for (var i in photos) {
-      if (photos[i] != null && photos[i].large != null && photos[i].small != null && photos[i].large.length > 0) {
-        newPhotos.push(photos[i]);
-      }
-    }
-    while (newPhotos.length < photos.length) {
-      newPhotos.push(null);
-    }
-    this.props.updateMyProfile({"photos": newPhotos});
-    return newPhotos;
-  }
-
-  async _asyncUpdateServerProfile(id, newProfile) {
-    if (this.props.shouldUseDummyData) {
-      return;
-    }
-    newProfile["photos"] = this._reArrangePhotos();
-    let url = "https://jumbosmash2017.herokuapp.com/profile/update/".concat(id).concat("/").concat(this.token.val);
-    fetch(url, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(newProfile),
-    }).then((response) => {
-      if (global.isGoodResponse(response)) {
-        Alert.alert(
-          "Success!",
-          "Successfully updated your profile",
-          [{text: 'OK', onPress: () => {}},]
-        )
-      } else {
-        Alert.alert(
-          "Error",
-          "We were unable to update your profile. Try quitting the app, or send us an email at team@jumbosmash.com and we can try to make the change manually",
-          [{text: 'OK', onPress: () => {}},]
-        )
-      }
-    }).catch((error) => {
-      throw error; //TODO @richard show error thing
-    });
-  }
-
   async _updateProfileToServer() {
-    let updateSuccess = await this._asyncUpdateServerProfile(this.props.myProfile.id, this.props.myProfile);
+    this.props.updateMyProfile({"photos": global.reArrangePhotos(this.props.myProfile.photos)});
+    let updateSuccess = await global.asyncUpdateServerProfile(this.props.myProfile.id, this.props.myProfile, this.props.shouldUseDummyData, this.token.val);
     return updateSuccess;
   }
 
@@ -328,6 +303,7 @@ class NavigationContainer extends Component {
           shouldUseDummyData={this.props.shouldUseDummyData}
           updateMyProfile={this.props.updateMyProfile}
           noMoreCards={this.state.noMoreCards}
+          addRecentLikes={this._addRecentLikes.bind(this)}
         />
       </View>
     );

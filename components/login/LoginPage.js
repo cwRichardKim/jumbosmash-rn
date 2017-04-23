@@ -8,7 +8,7 @@ It ensures:
   - user email is verified
   - account is created
 
-Directes to appropriate page if not. 
+Directes to appropriate page if not.
 */
 
 import React, {Component} from 'react';
@@ -22,6 +22,9 @@ import {
   Button,
   Image,
   ActivityIndicator,
+  ScrollView,
+  findNodeHandle,
+  Platform,
 } from 'react-native';
 
 import AuthErrors             from './AuthErrors.js';
@@ -35,9 +38,10 @@ import CreateProfilePage      from './CreateProfilePage.js'
 
 const PageNames = require("../global/GlobalFunctions.js").pageNames();
 const AuthStyle = require('./AuthStylesheet');
+const IS_ANDROID = Platform.OS === 'android';
 
 class LoginPage extends Component {
-  
+
   constructor(props) {
     super(props);
     this.studentProfile = null;
@@ -49,7 +53,7 @@ class LoginPage extends Component {
     }
   }
 
-  /* Handles current text input 
+  /* Handles current text input
      Called before Login and Signup
   */
 
@@ -102,7 +106,7 @@ class LoginPage extends Component {
 
                 this.setState({isLoading: false});
                 if (responseJson) {
-                  // Authentication Process complete! 
+                  // Authentication Process complete!
                   this.props.setMyProfile(responseJson);
                   this.props.loadPage(PageNames.appHome);
                 } else {
@@ -111,6 +115,7 @@ class LoginPage extends Component {
               } catch(error) {
                 this.setState({isLoading: false});
                 Alert.alert("There's been an error. Please try again, and if it persists, please email us at team@jumbosmash.com");
+                throw error;
               }
             })
           }
@@ -126,7 +131,7 @@ class LoginPage extends Component {
     await this._beforeButtonPress();
     let email = this.email;
     let password = this.state.password;
-    
+
     let studentProfile = await Verification.getStudent(email);
 
     if (studentProfile){
@@ -160,7 +165,7 @@ class LoginPage extends Component {
     this._goToForgotPassword();
   }
 
-  /*************************** Navigation ***************************/
+  /***************************** Navigation *****************************/
 
   _goToForgotPassword() {
     this.props.navigator.replace({
@@ -174,45 +179,80 @@ class LoginPage extends Component {
     });
   }
 
+/******************** Handles Textinput Scrolling ********************/
+
+  _inputFocused(refName) {
+    setTimeout(() => {
+    let scrollResponder = this.refs.scrollView.getScrollResponder();
+    scrollResponder.scrollResponderScrollNativeHandleToKeyboard(
+      findNodeHandle(this.refs[refName]),
+      150, //additionalOffset
+      true
+    );
+    }, 70);
+  }
+
+  _dismissFocus(refName) {
+    setTimeout(() => {
+    let scrollResponder = this.refs.scrollView.getScrollResponder();
+    scrollResponder.scrollResponderScrollTo(
+    )
+  }, 0);
+  }
   render() {
     if (this.state.isLoading) {
       return(
-        <Image source={require("./img/bg.png")} style={AuthStyle.container}>
+        <Image source={require("./img/bg.png")} style={AuthStyle.imageContainer}>
         <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-          <ActivityIndicator animating={true}/>
+          <ActivityIndicator animating={true} color="white"/>
         </View>
         </Image>
       );
     } else {
       return (
-        <View style={AuthStyle.container}>
         <Image source={require("./img/bg.png")} style={AuthStyle.imageContainer}>
+        <ScrollView ref="scrollView" style={AuthStyle.container}>
           <View style={AuthStyle.logoContainer}>
             <Image source={require('./img/logo.png')} style={AuthStyle.logo}/>
           </View>
           <View style={AuthStyle.body}>
             <Text style={AuthStyle.textTitles}> Tufts Email: </Text>
             <View style={AuthStyle.emailInputBorder}>
-              <TextInput
-                style={AuthStyle.emailInput}
-                onChangeText={(text) => this.setState({email_input: text})}
-                value={this.state.email_input}
-              />
+                <TextInput
+                  ref="emailInput"
+                  style={AuthStyle.emailInput}
+                  underlineColorAndroid="white"
+                  onChangeText={(text) => this.setState({email_input: text})}
+                  value={this.state.email_input}
+                  returnKeyType={"next"}
+                  onFocus={this._inputFocused.bind(this, "emailInput")}
+                  onBlur={this._dismissFocus.bind(this, "emailInput")}
+                  onSubmitEditing={(event) => {
+                    this.refs.passwordInput.focus();
+                  }}
+                />
               <Text style={AuthStyle.emailExt}> {this.props.email_ext} </Text>
             </View>
 
             <Text style={AuthStyle.textTitles}> Password: </Text>
             <View style={AuthStyle.passwordInputBorder}>
             <TextInput
+              ref="passwordInput"
               style={AuthStyle.passwordInput}
+              underlineColorAndroid="white"
               onChangeText={(text) => this.setState({password: text})}
               value={this.state.password}
               secureTextEntry={true}
+              returnKeyType={"done"}
+              onFocus={this._inputFocused.bind(this, "passwordInput")}
+              onBlur={this._dismissFocus.bind(this, "passwordInput")}
             />
+
             </View>
+
             <RectButton
                 style={[AuthStyle.forgotPasswordButton]}
-                textStyle={AuthStyle.forgotPasswordButtonText}  
+                textStyle={AuthStyle.forgotPasswordButtonText}
                 onPress={this._forgotPassword.bind(this)}
                 text="Forgot Password?"
             />
@@ -234,8 +274,8 @@ class LoginPage extends Component {
             </View>
           <Image/>
           </View>
+        </ScrollView>
         </Image>
-        </View>
       );
     }
   }

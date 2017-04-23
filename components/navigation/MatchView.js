@@ -22,15 +22,20 @@ import {
   TouchableOpacity,
   Animated,
   Dimensions,
+  Platform,
 } from 'react-native';
 
-import LoadableImage  from '../global/LoadableImage.js';
-import RectButton     from '../global/RectButton.js';
-import GlobalStyles   from "../global/GlobalStyles.js";
+import LoadableImage    from '../global/LoadableImage.js';
+import RectButton       from '../global/RectButton.js';
+import GlobalStyles     from "../global/GlobalStyles.js";
+import GlobalFunctions  from "../global/GlobalFunctions.js";
 
-const BORDER_RADIUS = 10;
-const Analytics = require('react-native-firebase-analytics');
 const WIDTH = Dimensions.get('window').width;
+const BORDER_RADIUS = 10;
+const PROFILE_BORDER_WIDTH = 4;
+const PROFILE_WIDTH = WIDTH * 0.35;
+const Analytics = require('react-native-firebase-analytics');
+const IS_ANDROID = Platform.OS === 'android';
 
 class MatchView extends Component {
   constructor(props) {
@@ -135,6 +140,7 @@ class MatchView extends Component {
   }
 
   render() {
+    let profileStyle = IS_ANDROID ? styles.profileAndroid : styles.profile;
     return (
       <View style={styles.container}>
         <Animated.View style={[GlobalStyles.absoluteCover, styles.background, {opacity: this.state.backgroundOpacity}]}/>
@@ -145,17 +151,23 @@ class MatchView extends Component {
             <Text style={[GlobalStyles.text, {textAlign: 'center', color: 'white'}]}>Say hello to {this.props.matchProfile.firstName}</Text>
           </Animated.View>
           <View style={styles.matchContainer}>
-            <Animated.View style={[styles.profile, styles.leftProfile, {transform: [{scale: this.state.foregroundScale}]}]}>
+            <Animated.View style={[profileStyle, styles.leftProfile, {transform: [{scale: this.state.foregroundScale}]}]}>
               <LoadableImage
                 source={{uri: this._shouldRenderLeftPhoto()}}
-                style={styles.image}
+                style={IS_ANDROID ? styles.profileAndroidContainer : styles.image}
+                imageStyle={IS_ANDROID ? styles.imageAndroid : null}
+                backgroundStyle={IS_ANDROID ? styles.imageAndroid : null}
+                circleClippingStyle = {IS_ANDROID ? styles.fixCircleClipping : null}
                 _key={this._shouldRenderLeftKey()}
               />
             </Animated.View>
-            <Animated.View style={[styles.profile, styles.rightProfile, {transform: [{scale: this.state.foregroundScale}]}]}>
+            <Animated.View style={[profileStyle, styles.rightProfile, {transform: [{scale: this.state.foregroundScale}]}]}>
               <LoadableImage
                 source={{uri: this._shouldRenderRightPhoto()}}
-                style={styles.image}
+                style={IS_ANDROID ? styles.profileAndroidContainer : styles.image}
+                imageStyle={IS_ANDROID ? styles.imageAndroid : null}
+                backgroundStyle={IS_ANDROID ? styles.imageAndroid : null}
+                circleClippingStyle = {IS_ANDROID ? styles.fixCircleClipping : null}
                 _key={this._shouldRenderRightKey()}
               />
             </Animated.View>
@@ -216,12 +228,18 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
   },
   profile: {
-    width: WIDTH * 0.35,
-    height: WIDTH * 0.35,
-    borderRadius: WIDTH * 0.35 / 2,
+    width: PROFILE_WIDTH,
+    height: PROFILE_WIDTH,
+    borderRadius: PROFILE_WIDTH / 2,
     overflow: 'hidden',
-    borderWidth: 4,
-    borderColor: '#715BB9',
+    borderWidth: PROFILE_BORDER_WIDTH,
+    borderColor: GlobalFunctions.style().color,
+  },
+  profileAndroid: {
+    width: PROFILE_WIDTH + PROFILE_BORDER_WIDTH * 2,
+    height: PROFILE_WIDTH + PROFILE_BORDER_WIDTH * 2,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   leftProfile: {
     marginRight: -10,
@@ -229,8 +247,27 @@ const styles = StyleSheet.create({
   rightProfile: {
     marginLeft: -10,
   },
+  profileAndroidContainer: {
+    width: PROFILE_WIDTH,
+    height: PROFILE_WIDTH,
+  },
   image: {
     flex: 1,
+  },
+  imageAndroid: {
+    width: PROFILE_WIDTH,
+    height: PROFILE_WIDTH,
+    borderRadius: PROFILE_WIDTH / 2,
+  },
+  fixCircleClipping: {
+    position: 'absolute',
+    top: -PROFILE_BORDER_WIDTH,
+    bottom: -PROFILE_BORDER_WIDTH,
+    right: -PROFILE_BORDER_WIDTH,
+    left: -PROFILE_BORDER_WIDTH,
+    borderRadius: PROFILE_WIDTH / 2 + PROFILE_BORDER_WIDTH / 2,
+    borderWidth: PROFILE_BORDER_WIDTH,
+    borderColor: GlobalFunctions.style().color
   },
   buttonContainer: {
     flex: 5,
@@ -247,11 +284,11 @@ const styles = StyleSheet.create({
     fontWeight:"600",
   },
   matchButton: {
-    backgroundColor: '#715BB9',
+    backgroundColor: GlobalFunctions.style().color,
     flex: 1,
   },
   closeButton: {
-    backgroundColor: '#715BB9',
+    backgroundColor: GlobalFunctions.style().color,
     flex: 1,
   },
   bottomBuffer: {

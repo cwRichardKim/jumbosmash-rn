@@ -7,7 +7,10 @@ with a loading indicator when the image hasn't loaded yet.
 props
 source: (same as image source)
 _key: for image reuse, "key" is reserved, so must use "_key"
-style: JSX style class
+style: JSX style class for image container view
+imageStyle: style for image (necessary for android because no overflow: hidden)
+backgroundStyle: style for loading background (necessary for android because no overflow: hidden)
+circleClippingStyle: JSX style class necessary for Android since it doesn't respect Overflow
 */
 
 import React, {Component} from 'react';
@@ -17,10 +20,14 @@ import {
     Image,
     ActivityIndicator,
     Alert,
+    Platform,
     Animated,
 } from 'react-native';
 
-import GlobalStyles from "../global/GlobalStyles.js";
+import GlobalStyles     from "../global/GlobalStyles.js";
+import GlobalFunctions  from "../global/GlobalFunctions.js";
+
+const IS_ANDROID = Platform.OS === 'android';
 
 class LoadableImage extends Component {
   constructor(props) {
@@ -70,7 +77,7 @@ class LoadableImage extends Component {
     if (this.props.thumbnail) {
       return(
         <Animated.Image
-          style={[GlobalStyles.absoluteCover, styles.thumbnail, {opacity: this.state.thumbnailOpacity}]}
+          style={[GlobalStyles.absoluteCover, styles.thumbnail, {opacity: this.state.thumbnailOpacity}, this.props.imageStyle]}
           source={this.props.thumbnail}
           onLoadStart={this._thumbnailLoadStart.bind(this)}
           onLoadEnd={this._thumbnailLoadEnd.bind(this)}
@@ -78,6 +85,16 @@ class LoadableImage extends Component {
           key={this.props._key ? this.props._key+"small" : ""}
         />
       );
+    }
+  }
+
+  _shouldRenderFixCircleClipping () {
+    if (IS_ANDROID && this.props.circleClippingStyle) {
+      return (
+        <View style={this.props.circleClippingStyle}/>
+      );
+    } else {
+      return null;
     }
   }
 
@@ -96,7 +113,7 @@ class LoadableImage extends Component {
     let shouldAnimate = hideImage || (thumbnailExists && thumbnailLoading);
     return (
       <View style={[this.props.style, styles.container]}>
-        <View style={[GlobalStyles.absoluteCover, styles.loadingPage]}>
+        <View style={[GlobalStyles.absoluteCover, styles.loadingPage, this.props.backgroundStyle]}>
           <ActivityIndicator animating={shouldAnimate}/>
         </View>
         <Image
@@ -108,15 +125,16 @@ class LoadableImage extends Component {
           onError={this._photoFetchError.bind(this)}
           key={this.props._key ? this.props._key : ""}
         />
-      {this._shouldRenderThumbnail()}
-    </View>
+        {this._shouldRenderThumbnail()}
+        {this._shouldRenderFixCircleClipping()}
+      </View>
     );
   }
 }
 
 const styles = StyleSheet.create({
   container: {
-    overflow: 'hidden',
+    overflow: IS_ANDROID ? null: 'hidden',
   },
   image: {
     flex: 1,
@@ -126,7 +144,7 @@ const styles = StyleSheet.create({
     resizeMode: 'cover',
   },
   loadingPage: {
-    backgroundColor: "#F0F0F0",
+    backgroundColor: GlobalFunctions.style().lightGray,
     justifyContent: 'center',
     alignItems: 'center',
   },

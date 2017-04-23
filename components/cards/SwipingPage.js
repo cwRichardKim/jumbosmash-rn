@@ -15,6 +15,7 @@ import {
   Dimensions,
   Alert,
   AsyncStorage,
+  Platform,
 } from 'react-native';
 
 import SwipeButtonsView from './SwipeButtonsView.js'
@@ -25,11 +26,12 @@ import DummyData        from '../misc/DummyData.js'
 const global = require('../global/GlobalFunctions.js');
 const Analytics = require('react-native-firebase-analytics');
 
-const CARD_REFRESH_BUFFER = 10; // There should always be at least this many cards left, else fetch more
+const CARD_REFRESH_BUFFER = 5; // There should always be at least this many cards left, else fetch more
 const CARD_WIDTH = Dimensions.get('window').width - 40;
 const DECK_SIZE = 3; // number of cards rendered at a time
 const StorageKeys = global.storageKeys();
 const MAX_SWIPES_REMEMBERED = 40;
+const IS_ANDROID = Platform.OS === 'android';
 
 class SwipingPage extends Component {
   constructor(props) {
@@ -210,6 +212,9 @@ class SwipingPage extends Component {
     let profile = this.props.profiles[cardIndex];
     this._asyncUpdateLikeList(this.props.myProfile.id, profile.id);
     this._swipeErrorCheck(cardIndex, profile);
+    if (this.props.addRecentLikes && profile.id) {
+      this.props.addRecentLikes(profile.id);
+    }
     this.setState({canUndoCount: 0});
     this.props.removeDuplicateProfiles(cardIndex);
     this._incrementSwipeCount(true);
@@ -301,12 +306,11 @@ class SwipingPage extends Component {
 
   render() {
     return (
-      <View style={{marginTop: this.props.navBarHeight, height:this.props.pageHeight}}>
+      <View style={{marginTop: this.props.navBarHeight, flex: 1}}>
         <View style={[styles.container]}>
-          <View style={styles.topPadding}/>
-          <View style={styles.cardContainer}>
-            {this._shouldRenderCards()}
-          </View>
+        <View style={styles.cardContainer}>
+          {this._shouldRenderCards()}
+        </View>
 
           <View style={styles.swipeButtonsView}>
             <SwipeButtonsView
@@ -332,17 +336,15 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: 'white',
   },
-  topPadding: {
-    height: 20,
-  },
   cardContainer: { // the area the card will occupy
     flex: 1,
+    marginTop: 20,
     width: CARD_WIDTH,
   },
   swipeButtonsView: {
     height: 100,
     alignSelf: "stretch",
-    zIndex: -1,
+    zIndex: IS_ANDROID ? 1 : -1, //idk why this is necessary, but buttons don't show up otherwise
   },
 });
 

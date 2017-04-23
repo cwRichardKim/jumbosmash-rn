@@ -32,24 +32,31 @@ class ChatPage extends React.Component {
     super(props);
     const ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
     this.state = {
-      dataSource: ds.cloneWithRows(this._fetchConversationsAsync()),
+      dataSource: ds.cloneWithRows([]),
       navigator: props.navigator,
       refreshing: false,
       rawData: [],
       filteredData: [],
       searchText: '',
+      isMounted: false,
     };
+    this._fetchConversationsAsync();
   }
 
   componentDidMount () {
+    this.setState({isMounted: true});
     if (_listView) {
       _listView.scrollTo({x: 0, y: SCROLL_TO_Y, animated: true});
     }
     Analytics.logEvent('open_chat_page', {});
-    PushNotifications.clearBadgeNumber(require('react-native-push-notification'));
+    PushNotifications.clearBadgeNumber(this.props.myProfile, require('react-native-push-notification'), this.props.token.val);
   }
 
-  _fetchConversationsAsync () {
+  componentWillUnmount () {
+    this.setState({isMounted: false});
+  }
+
+  async _fetchConversationsAsync () {
     let url = 'https://jumbosmash2017.herokuapp.com/chat/id/'.concat(this.props.myProfile.id).concat("/").concat(this.props.token.val);
     return fetch(url)
       .then((response) => {
@@ -64,7 +71,6 @@ class ChatPage extends React.Component {
         data.sort(function(a,b){
           return (b.lastSent && a.lastSent) ? new Date(b.lastSent.date) - new Date(a.lastSent.date) : 0;
         });
-
         this.setState({
           dataSource: this.state.dataSource.cloneWithRows(data),
           rawData: data,
@@ -85,7 +91,7 @@ class ChatPage extends React.Component {
   }
 
   refresh() {
-    this._onRefresh();
+    this._fetchConversationsAsync();
   }
 
   setSearchText(event) {
@@ -102,13 +108,31 @@ class ChatPage extends React.Component {
   filterConversations(searchText, conversations) {
     let text = searchText.toLowerCase();
     return conversations.filter((c) => {
-      let otherParticipants = global.otherParticipants(c.participants, this.props.myProfile.profileId);
-      let convo = otherParticipants.length > 0 ? otherParticipants[1].firstName.toLowerCase() : "";
+      let otherParticipants = global.otherParticipants(c.participants, this.props.myProfile.id);
+      let convo = otherParticipants.length > 0 ? otherParticipants[0].firstName.toLowerCase() : "";
       return convo.search(text) !== -1;
     });
   }
 
   rowPressed(conversation) {
+    // TODO: make a dictionary so code is cleaner I guess
+    let data = this.state.filteredData.length <= 0 ? this.state.rawData : this.state.filteredData;
+    let len = data.length;
+    for (var i = 0; i < len; i++) {
+      if (data[i]._id == conversation._id) {
+        let length = data[i].participants.length;
+        for (var j = 0; j < length; j++) {
+          if (data[i].participants[j].profileId == this.props.myProfile.id) {
+            data[i].participants[j].read = true;
+            if (this.state.filteredData.length <= 0) {
+              this.setState({filteredData: data});
+            } else {
+              this.setState({rawData: data});
+            }
+          }
+        }
+      }
+    }
     this.renderConversation(conversation);
   }
 
@@ -146,6 +170,7 @@ class ChatPage extends React.Component {
     return null;
   }
 
+  //TODO: @jared clearButtonMode #android this prop isn't there
   _renderSearchBar() {
     let numMatches = this.state.rawData != null && this.state.rawData.length != null ? this.state.rawData.length : 0;
     let str = "Search " + numMatches + " Matches";
@@ -156,7 +181,7 @@ class ChatPage extends React.Component {
          returnKeyType='done'
          value={this.state.searchText}
          onChange={this.setSearchText.bind(this)}
-         clearButtonMode='always' //TODO: @jared #android this prop isn't there
+         clearButtonMode='always'
          placeholder={str} />
       </View>);
   }
@@ -191,22 +216,24 @@ class ChatPage extends React.Component {
       height: 60,
       width: 60,
       borderRadius: 30,
-      borderColor: '#6A6ACB',
+      borderColor: global.style().color,
       borderWidth: read ? 0 : 3,
     });};
     let messageTextStyle = function (read) {return ({
-      fontSize: 13,
+      fontSize: 14,
       fontFamily: 'Avenir Next',
       flex: 3,
       textAlign: 'center',
       paddingBottom: 16,
-      color: read? '#CAC4C4' : 'black',
+      color: read? '#7C7C7C' : global.style().color,
       fontWeight: read ? 'normal' : '500',
     });};
     let nameTextStyle = function (read) {
-      return({fontSize: 13,
+      return({fontSize: 15,
+      marginTop: 2,
       fontFamily: 'Avenir Next',
       textAlign: 'center',
+      color: '#474747',
       fontWeight: read ? 'normal' : '500',});
     };
 
@@ -286,23 +313,18 @@ const styles = StyleSheet.create({
     paddingBottom: 16,
     color: '#CAC4C4',
   },
-  rowNameText: {
-    fontSize: 13,
-    fontFamily: 'Avenir Next',
-    textAlign: 'center',
-  },
   rowPhoto: {
     height: 50,
     width: 50,
     borderRadius: 25,
-    borderColor: '#6A6ACB',
+    borderColor: global.style().color,
     borderWidth: 3,
   },
   searchInput: {
     height: 36,
     flex: 1,
     paddingHorizontal: 8,
-    fontSize: 15,
+    fontSize: 14,
     backgroundColor: '#F0F0F0',
     borderRadius: 2,
   },

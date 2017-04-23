@@ -13,6 +13,7 @@ import {
   Dimensions,
   Linking,
   Alert,
+  Image,
 } from 'react-native';
 
 import GlobalStyles           from "../global/GlobalStyles.js";
@@ -70,16 +71,26 @@ class ThankYouPage extends Component {
     )
   }
 
+  _openAppStore () {
+    let link = "itms-apps://itunes.apple.com/us/app/jumbosmash/id1208768432?ls=1&mt=8";
+    Linking.canOpenURL(link).then(supported => {
+      supported && Linking.openURL(link);
+    }, (err) => console.log(err));
+  }
+
   render() {
     return (
       <View style={{flex: 1}}>
         <ScrollView style={styles.scrollView}>
           <View style={styles.header}>
-            <Text style={[GlobalStyles.boldText, styles.title]}>Congratulations{"\n"}Class of 2017</Text>
+            <Image
+              style={styles.gif}
+              source={require("./images/wink.gif")}
+            />
           </View>
           <View style={styles.textContainer}>
-            <Text style={[GlobalStyles.boldText, {marginBottom: 10}]}>We hope you had fun</Text>
-            <Text style={GlobalStyles.text}>Using JumboSmash, we certainly had fun making it. We wish you all the best of luck and hope you keep in contact with your matches. Off to the real world we go!</Text>
+            <Text style={[GlobalStyles.boldText, {marginBottom: 10}]}>Congratulations Class of 2017</Text>
+            <Text style={GlobalStyles.text}>We hope you had fun using JumboSmash, we certainly had fun making it. We wish you all the best of luck and hope you keep in contact with your matches. Off to the real world we go!</Text>
             <Text style={[GlobalStyles.text, styles.emojiText]}>🙈🙊🙉🍆🍑</Text>
           </View>
           <View style={styles.buttonContainer}>
@@ -101,6 +112,12 @@ class ThankYouPage extends Component {
               text="Making of / About the Team"
               onPress={this._openAboutURL.bind(this)}
             />
+            <RectButton
+              style={[styles.button, styles.aboutButton]}
+              textStyle={styles.buttonText}
+              text="Write an App Review (Weirder is Better)"
+              onPress={this._openAppStore.bind(this)}
+            />
           </View>
           <View style={[styles.textContainer, styles.thankYous]}>
             <Text style={[GlobalStyles.boldText, {marginBottom: 10}]}>Our Team:</Text>
@@ -118,19 +135,25 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   header: {
-    height: .35 * HEIGHT,
+    height: WIDTH,
     width: WIDTH,
     padding: PADDING,
-    backgroundColor: '#DDDDDD',
+    backgroundColor: 'white',
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  gif: {
+    resizeMode: 'contain',
+    marginTop: WIDTH * .15,
+    width: WIDTH*.7,
+    height: WIDTH*.7,
   },
   title: {
     textAlign: 'center',
   },
   textContainer: {
-    padding: PADDING,
-    paddingBottom: 0,
+    paddingRight: PADDING,
+    paddingLeft: PADDING,
   },
   emojiText: {
     textAlign: 'center',
@@ -152,15 +175,16 @@ const styles = StyleSheet.create({
   buttonText: {
     color: "white",
     fontWeight:"600",
+    textAlign: 'center',
   },
   dummyButton: {
-    backgroundColor: "#715BB9",
+    backgroundColor: GlobalFunctions.style().color,
   },
   smashButton: {
-    backgroundColor: "#715BB9",
+    backgroundColor: GlobalFunctions.style().color,
   },
   aboutButton: {
-    backgroundColor: "#715BB9"
+    backgroundColor: GlobalFunctions.style().color,
   },
   thankYous: {
     marginBottom: 50,
