@@ -128,12 +128,12 @@ class LoginPage extends Component {
     let password = this.state.password;
     
     let studentProfile = await Verification.getStudent(email);
-    this.setState({isLoading: false});
 
     if (studentProfile){
       this.studentProfile = studentProfile;
       this._createAccount(email, password);
     } else {
+      this.setState({isLoading: false});
       Verification.doesNotExist();
     }
   }
@@ -144,9 +144,11 @@ class LoginPage extends Component {
       // Success case
       .then((user) => {
         Verification.sendEmail(user);
+        this.setState({isLoading: false});
       })
       // Failure case: Signup Error
       .catch((error) => {
+        this.setState({isLoading: false});
         AuthErrors.handleSignupError(error);
       })
   }
