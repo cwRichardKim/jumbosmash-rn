@@ -41,8 +41,6 @@
 			</dict>
 		</dict>
 	</dict>
-	<key>NSLocationWhenInUseUsageDescription</key>
-	<string></string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>Voluntary upload of profile photo</string>
 	<key>UIAppFonts</key>

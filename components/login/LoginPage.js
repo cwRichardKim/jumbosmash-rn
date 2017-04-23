@@ -223,6 +223,7 @@ class LoginPage extends Component {
                   ref="emailInput"
                   style={AuthStyle.emailInput}
                   underlineColorAndroid="white"
+                  keyboardType="email-address"
                   onChangeText={(text) => this.setState({email_input: text})}
                   value={this.state.email_input}
                   returnKeyType={"next"}
