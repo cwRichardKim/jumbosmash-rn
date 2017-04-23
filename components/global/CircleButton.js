@@ -131,7 +131,6 @@ class CircleButton extends Component {
       opacity = this.props.disabledOpacity || 0.5;
     }
     if (opacity != this.state.opacity._value) {
-      console.log(IS_ANDROID);
       Animated.timing(
         this.state.opacity,
         {

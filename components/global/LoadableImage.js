@@ -127,7 +127,7 @@ class LoadableImage extends Component {
         />
         {this._shouldRenderThumbnail()}
         {this._shouldRenderFixCircleClipping()}
-    </View>
+      </View>
     );
   }
 }
