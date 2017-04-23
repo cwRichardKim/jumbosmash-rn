@@ -69,13 +69,7 @@ class ConversationPage extends Component {
         let then = new Date(this.props.conversation.lastSent.date);
         if (now.getTime() > then.getTime()) {
           this.props.conversation.lastSent = {'profileId': child.val().user._id, 'message': child.val().text, 'date': child.val().createdAt}
-          let len = this.props.conversation.participants.length;
-          for(var i = 0; i < len; i++) {
-            if (this.props.conversation.participants[i].profileId == this.props.myProfile.id) {
-              this.props.conversation.participants[i].read = true;
-            }
-          }
-          this._asyncUpdateConversation(this.props.chatroomId, this.props.conversation);
+          this._asyncUpdateConversation(this.props.chatroomId, {lastSent: this.props.conversation.lastSent});
         }
     });
     Analytics.logEvent('open_conversation_page', {});
