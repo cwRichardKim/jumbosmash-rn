@@ -15,7 +15,6 @@ import {
   TouchableWithoutFeedback,
   ScrollView,
   TouchableOpacity,
-  Animated,
   Dimensions,
 } from 'react-native';
 
@@ -129,13 +128,13 @@ class ProfileCardView extends Component {
     let pageHeight = this.props.pageHeight;
     let _scrollView: ScrollView;
     return (
-      <View style={{flex: 1}}>
+      <View style={[styles.container, this.props.style]}>
 
-        <Animated.View style={{flex: 1}}>
+        <View style={{flex: 1}}>
           <View style={[GlobalStyles.absoluteCover, styles.background]}/>
-        </Animated.View>
+        </View>
 
-        <Animated.View style={[GlobalStyles.absoluteCover]}>
+        <View style={[GlobalStyles.absoluteCover]}>
           <ScrollView style={styles.touchArea}
             ref={(scrollView) => { _scrollView = scrollView; }}
           >
@@ -160,13 +159,16 @@ class ProfileCardView extends Component {
               </TouchableOpacity>
             </View>
           </ScrollView>
-        </Animated.View>
+        </View>
       </View>
     );
   }
 }
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
   closeButton: {
     position: "absolute",
     left: 20,
