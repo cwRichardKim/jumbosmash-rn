@@ -18,7 +18,9 @@ import {
   Clipboard,
   Navigator,
   Image,
+  ActionSheetIOS,
   ActivityIndicator,
+  Platform,
 } from 'react-native';
 
 import GlobalStyles           from "../global/GlobalStyles.js";
@@ -29,6 +31,7 @@ import TagPage                from "../settings/TagPage.js";
 import SettingsPage           from "../settings/SettingsPage.js";
 import ProfileCardView        from "../cards/ProfileCardView.js";
 let Mailer = require('NativeModules').RNMail;
+const IS_ANDROID = Platform.OS === 'android';
 const StorageKeys = GlobalFunctions.storageKeys();
 const OverrideActions = GlobalFunctions.overrideActions();
 const PushNotifications = require('../global/PushNotifications.js');
@@ -228,12 +231,26 @@ class PreReleasePage extends Component {
   }
 
   _copyShareLink() {
-    Clipboard.setString('jumbosmash.com/share');
-    Alert.alert(
-      "Copied!",
-      "Jumbosmash URL copied to your clipboard",
-      [{text:"OK",onPress:()=>{}}]
-    )
+    if (IS_ANDROID) {
+      Clipboard.setString('jumbosmash.com');
+      Alert.alert(
+        "Copied!",
+        "Jumbosmash URL copied to your clipboard",
+        [{text:"OK",onPress:()=>{}}]
+      )
+    } else {
+      ActionSheetIOS.showShareActionSheetWithOptions({
+        url: "http://jumbosmash.com",
+        message: 'Smash it up 2017, nothing matters, it\'s all a lie:',
+        subject: 'Who uses email? Get with the times',
+      },
+      (error) => alert(error),
+      (completed, method) => {
+        if (completed) {
+          Analytics.logEvent('pre_release_share', {method: method});
+        }
+      });
+    }
   }
 
   // given a profile, shows the profile over the navigator
@@ -353,6 +370,7 @@ class PreReleasePage extends Component {
                 text="Logout"
                 onPress={this._logout.bind(this)}
               />
+              <Text style={styles.tos} onPress={GlobalFunctions.openTOS}>Terms of Service / Privacy Policy</Text>
             </View>
           </ScrollView>
         </View>
