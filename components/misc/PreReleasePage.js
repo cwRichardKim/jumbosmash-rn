@@ -142,7 +142,7 @@ class PreReleasePage extends Component {
   _loadPreReleaseApp() {
     Alert.alert(
       "You're here early",
-      "Official release: "+GlobalFunctions.formatDate(GlobalFunctions.dates().startDate)+"\n\nWelcome 😊 This 'pre-release state' is fully functional, but may include a few test users.\n\nteam@jumbosmash.com for questions!",
+      "Official release: "+GlobalFunctions.formatDate(GlobalFunctions.dates().startDate)+"\n\nWelcome 😊 This 'pre-release state' is fully functional, but we may clear the database from time to time.\n\nteam@jumbosmash.com for questions!",
       [
         {text:"Open in Pre-release State", onPress:()=>{this.props.changePage(OverrideActions.openApp)}},
       ]
@@ -223,10 +223,19 @@ class PreReleasePage extends Component {
   _renderCountdownString() {
     let diffDays = this._getNumDaysUntilLaunch();
     if (diffDays > 1) {
-      return (diffDays.toString()+" days\n");
+      return null;
     } else {
       let diffHours = Math.floor(this._getTimeUntilLaunch() / (1000 * 3600));
-      return (diffHours.toString()+" hours\n");
+      if (diffHours == 0){
+        let diffMinutes = Math.floor(this._getTimeUntilLaunch() / (1000 *60))
+        return (
+          <Text stye={GlobalStyles.text}>Countdown: {diffMinutes} minutes</Text>
+        );
+      } else {
+        return (
+          <Text stye={GlobalStyles.text}>Countdown: {diffHours} hours</Text>
+        );
+      }
     }
   }
 
@@ -241,8 +250,8 @@ class PreReleasePage extends Component {
     } else {
       ActionSheetIOS.showShareActionSheetWithOptions({
         url: "http://jumbosmash.com",
-        message: 'Smash it up 2017, nothing matters, it\'s all a lie:',
-        subject: 'Who uses email? Get with the times',
+        message: '🍆🍑  🔥🔥  🙈🙊🙉  😘👌:',
+        subject: 'Who uses email? Geez get with the times',
       },
       (error) => alert(error),
       (completed, method) => {
@@ -337,8 +346,11 @@ class PreReleasePage extends Component {
   _renderPreReleaseCount() {
     return (
       <View style={styles.textContainer}>
-        <Text style={[GlobalStyles.boldText, {marginBottom: 10}]}>Jumbosmash is Coming</Text>
-        <Text style={GlobalStyles.text}>Countdown: {this._renderCountdownString()}If you are a beta tester or someone who requires early access, tap the button below</Text>
+        <Text style={[GlobalStyles.boldText, {marginBottom: 10}]}>Jumbosmash is Coming 😉</Text>
+        {this._renderCountdownString()}
+        <Text style={GlobalStyles.text}>Need early access? Tap the button below and let us know</Text>
+        <Text style={GlobalStyles.text}>eg: registered beta tester, daily / observer,</Text>
+        <Text style={[GlobalStyles.text, {color: "#EEE"}]}>way too goddamn thirsty to deal with your release date bs</Text>
       </View>
     );
   }
