@@ -236,6 +236,12 @@ class CreateProfilePage extends Component {
           <View style={styles.line}/>
           <RectButton
             style={[styles.rectButton, styles.createAccountButton]}
+            onPress={GlobalFunctions.openTOS}
+            text="Privacy Policy / Terms of Service"
+            textStyle={styles.buttonText}
+          />
+          <RectButton
+            style={[styles.rectButton, styles.createAccountButton]}
             onPress={this._createAccount.bind(this)}
             text="Create Account"
             textStyle={styles.buttonText}
