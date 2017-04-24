@@ -19,6 +19,7 @@ import {
   Animated,
   AsyncStorage,
   Keyboard,
+  Linking,
 } from 'react-native';
 
 import ActionSheet        from 'react-native-actionsheet';
@@ -32,7 +33,7 @@ const Analytics = require('react-native-firebase-analytics');
 const GlobalFunctions = require('../global/GlobalFunctions.js');
 const StorageKeys = GlobalFunctions.storageKeys();
 const PageNames = GlobalFunctions.pageNames();
-const ACTION_SHEET_BUTTONS = ['Cancel', "Feedback", "Report Bug", "Block / Avoid User (no questions asked)", "Other"];
+const ACTION_SHEET_BUTTONS = ['Cancel', "Feedback", "Report Bug", "Block / Avoid User (no questions asked)", "Terms of Service / Privacy Policy", "Other"];
 const SaveButtonState = GlobalFunctions.saveButtonStates();
 let Mailer = require('NativeModules').RNMail;
 
@@ -190,6 +191,8 @@ class SettingsPage extends Component {
     } else if (index === 3) {
       this._sendMail("Block Request: ", "Please have the following people removed from my list: [first / last name]");
     } else if (index === 4) {
+      GlobalFunctions.openTOS();
+    } else if (index === 5) {
       this._sendMail("Feedback: Other");
     }
   }
@@ -419,7 +422,7 @@ class SettingsPage extends Component {
             style={[styles.rectButton]}
             textStyle={styles.buttonText}
             onPress={() => {this.ActionSheet.show()}}
-            text="Help / Feedback"
+            text="Help / Feedback / More"
           />
           <View style={styles.bottom}>
             <Text style={styles.aboutText}>

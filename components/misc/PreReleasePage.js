@@ -18,7 +18,9 @@ import {
   Clipboard,
   Navigator,
   Image,
+  ActionSheetIOS,
   ActivityIndicator,
+  Platform,
 } from 'react-native';
 
 import GlobalStyles           from "../global/GlobalStyles.js";
@@ -29,6 +31,7 @@ import TagPage                from "../settings/TagPage.js";
 import SettingsPage           from "../settings/SettingsPage.js";
 import ProfileCardView        from "../cards/ProfileCardView.js";
 let Mailer = require('NativeModules').RNMail;
+const IS_ANDROID = Platform.OS === 'android';
 const StorageKeys = GlobalFunctions.storageKeys();
 const OverrideActions = GlobalFunctions.overrideActions();
 const PushNotifications = require('../global/PushNotifications.js');
@@ -139,7 +142,7 @@ class PreReleasePage extends Component {
   _loadPreReleaseApp() {
     Alert.alert(
       "You're here early",
-      "Official release: "+GlobalFunctions.formatDate(GlobalFunctions.dates().startDate)+"\n\nWelcome 😊 This 'pre-release state' is fully functional, but may include a few test users.\n\nteam@jumbosmash.com for questions!",
+      "Official release: "+GlobalFunctions.formatDate(GlobalFunctions.dates().startDate)+"\n\nWelcome 😊 This 'pre-release state' is fully functional, but we may clear the database from time to time.\n\nteam@jumbosmash.com for questions!",
       [
         {text:"Open in Pre-release State", onPress:()=>{this.props.changePage(OverrideActions.openApp)}},
       ]
@@ -220,20 +223,43 @@ class PreReleasePage extends Component {
   _renderCountdownString() {
     let diffDays = this._getNumDaysUntilLaunch();
     if (diffDays > 1) {
-      return (diffDays.toString()+" days\n");
+      return null;
     } else {
       let diffHours = Math.floor(this._getTimeUntilLaunch() / (1000 * 3600));
-      return (diffHours.toString()+" hours\n");
+      if (diffHours == 0){
+        let diffMinutes = Math.floor(this._getTimeUntilLaunch() / (1000 *60))
+        return (
+          <Text stye={GlobalStyles.text}>Countdown: {diffMinutes} minutes</Text>
+        );
+      } else {
+        return (
+          <Text stye={GlobalStyles.text}>Countdown: {diffHours} hours</Text>
+        );
+      }
     }
   }
 
   _copyShareLink() {
-    Clipboard.setString('jumbosmash.com/share');
-    Alert.alert(
-      "Copied!",
-      "Jumbosmash URL copied to your clipboard",
-      [{text:"OK",onPress:()=>{}}]
-    )
+    if (IS_ANDROID) {
+      Clipboard.setString('jumbosmash.com');
+      Alert.alert(
+        "Copied!",
+        "Jumbosmash URL copied to your clipboard",
+        [{text:"OK",onPress:()=>{}}]
+      )
+    } else {
+      ActionSheetIOS.showShareActionSheetWithOptions({
+        url: "http://jumbosmash.com",
+        message: '🍆🍑  🔥🔥  🙈🙊🙉  😘👌:',
+        subject: 'Who uses email? Geez get with the times',
+      },
+      (error) => alert(error),
+      (completed, method) => {
+        if (completed) {
+          Analytics.logEvent('pre_release_share', {method: method});
+        }
+      });
+    }
   }
 
   // given a profile, shows the profile over the navigator
@@ -320,8 +346,11 @@ class PreReleasePage extends Component {
   _renderPreReleaseCount() {
     return (
       <View style={styles.textContainer}>
-        <Text style={[GlobalStyles.boldText, {marginBottom: 10}]}>Jumbosmash is Coming</Text>
-        <Text style={GlobalStyles.text}>Countdown: {this._renderCountdownString()}If you are a beta tester or someone who requires early access, tap the button below</Text>
+        <Text style={[GlobalStyles.boldText, {marginBottom: 10}]}>Jumbosmash is Coming 😉</Text>
+        {this._renderCountdownString()}
+        <Text style={GlobalStyles.text}>Need early access? Tap the button below and let us know</Text>
+        <Text style={GlobalStyles.text}>eg: registered beta tester, daily / observer,</Text>
+        <Text style={[GlobalStyles.text, {color: "#EEE"}]}>way too goddamn thirsty to deal with your release date bs</Text>
       </View>
     );
   }
@@ -353,6 +382,7 @@ class PreReleasePage extends Component {
                 text="Logout"
                 onPress={this._logout.bind(this)}
               />
+              <Text style={styles.tos} onPress={GlobalFunctions.openTOS}>Terms of Service / Privacy Policy</Text>
             </View>
           </ScrollView>
         </View>

@@ -66,7 +66,7 @@ module.exports = {
       tags: ['fast food', 'seafood', "🍜", "🍝", "🍕", 'brunch', 'fireball', 'cocktails', 'president of a club', 'traveling', 'singing', 'rap', 'blues', 'letterman'],
       teamMember: true,
       photos: [
-        {large: "https://d13yacurqjgara.cloudfront.net/users/109914/screenshots/905742/elephant_love.jpg", small: "https://d13yacurqjgara.cloudfront.net/users/109914/screenshots/905742/elephant_love.jpg"},
+        {large: "https://imgur.com/7eYec2z.jpg", small: "https://http://imgur.com/nwZZV2F.jpg"},
         {large: "https://d13yacurqjgara.cloudfront.net/users/1095591/screenshots/2711715/polywood_01_elephant_01_dribbble.jpg", small: "https://d13yacurqjgara.cloudfront.net/users/1095591/screenshots/2711715/polywood_01_elephant_01_dribbble.jpg"},
         {large: "https://d13yacurqjgara.cloudfront.net/users/179241/screenshots/2633954/chris-fernandez-elephant-2.jpg", small: "https://d13yacurqjgara.cloudfront.net/users/179241/screenshots/2633954/chris-fernandez-elephant-2.jpg"},
       ]

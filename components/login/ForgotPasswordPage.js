@@ -63,7 +63,7 @@ class ForgotPasswordPage extends Component {
         })
     }
   }
-  
+
 
   _goToLoginPage() {
     this.props.navigator.replace({
@@ -95,6 +95,8 @@ class ForgotPasswordPage extends Component {
               <TextInput
                 style={AuthStyle.emailInput}
                 onChangeText={(text) => this.setState({email_input: text})}
+                keyboardType="email-address"
+                returnKeyType="done"
                 value={this.state.email_input}
                 placeholder={this.props.emailInput}
               />
@@ -111,7 +113,7 @@ class ForgotPasswordPage extends Component {
 
               <RectButton
                 style={[AuthStyle.noBackgroundButton]}
-                textStyle={AuthStyle.noBackgroundButtonText}  
+                textStyle={AuthStyle.noBackgroundButtonText}
                 onPress={this._goToLoginPage.bind(this)}
                 text="JK! Take me back to login"
               />
