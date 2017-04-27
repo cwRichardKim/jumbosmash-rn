@@ -18,6 +18,7 @@ module.exports = {
   onRegister: async function (token, params) {
     let deviceId = {deviceId: token.token};
     let url = "https://jumbosmash2017.herokuapp.com/profile/update/".concat(params.profile.id).concat("/").concat(params.authToken);
+    console.log("URL " + url);
     fetch(url, {
       method: 'POST',
       headers: {
