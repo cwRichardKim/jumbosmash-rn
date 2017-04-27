@@ -429,7 +429,7 @@ class SettingsPage extends Component {
               JumboSmash was brought to you by:{"\n"}
               Devs: {GlobalFunctions.developers()+"\n"}
               Designers: {GlobalFunctions.designers()+"\n\n"}
-              Beta Testers:{"\n"+GlobalFunctions.betaTesters()}
+              Help From:{"\n"+GlobalFunctions.helpers()}
             </Text>
           </View>
           <View style={styles.hiddenText}>

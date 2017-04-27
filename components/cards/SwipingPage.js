@@ -75,7 +75,7 @@ class SwipingPage extends Component {
     });
   }
 
-  // TODO: @richard remove this later. this is for testing purposes to see if double click bug is fixed
+  // TODO: @richard remove this later. this is for dev purposes to see if double click bug is fixed
   _swipeErrorCheck(cardIndex, card) {
     let indexBroke = this.state.cardIndex != cardIndex; // expecting false
     let cardsArrayUpdated = this.cards[cardIndex %3] != null; // expecting true
@@ -85,7 +85,7 @@ class SwipingPage extends Component {
     }
   }
 
-  // Has a random chance to show a dummy match if we in demo mode
+  // Has a random chance to show a dummy match if we in try mode
   _showDummyMatchWithId(swipeId) {
     if (Math.random() > 0.5) {
       let dummyProfs = DummyData.profiles;
