@@ -193,7 +193,6 @@ class ProfileCardView extends Component {
   }
 
   _shouldRenderMoreButton() {
-    console.log(this.props.index);
     if (this.props.blockUserWithIndex && typeof(this.props.index) != "undefined") {
       return (
         <TouchableOpacity
