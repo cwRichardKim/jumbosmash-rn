@@ -115,6 +115,14 @@ class CreateProfilePage extends Component {
     }
   }
 
+  _createAccountOnPress() {
+    Alert.alert(
+      "Terms of Service",
+      "Do you agree to our listed Terms of Service? You can access them by tapping the 'Privacy Policy / Terms of Service' button right above the 'Create Account' button.\n\nViolations could lead to account deletion / banning",
+      [{text:"Yes, I agree to the terms",onPress:()=>{this._createAccount()}}, {text:"Close", onPress:()=>{}}]
+    )
+  }
+
   _createAccount() {
     if (this._checkPropertiesAreValid()) {
       let url = "https://jumbosmash2017.herokuapp.com/profile/add/".concat(this.token);
@@ -242,7 +250,7 @@ class CreateProfilePage extends Component {
           />
           <RectButton
             style={[styles.rectButton, styles.createAccountButton]}
-            onPress={this._createAccount.bind(this)}
+            onPress={this._createAccountOnPress.bind(this)}
             text="Create Account"
             textStyle={styles.buttonText}
           />
