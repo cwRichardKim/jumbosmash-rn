@@ -4,7 +4,6 @@
 This file is responsible for providing the zoomed in card view after tapping on a card
 
 isSharedTags: bool for "shared tags" vs "all tags" text
-showReportOptions: bool for extra options
 */
 
 import React, {Component} from 'react';
@@ -193,6 +192,19 @@ class ProfileCardView extends Component {
     }
   }
 
+  _shouldRenderMoreButton() {
+    console.log(this.props.index);
+    if (this.props.blockUserWithIndex && typeof(this.props.index) != "undefined") {
+      return (
+        <TouchableOpacity
+          style={styles.moreButton}
+          onPress={this._showOptions.bind(this)}>
+          <Image style={styles.moreButtonView} source={require('./images/white-more.png')}/>
+        </TouchableOpacity>
+      );
+    }
+  }
+
   render() {
     let isTeamMember = this.props.teamMember === true;
     let pageHeight = this.props.pageHeight;
@@ -227,11 +239,7 @@ class ProfileCardView extends Component {
                 onPress={this._closeProfileCard.bind(this)}>
                 <Image style={styles.closeButtonView} source={require('./images/x.png')}/>
               </TouchableOpacity>
-              <TouchableOpacity
-                style={styles.moreButton}
-                onPress={this._showOptions.bind(this)}>
-                <Image style={styles.moreButtonView} source={require('./images/white-more.png')}/>
-              </TouchableOpacity>
+              {this._shouldRenderMoreButton()}
             </View>
           </ScrollView>
         </View>
