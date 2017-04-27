@@ -472,7 +472,6 @@ class JumboNavigator extends Component {
     if (Mailer && Mailer.mail) {
       let firstName = this.conversationParticipantBasic ? this.conversationParticipantBasic.firstName : "";
       let profileId = this.conversationParticipantBasic ? "["+this.conversationParticipantBasic.profileId+"]" : "";
-      console.log("Report: "+firstName+" "+profileId);
       Mailer.mail({
         subject: 'Report',
         recipients: ['team@jumbosmash.com'],
