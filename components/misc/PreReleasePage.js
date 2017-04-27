@@ -30,7 +30,6 @@ import AuthErrors             from "../login/AuthErrors.js";
 import TagPage                from "../settings/TagPage.js";
 import SettingsPage           from "../settings/SettingsPage.js";
 import ProfileCardView        from "../cards/ProfileCardView.js";
-let Mailer = require('NativeModules').RNMail;
 const IS_ANDROID = Platform.OS === 'android';
 const StorageKeys = GlobalFunctions.storageKeys();
 const OverrideActions = GlobalFunctions.overrideActions();
@@ -142,36 +141,15 @@ class PreReleasePage extends Component {
   _loadPreReleaseApp() {
     Alert.alert(
       "You're here early",
-      "Official release: "+GlobalFunctions.formatDate(GlobalFunctions.dates().startDate)+"\n\nWelcome 😊 This 'pre-release state' is fully functional, but we may clear the database from time to time.\n\nteam@jumbosmash.com for questions!",
+      "Official release: "+GlobalFunctions.formatDate(GlobalFunctions.dates().startDate)+"\n\nOnly the Apple Review and JumboSmash Developers have access to this page. This 'pre-release state' is fully functional, but we may clear the database from time to time.\n\nteam@jumbosmash.com for questions!",
       [
         {text:"Open in Pre-release State", onPress:()=>{this.props.changePage(OverrideActions.openApp)}},
       ]
     )
   }
 
-  _sendMail() {
-    if (Mailer && Mailer.mail) {
-      let accountEmail = (this.props.myProfile && this.props.myProfile.email) ? this.props.myProfile.email : "your tufts email";
-      Mailer.mail({
-        subject: 'Requesting Early Access',
-        recipients: ['team@jumbosmash.com'],
-        body: '[account email: '+ accountEmail +']\n\nReason: (eg: registered beta tester, Tufts Daily / Observer, way too goddamn thirsty to deal with your release date bs)',
-      }, (error, event) => {
-        if(error) {
-          Alert.alert('Error', 'Could not send mail. Try sending an email to team@jumbosmash.com through your mail client');
-        }
-      });
-    } else {
-      Alert.alert(
-        "Unsupported Device",
-        "Sorry, your device doesn't support in-app email :(\nSend your question / feedback to team@jumbosmash.com with your mail client",
-        [{text:"OK", onPress:()=>{}}]
-      )
-    }
-  }
-
   _shouldLoadPreReleaseButton () {
-    if (this.props.myProfile && (this.props.myProfile.teamMember === true || this.props.myProfile.betaTester === true)) {
+    if (this.props.myProfile && (this.props.myProfile.teamMember === true)) {
       return (
         <RectButton
           style={[styles.button, styles.smashButton]}
@@ -181,14 +159,7 @@ class PreReleasePage extends Component {
         />
       )
     } else {
-      return (
-        <RectButton
-          style={[styles.button, styles.smashButton]}
-          textStyle={styles.buttonText}
-          text="Request Early Access"
-          onPress={this._sendMail.bind(this)}
-        />
-      )
+      return (null)
     }
   }
 
@@ -221,21 +192,20 @@ class PreReleasePage extends Component {
   }
 
   _renderCountdownString() {
-    let diffDays = this._getNumDaysUntilLaunch();
-    if (diffDays > 1) {
-      return null;
+    let diffHours = Math.floor(this._getTimeUntilLaunch() / (1000 * 3600));
+    if (diffHours == 0){
+      let diffMinutes = Math.floor(this._getTimeUntilLaunch() / (1000 *60))
+      return (
+        <View style={{paddingBottom: 10}}>
+          <Text stye={GlobalStyles.text}>Senior Weekend Countdown: {diffMinutes} minutes</Text>
+        </View>
+      );
     } else {
-      let diffHours = Math.floor(this._getTimeUntilLaunch() / (1000 * 3600));
-      if (diffHours == 0){
-        let diffMinutes = Math.floor(this._getTimeUntilLaunch() / (1000 *60))
-        return (
-          <Text stye={GlobalStyles.text}>Countdown: {diffMinutes} minutes</Text>
-        );
-      } else {
-        return (
-          <Text stye={GlobalStyles.text}>Countdown: {diffHours} hours</Text>
-        );
-      }
+      return (
+        <View style={{paddingBottom: 10}}>
+          <Text stye={GlobalStyles.text}>Senior Weekend Countdown: {diffHours} hours</Text>
+        </View>
+      );
     }
   }
 
@@ -348,9 +318,7 @@ class PreReleasePage extends Component {
       <View style={styles.textContainer}>
         <Text style={[GlobalStyles.boldText, {marginBottom: 10}]}>Jumbosmash is Coming 😉</Text>
         {this._renderCountdownString()}
-        <Text style={GlobalStyles.text}>Need early access? Tap the button below and let us know</Text>
-        <Text style={GlobalStyles.text}>eg: registered beta tester, daily / observer,</Text>
-        <Text style={[GlobalStyles.text, {color: "#EEE"}]}>way too goddamn thirsty to deal with your release date bs</Text>
+        <Text style={GlobalStyles.text}>Don't know what to do with yourself while you wait? Invite your friends! The earlier they sign up, the higher they'll be in the deck / the earlier they'll get smashed.</Text>
       </View>
     );
   }

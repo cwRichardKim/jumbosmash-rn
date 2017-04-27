@@ -127,7 +127,7 @@ module.exports = {
     let endDate = this.dates().endDate;
 
     if (__DEV__) {
-      return this.appExpirationStates().active; //TODO @richard remove this
+      return this.appExpirationStates().expired; //TODO @richard remove this
     }
 
     if (today > startDate && today < endDate) {
@@ -146,10 +146,10 @@ module.exports = {
       cheater: "CHEATER",
     })
   },
-  betaTesters: function() {
-    let testers = ["Josh Berl", "Orlando Economos", "Shana Gallagher", "Lucy Gerhart", "Ryan Gill", "Dhruv Khurana", "Rebecca Larson", "Brian McGough", "Jordan Meisel", "Mackenzie Merriam", "Kabir Singh", "Claire Stone", "Lilly Tahmasebi", "Joshua Terry", "Katie Saviano", "Mudit Tandon"];
-    this.shuffle(testers);
-    return testers.join(", ");
+  helpers: function() {
+    let helpersArray = ["Josh Berl", "Orlando Economos", "Shana Gallagher", "Lucy Gerhart", "Ryan Gill", "Dhruv Khurana", "Rebecca Larson", "Brian McGough", "Jordan Meisel", "Mackenzie Merriam", "Kabir Singh", "Claire Stone", "Lilly Tahmasebi", "Joshua Terry", "Katie Saviano", "Mudit Tandon"];
+    this.shuffle(helpersArray);
+    return helpersArray.join(", ");
   },
   developers: function() {
     let devs = ["Elif Kinli", "Jade Chan", "Jared Moskowitz", "Justin Sullivan", "Richard Kim"];
@@ -161,10 +161,10 @@ module.exports = {
     this.shuffle(des);
     return des.join(", ");
   },
-  overrideActions: function() { //override the app inactivity (used for app demo / using after expiration)
+  overrideActions: function() { //override the app inactivity (used for trying app / using after expiration)
     return({
       openApp: "OPENAPP",
-      demoApp: "DEMOAPP",
+      tryApp: "TRYAPP",
       logout: "LOGOUT",
     });
   },
