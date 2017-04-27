@@ -6,7 +6,7 @@ Responsible for the view of the dropdown banner that shows a notification
 exports:
 showWithMessage(message, onPress)
 example:
-this.notificationBanner.showWithMessage("test", ()=>{
+this.notificationBanner.showWithMessage("dev", ()=>{
   this.navigator.changeTab(PageNames.chatPage);
 });
 */

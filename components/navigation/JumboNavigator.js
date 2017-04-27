@@ -78,7 +78,7 @@ class JumboNavigator extends Component {
 
   componentDidMount() {
     // example notification calling function
-    // this.notificationBanner.showWithMessage("test", ()=>{
+    // this.notificationBanner.showWithMessage("dev", ()=>{
     //   this.changePage(PageNames.chatPage);
     // });
     //
