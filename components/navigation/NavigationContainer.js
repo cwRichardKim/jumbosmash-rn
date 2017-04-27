@@ -109,6 +109,40 @@ class NavigationContainer extends Component {
     }
   }
 
+  //same as remove duplicates, but includes the current card
+  _removeAllProfilesOfIndex(cardIndex) {
+    if (cardIndex >= 0 && cardIndex < this.state.profiles.length) {
+      let profile = this.state.profiles[cardIndex];
+      for (var i = cardIndex; i < this.state.profiles.length; i++) {
+        if (this.state.profiles[i].id == profile.id) {
+          this.state.profiles.splice(i, 1);
+          i --;
+        }
+      }
+    }
+  }
+
+  _blockUserWithIndex(cardIndex) {
+    this._blockUserWithId(this.state.profiles[cardIndex].id)
+    this._removeAllProfilesOfIndex(cardIndex)
+  }
+
+  _blockUserWithId(profileId) {
+    let url = "https://jumbosmash2017.herokuapp.com/profile/block/"+this.props.myProfile.id+"/"+profileId+"/"+this.token.val;
+    fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: "",
+    }).catch((error) => {
+      let errorString = "Sorry, we could not reach the servers and failed to block the user.  We removed them from your deck for now, if you see them again, try blocking them again! Or email us at team@jumbosmash.com and we can do it manually";
+      Alert.alert('Error', errorString);
+      console.log(error);
+      //DO NOTHING (user doesn't really need to know this didn't work)
+    });
+  }
+
   async _shouldSaveProfilesToStorage () {
     if (this.state.profiles && this.state.profiles.length > 0) {
       try {
@@ -294,6 +328,7 @@ class NavigationContainer extends Component {
           fetchProfiles={this._fetchProfiles.bind(this)}
           profiles={this.state.profiles}
           removeDuplicateProfiles={this._removeDuplicateProfiles.bind(this)}
+          blockUserWithIndex={this._blockUserWithIndex.bind(this)}
           myProfile={this.props.myProfile}
           updateProfileToServer={this._updateProfileToServer.bind(this)}
           firebase={this.props.firebase}

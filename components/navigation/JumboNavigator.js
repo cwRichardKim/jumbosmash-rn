@@ -73,6 +73,7 @@ class JumboNavigator extends Component {
       matchedProfile: null, // profile of the person you matched with for MatchView
       selectorBarPan: new Animated.ValueXY({x:0, y:0}),
       isSharedTags: false,
+      profileIndex: -1,
     };
   }
 
@@ -235,7 +236,7 @@ class JumboNavigator extends Component {
           pushNotificationsHandler={this.pushNotificationsHandler}
           removeSeenCards={this.props.removeSeenCards}
           notifyUserOfMatchWith={this._notifyUserOfMatchWith.bind(this)}
-          openProfileCard={()=>{this._showProfileCardForProfile(null, true)}}
+          openProfileCard={this._showProfileCardForProfile.bind(this)}
           shouldUseDummyData={this.props.shouldUseDummyData}
           noMoreCards={this.props.noMoreCards}
           removeDuplicateProfiles={this.props.removeDuplicateProfiles}
@@ -469,10 +470,13 @@ class JumboNavigator extends Component {
 
   _sendReport() {
     if (Mailer && Mailer.mail) {
+      let firstName = this.conversationParticipantBasic ? this.conversationParticipantBasic.firstName : "";
+      let profileId = this.conversationParticipantBasic ? "["+this.conversationParticipantBasic.profileId+"]" : "";
+      console.log("Report: "+firstName+" "+profileId);
       Mailer.mail({
         subject: 'Report',
         recipients: ['team@jumbosmash.com'],
-        body: this.conversationParticipantBasic ? "Report ".concat(this.conversationParticipantBasic.firstName) : '',
+        body: "Report: "+firstName+" "+profileId,
       }, (error, event) => {
         if(error) {
           Alert.alert('Error', 'Could not send mail. Try sending an email to team@jumbosmash.com through your mail client');
@@ -537,7 +541,6 @@ class JumboNavigator extends Component {
 
   // Profile card UI
 
-
   // given a profile, shows the profile over the navigator
   _shouldRenderProfileView() {
     if (this.state.profileToShow !== null) {
@@ -549,6 +552,8 @@ class JumboNavigator extends Component {
             exitFunction={this._closeProfileCard.bind(this)}
             isSharedTags={this.state.isSharedTags}
             style={{marginTop: marginTopAndroid}}
+            blockUserWithIndex={this.props.blockUserWithIndex}
+            index={this.state.profileIndex}
           />
         </View>
       );
@@ -559,7 +564,7 @@ class JumboNavigator extends Component {
 
   // called to show a profile card. if no card is set, it will show
   // the card with the current index
-  _showProfileCardForProfile(profile, isSharedTags) {
+  _showProfileCardForProfile(profile, isSharedTags, profileIndex) {
     let profileToShow = profile;
     if (profile === null && this.swipingPage.state.cardIndex < this.props.profiles.length) {
       profileToShow = this.props.profiles[this.swipingPage.state.cardIndex];
@@ -567,6 +572,7 @@ class JumboNavigator extends Component {
     this.setState({
       profileToShow: profileToShow,
       isSharedTags: isSharedTags,
+      profileIndex: profileIndex,
     })
   }
 
@@ -574,6 +580,7 @@ class JumboNavigator extends Component {
     this.setState({
       profileToShow: null,
       isSharedTags: false,
+      profileIndex: -1,
     })
   }
 
