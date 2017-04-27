@@ -8,22 +8,11 @@ pushNotifications.functionName(param);
 
 module.exports = {
   // Function to be called when push notification is received
-  onNotification: function (notification, params) {
-
+  onNotification: function (message, params) {
     if (params.chatPage) {
       params.chatPage.refresh();
     } else {
-      params.banner.showWithMessage(notification.message.body, params.onPress);
-    }
-
-    if (notification.foreground) {
-      switch (notification.data.code) {
-        case "MATCH":
-          break;
-        case "MESSAGE":
-          break;
-        default:
-      }
+      params.banner.showWithMessage(message, params.onPress);
     }
   },
   onRegister: async function (token, params) {
