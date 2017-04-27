@@ -252,7 +252,7 @@ class CreateProfilePage extends Component {
             JumboSmash was brought to you by:{"\n"}
             Devs: {GlobalFunctions.developers()+"\n"}
             Designers: {GlobalFunctions.designers()+"\n\n"}
-            Beta Testers:{"\n"+GlobalFunctions.betaTesters()}
+            Special Thanks To:{"\n"+GlobalFunctions.helpers()}
             </Text>
           </View>
           <View style={styles.hiddenText}>

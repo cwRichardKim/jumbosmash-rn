@@ -4,6 +4,7 @@
 This file is responsible for providing the zoomed in card view after tapping on a card
 
 isSharedTags: bool for "shared tags" vs "all tags" text
+showReportOptions: bool for extra options
 */
 
 import React, {Component} from 'react';

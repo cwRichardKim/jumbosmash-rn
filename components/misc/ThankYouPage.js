@@ -60,12 +60,12 @@ class ThankYouPage extends Component {
     )
   }
 
-  _loadDemoPage() {
+  _loadTryPage() {
     Alert.alert(
-      "Jumbosmash Demo",
-      "The Demo uses fake profiles to see what the app was like now that Senior Week is over",
+      "Try JumboSmash",
+      "This version uses fake profiles to see what the app was like during the prime of Senior Week",
       [
-        {text:"See the demo!", onPress:()=>{this.props.changePage(OverrideActions.demoApp)}},
+        {text:"Let's Go!", onPress:()=>{this.props.changePage(OverrideActions.tryApp)}},
         {text:"Close", onPress:()=>{}},
       ]
     )
@@ -103,8 +103,8 @@ class ThankYouPage extends Component {
             <RectButton
               style={[styles.button, styles.dummyButton]}
               textStyle={styles.buttonText}
-              text="Demo the App (dummy profiles)"
-              onPress={this._loadDemoPage.bind(this)}
+              text="Try the App with dummy profiles"
+              onPress={this._loadTryPage.bind(this)}
             />
             <RectButton
               style={[styles.button, styles.aboutButton]}
@@ -121,8 +121,8 @@ class ThankYouPage extends Component {
           </View>
           <View style={[styles.textContainer, styles.thankYous]}>
             <Text style={[GlobalStyles.boldText, {marginBottom: 10}]}>Our Team:</Text>
-            <Text style={GlobalStyles.text}>Developers: {GlobalFunctions.developers()}{"\nDesigners: "+GlobalFunctions.designers()}.{"\n\n"}We’d also like to thank our many beta testers including:{"\n"}</Text>
-            <Text style={[GlobalStyles.text, {textAlign: 'center'}]}>{GlobalFunctions.betaTesters()}</Text>
+            <Text style={GlobalStyles.text}>Developers: {GlobalFunctions.developers()}{"\nDesigners: "+GlobalFunctions.designers()}.{"\n\n"}We’d also like to thank many people for their help including:{"\n"}</Text>
+            <Text style={[GlobalStyles.text, {textAlign: 'center'}]}>{GlobalFunctions.helpers()}</Text>
           </View>
         </ScrollView>
       </View>

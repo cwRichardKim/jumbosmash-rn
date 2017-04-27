@@ -196,7 +196,7 @@ class InitialRouter extends Component {
       this.shouldOverridePageLoads = true;
       this.didGetUserAndProfile = false;
       this._shouldFetchUserAndProfile();
-    } else if (action === overrideActions.demoApp) {
+    } else if (action === overrideActions.tryApp) {
       this.shouldOverridePageLoads = true;
       this.shouldUseDummyData = true;
       this._shouldFetchUserAndProfile();
