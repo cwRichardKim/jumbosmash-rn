@@ -47,7 +47,7 @@ class LoginPage extends Component {
     this.studentProfile = null;
     this.email = "";
     this.state = {
-      email_input: this.props.emailInput || null,
+      emailInput: this.props.emailInput || null,
       password:'',
       isLoading: false,
     }
@@ -57,17 +57,17 @@ class LoginPage extends Component {
      Called before Login and Signup
   */
 
-  _beforeButtonPress() {
+  _inputValidation() {
     if (!this.props.isConnected) {
       Alert.alert("Sorry, no connection :(");
-    } else if (!this.state.email_input) {
+    } else if (!this.state.emailInput) {
         Alert.alert("Please type in your email address");
     } else {
 
       this.setState({isLoading: true});
 
-      this.props.setEmailInput(this.state.email_input);
-      var email = FormatInput.email(this.state.email_input, this.props.email_ext);
+      this.props.setEmailInput(this.state.emailInput);
+      var email = FormatInput.email(this.state.emailInput, this.props.email_ext);
       this.email = email;
       var password = this.state.password;
     }
@@ -75,7 +75,7 @@ class LoginPage extends Component {
 
   /*************************** Login ***************************/
   async _login() {
-    await this._beforeButtonPress();
+    await this._inputValidation();
     let email = this.email;
     let password = this.state.password;
 
@@ -128,7 +128,7 @@ class LoginPage extends Component {
 
   /*************************** Signup ***************************/
   async _signup() {
-    await this._beforeButtonPress();
+    await this._inputValidation();
     let email = this.email;
     let password = this.state.password;
 
@@ -162,7 +162,7 @@ class LoginPage extends Component {
   /*************************** Forgot Password ***************************/
 
   _forgotPassword() {
-    this.props.setEmailInput(this.state.email_input);
+    this.props.setEmailInput(this.state.emailInput);
     this._goToForgotPassword();
   }
 
@@ -224,8 +224,8 @@ class LoginPage extends Component {
                   style={AuthStyle.emailInput}
                   underlineColorAndroid="white"
                   keyboardType="email-address"
-                  onChangeText={(text) => this.setState({email_input: text})}
-                  value={this.state.email_input}
+                  onChangeText={(text) => this.setState({emailInput: text})}
+                  value={this.state.emailInput}
                   returnKeyType={"next"}
                   onFocus={this._inputFocused.bind(this, "emailInput")}
                   onBlur={this._dismissFocus.bind(this, "emailInput")}
