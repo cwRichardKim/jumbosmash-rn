@@ -220,7 +220,7 @@ class Card extends Component {
     return (
       <Animated.View style={[cardShadow, GlobalStyles.absoluteCover, styles.cardView, animatedCardstyles, {zIndex: 10 - this.props.positionInDeck}]} {...this._panResponder.panHandlers}>
         <TouchableWithoutFeedback style={styles.touchArea}
-          onPress={this.props.onPress}>
+          onPress={()=>{this.props.onPress(null, true, this.props.cardIndex)}}>
           <View style={styles.card}>
             <LoadableImage
               source={{uri: (this.props.photos && this.props.photos.length >= 1) ? this.props.photos[0].large : ""}}

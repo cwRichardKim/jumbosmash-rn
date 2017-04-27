@@ -17,15 +17,22 @@ import {
   ScrollView,
   TouchableOpacity,
   Dimensions,
+  Alert,
 } from 'react-native';
 
-import LoadableImage  from '../global/LoadableImage.js';
-import GlobalStyles   from "../global/GlobalStyles.js";
+import LoadableImage    from '../global/LoadableImage.js';
+import GlobalStyles     from "../global/GlobalStyles.js";
+import GlobalFunctions  from "../global/GlobalFunctions.js";
+import ActionSheet      from 'react-native-actionsheet';
 
 let Carousel = require('react-native-carousel');
+let Mailer = require('NativeModules').RNMail;
 
 const BORDER_RADIUS = 10;
 const CLOSE_SCROLL_DISTANCE = 100;
+const REPORT_OPTION = "Report User";
+const BLOCK_OPTION = "Block User";
+const ACTION_SHEET_OPTIONS = ['Cancel', REPORT_OPTION, BLOCK_OPTION];
 const WIDTH = Dimensions.get('window').width;
 
 class ProfileCardView extends Component {
@@ -124,6 +131,68 @@ class ProfileCardView extends Component {
     }
   }
 
+  _showOptions() {
+    this.actionSheet.show()
+  }
+
+  _renderActionSheet() {
+    return(
+      <ActionSheet
+        ref={(ref) => this.actionSheet = ref}
+        options={ACTION_SHEET_OPTIONS}
+        cancelButtonIndex={0}
+        tintColor={GlobalFunctions.style().color}
+        onPress={this._handleActionSheetPress.bind(this)}
+      />
+    );
+  }
+
+  async _handleActionSheetPress(index) {
+    if (ACTION_SHEET_OPTIONS[index] == REPORT_OPTION) {
+      this._sendReport();
+      return;
+    }
+
+    if (ACTION_SHEET_OPTIONS[index] == BLOCK_OPTION) {
+      if (this.props.blockUserWithIndex && typeof(this.props.index) != "undefined") {
+        Alert.alert(
+          "Block this user?",
+          "Are you sure you want to block this user? This can not be undone",
+          [
+            {
+              text:"Yes, block this user",
+              onPress:()=>{
+                this.props.blockUserWithIndex(this.props.index);
+                this._closeProfileCard();
+              }
+            },
+            {text:"No", onPress:()=>{}}
+          ]
+        )
+      }
+    }
+  }
+
+  _sendReport() {
+    if (Mailer && Mailer.mail) {
+      Mailer.mail({
+        subject: 'Report User',
+        recipients: ['team@jumbosmash.com'],
+        body: "Report: " + this.props.email + "\n\nReason: ",
+      }, (error, event) => {
+        if(error) {
+          Alert.alert('Error', 'Could not send mail. Try sending an email to team@jumbosmash.com through your mail client');
+        }
+      });
+    } else {
+      Alert.alert(
+        "Unsupported Device",
+        "Sorry, your device doesn't support in-app email :(\nSend your question / feedback to team@jumbosmash.com with your mail client",
+        [{text:"OK", onPress:()=>{}}]
+      )
+    }
+  }
+
   render() {
     let isTeamMember = this.props.teamMember === true;
     let pageHeight = this.props.pageHeight;
@@ -158,9 +227,15 @@ class ProfileCardView extends Component {
                 onPress={this._closeProfileCard.bind(this)}>
                 <Image style={styles.closeButtonView} source={require('./images/x.png')}/>
               </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.moreButton}
+                onPress={this._showOptions.bind(this)}>
+                <Image style={styles.moreButtonView} source={require('./images/white-more.png')}/>
+              </TouchableOpacity>
             </View>
           </ScrollView>
         </View>
+        {this._renderActionSheet()}
       </View>
     );
   }
@@ -183,6 +258,21 @@ const styles = StyleSheet.create({
     resizeMode: "contain",
     height: 15,
     width: 15,
+    flex: 1,
+  },
+  moreButton: {
+    position: "absolute",
+    right: 20,
+    top: 20,
+    width: 50,
+    height: 50,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  moreButtonView: {
+    resizeMode: "contain",
+    height: 30,
+    width: 30,
     flex: 1,
   },
   topGradient: {
