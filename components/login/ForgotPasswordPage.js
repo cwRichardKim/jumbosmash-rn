@@ -76,14 +76,14 @@ class ForgotPasswordPage extends Component {
       return(
         <Image source={require("./img/bg.png")} style={AuthStyle.container}>
         <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-          <ActivityIndicator animating={true}/>
+          <ActivityIndicator animating={true} color="white"/>
         </View>
         </Image>
       );
     } else {
       return (
-        <View style={AuthStyle.container}>
-        <Image source={require("./img/bg.png")} style={AuthStyle.imageContainer}>
+        <Image source={require("./img/bg.png")} style={AuthStyle.container}>
+        <View style={[AuthStyle.container, AuthStyle.centerAlign]}>
           <View style={AuthStyle.logoContainer}>
             <View style={AuthStyle.logoTopMargin}>
             </View>
@@ -119,8 +119,8 @@ class ForgotPasswordPage extends Component {
               />
             </View>
           </View>
-        </Image>
         </View>
+        </Image>
       );
     }
   }
