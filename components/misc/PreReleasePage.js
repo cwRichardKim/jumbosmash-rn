@@ -139,11 +139,14 @@ class PreReleasePage extends Component {
   }
 
   _loadPreReleaseApp() {
+    let preReleaseTitle = IS_ANDROID ? "Welcome! You're here early" : "Do you agree to the terms of service?";
+    let preReleaseText = IS_ANDROID ? "A few quick things.\n1) please don't show the app to anyone!\n2) We might clear the database every once in a while.\n3) report bugs at team@jumbosmash.com\n\nThanks for helping us out ;)" : "To access this app, you must agree to our terms of service (tap the 'terms of service' button). Most prominently this bans the submission of objectionable content that is offensive, insensitive, pornographic, or harmfully misleading.\n\nViolating these terms will lead to an instant termination of your account";
+    let acceptText = IS_ANDROID ? "Let's go!" : "I agree to the terms of service";
     Alert.alert(
-      "Do you agree to the terms of service?",
-      "To access this app, you must agree to our terms of service (tap the 'terms of service' button). Most prominently this bans the submission of objectionable content that is offensive, insensitive, pornographic, or harmfully misleading.\n\nViolating these terms will lead to an instant termination of your account",
+      preReleaseTitle,
+      preReleaseText,
       [
-        {text:"I agree to the terms of service", onPress:()=>{this.props.changePage(OverrideActions.openApp)}},
+        {text:acceptText, onPress:()=>{this.props.changePage(OverrideActions.openApp)}},
         {text:"Close", onPress:()=>{}}
       ]
     )
