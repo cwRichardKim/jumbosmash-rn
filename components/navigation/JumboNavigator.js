@@ -70,7 +70,7 @@ class JumboNavigator extends Component {
       hasUnsavedSettings: false,
       profileToShow: null,
       showMatchView: false,
-      matchedProfile: null, // profile of the person you matched with for MatchView
+      matchProfile: null, // profile of the person you matched with for MatchView
       selectorBarPan: new Animated.ValueXY({x:0, y:0}),
       isSharedTags: false,
       profileIndex: -1,
@@ -544,8 +544,9 @@ class JumboNavigator extends Component {
   _shouldRenderProfileView() {
     if (this.state.profileToShow !== null) {
       let marginTopAndroid = IS_ANDROID ? NAVBAR_HEIGHT : 0
+      let profileStyles = IS_ANDROID ? GlobalStyles.absoluteCover : [GlobalStyles.absoluteCover, styles.coverView]
       return(
-        <View style={[GlobalStyles.absoluteCover, styles.coverView]}>
+        <View style={profileStyles}>
           <ProfileCardView {...(this.state.profileToShow)}
             pageHeight={PAGE_HEIGHT + NAVBAR_HEIGHT}
             exitFunction={this._closeProfileCard.bind(this)}
@@ -587,8 +588,9 @@ class JumboNavigator extends Component {
 
   _shouldRenderMatchView() {
     if (this.state.showMatchView && this.currentPage == PageNames.cardsPage && this.props.profiles.length > 1) {
+      let matchStyles = IS_ANDROID ? GlobalStyles.absoluteCover : [GlobalStyles.absoluteCover, styles.coverView]
       return (
-        <View style={[GlobalStyles.absoluteCover, styles.coverView]}>
+        <View style={matchStyles}>
           <MatchView
             myProfile={this.props.myProfile}
             matchProfile={this.state.matchProfile}
