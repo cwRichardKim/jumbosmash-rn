@@ -203,7 +203,7 @@ class LoginPage extends Component {
   render() {
     if (this.state.isLoading) {
       return(
-        <Image source={require("./img/bg.png")} style={AuthStyle.imageContainer}>
+        <Image source={require("./img/bg.png")} style={AuthStyle.container}>
         <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
           <ActivityIndicator animating={true} color="white"/>
         </View>
@@ -211,8 +211,8 @@ class LoginPage extends Component {
       );
     } else {
       return (
-        <Image source={require("./img/bg.png")} style={AuthStyle.imageContainer}>
-        <ScrollView ref="scrollView" style={AuthStyle.container}>
+        <Image source={require("./img/bg.png")} style={AuthStyle.container}>
+        <ScrollView ref="scrollView" style={AuthStyle.container} contentContainerStyle={AuthStyle.centerAlign}>
           <View style={AuthStyle.logoContainer}>
             <Image source={require('./img/logo.png')} style={AuthStyle.logo}/>
           </View>

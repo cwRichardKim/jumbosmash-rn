@@ -15,11 +15,11 @@ const IS_ANDROID = Platform.OS === 'android';
 module.exports = StyleSheet.create({
   container: {
     flex: 1,
-  },
-  imageContainer: {
-    alignItems:'center',
     width: width,
     height: height,
+  },
+  centerAlign: {
+    alignItems:'center',
   },
   logoContainer: {
     alignSelf:'center',
