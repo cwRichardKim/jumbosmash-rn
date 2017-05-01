@@ -140,23 +140,33 @@ class PreReleasePage extends Component {
 
   _loadPreReleaseApp() {
     Alert.alert(
-      "You're here early",
-      "Official release: "+GlobalFunctions.formatDate(GlobalFunctions.dates().startDate)+"\n\nOnly the Apple Review and JumboSmash Developers have access to this page. This 'pre-release state' is fully functional, but we may clear the database from time to time.\n\nteam@jumbosmash.com for questions!",
+      "Do you agree to the terms of service?",
+      "To access this app, you must agree to our terms of service (tap the 'terms of service' button). Most prominently this bans the submission of objectionable content that is offensive, insensitive, pornographic, or harmfully misleading.\n\nViolating these terms will lead to an instant termination of your account",
       [
-        {text:"Open in Pre-release State", onPress:()=>{this.props.changePage(OverrideActions.openApp)}},
+        {text:"I agree to the terms of service", onPress:()=>{this.props.changePage(OverrideActions.openApp)}},
+        {text:"Close", onPress:()=>{}}
       ]
     )
   }
 
   _shouldLoadPreReleaseButton () {
-    if (this.props.myProfile && (this.props.myProfile.teamMember === true)) {
+    let isAndroidTester = __DEV__ && IS_ANDROID && this.props.myProfile.betaTester === true;
+    if (this.props.myProfile && (this.props.myProfile.teamMember === true || isAndroidTester)) {
       return (
-        <RectButton
-          style={[styles.button, styles.smashButton]}
-          textStyle={styles.buttonText}
-          text="Enter (you have special access 😁)"
-          onPress={this._loadPreReleaseApp.bind(this)}
-        />
+        <View>
+          <RectButton
+            style={[styles.button, styles.smashButton]}
+            onPress={GlobalFunctions.openTOS}
+            text="Terms of Service"
+            textStyle={styles.buttonText}
+          />
+          <RectButton
+            style={[styles.button, styles.smashButton]}
+            textStyle={styles.buttonText}
+            text="Enter"
+            onPress={this._loadPreReleaseApp.bind(this)}
+          />
+        </View>
       )
     } else {
       return (null)
