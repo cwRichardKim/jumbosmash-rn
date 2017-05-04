@@ -58,3 +58,6 @@ jumbosmash.app.dSYM.zip
 # fastlane/report.xml
 # fastlane/Preview.html
 # fastlane/screenshots
+
+# fastlane android
+android/fastlaneKey/*
