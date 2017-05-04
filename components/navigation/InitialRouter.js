@@ -23,7 +23,6 @@ import PreReleasePage             from "../misc/PreReleasePage.js";
 import LoadingPage                from "../misc/LoadingPage.js";
 import GlobalFunctions            from "../global/GlobalFunctions.js";
 import CheaterPage                from "../misc/CheaterPage.js";
-import FirebaseCrash              from 'react-native-firebase-crash-report';
 
 const PageNames = require("../global/GlobalFunctions.js").pageNames();
 const StorageKeys = require("../global/GlobalFunctions.js").storageKeys();
@@ -68,7 +67,6 @@ class InitialRouter extends Component {
   }
 
   componentDidMount() {
-    FirebaseCrash.log('opened initial router');
     NetInfo.isConnected.addEventListener(
       'change',
       this._handleConnectivityChange
