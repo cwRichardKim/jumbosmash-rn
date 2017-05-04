@@ -87,9 +87,9 @@ android {
     signingConfigs {
         config {
             keyAlias 'JumboSmashKey'
-            keyPassword 'CWRK0164329758jumb'
-            storeFile file('/Users/richard/developer/keystores/jumbosmashKeystore.jks')
-            storePassword 'CWRK0164329758keys'
+            keyPassword 'smashitup2017'
+            storeFile file('/Users/richard/developer/keystores/jumbosmashKeystore2.jks')
+            storePassword 'smashitup2017'
         }
     }
     compileSdkVersion 23
