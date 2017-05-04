@@ -85,11 +85,11 @@ def enableProguardInReleaseBuilds = false
 
 android {
     signingConfigs {
-        config {
-            keyAlias 'JumboSmashKey'
-            keyPassword 'smashitup2017'
-            storeFile file('/Users/richard/developer/keystores/jumbosmashKeystore2.jks')
-            storePassword 'smashitup2017'
+        release {
+          keyAlias 'JumboSmashKey'
+          keyPassword 'ask richard for help here'
+          storeFile file('/Users/richard/developer/keystores/jumbosmashKeystore.jks')
+          storePassword 'ask richard for help here'
         }
     }
     compileSdkVersion 23
@@ -99,7 +99,7 @@ android {
         minSdkVersion 16
         vectorDrawables.useSupportLibrary = true
         targetSdkVersion 22
-        versionCode 1
+        versionCode 3
         versionName "1.0"
         ndk {
             abiFilters "armeabi-v7a", "x86"
@@ -115,10 +115,10 @@ android {
     }
     buildTypes {
         release {
+            signingConfig signingConfigs.release
             minifyEnabled enableProguardInReleaseBuilds
             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
-            debuggable true
-            signingConfig signingConfigs.config
+            debuggable false
         }
     }
     // applicationVariants are e.g. debug, release
@@ -137,6 +137,7 @@ android {
 }
 
 dependencies {
+    compile project(':react-native-firebase-crash-report')
     compile project(':react-native-firebase-analytics')
     compile project(':react-native-push-notification')
     compile project(':react-native-image-resizer')

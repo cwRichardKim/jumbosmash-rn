@@ -13,9 +13,11 @@ import {
 } from 'react-native';
 
 import InitialRouter  from "./components/navigation/InitialRouter.js"
+import FirebaseCrash from 'react-native-firebase-crash-report';
 
 export default class jumbosmash extends Component {
   render() {
+    FirebaseCrash.log('opened index.android.js');
     return (
       <InitialRouter/>
     );
