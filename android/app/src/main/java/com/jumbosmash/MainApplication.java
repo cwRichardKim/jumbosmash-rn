@@ -3,6 +3,7 @@ package com.jumbosmash;
 import android.app.Application;
 
 import com.facebook.react.ReactApplication;
+import com.ianlin.RNFirebaseCrashReport.RNFirebaseCrashReportPackage;
 import com.evollu.react.fa.FIRAnalyticsPackage;
 import com.dieam.reactnativepushnotification.ReactNativePushNotificationPackage;
 import fr.bamlab.rnimageresizer.ImageResizerPackage;
@@ -29,6 +30,7 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
+            new RNFirebaseCrashReportPackage(),
             new FIRAnalyticsPackage(),
             new RNMail(),
             new ReactNativePushNotificationPackage(),
