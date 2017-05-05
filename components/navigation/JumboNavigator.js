@@ -17,6 +17,7 @@ import {
   Alert,
   Animated,
   Image,
+  BackAndroid,
 } from 'react-native';
 import ActionSheet        from 'react-native-actionsheet';
 
@@ -51,6 +52,7 @@ const NAVBAR_SELECTOR_WIDTH = PAGE_WIDTH * 0.2;
 const NAVBAR_SELECTOR_HEIGHT = 2;
 const HEADER_TITLE_LEFT_MARGIN = (Platform.OS === 'ios') ? 0 : (Navigator.NavigationBar.Styles.Stages.Left.Title.marginLeft || 0);
 const SAVE_BUTTON_STATE = global.saveButtonStates();
+const NAVIGATOR_BACKHANDLER = "NAVIGATOR_BACKHANDLER"
 
 class JumboNavigator extends Component {
   constructor(props) {
@@ -91,6 +93,30 @@ class JumboNavigator extends Component {
 
     // this._notifyUserOfMatchWith(this.props.myProfile)
     this._configureNotifications();
+    this._configureBackAndroid();
+  }
+
+  _configureBackAndroid () {
+    if (IS_ANDROID) {
+      BackAndroid.addEventListener(NAVIGATOR_BACKHANDLER, function() {
+        if (this) {
+          if (this.state.showMatchView) {
+            this._closeMatchView();
+          } else if (this.state.profileToShow !== null) {
+            this._closeProfileCard();
+          } else if (this.currentPage === PageNames.conversation || this.currentPage === PageNames.tagPage) {
+            this.navigator.pop();
+          } else if (this.currentPage === PageNames.cardsPage) {
+            return false;
+          } else {
+            this.changePage(PageNames.cardsPage);
+          }
+
+          return true;
+        }
+        return false;
+      }.bind(this));
+    }
   }
 
   _configureNotifications () {
@@ -586,6 +612,10 @@ class JumboNavigator extends Component {
 
   // Match View UI
 
+  _closeMatchView() {
+    this.setState({showMatchView: false})
+  }
+
   _shouldRenderMatchView() {
     if (this.state.showMatchView && this.currentPage == PageNames.cardsPage && this.props.profiles.length > 1) {
       let matchStyles = IS_ANDROID ? GlobalStyles.absoluteCover : [GlobalStyles.absoluteCover, styles.coverView]
@@ -594,7 +624,7 @@ class JumboNavigator extends Component {
           <MatchView
             myProfile={this.props.myProfile}
             matchProfile={this.state.matchProfile}
-            onClose={() => this.setState({showMatchView: false})}
+            onClose={this._closeMatchView.bind(this)}
             onSuccess={() => this.changePage(PageNames.chatPage)}
           />
         </View>

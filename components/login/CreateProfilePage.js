@@ -24,7 +24,6 @@ import GlobalStyles       from "../global/GlobalStyles.js";
 import AuthErrors         from "./AuthErrors.js"
 import ProfilePhotoPicker from "../settings/ProfilePhotoPicker.js";
 import GlobalFunctions    from "../global/GlobalFunctions.js";
-import LoginPage          from "./LoginPage.js";
 import TagPage            from "../settings/TagPage.js";
 
 const PageNames = require("../global/GlobalFunctions.js").pageNames();
@@ -168,7 +167,7 @@ class CreateProfilePage extends Component {
   }
 
   _showTagPage() {
-    this.props.navigator.push({name: TagPage})
+    this.props.navigator.push({name: TagPage});
   }
 
   render() {
