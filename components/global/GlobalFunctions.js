@@ -59,6 +59,7 @@ module.exports = {
       deviceToken: prefix+"deviceToken",
       myProfile: prefix+"myProfile",
       permissionsRequested: prefix+"permissionsRequested",
+      chats: prefix+"chats",
     })
   },
   mod: function (n, m) {
