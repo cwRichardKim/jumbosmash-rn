@@ -80,7 +80,7 @@ class ChatPage extends React.Component {
   }
 
   _saveChatsToLocalStorage(chats) {
-    if (this) {
+    if (this && chats) {
       try {
         AsyncStorage.setItem(StorageKeys.chats, JSON.stringify(chats));
       } catch (e) {
