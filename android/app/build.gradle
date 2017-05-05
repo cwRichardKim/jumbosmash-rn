@@ -86,10 +86,10 @@ def enableProguardInReleaseBuilds = false
 android {
     signingConfigs {
         release {
-          keyAlias 'JumboSmashKey'
-          keyPassword 'ask richard for help here'
-          storeFile file('/Users/richard/developer/keystores/jumbosmashKeystore.jks')
-          storePassword 'ask richard for help here'
+            keyAlias 'JumboSmashKey'
+            keyPassword 'ask richard for help'
+            storeFile file('/Users/richard/developer/keystores/jumbosmashKeystore.jks')
+            storePassword 'ask richard for help'
         }
     }
     compileSdkVersion 23
@@ -99,7 +99,7 @@ android {
         minSdkVersion 16
         vectorDrawables.useSupportLibrary = true
         targetSdkVersion 22
-        versionCode 3
+        versionCode 4
         versionName "1.0"
         ndk {
             abiFilters "armeabi-v7a", "x86"
