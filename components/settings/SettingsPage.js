@@ -236,15 +236,12 @@ class SettingsPage extends Component {
     Analytics.logEvent('logout_button', {});
     this.props.firebase.auth().signOut()
       .then(() => {
-        try {
-          AsyncStorage.removeItem(StorageKeys.myProfile);
-        } catch (error) {
-          throw "Error: Remove from storage: " + error;
-        }
-        try {
-          AsyncStorage.removeItem(StorageKeys.profiles);
-        } catch (error) {
-          throw "Error: Remove from storage: " + error;
+        for (var key in StorageKeys) {
+          try {
+            AsyncStorage.removeItem(StorageKeys[key]);
+          } catch (error) {
+            throw "Error: Remove from storage: " + error;
+          }
         }
         this.props.routeNavigator.replace({name: PageNames.auth});
       })
