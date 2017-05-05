@@ -18,7 +18,9 @@ import { View,
          Image,
          TouchableHighlight,
          Alert,
-         RefreshControl,} from 'react-native';
+         RefreshControl,
+         AsyncStorage,
+       } from 'react-native';
 let global = require('../global/GlobalFunctions.js');
 const PushNotifications = require('../global/PushNotifications.js');
 
@@ -26,6 +28,7 @@ const PushNotifications = require('../global/PushNotifications.js');
 let _listView: ListView;
 const Analytics = require('react-native-firebase-analytics');
 const SCROLL_TO_Y = 0;
+const StorageKeys = global.storageKeys();
 
 class ChatPage extends React.Component {
   constructor(props) {
@@ -34,17 +37,17 @@ class ChatPage extends React.Component {
     this.state = {
       dataSource: ds.cloneWithRows([]),
       navigator: props.navigator,
-      refreshing: false,
+      refreshing: true,
       rawData: [],
       filteredData: [],
       searchText: '',
       isMounted: false,
     };
-    this._fetchConversationsAsync();
   }
 
   componentDidMount () {
     this.setState({isMounted: true});
+    this._fetchChatsFromLocalStorage(this._fetchConversationsAsync.bind(this))
     if (_listView) {
       _listView.scrollTo({x: 0, y: SCROLL_TO_Y, animated: true});
     }
@@ -53,7 +56,37 @@ class ChatPage extends React.Component {
   }
 
   componentWillUnmount () {
+    this._saveChatsToLocalStorage(this.state.rawData);
     this.setState({isMounted: false});
+  }
+
+  async _fetchChatsFromLocalStorage(callback) {
+    let storedChats = null;
+    try {
+      let storedData = await AsyncStorage.getItem(StorageKeys.chats);
+      if (storedData !== null && typeof(storedData) === "string") {
+        storedChats = JSON.parse(storedData);
+        this.setState({
+          dataSource: this.state.dataSource.cloneWithRows(storedChats),
+          rawData: storedChats,
+        });
+      }
+    } catch (e) {
+      throw e;
+    }
+    if (callback) {
+      callback();
+    }
+  }
+
+  _saveChatsToLocalStorage(chats) {
+    if (this && chats) {
+      try {
+        AsyncStorage.setItem(StorageKeys.chats, JSON.stringify(chats));
+      } catch (e) {
+        throw e;
+      }
+    }
   }
 
   async _fetchConversationsAsync () {
@@ -76,6 +109,7 @@ class ChatPage extends React.Component {
           rawData: data,
           filteredData: [],
           searchText: '',
+          refreshing: false,
         });
       })
       .catch((error) => {
