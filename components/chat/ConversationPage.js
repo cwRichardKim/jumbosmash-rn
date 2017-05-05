@@ -53,6 +53,7 @@ class ConversationPage extends Component {
 
   componentDidMount() {
     this._messagesRef.on('child_added', (child) => {
+      console.log(Date.now());
         var pos = 'right';
         if (child.val().user._id != this.props.myProfile.id) {
           pos = 'left';
