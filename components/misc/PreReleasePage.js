@@ -182,10 +182,12 @@ class PreReleasePage extends Component {
   _logout() {
     this.props.firebase.auth().signOut()
       .then(() => {
-        try {
-          AsyncStorage.removeItem(StorageKeys.myProfile);
-        } catch (error) {
-          throw "Error: Remove from storage: " + error;
+        for (var key in StorageKeys) {
+          try {
+            AsyncStorage.removeItem(StorageKeys[key]);
+          } catch (error) {
+            throw "Error: Remove from storage: " + error;
+          }
         }
         this.props.changePage(OverrideActions.logout);
       })
