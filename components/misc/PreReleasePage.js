@@ -113,8 +113,6 @@ class PreReleasePage extends Component {
     this.pushNotificationsHandler.configure({
         // (optional) Called when Token is generated (iOS and Android)
         onRegister: function(token) {
-          console.log("SETTING NOTIFICATIONS");
-          console.log(this.token.val);
             PushNotifications.onRegister(token,
               {authToken: this.token.val,
                profile: this.props.myProfile});
