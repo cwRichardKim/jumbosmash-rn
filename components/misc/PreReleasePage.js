@@ -81,20 +81,24 @@ class PreReleasePage extends Component {
       return;
     }
     if (this.token && this.token.val) {
-      Alert.alert(
-        'Instant Smashification',
-        'Would you like to get notifications from us when people want to smash you?',
-        [
-          {text: 'Yes Please', onPress: () => this._configureNotifications()},
-          {text: 'Nah I\'m Good', onPress: () => console.log('Cancel Pressed'), style: 'cancel'},
-        ],
-      );
-      try {
-        await AsyncStorage.setItem(StorageKeys.permissionsRequested, 'true');
-      } catch (err) {
-        // Error saving data
-        //¯\_(ツ)_/¯
-        console.log(err);
+      if (IS_ANDROID) {
+        this._configureNotifications()
+      } else {
+        Alert.alert(
+          'Instant Smashification',
+          'Would you like to get notifications from us when people want to smash you?',
+          [
+            {text: 'Yes Please', onPress: () => this._configureNotifications()},
+            {text: 'Nah I\'m Good', onPress: () => console.log('Cancel Pressed'), style: 'cancel'},
+          ],
+        );
+        try {
+          await AsyncStorage.setItem(StorageKeys.permissionsRequested, 'true');
+        } catch (err) {
+          // Error saving data
+          //¯\_(ツ)_/¯
+          console.log(err);
+        }
       }
     } else {
       setTimeout( () => {
@@ -107,9 +111,10 @@ class PreReleasePage extends Component {
   // to be configured differently for each
   _configureNotifications () {
     this.pushNotificationsHandler.configure({
-
         // (optional) Called when Token is generated (iOS and Android)
         onRegister: function(token) {
+          console.log("SETTING NOTIFICATIONS");
+          console.log(this.token.val);
             PushNotifications.onRegister(token,
               {authToken: this.token.val,
                profile: this.props.myProfile});
