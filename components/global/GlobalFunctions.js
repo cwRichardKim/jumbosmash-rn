@@ -205,7 +205,7 @@ module.exports = {
     }).catch(err => console.error('An error occurred', err));
   },
   asyncUpdateServerProfile: async function(id, newProfile, shouldUseDummyData, token, successOption) {
-    if (shouldUseDummyData === true) {
+    if (shouldUseDummyData === true || token === null) {
       return;
     }
     newProfile["photos"] = this.reArrangePhotos(newProfile.photos);
