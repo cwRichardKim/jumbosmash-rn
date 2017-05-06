@@ -14,7 +14,7 @@ let Mailer = require('NativeModules').RNMail;
 
 const Analytics = require('react-native-firebase-analytics');
 let TOP_MARGIN = Platform.OS === 'android' ? 54 : 64;
-const QUERY_LIMIT = 5;
+const QUERY_LIMIT = 12;
 
 class ConversationPage extends Component {
   constructor(props) {
@@ -22,8 +22,8 @@ class ConversationPage extends Component {
 
     //will open up and get ref to particular chat between two users
     const path = "messages/".concat(this.props.chatroomId);
-    // this._messagesRef = this.props.firebase.database().ref(path).orderByChild("createdAt").limitToLast(QUERY_LIMIT);
-    this._messagesRef = this.props.firebase.database().ref(path).limitToLast(QUERY_LIMIT);
+    this._pushMessageRef = this.props.firebase.database().ref(path);
+    this._messagesRef = this._pushMessageRef.orderByChild("createdAt").limitToLast(QUERY_LIMIT);
 
     this._isMounted = false;
     this.onSend = this.onSend.bind(this);
@@ -57,7 +57,6 @@ class ConversationPage extends Component {
 
   componentDidMount() {
     this._messagesRef.on('child_added', (child) => {
-      console.log("ADDED");
         var pos = 'right';
         if (child.val().user._id != this.props.myProfile.id) {
           pos = 'left';
@@ -81,9 +80,6 @@ class ConversationPage extends Component {
   }
 
   onLoadEarlier() {
-    for (let i = 0; i < this.state.messages.length; i++) {
-      console.log(this.state.messages[i].text);
-    }
     let leftToLoad = QUERY_LIMIT;
     let loadedMessages = [];
 
@@ -106,18 +102,11 @@ class ConversationPage extends Component {
         createdAt: new Date(child.val().createdAt),
       };
 
-      // console.log("NEW: " + message.text);
-      console.log("LENGTH " + loadedMessages.length);
-      console.log("LEFT " + leftToLoad);
-
       loadedMessages.unshift(message);
-      console.log("LENGTH2 " + loadedMessages.length);
       leftToLoad -= 1;
 
       if (leftToLoad <= 0) {
-      console.log("INHEEERRRR");
         loadedMessages.shift();
-      console.log("LENGTH3 " + loadedMessages.length);
         let newMessages = GiftedChat.prepend(this.state.messages, loadedMessages);
 
         this.setState({
@@ -183,10 +172,7 @@ class ConversationPage extends Component {
   onSend(messages = []) {
     for (var i = 0, len = messages.length; i < len; i++) {
       var message = messages[i];
-      console.log("YOOOO");
-      console.log(this._messagesRef);
-      console.log(this._messagesRef.push);
-      this._messagesRef.push({
+      this._pushMessageRef.push({
         _id: message._id,
         text: message.text,
         user: {
@@ -197,7 +183,6 @@ class ConversationPage extends Component {
         date: new Date().getTime(),
         createdAt: new Date().getTime(),
       });
-      console.log("MMMMMMM");
     }
     this._notifyParticipants()
   }
