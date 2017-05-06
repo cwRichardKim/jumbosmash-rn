@@ -14,26 +14,30 @@ let Mailer = require('NativeModules').RNMail;
 
 const Analytics = require('react-native-firebase-analytics');
 let TOP_MARGIN = Platform.OS === 'android' ? 54 : 64;
+const QUERY_LIMIT = 5;
 
 class ConversationPage extends Component {
   constructor(props) {
     super(props);
 
     //will open up and get ref to particular chat between two users
-    // TODO: make so need auth to get ref
     const path = "messages/".concat(this.props.chatroomId);
-    this._messagesRef = this.props.firebase.database().ref(path);
+    // this._messagesRef = this.props.firebase.database().ref(path).orderByChild("createdAt").limitToLast(QUERY_LIMIT);
+    this._messagesRef = this.props.firebase.database().ref(path).limitToLast(QUERY_LIMIT);
 
     this._isMounted = false;
     this.onSend = this.onSend.bind(this);
     this.onReceive = this.onReceive.bind(this);
+    this.onLoadEarlier = this.onLoadEarlier.bind(this);
 
     this._messages = []
     this.state = {
       messages: this._messages,
       typingText: null,
+      loadEarlier: true,
+      typingText: null,
+      isLoadingEarlier: false,
     };
-
   }
 
   componentWillMount() {
@@ -53,7 +57,7 @@ class ConversationPage extends Component {
 
   componentDidMount() {
     this._messagesRef.on('child_added', (child) => {
-      console.log(Date.now());
+      console.log("ADDED");
         var pos = 'right';
         if (child.val().user._id != this.props.myProfile.id) {
           pos = 'left';
@@ -74,6 +78,75 @@ class ConversationPage extends Component {
         }
     });
     Analytics.logEvent('open_conversation_page', {});
+  }
+
+  onLoadEarlier() {
+    for (let i = 0; i < this.state.messages.length; i++) {
+      console.log(this.state.messages[i].text);
+    }
+    let leftToLoad = QUERY_LIMIT;
+    let loadedMessages = [];
+
+    if (this.state.messages == null || this.state.messages.length <= 0) {
+      return;
+    }
+
+    this._messagesRef.endAt(this.state.messages[this.state.messages.length - 1].date.getTime()).on("child_added", function(child) {
+      var pos = 'right';
+      if (child.val().user._id != this.props.myProfile.id) {
+        pos = 'left';
+      }
+
+      let message = {
+        _id: child.val()._id,
+        text: child.val().text,
+        user: child.val().user,
+        position: pos,
+        date: new Date(child.val().date),
+        createdAt: new Date(child.val().createdAt),
+      };
+
+      // console.log("NEW: " + message.text);
+      console.log("LENGTH " + loadedMessages.length);
+      console.log("LEFT " + leftToLoad);
+
+      loadedMessages.unshift(message);
+      console.log("LENGTH2 " + loadedMessages.length);
+      leftToLoad -= 1;
+
+      if (leftToLoad <= 0) {
+      console.log("INHEEERRRR");
+        loadedMessages.shift();
+      console.log("LENGTH3 " + loadedMessages.length);
+        let newMessages = GiftedChat.prepend(this.state.messages, loadedMessages);
+
+        this.setState({
+          isLoadingEarlier: false,
+          messages: newMessages,
+        });
+        leftToLoad = 0;
+        loadedMessages = [];
+        return;
+      }
+      const path = "messages/".concat(this.props.chatroomId);
+      this.props.firebase.database().ref(path).once("value", function(snapshot) {
+        let numChildren = snapshot.numChildren();
+        if (numChildren <= this.state.messages.length + QUERY_LIMIT) {
+            loadedMessages.shift();
+            this.setState((previousState) => {
+              return {
+                isLoadingEarlier: false,
+                messages: GiftedChat.prepend(previousState.messages, loadedMessages),
+                loadEarlier: this.state.messages.length != numChildren,
+              }
+            });
+            leftToLoad -= 1;
+            loadedMessages = [];
+        }
+      }.bind(this));
+    }.bind(this));
+
+
   }
 
   async _asyncUpdateConversation(id, chatChanges) {
@@ -110,6 +183,9 @@ class ConversationPage extends Component {
   onSend(messages = []) {
     for (var i = 0, len = messages.length; i < len; i++) {
       var message = messages[i];
+      console.log("YOOOO");
+      console.log(this._messagesRef);
+      console.log(this._messagesRef.push);
       this._messagesRef.push({
         _id: message._id,
         text: message.text,
@@ -121,6 +197,7 @@ class ConversationPage extends Component {
         date: new Date().getTime(),
         createdAt: new Date().getTime(),
       });
+      console.log("MMMMMMM");
     }
     this._notifyParticipants()
   }
@@ -147,6 +224,9 @@ class ConversationPage extends Component {
             messages={this.state.messages}
             onSend={this.onSend}
             onReceive={this.onReceive}
+            loadEarlier={this.state.loadEarlier && this.state.messages.length >= QUERY_LIMIT}
+            onLoadEarlier={this.onLoadEarlier}
+            isLoadingEarlier={this.state.isLoadingEarlier}
             renderLoading={() => {return (<LoadingCards/>)}}
             user={{
               _id: this.props.myProfile.id
