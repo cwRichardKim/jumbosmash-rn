@@ -11,6 +11,7 @@ import {View, Platform} from 'react-native';
 import { GiftedChat } from 'react-native-gifted-chat';
 
 let Mailer = require('NativeModules').RNMail;
+const MAX_INPUT_LENGTH = 300;
 
 const Analytics = require('react-native-firebase-analytics');
 let TOP_MARGIN = Platform.OS === 'android' ? 54 : 64;
@@ -147,6 +148,7 @@ class ConversationPage extends Component {
             onSend={this.onSend}
             onReceive={this.onReceive}
             renderLoading={() => {return (<LoadingCards/>)}}
+            maxInputLength={MAX_INPUT_LENGTH}
             user={{
               _id: this.props.myProfile.id
             }}/>
