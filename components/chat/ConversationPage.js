@@ -34,7 +34,6 @@ class ConversationPage extends Component {
     this._messages = []
     this.state = {
       messages: this._messages,
-      typingText: null,
       loadEarlier: true,
       typingText: null,
       isLoadingEarlier: false,
