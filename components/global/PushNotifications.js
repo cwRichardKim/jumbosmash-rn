@@ -11,7 +11,7 @@ module.exports = {
   onNotification: function (message, params) {
     if (params.chatPage) {
       params.chatPage.refresh();
-    } else {
+    } else if (params && params.banner) {
       params.banner.showWithMessage(message, params.onPress);
     }
   },
