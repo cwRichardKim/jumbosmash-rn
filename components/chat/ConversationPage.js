@@ -11,28 +11,33 @@ import {View, Platform} from 'react-native';
 import { GiftedChat } from 'react-native-gifted-chat';
 
 let Mailer = require('NativeModules').RNMail;
-const MAX_INPUT_LENGTH = 300;
+const MAX_INPUT_LENGTH = 200;
 
 const Analytics = require('react-native-firebase-analytics');
 let TOP_MARGIN = Platform.OS === 'android' ? 54 : 64;
+const QUERY_LIMIT = 12;
 
 class ConversationPage extends Component {
   constructor(props) {
     super(props);
 
     //will open up and get ref to particular chat between two users
-    // TODO: make so need auth to get ref
     const path = "messages/".concat(this.props.chatroomId);
-    this._messagesRef = this.props.firebase.database().ref(path);
+    this._pushMessageRef = this.props.firebase.database().ref(path);
+    this._messagesRef = this._pushMessageRef.orderByChild("createdAt").limitToLast(QUERY_LIMIT);
 
     this._isMounted = false;
     this.onSend = this.onSend.bind(this);
     this.onReceive = this.onReceive.bind(this);
+    this.onLoadEarlier = this.onLoadEarlier.bind(this);
 
     this._messages = []
     this.state = {
       messages: this._messages,
       typingText: null,
+      loadEarlier: true,
+      typingText: null,
+      isLoadingEarlier: false,
     };
 
   }
@@ -76,6 +81,63 @@ class ConversationPage extends Component {
     Analytics.logEvent('open_conversation_page', {});
   }
 
+  onLoadEarlier() {
+    let leftToLoad = QUERY_LIMIT;
+    let loadedMessages = [];
+
+    if (this.state.messages == null || this.state.messages.length <= 0) {
+      return;
+    }
+
+    this._messagesRef.endAt(this.state.messages[this.state.messages.length - 1].date.getTime()).on("child_added", function(child) {
+      var pos = 'right';
+      if (child.val().user._id != this.props.myProfile.id) {
+        pos = 'left';
+      }
+
+      let message = {
+        _id: child.val()._id,
+        text: child.val().text,
+        user: child.val().user,
+        position: pos,
+        date: new Date(child.val().date),
+        createdAt: new Date(child.val().createdAt),
+      };
+
+      loadedMessages.unshift(message);
+      leftToLoad -= 1;
+
+      if (leftToLoad <= 0) {
+        loadedMessages.shift();
+        let newMessages = GiftedChat.prepend(this.state.messages, loadedMessages);
+
+        this.setState({
+          isLoadingEarlier: false,
+          messages: newMessages,
+        });
+        leftToLoad = 0;
+        loadedMessages = [];
+        return;
+      }
+      const path = "messages/".concat(this.props.chatroomId);
+      this.props.firebase.database().ref(path).once("value", function(snapshot) {
+        let numChildren = snapshot.numChildren();
+        if (numChildren <= this.state.messages.length + QUERY_LIMIT) {
+            loadedMessages.shift();
+            this.setState((previousState) => {
+              return {
+                isLoadingEarlier: false,
+                messages: GiftedChat.prepend(previousState.messages, loadedMessages),
+                loadEarlier: this.state.messages.length != numChildren,
+              }
+            });
+            leftToLoad -= 1;
+            loadedMessages = [];
+        }
+      }.bind(this));
+    }.bind(this));
+  }
+
   async _asyncUpdateConversation(id, chatChanges) {
     let url = "https://jumbosmash2017.herokuapp.com/chat/update/".concat(id).concat("/").concat(this.props.token.val);
     fetch(url, {
@@ -110,7 +172,7 @@ class ConversationPage extends Component {
   onSend(messages = []) {
     for (var i = 0, len = messages.length; i < len; i++) {
       var message = messages[i];
-      this._messagesRef.push({
+      this._pushMessageRef.push({
         _id: message._id,
         text: message.text,
         user: {
@@ -147,6 +209,9 @@ class ConversationPage extends Component {
             messages={this.state.messages}
             onSend={this.onSend}
             onReceive={this.onReceive}
+            loadEarlier={this.state.loadEarlier && this.state.messages.length >= QUERY_LIMIT}
+            onLoadEarlier={this.onLoadEarlier}
+            isLoadingEarlier={this.state.isLoadingEarlier}
             renderLoading={() => {return (<LoadingCards/>)}}
             maxInputLength={MAX_INPUT_LENGTH}
             user={{
