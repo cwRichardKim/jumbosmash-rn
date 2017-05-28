@@ -20,7 +20,6 @@ class Verification extends Component {
   }
 
   static async getStudent(email) {
-    console.log(email);
     let url = "https://jumbosmash2017.herokuapp.com/student/email/" + email;
 
     try {
