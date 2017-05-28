@@ -148,7 +148,7 @@ module.exports = {
     })
   },
   helpers: function() {
-    let helpersArray = ["Josh Berl", "Orlando Economos", "Shana Gallagher", "Lucy Gerhart", "Ryan Gill", "Dhruv Khurana", "Rebecca Larson", "Brian McGough", "Jordan Meisel", "Mackenzie Merriam", "Kabir Singh", "Claire Stone", "Lilly Tahmasebi", "Joshua Terry", "Katie Saviano", "Mudit Tandon"];
+    let helpersArray = ["Josh Berl", "Orlando Economos", "Shana Gallagher", "Nishant Joshi", "Lucy Gerhart", "Ryan Gill", "Dhruv Khurana", "Rebecca Larson", "Brian McGough", "Jordan Meisel", "Mackenzie Merriam", "Kabir Singh", "Claire Stone", "Lilly Tahmasebi", "Joshua Terry", "Katie Saviano", "Mudit Tandon"];
     this.shuffle(helpersArray);
     return helpersArray.join(", ");
   },

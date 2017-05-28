@@ -198,7 +198,7 @@ class ConversationPage extends Component {
 
   // removes a conversation from firebase
   onUnmatch() {
-    this._messagesRef.remove()
+    this._pushMessageRef.remove()
   }
 
   render() {
