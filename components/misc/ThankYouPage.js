@@ -14,6 +14,7 @@ import {
   Linking,
   Alert,
   Image,
+  Platform,
 } from 'react-native';
 
 import GlobalStyles           from "../global/GlobalStyles.js";
@@ -24,6 +25,7 @@ const Analytics = require('react-native-firebase-analytics');
 const HEIGHT = Dimensions.get('window').height;
 const WIDTH = Dimensions.get('window').width;
 const PADDING = 20;
+const IS_ANDROID = Platform.OS === 'android';
 
 class ThankYouPage extends Component {
   constructor(props) {
@@ -72,7 +74,7 @@ class ThankYouPage extends Component {
   }
 
   _openAppStore () {
-    let link = "itms-apps://itunes.apple.com/us/app/jumbosmash/id1208768432?ls=1&mt=8";
+    let link = IS_ANDROID ? "market://details?id=com.jumbosmash" : "itms-apps://itunes.apple.com/us/app/jumbosmash/id1208768432?ls=1&mt=8";
     Linking.canOpenURL(link).then(supported => {
       supported && Linking.openURL(link);
     }, (err) => console.log(err));
@@ -80,7 +82,7 @@ class ThankYouPage extends Component {
 
   render() {
     return (
-      <View style={{flex: 1}}>
+      <View style={{flex: 1, paddingTop: 20}}>
         <ScrollView style={styles.scrollView}>
           <View style={styles.header}>
             <Image

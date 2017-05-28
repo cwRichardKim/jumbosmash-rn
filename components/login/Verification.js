@@ -2,7 +2,7 @@
 
 /*
 This page is responsible for verifying:
-  - user has verified email 
+  - user has verified email
   - user exists in student database
 */
 
@@ -20,11 +20,12 @@ class Verification extends Component {
   }
 
   static async getStudent(email) {
+    console.log(email);
     let url = "https://jumbosmash2017.herokuapp.com/student/email/" + email;
-  
+
     try {
       let response = await fetch(url);
-      let responseJson = await response.json(); 
+      let responseJson = await response.json();
       return responseJson || null;
     } catch (error) {
       Alert.alert("There's been an error. Please try again, and if it persists, please email us at team@jumbosmash.com");

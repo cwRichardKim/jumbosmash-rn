@@ -156,8 +156,7 @@ class PreReleasePage extends Component {
   }
 
   _shouldLoadPreReleaseButton () {
-    let isTester = this.props.myProfile.betaTester === true;
-    if (this.props.myProfile && (this.props.myProfile.teamMember === true || isTester)) {
+    if (this.props.myProfile && this.props.myProfile.teamMember === true) {
       return (
         <View>
           <RectButton

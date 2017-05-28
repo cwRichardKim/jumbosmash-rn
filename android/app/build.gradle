@@ -99,8 +99,8 @@ android {
         minSdkVersion 16
         vectorDrawables.useSupportLibrary = true
         targetSdkVersion 22
-        versionCode 6
-        versionName "1.0"
+        versionCode 7
+        versionName "1.1"
         ndk {
             abiFilters "armeabi-v7a", "x86"
         }
@@ -143,6 +143,7 @@ dependencies {
     compile project(':react-native-image-resizer')
     compile project(':react-native-image-crop-picker')
     compile project(':react-native-fetch-blob')
+    compile 'com.facebook.fresco:animated-gif:0.12.0'
     compile fileTree(include: ['*.jar'], dir: 'libs')
     compile project(':RNMail')
     compile 'com.android.support:appcompat-v7:23.0.1'
