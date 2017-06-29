@@ -67,3 +67,5 @@ android/fastlaneKey/*
 *.p12
 *.pem
 *.pkey
+
+ios/GoogleService-Info.plist
