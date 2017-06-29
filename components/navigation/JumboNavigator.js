@@ -131,12 +131,8 @@ class JumboNavigator extends Component {
 
         // (required) Called when a remote or local notification is opened or received
         onNotification: function(notification) {
-            let message = "";
-            if (Platform.OS === 'android') {
-              message = notification.message;
-            } else {
-              message = notification.message.body;
-            }
+            let message = IS_ANDROID ? notification.message : notification.message.body;
+
             PushNotifications.onNotification(message,
               {banner: this.notificationBanner,
                onPress: () => {this.changePage(PageNames.chatPage)},
